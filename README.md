@@ -12,7 +12,7 @@
 ## Stack:
 Front-end:
 * [Flutter (Dart)](https://flutter.dev/)
-* [Mockups in Adobe XD](https://www.adobe.com/products/xd.html)
+* [Mockups in Adobe XD](https://xd.adobe.com/view/8a421d6f-ad6f-4196-7089-fff92621dc6f-fc73/?fullscreen)
 
 Back-end: 
 * Working on it. (open to anything really)
