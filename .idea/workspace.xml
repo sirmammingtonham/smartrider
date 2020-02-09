@@ -2,13 +2,462 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cbedb026-2cce-4248-bf63-ebd8149515cb" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.flutter-plugins" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/.metadata" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/debug/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/main/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/main/java/me/jpryan/example/MainActivity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/main/kotlin/me/jpryan/example/MainActivity.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/main/res/drawable/launch_background.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/main/res/values/styles.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/app/src/profile/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/gradle.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/android/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/berlin.mbtiles" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2177/1259.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2177/1260.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2177/1261.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2177/1262.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2178/1259.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2178/1260.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2178/1261.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2178/1262.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2179/1259.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2179/1260.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2179/1261.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2179/1262.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2180/1259.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2180/1260.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2180/1261.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2180/1262.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2181/1259.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2181/1260.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2181/1261.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/12/2181/1262.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4354/2518.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4354/2519.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4354/2520.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4354/2521.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4354/2522.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4354/2523.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4354/2524.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4355/2518.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4355/2519.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4355/2520.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4355/2521.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4355/2522.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4355/2523.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4355/2524.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4356/2518.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4356/2519.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4356/2520.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4356/2521.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4356/2522.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4356/2523.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4356/2524.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4357/2518.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4357/2519.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4357/2520.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4357/2521.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4357/2522.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4357/2523.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4357/2524.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4358/2518.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4358/2519.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4358/2520.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4358/2521.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4358/2522.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4358/2523.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4358/2524.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4359/2518.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4359/2519.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4359/2520.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4359/2521.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4359/2522.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4359/2523.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4359/2524.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4360/2518.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4360/2519.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4360/2520.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4360/2521.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4360/2522.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4360/2523.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4360/2524.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4361/2518.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4361/2519.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4361/2520.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4361/2521.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4361/2522.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4361/2523.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4361/2524.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4362/2518.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4362/2519.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4362/2520.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4362/2521.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4362/2522.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4362/2523.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4362/2524.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4363/2518.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4363/2519.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4363/2520.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4363/2521.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4363/2522.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4363/2523.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/13/4363/2524.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8709/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8710/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8711/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8712/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8713/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8714/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8715/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8716/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8717/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8718/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8719/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8720/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8721/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8722/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8723/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8724/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8725/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8726/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5036.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5037.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5038.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5039.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5040.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5041.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5042.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5043.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5044.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5045.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5046.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5047.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5048.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/assets/map/anholt_osmbright/14/8727/5049.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/flutter_map_example.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Flutter/AppFrameworkInfo.plist" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Flutter/Debug.xcconfig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Flutter/Release.xcconfig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Flutter/flutter_assets/AssetManifest.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Flutter/flutter_assets/FontManifest.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Flutter/flutter_assets/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Flutter/flutter_assets/fonts/MaterialIcons-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/AppDelegate.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/AppDelegate.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Assets.xcassets/LaunchImage.imageset/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Base.lproj/LaunchScreen.storyboard" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Base.lproj/Main.storyboard" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/Info.plist" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/ios/Runner/main.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/leaflet_flutter_example_android.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/main.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/animated_map_controller.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/circle.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/esri.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/home.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/map_controller.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/marker_anchor.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/moving_markers.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/offline_map.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/offline_mbtiles_map.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/on_tap.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/overlay_image.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/plugin_api.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/plugin_scalebar.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/plugin_zoombuttons.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/polyline.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/scale_layer_plugin_option.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/scalebar_utils.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/tap_to_add.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/wms_tile_layer.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/pages/zoombuttons_plugin_option.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/test_app.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/lib/widgets/drawer.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/pubspec.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_map_example/web/index.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.h" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/widget_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/test/widget_test.dart" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.dart_tool/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -31,7 +480,7 @@
         <entry file="file://$PROJECT_DIR$/android/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="170">
-              <caret line="10" column="55" selection-start-line="10" selection-start-column="55" selection-end-line="10" selection-end-column="55" />
+              <caret line="11" column="5" selection-start-line="11" selection-start-column="5" selection-end-line="11" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -39,8 +488,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/android/app/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="769">
-              <caret line="67" column="65" selection-start-line="67" selection-start-column="65" selection-end-line="67" selection-end-column="65" />
+            <state relative-caret-position="1139">
+              <caret line="75" selection-start-line="75" selection-end-line="75" />
             </state>
           </provider>
         </entry>
@@ -48,8 +497,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pubspec.yaml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="27" column="28" selection-start-line="27" selection-start-column="28" selection-end-line="27" selection-end-column="28" />
+            <state relative-caret-position="425">
+              <caret line="44" selection-start-line="44" selection-end-line="44" />
             </state>
           </provider>
         </entry>
@@ -69,18 +518,17 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="754" />
-    <option name="y" value="197" />
-    <option name="width" value="1298" />
-    <option name="height" value="1039" />
+    <option name="x" value="753" />
+    <option name="y" value="196" />
+    <option name="width" value="1299" />
+    <option name="height" value="1040" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -103,7 +551,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -138,10 +587,9 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
-    <editor active="true" />
+    <frame x="-7" y="-7" width="2062" height="838" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12100213" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12087912" />
       <window_info id="Structure" order="1" side_tool="true" />
       <window_info id="Build Variants" order="2" side_tool="true" />
       <window_info id="Image Layers" order="3" />
@@ -150,8 +598,6 @@
       <window_info id="Resources Explorer" order="6" />
       <window_info id="Capture Tool" order="7" />
       <window_info id="Favorites" order="8" side_tool="true" />
-      <window_info anchor="bottom" id="Run" />
-      <window_info anchor="bottom" id="Debug" />
       <window_info anchor="bottom" id="Version Control" order="0" />
       <window_info anchor="bottom" id="Logcat" order="1" />
       <window_info anchor="bottom" id="TODO" order="2" />
@@ -160,13 +606,15 @@
       <window_info anchor="bottom" id="Event Log" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Dart Analysis" order="6" weight="0.3289183" />
       <window_info active="true" anchor="bottom" id="Messages" order="7" visible="true" weight="0.3289183" />
-      <window_info anchor="right" id="Flutter Inspector" />
-      <window_info anchor="right" id="Flutter Outline" />
-      <window_info anchor="right" id="Flutter Performance" />
+      <window_info anchor="bottom" id="Run" order="8" />
+      <window_info anchor="bottom" id="Debug" order="9" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
       <window_info anchor="right" id="Capture Analysis" order="1" />
       <window_info anchor="right" id="Theme Preview" order="2" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
+      <window_info anchor="right" id="Flutter Inspector" order="4" />
+      <window_info anchor="right" id="Flutter Outline" order="5" />
+      <window_info anchor="right" id="Flutter Performance" order="6" />
     </layout>
   </component>
   <component name="editorHistoryManager">
@@ -176,21 +624,21 @@
     <entry file="file://$PROJECT_DIR$/android/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
-          <caret line="10" column="55" selection-start-line="10" selection-start-column="55" selection-end-line="10" selection-end-column="55" />
+          <caret line="11" column="5" selection-start-line="11" selection-start-column="5" selection-end-line="11" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/app/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="769">
-          <caret line="67" column="65" selection-start-line="67" selection-start-column="65" selection-end-line="67" selection-end-column="65" />
+        <state relative-caret-position="1139">
+          <caret line="75" selection-start-line="75" selection-end-line="75" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pubspec.yaml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="27" column="28" selection-start-line="27" selection-start-column="28" selection-end-line="27" selection-end-column="28" />
+        <state relative-caret-position="425">
+          <caret line="44" selection-start-line="44" selection-end-line="44" />
         </state>
       </provider>
     </entry>
