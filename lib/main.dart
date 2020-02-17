@@ -1,5 +1,7 @@
+// import 'package:floating_search_bar/floating_search_bar.dart';
 import 'package:flutter/material.dart';
-import 'pages/home.dart';
+import 'package:smartrider/widgets/search_bar.dart';
+import 'package:smartrider/pages/home.dart';
 
 void main() => runApp(SmartRider());
 

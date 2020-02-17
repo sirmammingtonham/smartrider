@@ -1,12 +1,16 @@
 // ui imports
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:floating_search_bar/floating_search_bar.dart';
 
 // map imports
-import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:mapbox_search_flutter/mapbox_search_flutter.dart';
 
 // custom widget imports
 import '../widgets/shuttle_map.dart';
+import '../widgets/search_bar.dart';
+import 'schedule.dart';
 
 class HomePage extends StatelessWidget {
   static const String route = '/';
@@ -48,8 +52,8 @@ class _HomePageState extends State<_HomePage> {
             minHeight: _panelHeightClosed,
             parallaxEnabled: true,
             parallaxOffset: .5,
-            body: ShuttleMap(),
-            panelBuilder: (sc) => _panel(sc), // replace with custom shuttle schedule page later
+            body: SearchBar(),
+            panelBuilder: (sc) => ShuttleSchedule(), //_panel(sc), // replace with custom shuttle schedule page later
             borderRadius: BorderRadius.only(topLeft: Radius.circular(18.0), topRight: Radius.circular(18.0)),
             onPanelSlide: (double pos) => setState((){
               _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
