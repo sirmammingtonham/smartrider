@@ -53,6 +53,7 @@ class _HomePageState extends State<_HomePage> {
             parallaxEnabled: true,
             parallaxOffset: .5,
             body: SearchBar(),
+            // body: ShuttleMap(),
             panelBuilder: (sc) => ShuttleSchedule(), //_panel(sc), // replace with custom shuttle schedule page later
             borderRadius: BorderRadius.only(topLeft: Radius.circular(18.0), topRight: Radius.circular(18.0)),
             onPanelSlide: (double pos) => setState((){

@@ -1,12 +1,12 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 // import 'dart:ui' as ui;
 // import 'package:flutter/services.dart' show rootBundle;
 // import 'dart:async';
 // import 'dart:typed_data';
-
+import 'package:google_fonts/google_fonts.dart';
  
 
- class MyApp extends StatelessWidget {
+ class Loginpage extends StatelessWidget {
       // This widget is the root of your application.
       @override
       Widget build(BuildContext context) {
@@ -93,9 +93,13 @@
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(
-                      height: 135.0,
+                      height: 50.0,
+                      child:Text("SmartRider",style:GoogleFonts.pacifico(fontSize: 25),),
+                    ),
+                    SizedBox(
+                      height: 100.0,
                       child: Image.asset(
-                        "assets/logo.png",
+                        "assets/ridericon.png",
                         fit: BoxFit.contain,
                       ),
                     ),
