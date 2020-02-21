@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smartrider/user_list.dart';
 
 /* Contains all the functions for handling the database */
 
@@ -21,4 +22,23 @@ class DatabaseService {
 
   //receive data function(s) go here
 
+  // user list from snapshot
+  List<User> _userListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((info){
+      return User(
+
+        name: info.data['name'],
+        rin: info.data['rin'],
+        userType: info.data[userType]
+
+      );
+    }).toList();
+  }
+
+  // gets user stream
+  Stream<List<User>> get users {
+    //takes user info from collection and creates a list of user objects
+    return _userCollection.snapshots().map(_userListFromSnapshot);
+  }
+  
 }

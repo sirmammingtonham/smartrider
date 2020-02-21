@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "412876338159",
+    "firebase_url": "https://smartrider-4e9e8.firebaseio.com",
+    "project_id": "smartrider-4e9e8",
+    "storage_bucket": "smartrider-4e9e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:412876338159:android:441a68d2eaf9ec7109fc1a",
+        "android_client_info": {
+          "package_name": "com.example.smartrider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "412876338159-bc9v7jrbk0uipar7r1808e9t5743rrjb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUmVyGqzuVcQetrPkCiaM8OCQsO4GTLhs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "412876338159-bc9v7jrbk0uipar7r1808e9t5743rrjb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
