@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:smartrider/widgets/icons.dart';
 
 // import map background
-import 'shuttle_map.dart';
+import 'map_ui.dart';
 
 class SearchBar extends StatefulWidget {
   const SearchBar();

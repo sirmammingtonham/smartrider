@@ -46,6 +46,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data android:name="com.mapbox.token" android:value="TOKEN_HERE" />
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value=""/>
     </application>
 </manifest>

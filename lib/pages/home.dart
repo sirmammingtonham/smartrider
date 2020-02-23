@@ -2,13 +2,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:floating_search_bar/floating_search_bar.dart';
-
-// map imports
-import 'package:mapbox_search_flutter/mapbox_search_flutter.dart';
 
 // custom widget imports
-import '../widgets/shuttle_map.dart';
+// import '../widgets/map_ui.dart';
 import '../widgets/search_bar.dart';
 import 'schedule.dart';
 
