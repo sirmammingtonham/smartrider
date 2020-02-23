@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 // import 'dart:async';
 // import 'dart:typed_data';
 import 'package:google_fonts/google_fonts.dart';
- 
+import 'signup.dart';
 
  class Loginpage extends StatelessWidget {
       // This widget is the root of your application.
       @override
       Widget build(BuildContext context) {
         return MaterialApp(
-          title: 'Flutter login UI',
+          title: 'smart rider login',
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
@@ -40,7 +40,7 @@ import 'package:google_fonts/google_fonts.dart';
               contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               hintText: "Username",
               border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))),
         );
         final passwordField = TextField(
           obscureText: true,
@@ -49,11 +49,11 @@ import 'package:google_fonts/google_fonts.dart';
               contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               hintText: "Password",
               border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))),
         );
         final loginButon = Material(
-          elevation: 5.0,
-          borderRadius: BorderRadius.circular(30.0),
+          elevation: 4.0,
+          borderRadius: BorderRadius.circular(10.0),
           color: Colors.green,
           child: MaterialButton(
             minWidth: MediaQuery.of(context).size.width,
@@ -66,13 +66,18 @@ import 'package:google_fonts/google_fonts.dart';
           ),
         );
         final signupButton = Material(
-          elevation: 5.0,
-          borderRadius: BorderRadius.circular(30.0),
+          elevation: 4.0,
+          borderRadius: BorderRadius.circular(10.0),
           color: Colors.lightBlue,
           child: MaterialButton(
            minWidth: MediaQuery.of(context).size.width,
             padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-            onPressed: () {},
+            onPressed: () {
+                Navigator.push(
+                   context,
+                MaterialPageRoute(builder: (context) => Signuppage()),
+                  );
+            },
             child: Text("Signup",
                 textAlign: TextAlign.center,
                 style: style.copyWith(
@@ -83,9 +88,12 @@ import 'package:google_fonts/google_fonts.dart';
         
 
         return Scaffold(
-          body: Center(
+          
+          body: CustomPaint(
+            painter: BluePainter(),
+            child:Center(
             child: Container(
-              color: Colors.white,
+              
               child: Padding(
                 padding: const EdgeInsets.all(36.0),
                 child: Column(
@@ -94,7 +102,7 @@ import 'package:google_fonts/google_fonts.dart';
                   children: <Widget>[
                     SizedBox(
                       height: 50.0,
-                      child:Text("SmartRider",style:GoogleFonts.pacifico(fontSize: 25),),
+                      child:Text("SmartRider",style:GoogleFonts.prompt(fontSize: 25),),
                     ),
                     SizedBox(
                       height: 100.0,
@@ -123,9 +131,48 @@ import 'package:google_fonts/google_fonts.dart';
               ),
             ),
           ),
+          ),
         );
       }
     }
+  class BluePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final height = size.height;
+    final width = size.width;
+    Paint paint = Paint(); 
+
+    Path mainBackground = Path();
+    mainBackground.addRect(Rect.fromLTRB(0, 0, width, height));
+    paint.color = Colors.blue.shade700;
+    canvas.drawPath(mainBackground, paint);
+
+    Path ovalPath = Path();
+    // Start paint from 20% height to the left
+    ovalPath.moveTo(0, height * 0.2);
+
+    // paint a curve from current position to middle of the screen
+    ovalPath.quadraticBezierTo(
+        width * 0.45, height * 0.25, width * 0.51, height * 0.5);
+
+    // Paint a curve from current position to bottom left of screen at width * 0.1
+    ovalPath.quadraticBezierTo(width * 0.58, height * 0.8, width * 0.1, height);
+
+    // draw remaining line to bottom left side
+    ovalPath.lineTo(0, height);
+
+    // Close line to reset it back
+    ovalPath.close();
+
+    paint.color = Colors.blue.shade600;
+    canvas.drawPath(ovalPath, paint);
+  }
+    
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return oldDelegate != this;
+  }
+  }
 
 // class MyApp extends StatelessWidget {
 //   // This widget is the root of your application.
