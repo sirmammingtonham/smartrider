@@ -4,7 +4,10 @@
 
 // ignore_for_file: public_member_api_docs
 
+// ui imports
 import 'package:flutter/material.dart';
+
+// map imports
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -47,10 +50,14 @@ class ShuttleMapState extends State<ShuttleMap> {
   bool _myLocationButtonEnabled = true;
   GoogleMapController _controller;
   bool _nightMode = false;
+  String _mapStyle;
 
   @override
   void initState() {
     super.initState();
+    rootBundle.loadString('assets/map_styles/light.json').then((string) {
+    _mapStyle = string;
+    });
   }
 
   @override
@@ -122,6 +129,8 @@ class ShuttleMapState extends State<ShuttleMap> {
     setState(() {
       _controller = controller;
       _isMapCreated = true;
+      print(_mapStyle);
+      _controller.setMapStyle(_mapStyle);
     });
   }
 }

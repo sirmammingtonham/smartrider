@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'dart:ui' as ui;
-// import 'package:flutter/services.dart' show rootBundle;
-// import 'dart:async';
-// import 'dart:typed_data';
 import 'package:google_fonts/google_fonts.dart';
 import 'signup.dart';
 
