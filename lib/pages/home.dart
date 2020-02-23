@@ -3,9 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-// map imports
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 // custom widget imports
 // import '../widgets/map_ui.dart';
 import '../widgets/search_bar.dart';
@@ -47,28 +44,11 @@ class _HomePageState extends State<_HomePage> {
             parallaxEnabled: true,
             parallaxOffset: .5,
             body: SearchBar(),
-            // body: ShuttleMap(),
             panelBuilder: (sc) => ShuttleSchedule(), 
             borderRadius: BorderRadius.only(topLeft: Radius.circular(18.0), topRight: Radius.circular(18.0)),
             // onPanelSlide: (double pos) => setState((){
             // }),
           ),
-
-          // the fab icon
-          // Positioned(
-          //   right: 20.0,
-          //   bottom: _fabHeight,
-          //   child: FloatingActionButton(
-          //     child: Icon(
-          //       Icons.gps_fixed,
-          //       color: Theme.of(context).primaryColor,
-          //     ),
-          //     onPressed: () {
-
-          //     },
-          //     backgroundColor: Colors.white,
-          //   ),
-          // ),
 
           // blur filter
           Positioned(
