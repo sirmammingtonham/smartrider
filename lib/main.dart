@@ -5,6 +5,7 @@ import 'package:smartrider/widgets/search_bar.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/widgets/shuttle_map.dart';
 import 'package:google_fonts/google_fonts.dart'; //package for google font
+
 void main() => runApp(SmartRider());
 
 class SmartRider extends StatelessWidget {
