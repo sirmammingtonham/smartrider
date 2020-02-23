@@ -109,4 +109,3 @@ app.*.symbols
 # Secrets (shhhh)
 google-services.json
 tokens.txt
-**/api-keys.xml

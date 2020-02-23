@@ -66,7 +66,9 @@ class _HomePageState extends State<_HomePage> {
                 Icons.gps_fixed,
                 color: Theme.of(context).primaryColor,
               ),
-              onPressed: (){},
+              onPressed: () {
+                
+              },
               backgroundColor: Colors.white,
             ),
           ),
