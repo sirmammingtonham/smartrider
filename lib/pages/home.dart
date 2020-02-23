@@ -3,6 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+// map imports
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 // custom widget imports
 // import '../widgets/map_ui.dart';
 import '../widgets/search_bar.dart';
@@ -21,17 +24,12 @@ class _HomePage extends StatefulWidget{
   _HomePageState createState() => _HomePageState();
 }
 class _HomePageState extends State<_HomePage> {
-
-  final double _initFabHeight = 120.0;
-  double _fabHeight;
   double _panelHeightOpen;
   double _panelHeightClosed = 95.0;
 
   @override
   void initState(){
     super.initState();
-
-    _fabHeight = _initFabHeight;
   }
 
   @override
@@ -50,28 +48,27 @@ class _HomePageState extends State<_HomePage> {
             parallaxOffset: .5,
             body: SearchBar(),
             // body: ShuttleMap(),
-            panelBuilder: (sc) => ShuttleSchedule(), //_panel(sc), // replace with custom shuttle schedule page later
+            panelBuilder: (sc) => ShuttleSchedule(), 
             borderRadius: BorderRadius.only(topLeft: Radius.circular(18.0), topRight: Radius.circular(18.0)),
-            onPanelSlide: (double pos) => setState((){
-              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
-            }),
+            // onPanelSlide: (double pos) => setState((){
+            // }),
           ),
 
           // the fab icon
-          Positioned(
-            right: 20.0,
-            bottom: _fabHeight,
-            child: FloatingActionButton(
-              child: Icon(
-                Icons.gps_fixed,
-                color: Theme.of(context).primaryColor,
-              ),
-              onPressed: () {
-                
-              },
-              backgroundColor: Colors.white,
-            ),
-          ),
+          // Positioned(
+          //   right: 20.0,
+          //   bottom: _fabHeight,
+          //   child: FloatingActionButton(
+          //     child: Icon(
+          //       Icons.gps_fixed,
+          //       color: Theme.of(context).primaryColor,
+          //     ),
+          //     onPressed: () {
+
+          //     },
+          //     backgroundColor: Colors.white,
+          //   ),
+          // ),
 
           // blur filter
           Positioned(

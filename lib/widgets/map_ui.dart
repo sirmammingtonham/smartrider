@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 // map imports
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 
@@ -116,7 +117,59 @@ class ShuttleMapState extends State<ShuttleMap> {
       onCameraMove: _updateCameraPosition,
     );
 
-    return googleMap;
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: <Widget>[
+        // Actual map
+        googleMap,
+
+        // Location Button
+        Positioned(
+            right: 20.0,
+            bottom: 120.0,
+            child: FloatingActionButton(
+              child: Icon(
+                Icons.gps_fixed,
+                color: Theme.of(context).primaryColor,
+              ),
+              onPressed: _scrollToLocation,
+              backgroundColor: Colors.white,
+            ),
+          ),
+      ]
+    );
+  }
+
+  void _scrollToLocation() async {
+    var currentLocation = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+
+    var loc = LatLng(currentLocation.latitude, currentLocation.longitude);
+
+    if (rpiBounds.contains(loc)) {
+      _controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            bearing: 0.0,
+            target: loc,
+            // tilt: 30.0,
+            zoom: 17.0,
+          ),
+        ),
+      );
+    }
+    else {
+      _controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            bearing: 0.0,
+            target: LatLng(42.729280, -73.679056),
+            // tilt: 30.0,
+            zoom: 15.0,
+          ),
+        ),
+      );
+    }
   }
 
   void _updateCameraPosition(CameraPosition position) {
