@@ -21,4 +21,3 @@ doc/api/
 *.js.map
 
 google-services.json
-android/app/src/main/res/values/strings.xml
