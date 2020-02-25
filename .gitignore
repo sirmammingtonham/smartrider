@@ -22,3 +22,4 @@ doc/api/
 
 google-services.json
 android/app/src/main/res/values/strings.xml
+ios/Runner/ApiKeys.plist
