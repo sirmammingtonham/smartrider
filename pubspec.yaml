@@ -27,7 +27,11 @@ dependencies:
   firebase_auth: ^0.14.0+5
   cloud_firestore: ^0.12.9+5
 
-
+  cloud_firestore_platform_interface: ^1.0.0
+  plugin_platform_interface: ^1.0.1
+  mockito: ^4.1.0
+  mock_cloud_firestore: ^0.0.17
+  provider: ^4.0.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

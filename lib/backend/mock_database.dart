@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mock_cloud_firestore/mock_types.dart';
 import 'package:smartrider/backend/user_list.dart';
 import 'package:smartrider/backend/user.dart';
 
-/* Contains all the functions for handling the database */
+import 'dart:async';
+import 'package:flutter_test/flutter_test.dart';
 
 class DatabaseService {
   //unique user id, will be generated from authorization class after a user successfully logs in
   final String usid;
   //reference to the user collection in the database
-  final CollectionReference _userCollection = Firestore.instance.collection('users');
+
+  final CollectionReference _userCollection = MockFirestoreInstance().collection('users');
 
   DatabaseService({this.usid});
 
@@ -28,9 +31,9 @@ class DatabaseService {
     return snapshot.documents.map((info){
       return User(
 
-        name: info.data['name'],
-        rin: info.data['rin'],
-        userType: info.data['userType']
+          name: info.data['name'],
+          rin: info.data['rin'],
+          userType: info.data['userType']
 
       );
     }).toList();
@@ -41,5 +44,5 @@ class DatabaseService {
     //takes user info from collection and creates a list of user objects
     return _userCollection.snapshots().map(_userListFromSnapshot);
   }
-  
+
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package.provider/provider.dart';
-import 'package:smartrider/user.dart'
+import 'package:provider/provider.dart';
+import 'package:smartrider/backEnd/user.dart';
 
 class UserList extends StatefulWidget {
 	@override
@@ -10,7 +10,7 @@ class UserList extends StatefulWidget {
 
 class _UserListState extends State<UserList> {
 	@override
-	Widget build(Buildcontext context){
+	Widget build(BuildContext context){
 
 		final users = Provider.of<List<User>>(context);
 		users.forEach((user){
