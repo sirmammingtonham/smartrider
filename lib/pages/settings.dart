@@ -239,7 +239,7 @@ class _SettingsPageState extends State<SettingsPage> {
               alignment: AlignmentDirectional.bottomCenter,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.all(50.0),
+                  padding: const EdgeInsets.all(25.0),
                   child: RaisedButton(
                       color: Theme.of(context).primaryColor,
                       child: Text(
