@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'home.dart';
+
 class SettingsPage extends StatefulWidget {
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -24,7 +26,9 @@ class _SettingsPageState extends State<SettingsPage> {
           icon: Icon(Icons.arrow_downward),
           color: Theme.of(context).accentColor,
           tooltip: 'Go back',
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+          },
         ),
         // title
         title: Text('Settings',
@@ -40,7 +44,9 @@ class _SettingsPageState extends State<SettingsPage> {
             icon: Icon(Icons.arrow_downward),
             color: Theme.of(context).accentColor,
             tooltip: 'Go back',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            },
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:smartrider/widgets/icons.dart';
 
 // import map background
+import '../pages/settings.dart';
 import 'map_ui.dart';
 
 class SearchBar extends StatefulWidget {
@@ -36,7 +37,9 @@ class SearchBarState extends State<SearchBar> {
                   IconButton(
                     splashColor: Colors.grey,
                     icon: Icon(SR_Icons.Settings),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+                    },
                   ),
                   Expanded(
                     child: TextField(
