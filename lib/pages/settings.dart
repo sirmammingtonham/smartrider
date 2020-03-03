@@ -223,18 +223,35 @@ class _SettingsPageState extends State<SettingsPage> {
                                       });
                                     },
                                     secondary: const Icon(Icons.lightbulb_outline),
-                                  )
+                                  ), SwitchListTile(
+                                    title:  Text('Dark Mode',
+                                    ),
+                                    value: configDarkMode,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        configDarkMode = value;
+                                      });
+                                    },
+                                    secondary: const Icon(Icons.lightbulb_outline),
+                                  ),
+                                   SwitchListTile(
+                                    title:  Text('Dark Mode',
+                                    ),
+                                    value: configDarkMode,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        configDarkMode = value;
+                                      });
+                                    },
+                                    secondary: const Icon(Icons.lightbulb_outline),
+                                  ),
                                 ],
                               ),
                             ),
                           ),
                         ),
               ),
-              ],
-            ),
-          // Card 1
-          FractionallySizedBox(
-            heightFactor: 1.0,
+               SizedBox(
             child: Stack(
               alignment: AlignmentDirectional.bottomCenter,
               children: <Widget>[
@@ -254,6 +271,10 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           )
+              ],
+            ),
+          // Card 1
+         
         ],
       ),
     );
