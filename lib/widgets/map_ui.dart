@@ -6,17 +6,25 @@
 
 // ui imports
 import 'package:flutter/material.dart';
+import 'package:flutter_load_local_json/stops.dart';
+import 'package:google_map_polyline/google_map_polyline.dart';
 
 // map imports
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart' show rootBundle;
+
 
 
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.720779, -73.698129),
   northeast: const LatLng(42.739179, -73.659123),
 );
+const LatLng SOURCE_LOCATION = LatLng(42.73029109316892, -73.67655873298646);
+const LatLng DEST_LOCATION = LatLng(42.73154808884768, -73.68611276149751);
+
+//var json =
 
 class ShuttleMap extends StatefulWidget {
   const ShuttleMap();
@@ -52,6 +60,12 @@ class ShuttleMapState extends State<ShuttleMap> {
   GoogleMapController _controller;
   bool _nightMode = false;
   String _mapStyle;
+
+  Set<Marker> markers = {};
+  Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
+  int _polylineIdCounter = 1;
+  PolylineId selectedPolyline;
+  String googleAPIKey = "AIzaSyDYWcuecs539zm-vuUBxKhR7rEqoFPa_Eg";
 
   @override
   void initState() {
@@ -115,6 +129,9 @@ class ShuttleMapState extends State<ShuttleMap> {
       myLocationButtonEnabled: _myLocationButtonEnabled,
       trafficEnabled: _myTrafficEnabled,
       onCameraMove: _updateCameraPosition,
+
+      polylines: Set<Polyline>.of(polylines.values),
+      markers: markers,
     );
 
     return Stack(
@@ -184,6 +201,56 @@ class ShuttleMapState extends State<ShuttleMap> {
       _isMapCreated = true;
       print(_mapStyle);
       _controller.setMapStyle(_mapStyle);
+
+      setMapPins();
+      setPolylines();
     });
+  }
+
+
+  void setMapPins() {
+    setState(() {
+      // source pin
+      markers.add(Marker(
+          markerId: MarkerId('sourcePin'),
+          position: SOURCE_LOCATION));
+      // destination pin
+      markers.add(Marker(
+          markerId: MarkerId('destPin'),
+          position: DEST_LOCATION));
+    });
+  }
+
+  void setPolylines() {
+    final int polylineCount = polylines.length;
+
+    if (polylineCount == 12) {
+      return;
+    }
+
+    final String polylineIdVal = 'polyline_id_$_polylineIdCounter';
+    _polylineIdCounter++;
+    final PolylineId polylineId = PolylineId(polylineIdVal);
+
+    final Polyline polyline = Polyline(
+      polylineId: polylineId,
+      color: Colors.orange,
+      width: 5,
+      points: _createPoints(),
+    );
+
+    setState(() {
+      polylines[polylineId] = polyline;
+    });
+  }
+  List<LatLng> _createPoints() {
+    final List<LatLng> points = <LatLng>[];
+    points.add(_createLatLng(42.73029109316892, -73.67655873298646));
+    points.add(_createLatLng(42.73154808884768, -73.68611276149751));
+    return points;
+  }
+
+  LatLng _createLatLng(double lat, double lng) {
+    return LatLng(lat, lng);
   }
 }

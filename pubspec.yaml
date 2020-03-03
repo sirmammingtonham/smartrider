@@ -29,6 +29,8 @@ dependencies:
    
   #map dependencies
   google_maps_flutter: ^0.5.24+1
+  google_map_polyline: ^0.2.0+1
+  flutter_polyline_points: ^0.1.0
   geolocator: ^5.3.0
 
   #ui dependencies
@@ -56,6 +58,7 @@ flutter:
   assets:
     - assets/ridericon.png
     - assets/map_styles/light.json
+    - assets/shuttle_jsons/stops.json
    # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
