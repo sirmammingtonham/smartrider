@@ -27,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
           color: Theme.of(context).accentColor,
           tooltip: 'Go back',
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.pop(context);
           },
         ),
         // title
@@ -45,7 +45,7 @@ class _SettingsPageState extends State<SettingsPage> {
             color: Theme.of(context).accentColor,
             tooltip: 'Go back',
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+              Navigator.pop(context);
             },
           ),
         ],
