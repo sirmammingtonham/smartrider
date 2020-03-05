@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-// TEMPORARY MOCKUP FILE TO HOUSE SHUTTLE SCHEDULE PAGE
-// CURRENTLY home.dart has a bug concerning mapbox
-
 class ShuttleSchedule extends StatefulWidget {
   @override
   _ShuttleScheduleState createState() => _ShuttleScheduleState();
