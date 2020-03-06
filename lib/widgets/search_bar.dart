@@ -29,13 +29,13 @@ class SearchBarState extends State<SearchBar> {
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             height: 50,
               child: Material(
-                color: Colors.white,
+                color: Colors.grey[800],
                 borderRadius: BorderRadius.circular(10.0),
                 elevation: 5.0,
                 child: Row(
                 children: <Widget>[
                   IconButton(
-                    splashColor: Colors.grey,
+                    splashColor: Colors.black,
                     icon: Icon(SR_Icons.Settings),
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
