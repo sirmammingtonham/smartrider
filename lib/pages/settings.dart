@@ -20,11 +20,11 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.white,
         // first down arrow
         leading: IconButton(
           icon: Icon(Icons.arrow_downward),
-          color: Colors.white,
+          color: Theme.of(context).accentColor,
           tooltip: 'Go back',
           onPressed: () {
             Navigator.pop(context);
@@ -33,7 +33,7 @@ class _SettingsPageState extends State<SettingsPage> {
         // title
         title: Text('Settings',
           style: TextStyle(
-            color: Colors.white,
+            color: Theme.of(context).accentColor,
             fontWeight: FontWeight.bold,
             fontSize: 32
             ),
@@ -42,7 +42,7 @@ class _SettingsPageState extends State<SettingsPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.arrow_downward),
-            color: Colors.white,
+            color: Theme.of(context).accentColor,
             tooltip: 'Go back',
             onPressed: () {
               Navigator.pop(context);
@@ -62,7 +62,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Center(
                   child: Text('General',
                     style: TextStyle(
-                    color: Colors.white,
+                    color: Theme.of(context).accentColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 24
                     ),
@@ -74,7 +74,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 child:  Material(
                       elevation: 5,
                       borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.grey,
+                      color: Colors.white,
                       child: Container(
                         padding: EdgeInsets.only(right: 10,left: 10),
                         decoration: BoxDecoration(
@@ -116,7 +116,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Center(
                   child: Text('Shuttle Settings',
                     style: TextStyle(
-                    color: Colors.white,
+                    color: Theme.of(context).accentColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 24
                     ),
@@ -128,7 +128,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Material(
                         elevation: 5,
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.grey,
+                        color: Colors.white,
                         child: Container(
                           padding: EdgeInsets.only(right: 10,left: 10),
                           decoration: BoxDecoration(
@@ -193,7 +193,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Center(
                   child: Text('Safe Ride Settings',
                     style: TextStyle(
-                    color: Colors.white,
+                    color: Theme.of(context).accentColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 24
                     ),
@@ -205,7 +205,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Material(
                         elevation: 5,
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.grey,
+                        color: Colors.white,
                         child: Container(
                           padding: EdgeInsets.only(right: 10,left: 10),
                           decoration: BoxDecoration(
