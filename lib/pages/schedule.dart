@@ -8,11 +8,11 @@ class ShuttleSchedule extends StatefulWidget {
 class _ShuttleScheduleState extends State<ShuttleSchedule> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DefaultTabController(
+    return DefaultTabController(
         length: 3,
         child: Scaffold(
           appBar: AppBar(
+            centerTitle: true,
             bottom: TabBar(
               tabs: [
                 Text(
@@ -355,7 +355,6 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> {
             ],
           ),
         ),
-      ),
     );
   }
 }
