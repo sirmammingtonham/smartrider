@@ -39,6 +39,31 @@ class _HomePageState extends State<_HomePage> {
         children: <Widget>[
           // sliding panel (body is the background, panelBuilder is the actual panel)
           SlidingUpPanel(
+            collapsed: AppBar(
+              centerTitle: true,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_drop_up),
+                color: Theme.of(context).accentColor,
+                iconSize: 50,
+                tooltip: 'Open Shuttle Schedules',
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              title: Text('Shuttle Schedules'),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.arrow_drop_up),
+                  color: Theme.of(context).accentColor,
+                  tooltip: 'Go back',
+                  iconSize: 50,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+            
             maxHeight: _panelHeightOpen,
             minHeight: _panelHeightClosed,
             parallaxEnabled: true,

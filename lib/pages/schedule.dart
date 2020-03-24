@@ -36,6 +36,26 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> {
               ],
             ),
             title: Text('Shuttle Schedules'),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_drop_down),
+              color: Theme.of(context).accentColor,
+              tooltip: 'Go back',
+              iconSize: 50,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.arrow_drop_down),
+                color: Theme.of(context).accentColor,
+                tooltip: 'Go back',
+                iconSize: 50,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
           ),
           body: TabBarView(
             children: [
