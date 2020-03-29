@@ -26,8 +26,8 @@ Interact with our [mockups](https://xd.adobe.com/view/8a421d6f-ad6f-4196-7089-ff
         - For AMD CPUs: Enable the Windows Hypervisor Platform in Windows Features
 4. Clone the smartrider repo with `git clone https://github.com/sirmammingtonham/smartrider.git`.
 5. Download the `google-services.json` from the Firebase project and place it in the `android/app` folder.
-6. Copy the API key for the Google Maps SDK from your Google Developers Console project and add it to `android/app/src/main/res/values/api-keys.xml`.
-    - Use `api-keys.xml.template` as a template.
+6. Copy and rename `android/app/src/main/res/api-keys.template` to `android/app/src/main/res/values/api-keys.xml`
+    - Copy the API key for the Google Maps SDK from your Google Developers Console project and add it to `android/app/src/main/res/values/api-keys.xml`.
 7. Download the required packages by following the steps in your editor of choice, or by running `flutter pub get` inside the cloned repository folder.
 8. Open the emulator and run `lib/main.dart` in your editor, or run `flutter run` in the repo folder.
 
