@@ -1,380 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:smartrider/util/schedule_data.dart';
 
 class ShuttleSchedule extends StatefulWidget {
+  ScrollController scroll_c;
+  ShuttleSchedule({Key key, this.scroll_c}) : super(key: key);
   @override
   _ShuttleScheduleState createState() => _ShuttleScheduleState();
 }
 
-class _ShuttleScheduleState extends State<ShuttleSchedule> {
+class _ShuttleScheduleState extends State<ShuttleSchedule> with SingleTickerProviderStateMixin {
+  final List<Widget> myTabs = [
+    Tab(text: 'SOUTH'),
+    Tab(text: 'NORTH'),
+    Tab(text: 'WEST'),
+  ];
+
+  TabController _tabController;
+  @override
+  void initState() {
+    super.initState();
+    _tabController = new TabController(vsync: this, length: myTabs.length);
+    _tabController.addListener(_handleTabSelection);
+  }
+
+  _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            bottom: TabBar(
-              tabs: [
-                Text(
-                  'SOUTH',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  'NORTH',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  'WEST',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                )
-              ],
-            ),
-            title: Text('Shuttle Schedules'),
-            leading: IconButton(
-              icon: Icon(Icons.arrow_drop_down),
-              color: Theme.of(context).accentColor,
-              tooltip: 'Go back',
-              iconSize: 50,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.arrow_drop_down),
-                color: Theme.of(context).accentColor,
-                tooltip: 'Go back',
-                iconSize: 50,
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+    final shuttle_lists = [shuttle_south, shuttle_north, shuttle_south];
+
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(20),
               ),
-            ],
-          ),
-          body: TabBarView(
-            children: [
-              GridView.count(
-                primary: false,
-                padding: const EdgeInsets.all(40),
-                crossAxisSpacing: 0,
-                mainAxisSpacing: 0,
-                crossAxisCount: 3,
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Union to B-Lot', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.purple[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('B-Lot to LXA', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.purple[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('LXA to Tibitts/Orchard', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.purple[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Tibitts/Orchard to Polytech', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.purple[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Polytech to 15th/College', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.purple[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                ],
-              ),
-              GridView.count(
-                primary: false,
-                padding: const EdgeInsets.all(40),
-                crossAxisSpacing: 0,
-                mainAxisSpacing: 0,
-                crossAxisCount: 3,
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Union to Troy Crosswalk', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Troy Crosswalk to 9th St', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('9th St to Alumni House', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Alumni House to Jacob', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Jacob to Colonie', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Colonie to Georgian', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Colonie to Brinsmade', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Brinsmade to Sunset 1', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Sunset 1 to Sunset 2', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Sunset 2 to E-Lot', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('E-Lot to B-Lot', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('B-Lot to Union', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.blue[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                ],
-              ),
-              GridView.count(
-                primary: false,
-                padding: const EdgeInsets.all(40),
-                crossAxisSpacing: 0,
-                mainAxisSpacing: 0,
-                crossAxisCount: 3,
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Union to CBIS/AH', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.orange[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('CBIS/AH to 15th/Off Commons', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.orange[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('15th/Off Commons to 15th/Poly', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.orange[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('15th/Poly to City Station', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.orange[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('City Station to Blitman', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.orange[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Blitman to Winslow', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.orange[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('Winslow to West', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.orange[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('West to 87 Gym', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.orange[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('87 Gym to Union', textScaleFactor: 1.15, textAlign: TextAlign.right),
-                  ),
-                  Container(
-                    child: VerticalDivider(thickness: 15, color: Colors.orange[400])
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('[time]', textScaleFactor: 1.15),
-                  ),
-                ],
-              ),
-            ],
-          ),
         ),
+        title: Text('Shuttle Schedules'),
+        leading: Icon(Icons.arrow_downward),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Icon(Icons.arrow_downward)
+          )
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: myTabs,
+        ),
+      ),
+      body: ListView.builder(
+        itemCount: shuttle_lists[_tabController.index].length,
+        controller: this.widget.scroll_c,
+        itemBuilder: (context, index) {
+          var cur_list = shuttle_lists[_tabController.index];
+          return Card(
+            child: ListTile(
+              leading: Icon(Icons.airport_shuttle),
+              title: Text(cur_list[index][0]),
+              subtitle: Text(cur_list[index][1]),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {},
+            ),
+          );
+        },
+      ),
     );
   }
 }

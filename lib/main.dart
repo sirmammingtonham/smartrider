@@ -21,7 +21,7 @@ class SmartRider extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Smart Rider Prototype',
-      theme: themeNotifier.getTheme(),
+      // theme: themeNotifier.getTheme(),
       home: HomePage(),
     );
   }

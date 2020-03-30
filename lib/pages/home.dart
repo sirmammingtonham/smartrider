@@ -40,36 +40,28 @@ class _HomePageState extends State<_HomePage> {
           // sliding panel (body is the background, panelBuilder is the actual panel)
           SlidingUpPanel(
             collapsed: AppBar(
-              centerTitle: true,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_drop_up),
-                color: Theme.of(context).accentColor,
-                iconSize: 50,
-                tooltip: 'Open Shuttle Schedules',
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              title: Text('Shuttle Schedules'),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.arrow_drop_up),
-                  color: Theme.of(context).accentColor,
-                  tooltip: 'Go back',
-                  iconSize: 50,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                centerTitle: true,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
                 ),
-              ],
-            ),
+                leading: Icon(Icons.arrow_upward),
+                title: Text('Shuttle Schedules'),
+                actions: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: Icon(Icons.arrow_upward)
+                  )
+                ],
+              ),
             
             maxHeight: _panelHeightOpen,
             minHeight: _panelHeightClosed,
             parallaxEnabled: true,
             parallaxOffset: .5,
             body: SearchBar(),
-            panelBuilder: (sc) => ShuttleSchedule(), 
+            panelBuilder: (ScrollController sc) => ShuttleSchedule(scroll_c: sc), 
             borderRadius: BorderRadius.only(topLeft: Radius.circular(18.0), topRight: Radius.circular(18.0)),
             // onPanelSlide: (double pos) => setState((){
             // }),
@@ -91,47 +83,6 @@ class _HomePageState extends State<_HomePage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _panel(ScrollController sc){
-    return MediaQuery.removePadding(
-      context: context,
-      removeTop: true,
-      child: ListView(
-        controller: sc,
-        children: <Widget>[
-          // gray pull bar (replace with the thing from mockup)
-          SizedBox(height: 12.0,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: 30,
-                height: 5,
-                decoration: BoxDecoration(
-                color: Colors.grey[300],
-                  borderRadius: BorderRadius.all(Radius.circular(12.0))
-                ),
-              ),
-            ],
-          ),
-          // Title (replace with "Schedules" in the right font)
-          SizedBox(height: 15.0,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                "Shuttle Schedule Page Test",
-                style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: 24.0,
-                ),
-              ),
-            ],
-          )
-        ]
-      )
     );
   }
 }

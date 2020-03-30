@@ -46,7 +46,7 @@ class ShuttleMapState extends State<ShuttleMap> {
   bool _tiltGesturesEnabled = true;
   bool _zoomGesturesEnabled = true;
   bool _indoorViewEnabled = true;
-  bool _myLocationEnabled = true;
+  bool _myLocationEnabled = false;
   bool _myTrafficEnabled = false;
   bool _myLocationButtonEnabled = true;
   GoogleMapController _controller;
