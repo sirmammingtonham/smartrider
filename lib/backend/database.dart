@@ -36,10 +36,25 @@ class DatabaseService {
     }).toList();
   }
 
+  //Stream<List<User>> get users {
   // gets user stream
   Stream<List<User>> get users {
     //takes user info from collection and creates a list of user objects
     return _userCollection.snapshots().map(_userListFromSnapshot);
   }
-  
+
+  //get the data associated with the specific user
+ Map<String, dynamic> returnData() {
+    //return the data associated with the user
+   //TODO: add error handling for when the data is not found
+    Map<String, dynamic> data;
+    data = null;
+    Future<DocumentSnapshot> userRef =  _userCollection.document(usid).get();
+    userRef.then( (DocumentSnapshot ds) {
+      //print(ds.data);
+      data = ds.data;
+    });
+
+    return data;
+
 }
