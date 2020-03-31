@@ -50,7 +50,7 @@ class ShuttleMapState extends State<ShuttleMap> {
   bool _myTrafficEnabled = false;
   bool _myLocationButtonEnabled = true;
   GoogleMapController _controller;
-  bool _nightMode = false;
+  bool _nightMode = false;              
   String _mapStyle;
 
   @override
