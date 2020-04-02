@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:smartrider/widgets/icons.dart';
 
 // import map background
-import '../pages/settings.dart';
-import 'map_ui.dart';
+import 'package:smartrider/pages/settings.dart';
+
+// import places api
+import 'package:google_maps_webservice/places.dart';
+import 'package:smartrider/widgets/autocomplete.dart';
+import 'package:smartrider/util/strings.dart';
+
 
 class SearchBar extends StatefulWidget {
   const SearchBar();
@@ -17,59 +22,50 @@ class SearchBarState extends State<SearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        // Replace this container with your Map widget
-        ShuttleMap(),
-        Positioned(
-          top: 30,
-          right: 15,
-          left: 15,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            height: 50,
-              child: Material(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                elevation: 5.0,
-                child: Row(
-                children: <Widget>[
-                  IconButton(
-                    splashColor: Colors.grey,
-                    icon: Icon(SR_Icons.Settings),
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
-                    },
-                  ),
-                  Expanded(
-                    child: TextField(
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        // height: 2.0,
-                      ),
-                      cursorColor: Colors.black,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.go,
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 15),
-                          hintText: "Need a Safe Ride?"),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.deepPurple,
-                      child: Text('JS'),
-                    ),
-                  ),
-                ],
+    return Positioned(
+      top: 30,
+      right: 15,
+      left: 15,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        height: 50,
+        child: Material(
+          borderRadius: BorderRadius.circular(10.0),
+          elevation: 5.0,
+          child: Row(
+            children: <Widget>[
+              IconButton(
+                splashColor: Colors.grey,
+                icon: Icon(SR_Icons.Settings),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+                },
               ),
-            ),
+              Expanded(
+                // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
+                child: PlacesAutocompleteField(
+                  apiKey: google_api_key,
+                  hint: "Need a Safe Ride?",
+                  location: Location(42.729980, -73.676682), // location of union as center
+                  radius: 1000, // 1km from union seems to be a good estimate of the bounds on safe ride's website
+                  language: "en",
+                  components: [Component(Component.country, "us")],
+                  strictbounds: true,
+                  sessionToken: Uuid().generateV4(),
+                  inputDecoration: null,
+                )
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: CircleAvatar(
+                  backgroundColor: Colors.deepPurple,
+                  child: Text('JS', style: TextStyle(color: Colors.white70)),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

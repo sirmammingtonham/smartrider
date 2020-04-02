@@ -111,3 +111,4 @@ google-services.json
 tokens.txt
 api-keys.xml
 android/app/src/main/res/values/api-keys.xml
+strings.dart

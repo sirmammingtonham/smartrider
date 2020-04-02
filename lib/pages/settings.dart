@@ -268,8 +268,6 @@ class _SettingsPageState extends State<SettingsPage> {
           )
               ],
             ),
-          // Card 1
-         
         ],
       ),
     );

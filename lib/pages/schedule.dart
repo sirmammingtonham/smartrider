@@ -79,3 +79,28 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with SingleTickerProv
     );
   }
 }
+// Dismissible(
+//         resizeDuration: null,
+//         onDismissed: (DismissDirection direction) {
+//           setState(() {
+//             _tabController.index += direction == DismissDirection.endToStart ? 1 : -1;
+//           });
+//         },
+//         key: ValueKey(_tabController.index),
+//         child: ListView.builder(
+//           itemCount: shuttle_lists[_tabController.index].length,
+//           controller: this.widget.scroll_c,
+//           itemBuilder: (context, index) {
+//             var cur_list = shuttle_lists[_tabController.index];
+//             return Card(
+//               child: ListTile(
+//                 leading: Icon(Icons.airport_shuttle),
+//                 title: Text(cur_list[index][0]),
+//                 subtitle: Text(cur_list[index][1]),
+//                 trailing: Icon(Icons.arrow_forward),
+//                 onTap: () {},
+//               ),
+//             );
+//           },
+//         ),
+//       ),
