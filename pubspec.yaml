@@ -63,6 +63,8 @@ flutter:
   assets:
     - assets/ridericon.png
     - assets/map_styles/light.json
+    - assets/map_styles/dark.json
+    - assets/map_styles/aubergine.json
    # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

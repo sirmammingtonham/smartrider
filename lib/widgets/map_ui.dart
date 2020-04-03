@@ -51,13 +51,17 @@ class ShuttleMapState extends State<ShuttleMap> {
   bool _myLocationButtonEnabled = true;
   GoogleMapController _controller;
   bool _nightMode = false;              
-  String _mapStyle;
+  String _lightMapStyle;
+  String _darkMapStyle;
 
   @override
   void initState() {
     super.initState();
+    rootBundle.loadString('assets/map_styles/dark.json').then((string) {
+      _darkMapStyle = string;
+    });
     rootBundle.loadString('assets/map_styles/light.json').then((string) {
-    _mapStyle = string;
+      _lightMapStyle = string;
     });
   }
 
@@ -98,6 +102,17 @@ class ShuttleMapState extends State<ShuttleMap> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    if (_controller != null ) {
+      if (isDark) {
+          _controller.setMapStyle(_darkMapStyle);
+      }
+      else {
+          _controller.setMapStyle(_lightMapStyle);
+      }
+    }
+
+
     final GoogleMap googleMap = GoogleMap(
       onMapCreated: onMapCreated,
       initialCameraPosition: _kInitialPosition,
@@ -182,8 +197,8 @@ class ShuttleMapState extends State<ShuttleMap> {
     setState(() {
       _controller = controller;
       _isMapCreated = true;
-      print(_mapStyle);
-      _controller.setMapStyle(_mapStyle);
+      // print(_lightMapStyle);
+      // _controller.setMapStyle(_darkMapStyle);
     });
   }
 }
