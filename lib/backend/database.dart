@@ -45,16 +45,19 @@ class DatabaseService {
 
   //get the data associated with the specific user
  Map<String, dynamic> returnData() {
-    //return the data associated with the user
-   //TODO: add error handling for when the data is not found
-    Map<String, dynamic> data;
-    data = null;
-    Future<DocumentSnapshot> userRef =  _userCollection.document(usid).get();
-    userRef.then( (DocumentSnapshot ds) {
-      //print(ds.data);
-      data = ds.data;
-    });
+   //return the data associated with the user
+   Map<String, dynamic> data;
+   data = null;
+   Future<DocumentSnapshot> userRef = _userCollection.document(usid).get();
+   userRef.then((DocumentSnapshot ds){
+     //print(ds.data);
+     data = ds.data;
+   })
+       .catchError((e) {
+          print(e.error);//Prints the error
+          return(Null);
+   });
 
-    return data;
-
+   return data;
+ }
 }
