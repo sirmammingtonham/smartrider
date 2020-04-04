@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FilterDialog extends StatefulWidget {
-  List<List<String>> stops;
+  List<String> stops;
   TextEditingController controller;
   // ValueChanged<String> updateTime, updateStop;
   FilterDialog({Key key, this.stops, this.controller}) : super(key: key);

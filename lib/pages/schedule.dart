@@ -8,9 +8,13 @@ class ShuttleSchedule extends StatefulWidget {
   @override
   _ShuttleScheduleState createState() => _ShuttleScheduleState();
 }
-
+  
 class _ShuttleScheduleState extends State<ShuttleSchedule> with SingleTickerProviderStateMixin {
-  final shuttle_lists = [shuttle_south, shuttle_north, shuttle_south];
+  static final weekday_north_flat = weekday_north.expand((i) => i).toList();
+  static final weekday_south_flat = weekday_south.expand((i) => i).toList();
+  static final weekday_west_flat = weekday_west.expand((i) => i).toList();
+  final shuttle_lists = [weekday_south_flat, weekday_north_flat, weekday_west_flat];
+  final shuttle_stops_lists = [south_stops,north_stops,west_stops];
   final List<Widget> myTabs = [
     Tab(text: 'SOUTH'),
     Tab(text: 'NORTH'),
@@ -107,24 +111,25 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with SingleTickerProv
           itemCount: this.shuttle_lists[_tabController.index].length,
           controller: this.widget.scroll_c,
           itemBuilder: (context, index) {
-            var cur_list = this.shuttle_lists[_tabController.index];
+            var cur_stop_list = this.shuttle_stops_lists[_tabController.index];
+            var cur_shuttle_list = this.shuttle_lists[_tabController.index];
             if (filter == null) {
               return Card(
                 child: ListTile(
                   leading: Icon(Icons.airport_shuttle),
-                  title: Text(cur_list[index][0]),
-                  subtitle: Text(cur_list[index][1]),
+                  title: Text(cur_stop_list[index%cur_stop_list.length]),
+                  subtitle: Text(cur_shuttle_list[index]),
                   trailing: Icon(Icons.arrow_forward),
                   onTap: () {},
                 ),
               );
             }
-            else if (cur_list[index][0].toLowerCase().contains(filter) || cur_list[index][0].contains(filter)) {
-              return Card(
-                child: ListTile(
+            else if (cur_stop_list[index%cur_stop_list.length].toLowerCase().contains(filter) || cur_stop_list[index%cur_stop_list.length].contains(filter)) {
+               return Card(
+                 child: ListTile(
                   leading: Icon(Icons.airport_shuttle),
-                  title: Text(cur_list[index][0]),
-                  subtitle: Text(cur_list[index][1]),
+                  title: Text(cur_stop_list[index%cur_stop_list.length]),
+                  subtitle: Text(cur_shuttle_list[index]),
                   trailing: Icon(Icons.arrow_forward),
                   onTap: () {},
                 ),
