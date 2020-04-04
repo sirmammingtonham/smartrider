@@ -114,10 +114,10 @@ class ShuttleMapState extends State<ShuttleMap> {
             child: FloatingActionButton(
               child: Icon(
                 Icons.gps_fixed,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).brightness == Brightness.light ? Colors.black87 : null,
               ),
+              backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.white : null,
               onPressed: _scrollToLocation,
-              backgroundColor: Colors.white,
             ),
           ),
       ]

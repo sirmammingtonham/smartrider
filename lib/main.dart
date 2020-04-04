@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smartrider/pages/home.dart';
-import 'package:smartrider/widgets/theme.dart';
+import 'package:smartrider/util/theme.dart';
 import 'package:smartrider/util/theme_notifier.dart';
 
 void main() => runApp(

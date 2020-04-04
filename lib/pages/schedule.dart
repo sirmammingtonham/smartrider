@@ -60,7 +60,11 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ClipRRect(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20.0),
+      ),
+      child: Scaffold(
       appBar: AppBar(
         centerTitle: true,
         shape: RoundedRectangleBorder(
@@ -138,6 +142,6 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with SingleTickerProv
         elevation: 5.0,
         onPressed: _displayFilterDialog,
       ),
-    );
+    ));
   }
 }

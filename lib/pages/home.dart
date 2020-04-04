@@ -66,7 +66,9 @@ class _HomePageState extends State<_HomePage> {
           ]
         ),
         panelBuilder: (ScrollController sc) => ShuttleSchedule(scroll_c: sc), 
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(18.0), topRight: Radius.circular(18.0)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20.0),
+        ),
         // onPanelSlide: (double pos) => setState((){
         // }),
       ),

@@ -35,7 +35,6 @@ class SearchBarState extends State<SearchBar> {
           child: Row(
             children: <Widget>[
               IconButton(
-                splashColor: Colors.grey,
                 icon: Icon(SR_Icons.Settings),
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
@@ -58,7 +57,7 @@ class SearchBarState extends State<SearchBar> {
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: CircleAvatar(
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor: Theme.of(context).buttonColor,
                   child: Text('JS', style: TextStyle(color: Colors.white70)),
                 ),
               ),
