@@ -49,15 +49,14 @@ class ShuttleMapState extends State<ShuttleMap> {
   bool _myLocationEnabled = false;
   bool _myTrafficEnabled = false;
   bool _myLocationButtonEnabled = true;
-  GoogleMapController _controller;
-  bool _nightMode = false;              
+  GoogleMapController _controller;           
   String _lightMapStyle;
   String _darkMapStyle;
 
   @override
   void initState() {
     super.initState();
-    rootBundle.loadString('assets/map_styles/dark.json').then((string) {
+    rootBundle.loadString('assets/map_styles/aubergine.json').then((string) {
       _darkMapStyle = string;
     });
     rootBundle.loadString('assets/map_styles/light.json').then((string) {
@@ -69,36 +68,6 @@ class ShuttleMapState extends State<ShuttleMap> {
   void dispose() {
     super.dispose();
   }
-
-  // Future<String> _getFileData(String path) async {
-  //   return await rootBundle.loadString(path);
-  // }
-
-  // void _setMapStyle(String mapStyle) {
-  //   setState(() {
-  //     _nightMode = true;
-  //     _controller.setMapStyle(mapStyle);
-  //   });
-  // }
-
-  // Widget _nightModeToggler() {
-  //   if (!_isMapCreated) {
-  //     return null;
-  //   }
-  //   return FlatButton(
-  //     child: Text('${_nightMode ? 'disable' : 'enable'} night mode'),
-  //     onPressed: () {
-  //       if (_nightMode) {
-  //         setState(() {
-  //           _nightMode = false;
-  //           _controller.setMapStyle(null);
-  //         });
-  //       } else {
-  //         _getFileData('assets/night_mode.json').then(_setMapStyle);
-  //       }
-  //     },
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -197,8 +166,6 @@ class ShuttleMapState extends State<ShuttleMap> {
     setState(() {
       _controller = controller;
       _isMapCreated = true;
-      // print(_lightMapStyle);
-      // _controller.setMapStyle(_darkMapStyle);
     });
   }
 }
