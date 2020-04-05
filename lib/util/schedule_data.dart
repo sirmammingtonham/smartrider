@@ -1,41 +1,40 @@
 // File to hold a bunch of lists for our listbuilders
+final shuttleStopLists = [south_stops, north_stops, west_stops];
+final shuttleTimeLists = [
+  weekday_south.expand((i) => i).toList(), 
+  weekday_north.expand((i) => i).toList(), 
+  weekday_west.expand((i) => i).toList()
+];
+final busStopLists = [
+  stops_22,
+  stops_80,
+  stops_85,
+  stops_87,
+  stops_182,
+  stops_224,
+  stops_286,
+  stops_289,
+  stops_522,
+  stops_808,
+  stops_809,
+  stops_815,
+];
+final busTimeLists = [
+  times_22.expand((i) => i).toList(),
+  times_80.expand((i) => i).toList(),
+  times_85.expand((i) => i).toList(),
+  times_87.expand((i) => i).toList(),
+  times_182.expand((i) => i).toList(),
+  times_224.expand((i) => i).toList(),
+  times_286.expand((i) => i).toList(),
+  times_289.expand((i) => i).toList(),
+  times_522.expand((i) => i).toList(),
+  times_808.expand((i) => i).toList(),
+  times_809.expand((i) => i).toList(),
+  times_815.expand((i) => i).toList(),
+];
 
 // Shuttle Schedules //
-List<List<String>> shuttle_north = [
-  ["Union to Troy Crosswalk", "time", "id"],
-  ["Troy Crosswalk to 9th St", "time", "id"],
-  ["9th St to Alumni House", "time", "id"],
-  ["Alumni House to Jacob", "time", "id"],
-  ["Jacob to Colonie", "time", "id"],
-  ["Colonie to Georgian", "time", "id"],
-  ["Georgian to Brinsmade", "time", "id"],
-  ["Brinsmade to Sunset 1", "time", "id"],
-  ["Sunset 1 to Sunset 2", "time", "id"],
-  ["Sunset 2 to E-Lot", "time", "id"],
-  ["E-Lot to B-Lot", "time", "id"],
-  ["B-Lot to Union", "time", "id"],
-];
-
-List<List<String>> shuttle_south = [
-  ["Union to B-Lot", "time", "id"],
-  ["B-Lot to LXA", "time", "id"],
-  ["LXA to Tibitts/Orchard", "time", "id"],
-  ["Tibitts/Orchard to Polytech", "time", "id"],
-  ["Polytech to 15th/College", "time", "id"],
-];
-
-List<List<String>> shuttle_west = [
-  ["Union to CBIS/AH", "time", "id"],
-  ["CBIS/AH to 15th/Off Commons", "time", "id"],
-  ["15th/Off Commons to 15th/Poly", "time", "id"],
-  ["15th/Poly to City Station", "time", "id"],
-  ["City Station to Blitman", "time", "id"],
-  ["Blitman to Winslow", "time", "id"],
-  ["Winslow to West", "time", "id"],
-  ["West to 87 Gym", "time", "id"],
-  ["87 Gym to Union", "time", "id"],
-];
-
 List<String> north_stops = [
   "Union to Troy Crosswalk",
   "Troy Crosswalk to 9th St",
@@ -356,8 +355,139 @@ List<List<String>> weekday_west =[
   ["10:30pm","10:31pm","10:31pm","10:33pm","10:36pm","10:38pm","10:40pm","10:42pm","10:43pm"],
   ["10:45pm","10:46pm","10:46pm","10:48pm","10:51pm","10:53pm","10:55pm","10:57pm","10:58pm"]
 ];
+
 // BUS SCHEDULES //
+// might have to convert this data to a json cus its getting big...
+List<String> stops_22 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
+List<String> stops_80 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
+List<String> stops_85 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
+List<String> stops_87 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
+List<String> stops_182 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
+List<String> stops_224 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
+List<String> stops_286 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
+List<String> stops_289 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
+List<String> stops_522 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
+List<String> stops_808 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
+List<String> stops_809 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
+List<String> stops_815 = [
+  "test1",
+  "test2",
+  "test3",
+  "test4",
+];
 
-
-
-
+List<List<String>> times_22 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",]
+];
+List<List<String>> times_80 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",],
+];
+List<List<String>> times_85 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",],
+];
+List<List<String>> times_87 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",],
+];
+List<List<String>> times_182 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",],
+];
+List<List<String>> times_224 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",],
+];
+List<List<String>> times_286 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",],
+];
+List<List<String>> times_289 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",],
+];
+List<List<String>> times_522 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",],
+];
+List<List<String>> times_808 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",],
+];
+List<List<String>> times_809 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",],
+];
+List<List<String>> times_815 = [
+  ["1:00am","2:00am","3:00am",],
+  ["4:00am","5:00pm","6:00pm",],
+  ["7:00pm","8:00pm","9:00pm",],
+];

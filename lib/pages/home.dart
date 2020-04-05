@@ -23,10 +23,12 @@ class _HomePage extends StatefulWidget{
 class _HomePageState extends State<_HomePage> {
   double _panelHeightOpen;
   double _panelHeightClosed = 95.0;
+  bool _isShuttle; // used to determine what text to display
 
   @override
   void initState(){
     super.initState();
+    _isShuttle = true;
   }
 
   @override
@@ -45,7 +47,7 @@ class _HomePageState extends State<_HomePage> {
               ),
             ),
             leading: Icon(Icons.arrow_upward),
-            title: Text('Shuttle Schedules'),
+            title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
             actions: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(right: 12.0),
@@ -65,7 +67,14 @@ class _HomePageState extends State<_HomePage> {
             SearchBar(),
           ]
         ),
-        panelBuilder: (ScrollController sc) => ShuttleSchedule(scrollController: sc),
+        panelBuilder: (ScrollController sc) => ShuttleSchedule(
+          scrollController: sc,
+          scheduleChanged: () {
+            _isShuttle = !_isShuttle;
+            setState(() {});
+          }
+          ,
+        ),
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20.0),
         ),
