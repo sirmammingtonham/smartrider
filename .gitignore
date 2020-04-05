@@ -19,3 +19,7 @@ doc/api/
 *.js_
 *.js.deps
 *.js.map
+
+google-services.json
+android/app/src/main/res/values/strings.xml
+ios/Runner/ApiKeys.plist
