@@ -3,18 +3,19 @@ import 'package:smartrider/util/schedule_data.dart';
 import 'package:smartrider/widgets/filter_dialog.dart';
 
 class ShuttleSchedule extends StatefulWidget {
-  ScrollController scroll_c;
-  ShuttleSchedule({Key key, this.scroll_c}) : super(key: key);
+  final ScrollController scrollController;
+  ShuttleSchedule({Key key, this.scrollController}) : super(key: key);
   @override
   _ShuttleScheduleState createState() => _ShuttleScheduleState();
 }
   
 class _ShuttleScheduleState extends State<ShuttleSchedule> with SingleTickerProviderStateMixin {
-  static final weekday_north_flat = weekday_north.expand((i) => i).toList();
-  static final weekday_south_flat = weekday_south.expand((i) => i).toList();
-  static final weekday_west_flat = weekday_west.expand((i) => i).toList();
-  final shuttle_lists = [weekday_south_flat, weekday_north_flat, weekday_west_flat];
-  final shuttle_stops_lists = [south_stops,north_stops,west_stops];
+  final shuttleStopLists = [south_stops, north_stops, west_stops];
+  final shuttleTimeLists = [
+    weekday_south.expand((i) => i).toList(), 
+    weekday_north.expand((i) => i).toList(), 
+    weekday_west.expand((i) => i).toList()
+  ];
   final List<Widget> myTabs = [
     Tab(text: 'SOUTH'),
     Tab(text: 'NORTH'),
@@ -48,11 +49,26 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with SingleTickerProv
 
   _displayFilterDialog() async {
     final builder = (BuildContext ctx) => FilterDialog(
-      stops: shuttle_lists[_tabController.index],
+      stops: shuttleStopLists[_tabController.index],
       controller: _textController,
     );
     await showDialog(context: context, builder: builder);
-    print(filter);
+  }
+
+  bool _containsFilter(var curStopList, var curTimeList, var index) {
+    assert (filter != null);
+    if (double.tryParse(filter) != null) {
+      return curTimeList[index].contains(filter);
+    }
+    if (filter.contains('am') || filter.contains('pm') || filter.contains(':')) {
+      return curTimeList[index].contains(filter);
+    }
+    if (filter.contains('@')) {
+      var filterSplit = filter.split('@');
+      return (curStopList[index%curStopList.length].toLowerCase().contains(filterSplit[0].toLowerCase()) &&
+        curTimeList[index].contains(filterSplit[1]));
+    }
+    return curStopList[index%curStopList.length].toLowerCase().contains(filter.toLowerCase().trim());
   }
 
   @override
@@ -108,28 +124,28 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with SingleTickerProv
           }
         },
         child: ListView.builder(
-          itemCount: this.shuttle_lists[_tabController.index].length,
-          controller: this.widget.scroll_c,
+          itemCount: this.shuttleTimeLists[_tabController.index].length,
+          controller: this.widget.scrollController,
           itemBuilder: (context, index) {
-            var cur_stop_list = this.shuttle_stops_lists[_tabController.index];
-            var cur_shuttle_list = this.shuttle_lists[_tabController.index];
+            var curStopList = this.shuttleStopLists[_tabController.index];
+            var curTimeList = this.shuttleTimeLists[_tabController.index];
             if (filter == null) {
               return Card(
                 child: ListTile(
                   leading: Icon(Icons.airport_shuttle),
-                  title: Text(cur_stop_list[index%cur_stop_list.length]),
-                  subtitle: Text(cur_shuttle_list[index]),
+                  title: Text(curStopList[index%curStopList.length]),
+                  subtitle: Text(curTimeList[index]),
                   trailing: Icon(Icons.arrow_forward),
                   onTap: () {},
                 ),
               );
             }
-            else if (cur_stop_list[index%cur_stop_list.length].toLowerCase().contains(filter) || cur_stop_list[index%cur_stop_list.length].contains(filter)) {
+            else if (_containsFilter(curStopList, curTimeList, index)) {
                return Card(
                  child: ListTile(
                   leading: Icon(Icons.airport_shuttle),
-                  title: Text(cur_stop_list[index%cur_stop_list.length]),
-                  subtitle: Text(cur_shuttle_list[index]),
+                  title: Text(curStopList[index%curStopList.length]),
+                  subtitle: Text(curTimeList[index]),
                   trailing: Icon(Icons.arrow_forward),
                   onTap: () {},
                 ),

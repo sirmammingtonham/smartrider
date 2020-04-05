@@ -28,8 +28,12 @@ class _FilterDialogState extends State<FilterDialog> {
     return Dialog(
       shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(18.0))),
-      child: Stack(
+      child: 
+      FractionallySizedBox(
+      heightFactor: 0.7,
+      child:Stack(
         children: <Widget>[ ListView( 
+          physics: const NeverScrollableScrollPhysics(),
           children: <Widget>[ SizedBox(height: 10),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -59,25 +63,40 @@ class _FilterDialogState extends State<FilterDialog> {
                         padding: const EdgeInsets.only(right: 8.0),
                       )
                     ),
+                    IconButton(
+                      icon: Icon(Icons.cancel),
+                      onPressed: () {
+                        widget.controller.text = '';
+                        Navigator.pop(context);
+                      },
+                    ),
                   ],
                 ),
               ),
             ),
-            ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: widget.stops.length,
-              itemBuilder: (context, index) {
-                String stop_name = widget.stops[index][0];
-                return ListTile(
-                  leading: Icon(Icons.departure_board),
-                  title: Text(stop_name),
-                  trailing: Icon(Icons.search),
-                  onTap: () {
-                    widget.controller.text = stop_name;
-                  },
-                );
-              }
+            Container(
+              height: 400,  
+              child:ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: widget.stops.length+1,
+                itemBuilder: (context, index) {
+                  // hack that allows us to show the last list item without clipping
+                  if (index == widget.stops.length){
+                    return SizedBox(height: 20);
+                  }
+                  String stop_name = widget.stops[index];
+                  return ListTile(
+                    leading: Icon(Icons.departure_board),
+                    title: Text(stop_name),
+                    trailing: Icon(Icons.search),
+                    onTap: () {
+                      widget.controller.text = stop_name;
+                      Navigator.pop(context);
+                    },
+                  );
+                }
+              ),
             ),
           ]),
           Positioned(
@@ -92,6 +111,6 @@ class _FilterDialogState extends State<FilterDialog> {
           ),
         ]
       )
-    );
+    ));
   }
 }

@@ -65,7 +65,7 @@ class _HomePageState extends State<_HomePage> {
             SearchBar(),
           ]
         ),
-        panelBuilder: (ScrollController sc) => ShuttleSchedule(scroll_c: sc), 
+        panelBuilder: (ScrollController sc) => ShuttleSchedule(scrollController: sc),
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20.0),
         ),
