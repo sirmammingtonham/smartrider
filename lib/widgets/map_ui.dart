@@ -6,8 +6,9 @@
 
 // ui imports
 import 'package:flutter/material.dart';
-import 'package:flutter_load_local_json/stops.dart';
+// import 'package:flutter_load_local_json/stops.dart';
 import 'package:google_map_polyline/google_map_polyline.dart';
+import 'dart:convert';
 
 // map imports
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -73,6 +74,16 @@ class ShuttleMapState extends State<ShuttleMap> {
     rootBundle.loadString('assets/map_styles/light.json').then((string) {
     _mapStyle = string;
     });
+    rootBundle.loadString('assets/shuttle_jsons/stops.json').then((string) {
+      var data = json.decode(string);
+      data.forEach( (stop) {
+        markers.add(Marker(
+          markerId: MarkerId(stop['id'].toString()),
+          position: LatLng(stop['latitude'], stop['longitude'])
+        ));
+      });
+    });
+    print(markers);
   }
 
   @override
@@ -84,31 +95,6 @@ class ShuttleMapState extends State<ShuttleMap> {
   //   return await rootBundle.loadString(path);
   // }
 
-  // void _setMapStyle(String mapStyle) {
-  //   setState(() {
-  //     _nightMode = true;
-  //     _controller.setMapStyle(mapStyle);
-  //   });
-  // }
-
-  // Widget _nightModeToggler() {
-  //   if (!_isMapCreated) {
-  //     return null;
-  //   }
-  //   return FlatButton(
-  //     child: Text('${_nightMode ? 'disable' : 'enable'} night mode'),
-  //     onPressed: () {
-  //       if (_nightMode) {
-  //         setState(() {
-  //           _nightMode = false;
-  //           _controller.setMapStyle(null);
-  //         });
-  //       } else {
-  //         _getFileData('assets/night_mode.json').then(_setMapStyle);
-  //       }
-  //     },
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -211,13 +197,13 @@ class ShuttleMapState extends State<ShuttleMap> {
   void setMapPins() {
     setState(() {
       // source pin
-      markers.add(Marker(
-          markerId: MarkerId('sourcePin'),
-          position: SOURCE_LOCATION));
-      // destination pin
-      markers.add(Marker(
-          markerId: MarkerId('destPin'),
-          position: DEST_LOCATION));
+      // markers.add(Marker(
+      //     markerId: MarkerId('sourcePin'),
+      //     position: SOURCE_LOCATION));
+      // // destination pin
+      // markers.add(Marker(
+      //     markerId: MarkerId('destPin'),
+      //     position: DEST_LOCATION));
     });
   }
 
