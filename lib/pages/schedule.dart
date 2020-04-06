@@ -1,16 +1,22 @@
+// ui dependencies
 import 'package:flutter/material.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:intl/intl.dart';
+
+// loading custom widgets and data
 import 'package:smartrider/util/schedule_data.dart';
 import 'package:smartrider/widgets/filter_dialog.dart';
 
 class ShuttleSchedule extends StatefulWidget {
-  final ScrollController scrollController;
+  final PanelController panelController;
   final VoidCallback scheduleChanged;
-  ShuttleSchedule({Key key, this.scrollController, this.scheduleChanged}) : super(key: key);
+  ShuttleSchedule({Key key, this.panelController, this.scheduleChanged}) : super(key: key);
   @override
-  _ShuttleScheduleState createState() => _ShuttleScheduleState();
+  ShuttleScheduleState createState() => ShuttleScheduleState();
 }
   
-class _ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderStateMixin {
+class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderStateMixin {
   final List<Widget> shuttleTabs = [
     Tab(text: 'SOUTH'),
     Tab(text: 'NORTH'),
@@ -34,11 +40,13 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSt
     Tab(text: '815'),
   ];
 
+  TabController _tabController;
+  TextEditingController _textController;
+  ItemScrollController _scrollController;
+
   double initial, distance;
   String filter;
   bool _isShuttle; // true if we have to build the shuttle schedule, false if bus
-  TabController _tabController;
-  TextEditingController _textController;
 
   @override
   void initState() {
@@ -46,15 +54,12 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSt
     _isShuttle = true;
     _tabController = new TabController(vsync: this, length: shuttleTabs.length);
     _textController = new TextEditingController();
+    _scrollController = new ItemScrollController();
     _tabController.addListener(_handleTabSelection);
     _textController.addListener(_handleSearchQuery);
     filter = null;
   }
-  _handleSearchQuery() {
-    setState(() {
-      filter = _textController.text;
-    });
-  }
+
   _handleTabSelection() {
     if (_tabController.indexIsChanging) {
       setState(() {});
@@ -66,13 +71,20 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSt
       _switchState();
     }
   }
-  // switches from shuttle build to bus build
+
+  _handleSearchQuery() {
+    setState(() {
+      filter = _textController.text;
+    });
+  }
+  
+  // switches from shuttle state to bus state and vice versa
   _switchState() {
     _isShuttle = !_isShuttle;
     _tabController = new TabController(vsync: this, length: _isShuttle ? shuttleTabs.length : busTabs.length);
     _tabController.index = _isShuttle ? 2 : 1;
     _tabController.addListener(_handleTabSelection);
-    widget.scheduleChanged(); // notify parent widget so we can modify top appbar text
+    this.widget.scheduleChanged(); // notify parent widget so we can modify top appbar text
     setState(() {});
   }
 
@@ -100,6 +112,36 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSt
     return curStopList[index%curStopList.length].toLowerCase().contains(filter.toLowerCase().trim());
   }
 
+  scrollToCurrentTime() {
+    // TODO: update so it works with filter
+    List curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
+                busTimeLists[_tabController.index-1];
+    var now = DateTime.now();
+    var f = DateFormat('H.m');
+    double min = double.maxFinite;
+    double curTime = double.parse(f.format(now));
+    double compTime;
+    String closest;
+    curTimeList.forEach(
+      (time) {
+        var t = time.replaceAll(':', '.');
+        compTime = double.parse(t.substring(0,t.length-2));
+        if (t.endsWith('pm')) {
+          compTime += 12.0;
+        }
+        if ((curTime - compTime).abs() < min) {
+          min = (curTime - compTime).abs();
+          closest = time;
+        }
+      }
+    );
+
+    var idx = curTimeList.indexWhere((element) => element == closest);
+    _scrollController.jumpTo(
+      index: idx,
+    );
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -122,11 +164,18 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSt
             ),
           ),
           title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
-          leading: Icon(Icons.arrow_downward),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_downward),
+            onPressed: () {
+              this.widget.panelController.animatePanelToPosition(0);
+            },
+          ),
           actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: Icon(Icons.arrow_downward)
+            IconButton(
+              icon: Icon(Icons.arrow_downward),
+              onPressed: () {
+                this.widget.panelController.animatePanelToPosition(0);
+              },
             )
           ],
           bottom: TabBar(
@@ -155,15 +204,21 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSt
               _tabController.animateTo(_tabController.index + 1);
             }
           },
-          child: ListView.builder(
+          child: ScrollablePositionedList.builder(
             itemCount: _isShuttle ? shuttleTimeLists[_tabController.index].length : 
               busTimeLists[_tabController.index-1].length,
-            controller: this.widget.scrollController,
+            itemScrollController: _scrollController,
             itemBuilder: (context, index) {
               var curStopList = _isShuttle ? shuttleStopLists[_tabController.index] : 
                 busStopLists[_tabController.index-1];
               var curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
                 busTimeLists[_tabController.index-1];
+
+              // bit of a hack to prevent us from getting index errors with the new list controller...
+              if (index >= curTimeList.length) {
+                return null;
+              }
+
               if (filter == null) {
                 return Card(
                   child: ListTile(
@@ -187,7 +242,7 @@ class _ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSt
                 );
               }
               else {
-                return Container();
+                return null;
               }
             },
           ),

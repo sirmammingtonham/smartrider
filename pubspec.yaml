@@ -34,10 +34,12 @@ dependencies:
   rxdart: ^0.23.1
 
   #ui dependencies
-  sliding_up_panel: ^1.0.0
+  sliding_up_panel: ^1.0.1
+  scrollable_positioned_list: ^0.1.2
   google_fonts: ^0.3.9
   cupertino_icons: ^0.1.2
   day_night_switch: ^0.0.2+1
+  intl: ^0.16.1
 
   #state management
   provider: ^3.1.0
