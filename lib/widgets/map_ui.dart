@@ -49,15 +49,18 @@ class ShuttleMapState extends State<ShuttleMap> {
   bool _myLocationEnabled = false;
   bool _myTrafficEnabled = false;
   bool _myLocationButtonEnabled = true;
-  GoogleMapController _controller;
-  bool _nightMode = false;              
-  String _mapStyle;
+  GoogleMapController _controller;           
+  String _lightMapStyle;
+  String _darkMapStyle;
 
   @override
   void initState() {
     super.initState();
+    rootBundle.loadString('assets/map_styles/aubergine.json').then((string) {
+      _darkMapStyle = string;
+    });
     rootBundle.loadString('assets/map_styles/light.json').then((string) {
-    _mapStyle = string;
+      _lightMapStyle = string;
     });
   }
 
@@ -66,38 +69,19 @@ class ShuttleMapState extends State<ShuttleMap> {
     super.dispose();
   }
 
-  // Future<String> _getFileData(String path) async {
-  //   return await rootBundle.loadString(path);
-  // }
-
-  // void _setMapStyle(String mapStyle) {
-  //   setState(() {
-  //     _nightMode = true;
-  //     _controller.setMapStyle(mapStyle);
-  //   });
-  // }
-
-  // Widget _nightModeToggler() {
-  //   if (!_isMapCreated) {
-  //     return null;
-  //   }
-  //   return FlatButton(
-  //     child: Text('${_nightMode ? 'disable' : 'enable'} night mode'),
-  //     onPressed: () {
-  //       if (_nightMode) {
-  //         setState(() {
-  //           _nightMode = false;
-  //           _controller.setMapStyle(null);
-  //         });
-  //       } else {
-  //         _getFileData('assets/night_mode.json').then(_setMapStyle);
-  //       }
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    if (_controller != null ) {
+      if (isDark) {
+          _controller.setMapStyle(_darkMapStyle);
+      }
+      else {
+          _controller.setMapStyle(_lightMapStyle);
+      }
+    }
+
+
     final GoogleMap googleMap = GoogleMap(
       onMapCreated: onMapCreated,
       initialCameraPosition: _kInitialPosition,
@@ -130,10 +114,10 @@ class ShuttleMapState extends State<ShuttleMap> {
             child: FloatingActionButton(
               child: Icon(
                 Icons.gps_fixed,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).brightness == Brightness.light ? Colors.black87 : null,
               ),
+              backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.white : null,
               onPressed: _scrollToLocation,
-              backgroundColor: Colors.white,
             ),
           ),
       ]
@@ -182,8 +166,6 @@ class ShuttleMapState extends State<ShuttleMap> {
     setState(() {
       _controller = controller;
       _isMapCreated = true;
-      print(_mapStyle);
-      _controller.setMapStyle(_mapStyle);
     });
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+// theme stuff
 import 'package:smartrider/util/theme_notifier.dart';
-import 'package:smartrider/widgets/theme.dart';
+import 'package:smartrider/util/theme.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
