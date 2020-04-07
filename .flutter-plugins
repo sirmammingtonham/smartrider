@@ -2,9 +2,10 @@
 cloud_firestore=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\cloud_firestore-0.12.11\\
 firebase_analytics=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_analytics-5.0.11\\
 firebase_auth=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_auth-0.14.0+9\\
-firebase_core=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_core-0.4.4\\
+firebase_core=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_core-0.4.4+3\\
 firebase_core_web=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\firebase_core_web-0.1.1+2\\
 flutter_plugin_android_lifecycle=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\flutter_plugin_android_lifecycle-1.0.6\\
-google_maps_flutter=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_maps_flutter-0.5.24+1\\
-google_sign_in=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_sign_in-4.1.4\\
-google_sign_in_web=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_sign_in_web-0.8.3+2\\
+google_maps_flutter=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_maps_flutter-0.5.25+3\\
+google_sign_in=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_sign_in-4.4.1\\
+google_sign_in_web=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_sign_in_web-0.8.4\\
+location=C:\\Users\\crowlc3\\Dropbox\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\location-1.4.1\\
