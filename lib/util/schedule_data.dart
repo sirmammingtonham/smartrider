@@ -340,33 +340,33 @@ List<List<String>> weekday_west =[
 ];
 
 // BUS SCHEDULES //
-List<String> stops_87 = [
-  "River St & Front St to 4th St & Fulton St",
-  "4th St & Fulton St to Hoosick St & 6th Ave",
-  "Hoosick St & 6th Ave to Burdett Ave & Samaritan Hospital",
-  "Burdett Ave & Samaritan Hospital to 15th St & RPI Walk Over Bridge",
-  "15th St & RPI Walk Over Bridge to 2212 Burdett Ave",
-  "2212 Burdett Ave to 716 Hoosick Rd (Price Chopper)",
-  "716 Hoosick Rd (Price Chopper) to Walmart - Brunswick Plaza",
+List<List<String>> stops_87 = [
+  ["River St & Front St to 4th St & Fulton St","lat","long","id"],
+  ["4th St & Fulton St to Hoosick St & 6th Ave","lat","long","id"],
+  ["Hoosick St & 6th Ave to Burdett Ave & Samaritan Hospital","lat","long","id"],
+  ["Burdett Ave & Samaritan Hospital to 15th St & RPI Walk Over Bridge","lat","long","id"],
+  ["15th St & RPI Walk Over Bridge to 2212 Burdett Ave","lat","long","id"],
+  ["2212 Burdett Ave to 716 Hoosick Rd (Price Chopper)","lat","long","id"],
+  ["716 Hoosick Rd (Price Chopper) to Walmart - Brunswick Plaza","lat","long","id"],
 ];
 
-List<String> stops_286 = [
-  "Vanderheyden Hall to Main Ave & Atlantic Ave",
-  "Main Ave & Atlantic Ave to Pawling Ave & Spring Ave",
-  "Pawling Ave & Spring Ave to Myrtle Ave",
-  "Myrtle Ave to Congress St & 15th St",
-  "Congress St & 15th St to Sage Ave & Anderson Field",
-  "Sage Ave & Anderson Field to River St & Front St",
-  "River St & Front St to 4th St & Fulton St",
-  "4th St & Fulton St to Sage Ave @ 87 Gymnasium PE Building",
-  "Sage Ave @ 87 Gymnasium PE Building to Sunset Terr & Forsyth Dr",
+List<List<String>> stops_286 = [
+  ["Vanderheyden Hall to Main Ave & Atlantic Ave","lat","long","id"],
+  ["Main Ave & Atlantic Ave to Pawling Ave & Spring Ave","lat","long","id"],
+  ["Pawling Ave & Spring Ave to Myrtle Ave","lat","long","id"],
+  ["Myrtle Ave to Congress St & 15th St","lat","long","id"],
+  ["Congress St & 15th St to Sage Ave & Anderson Field","lat","long","id"],
+  ["Sage Ave & Anderson Field to River St & Front St","lat","long","id"],
+  ["River St & Front St to 4th St & Fulton St","lat","long","id"],
+  ["4th St & Fulton St to Sage Ave @ 87 Gymnasium PE Building","lat","long","id"],
+  ["Sage Ave @ 87 Gymnasium PE Building to Sunset Terr & Forsyth Dr","lat","long","id"],
 ];
-List<String> stops_289 = [
-  "Project St & Madison Ave to Myrtle Ave",
-  "Myrtle Ave to Congress St & 15th St",
-  "Congress St & 15th St to 4th St & Fulton St",
-  "4th St & Fulton St to Sage Ave @ 87 Gymnasium PE Building",
-  "Sage Ave @ 87 Gymnasium PE Building to 15th St & Massachusetts Ave",
+List<List<String>> stops_289 = [
+  ["Project St & Madison Ave to Myrtle Ave","lat","long","id"],
+  ["Myrtle Ave to Congress St & 15th St","lat","long","id"],
+  ["Congress St & 15th St to 4th St & Fulton St","lat","long","id"],
+  ["4th St & Fulton St to Sage Ave @ 87 Gymnasium PE Building","lat","long","id"],
+  ["Sage Ave @ 87 Gymnasium PE Building to 15th St & Massachusetts Ave","lat","long","id"],
 ];
 
 List<List<String>> times_87 = [

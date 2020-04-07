@@ -85,7 +85,7 @@ Widget shuttleList(int idx, ItemScrollController _scrollController, Function _co
           subtitle: Text(curTimeList[index]),
           trailing: Icon(Icons.arrow_forward),
           onTap: () {
-            
+
           },
         ),
       );

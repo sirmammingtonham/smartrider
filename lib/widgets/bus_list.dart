@@ -77,7 +77,7 @@ Widget busList(int idx, ItemScrollController _scrollController, Function _contai
       return Card(
         child: ListTile(
           leading: Icon(Icons.directions_bus),
-          title: Text(curStopList[index%curStopList.length]),
+          title: Text(curStopList[index%curStopList.length][0]),
           subtitle: Text(curTimeList[index]),
           trailing: Icon(Icons.arrow_forward),
           onTap: () {},

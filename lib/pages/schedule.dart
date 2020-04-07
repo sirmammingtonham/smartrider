@@ -73,7 +73,7 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
 
   _displayFilterDialog() async {
     final builder = (BuildContext ctx) => FilterDialog(
-      stops: _isShuttle ? shuttleStopLists[_tabController.index] : busStopLists[_tabController.index],
+      stops: _isShuttle ? shuttleStopLists[_tabController.index][0] : busStopLists[_tabController.index][0],
       controller: _textController,
     );
     await showDialog(context: context, builder: builder);
@@ -94,7 +94,7 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
       return (curStopList[index%curStopList.length].toLowerCase().contains(filterSplit[0].toLowerCase()) &&
         curTimeList[index].contains(filterSplit[1]));
     }
-    return curStopList[index%curStopList.length].toLowerCase().contains(this.filter.toLowerCase().trim());
+    return curStopList[index%curStopList.length][0].toLowerCase().contains(this.filter.toLowerCase().trim());
   }
 
   _scrollToCurrentTime(int idx, ItemScrollController _scrollController) {
