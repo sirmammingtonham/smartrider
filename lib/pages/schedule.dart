@@ -45,7 +45,7 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
       _shuttleScrollControllers.add(new ItemScrollController());
     });
 
-    [0,1,2,3].forEach((idx) {
+    [0,1,2].forEach((idx) {
       _busScrollControllers.add(new ItemScrollController());
     });
     filter = null;

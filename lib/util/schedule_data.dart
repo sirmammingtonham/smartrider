@@ -1,9 +1,10 @@
 // File to hold a bunch of lists for our listbuilders
-final shuttleStopLists = [south_stops, north_stops, west_stops];
+final shuttleStopLists = [south_stops, north_stops, west_stops, weekend_express_stops];
 final shuttleTimeLists = [
   weekday_south.expand((i) => i).toList(), 
   weekday_north.expand((i) => i).toList(), 
-  weekday_west.expand((i) => i).toList()
+  weekday_west.expand((i) => i).toList(),
+  weekend_express.expand((i) => i).toList()
 ];
 final busStopLists = [
   stops_87,
@@ -51,6 +52,33 @@ List<List<String>> west_stops = [
   ["Winslow to West","42.731534","-73.68416","20"],
   ["West to 87 Gym","42.7315441484621","-73.6813545227051","27"],
   ["87 Gym to Union","42.73122584540517","-73.68019812550736","29"],
+];
+
+List<List<String>> weekend_express_stops = [
+  ["15th/Col. to Union","lat","long","id"],
+  ["Union to Colonie","lat","long","id"],
+  ["Colonie to Brinsmade","lat","long","id"],
+  ["Brinsmade to Sunset 1&2","lat","long","id"],
+  ["Sunset 1&2 to E-Lot","lat","long","id"],
+  ["E-lot to B-Lot","lat","long","id"],
+  ["B-lot to 13th/Peoples","lat","long","id"],
+  ["13th/Peoples to Blitman","lat","long","id"],
+  ["Blitman to City Stat.","lat","long","id"],
+  ["City Stat. to Poly","lat","long","id"],
+  ["Poly to 15th/Col.", "lat","long","id"],
+];
+
+List<List<String>> weekend_express = [
+  ["4:30p","4:33p","4:36p","4:37p","4:38p","4:39p","4:41p","4:43p","4:45p","4:48p","4:49p","- - - -"],
+  ["4:50p","4:53p","4:56p","4:57p","4:58p","4:59p","5:01p","5:03p","5:05p","5:08p","5:09p","- - - -"],
+  ["5:10p","5:13p","5:16p","5:17p","5:18p","5:19p","5:21p","5:23p","5:25p","5:28p","5:29p","- - - -"],
+  ["5:30p","5:33p","5:36p","5:37p","5:38p","5:39p","5:41p","5:43p","5:45p","5:48p","5:49p","- - - -"],
+  ["5:50p","5:53p","5:56p","5:57p","5:58p","5:59p","6:01p","6:03p","6:05p","6:08p","6:09p","- - - -"],
+  ["6:10p","6:13p","6:16p","6:17p","6:18p","6:19p","6:21p","6:23p","6:25p","6:28p","6:39p","6:40p"],
+  ["6:30p","6:33p","6:36p","6:37p","6:38p","6:39p","6:41p","6:43P","6:45p","6:48p","6:49p","- - - -"],
+  ["6:50p","6:53p","6:56p","6:57p","6:58p","6:59p","7:01p","7:03p","7:05p","7:08p","7:09p","- - - -"],
+  ["7:10p","7:13p","7:16p","7:17p","7:18p","7:19p","7:21p","7:23p","7:25p","7:28p","7:29p","- - - -"],
+  ["7:30p","7:33p","7:36p","7:37p","7:38p","7:39p","7:41p","7:43p","7:45p","7:48p","7:49p","7:50p"]
 ];
 
 List<List<String>> weekday_south = [
