@@ -18,39 +18,39 @@ final busTimeLists = [
 ];
 
 // Shuttle Schedules //
-List<String> north_stops = [
-  "Union to Troy Crosswalk",
-  "Troy Crosswalk to 9th St",
-  "9th St to Alumni House",
-  "Alumni House to Jacob",
-  "Jacob to Colonie",
-  "Colonie to Georgian",
-  "Georgian to Brinsmade",
-  "Brinsmade to Sunset 1",
-  "Sunset 1 to Sunset 2",
-  "Sunset 2 to E-Lot",
-  "E-Lot to B-Lot",
-  "B-Lot to Union",
+List<List<String>> north_stops = [
+  ["Union to Troy Crosswalk","42.73029109316892","-73.67655873298646","1"],
+  ["Troy Crosswalk to 9th St","42.7312289168093","-73.6801850795746","26"],
+  ["9th St to Alumni House","42.7328759845107","-73.6825019716889","28"],
+  ["Alumni House to Jacob","42.73328577446417","-73.67845773696901","13"],
+  ["Jacob to Colonie","42.73433031016419","-73.6761257175685","31"],
+  ["Colonie to Georgian","42.73637487312414","-73.67058759924475","14"],
+  ["Georgian to Brinsmade","42.736894431805204","-73.6668883604528","39"],
+  ["Brinsmade to Sunset 1","42.73565383452506","-73.66511642932893","15"],
+  ["Sunset 1 to Sunset 2","42.73445074085895","-73.66340217450477","24"],
+  ["Sunset 2 to E-Lot","42.73265532726045","-73.66520762443544","17"],
+  ["E-Lot to B-Lot","42.731418","-73.666462","21"],
+  ["B-Lot to Union","42.731635","-73.669706","18"],
 ];
 
-List<String> south_stops = [
-  "Union to B-Lot",
-  "B-Lot to LXA",
-  "LXA to Tibitts/Orchard",
-  "Tibitts/Orchard to Polytech",
-  "Polytech to 15th/College",
+List<List<String>> south_stops = [
+  ["Union to B-Lot","42.73029109316892","-73.67655873298646","1"],
+  ["B-Lot to LXA","42.731635","-73.669706","18"],
+  ["LXA to Tibitts/Orchard","42.730603231713005","-73.66728060672497","23"],
+  ["Tibitts/Orchard to Polytech","42.72538585964356","-73.66795652333111","33"],
+  ["Polytech to 15th/College","42.72264515147823","-73.67949028031151","34"],
 ];
 
-List<String> west_stops = [
-  "Union to CBIS/AH",
-  "CBIS/AH to 15th/Off Commons",
-  "15th/Off Commons to 15th/Poly",
-  "15th/Poly to City Station",
-  "City Station to Blitman",
-  "Blitman to Winslow",
-  "Winslow to West",
-  "West to 87 Gym",
-  "87 Gym to Union",
+List<List<String>> west_stops = [
+  ["Union to CBIS/AH","42.73029109316892","-73.67655873298646","1"],
+  ["CBIS/AH to 15th/Off Commons","42.727836972407424","-73.6781703753778","35"],
+  ["15th/Off Commons to 15th/Poly","42.726823386814196","-73.67809295654298","12"],
+  ["15th/Poly to City Station","42.723073","-73.680344","11"],
+  ["City Station to Blitman","42.72739","-73.687328","10"],
+  ["Blitman to Winslow","42.73080144429565","-73.68637887775277","38"],
+  ["Winslow to West","42.731534","-73.68416","20"],
+  ["West to 87 Gym","42.7315441484621","-73.6813545227051","27"],
+  ["87 Gym to Union","42.73122584540517","-73.68019812550736","29"],
 ];
 
 List<List<String>> weekday_south = [
