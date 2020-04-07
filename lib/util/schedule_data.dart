@@ -341,13 +341,13 @@ List<List<String>> weekday_west =[
 
 // BUS SCHEDULES //
 List<List<String>> stops_87 = [
-  ["River St & Front St to 4th St & Fulton St","lat","long","id"],
-  ["4th St & Fulton St to Hoosick St & 6th Ave","lat","long","id"],
-  ["Hoosick St & 6th Ave to Burdett Ave & Samaritan Hospital","lat","long","id"],
-  ["Burdett Ave & Samaritan Hospital to 15th St & RPI Walk Over Bridge","lat","long","id"],
-  ["15th St & RPI Walk Over Bridge to 2212 Burdett Ave","lat","long","id"],
-  ["2212 Burdett Ave to 716 Hoosick Rd (Price Chopper)","lat","long","id"],
-  ["716 Hoosick Rd (Price Chopper) to Walmart - Brunswick Plaza","lat","long","id"],
+  ["River St & Front St to 4th St & Fulton St","42.732941","-73.690010","07118"],
+  ["4th St & Fulton St to Hoosick St & 6th Ave","42.732837","-73.688384","07130"],
+  ["Hoosick St & 6th Ave to Burdett Ave & Samaritan Hospital","42.739727","-73.682889","03103"],
+  ["Burdett Ave & Samaritan Hospital to 15th St & RPI Walk Over Bridge","42.733552"," -73.671388","0970"],
+  ["15th St & RPI Walk Over Bridge to 2212 Burdett Ave","42.729469","-73.677643","02886"],
+  ["2212 Burdett Ave to 716 Hoosick Rd (Price Chopper)","42.733488","-73.671350","07151"],
+  ["716 Hoosick Rd (Price Chopper) to Walmart - Brunswick Plaza","42.74271","-73.642987","00033"],
 ];
 
 List<List<String>> stops_286 = [
