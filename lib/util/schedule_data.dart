@@ -379,22 +379,22 @@ List<List<String>> stops_87 = [
 ];
 
 List<List<String>> stops_286 = [
-  ["Vanderheyden Hall to Main Ave & Atlantic Ave","lat","long","id"],
-  ["Main Ave & Atlantic Ave to Pawling Ave & Spring Ave","lat","long","id"],
-  ["Pawling Ave & Spring Ave to Myrtle Ave","lat","long","id"],
-  ["Myrtle Ave to Congress St & 15th St","lat","long","id"],
-  ["Congress St & 15th St to Sage Ave & Anderson Field","lat","long","id"],
-  ["Sage Ave & Anderson Field to River St & Front St","lat","long","id"],
-  ["River St & Front St to 4th St & Fulton St","lat","long","id"],
-  ["4th St & Fulton St to Sage Ave @ 87 Gymnasium PE Building","lat","long","id"],
-  ["Sage Ave @ 87 Gymnasium PE Building to Sunset Terr & Forsyth Dr","lat","long","id"],
+  ["Vanderheyden Hall to Main Ave & Atlantic Ave","42.690565","73.614608","10978"],
+  ["Main Ave & Atlantic Ave to Pawling Ave & Spring Ave","42.696309","-73.641741","04339"],
+  ["Pawling Ave & Spring Ave to Myrtle Ave","42.708893","-73.663011","04368"],
+  ["Myrtle Ave to Congress St & 15th St","42.711505","-73.666573","12357"],
+  ["Congress St & 15th St to Sage Ave & Anderson Field","42.722699","-73.679570","10037"],
+  ["Sage Ave & Anderson Field to River St & Front St","42.731096","-73.678897","11943"],
+  ["River St & Front St to 4th St & Fulton St","42.732941","-73.690010","07118"],
+  ["4th St & Fulton St to Sage Ave @ 87 Gymnasium PE Building","42.732837","-73.688384","07130"],
+  ["Sage Ave @ 87 Gymnasium PE Building to Sunset Terr & Forsyth Dr","42.730971","-73.678716","11637"],
 ];
 List<List<String>> stops_289 = [
-  ["Project St & Madison Ave to Myrtle Ave","lat","long","id"],
-  ["Myrtle Ave to Congress St & 15th St","lat","long","id"],
-  ["Congress St & 15th St to 4th St & Fulton St","lat","long","id"],
-  ["4th St & Fulton St to Sage Ave @ 87 Gymnasium PE Building","lat","long","id"],
-  ["Sage Ave @ 87 Gymnasium PE Building to 15th St & Massachusetts Ave","lat","long","id"],
+  ["Project St & Madison Ave to Myrtle Ave","42.713669","-73.677208","12359"],
+  ["Myrtle Ave to Congress St & 15th St","42.711505","-73.666573","12357"],
+  ["Congress St & 15th St to 4th St & Fulton St","42.722699","-73.679570","10037"],
+  ["4th St & Fulton St to Sage Ave @ 87 Gymnasium PE Building","42.732837","-73.688384","07130"],
+  ["Sage Ave @ 87 Gymnasium PE Building to 15th St & Massachusetts Ave","42.730971","-73.678716","11637"],
 ];
 
 List<List<String>> times_87 = [
