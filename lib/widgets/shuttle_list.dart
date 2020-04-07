@@ -48,8 +48,8 @@ AutomaticKeepAliveClientMixin<ShuttleList>
           isScrollable: true,
           tabs: shuttleTabs,
           // unselectedLabelColor: Colors.white.withOpacity(0.3),
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.black,
+          labelColor: Theme.of(context).brightness == Brightness.light ? Colors.black : null,
+          unselectedLabelColor: Theme.of(context).brightness == Brightness.light ? Colors.black : null,
           controller: _tabController,
         ),
         Container(

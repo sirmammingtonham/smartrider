@@ -87,10 +87,21 @@ class ShuttleMapState extends State<ShuttleMap> {
     rootBundle.loadString('assets/shuttle_jsons/stops.json').then((string) {
       var data = json.decode(string);
       data.forEach( (stop) {
+        var position = LatLng(stop['latitude'], stop['longitude']);
         markers.add(Marker(
           icon: stopIcon,
           markerId: MarkerId(stop['id'].toString()),
-          position: LatLng(stop['latitude'], stop['longitude'])
+          position: position,
+          onTap: () {
+            _controller.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  target: position,
+                  zoom: 18,
+                  tilt: 50)  
+              ),
+            );
+          }
         ));
       });
     });
