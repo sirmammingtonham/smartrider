@@ -70,6 +70,9 @@ flutter:
     - assets/map_styles/dark.json
     - assets/map_styles/aubergine.json
     - assets/shuttle_jsons/stops.json
+    - assets/shuttle_jsons/west.json
+    - assets/shuttle_jsons/south.json
+    - assets/shuttle_jsons/north.json
    # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

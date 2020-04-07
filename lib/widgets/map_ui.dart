@@ -63,6 +63,9 @@ class ShuttleMapState extends State<ShuttleMap> {
   String _darkMapStyle;
 
   Set<Marker> markers = {};
+  List<LatLng> westPoints = [];
+  List<LatLng> southPoints = [];
+  List<LatLng> northPoints = [];
   Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
   int _polylineIdCounter = 1;
   PolylineId selectedPolyline;
@@ -77,6 +80,7 @@ class ShuttleMapState extends State<ShuttleMap> {
     rootBundle.loadString('assets/map_styles/light.json').then((string) {
       _lightMapStyle = string;
     });
+
     rootBundle.loadString('assets/shuttle_jsons/stops.json').then((string) {
       var data = json.decode(string);
       data.forEach( (stop) {
@@ -86,6 +90,30 @@ class ShuttleMapState extends State<ShuttleMap> {
         ));
       });
     });
+
+    rootBundle.loadString('assets/shuttle_jsons/west.json').then((string) {
+      var data = json.decode(string);
+      data.forEach( (point) {
+        westPoints.add(LatLng(point['latitude'], point['longitude']));
+      });
+    });
+
+    rootBundle.loadString('assets/shuttle_jsons/south.json').then((string) {
+      var data = json.decode(string);
+      data.forEach( (point) {
+        southPoints.add(LatLng(point['latitude'], point['longitude']));
+      });
+    });
+
+    rootBundle.loadString('assets/shuttle_jsons/north.json').then((string) {
+      var data = json.decode(string);
+      data.forEach( (point) {
+        northPoints.add(LatLng(point['latitude'], point['longitude']));
+      });
+    });
+
+
+
     print(markers);
   }
 
@@ -194,27 +222,12 @@ class ShuttleMapState extends State<ShuttleMap> {
     setState(() {
       _controller = controller;
       _isMapCreated = true;
-      print(_mapStyle);
-      _controller.setMapStyle(_mapStyle);
 
-      setMapPins();
       setPolylines();
     });
   }
 
 
-  void setMapPins() {
-    setState(() {
-      // source pin
-      // markers.add(Marker(
-      //     markerId: MarkerId('sourcePin'),
-      //     position: SOURCE_LOCATION));
-      // // destination pin
-      // markers.add(Marker(
-      //     markerId: MarkerId('destPin'),
-      //     position: DEST_LOCATION));
-    });
-  }
 
   void setPolylines() {
     final int polylineCount = polylines.length;
@@ -231,21 +244,40 @@ class ShuttleMapState extends State<ShuttleMap> {
       polylineId: polylineId,
       color: Colors.orange,
       width: 5,
-      points: _createPoints(),
+      points: westPoints,
     );
 
     setState(() {
       polylines[polylineId] = polyline;
     });
-  }
-  List<LatLng> _createPoints() {
-    final List<LatLng> points = <LatLng>[];
-    points.add(_createLatLng(42.73029109316892, -73.67655873298646));
-    points.add(_createLatLng(42.73154808884768, -73.68611276149751));
-    return points;
-  }
 
-  LatLng _createLatLng(double lat, double lng) {
-    return LatLng(lat, lng);
+    final String polylineIdVal1 = 'polyline_id_$_polylineIdCounter';
+    _polylineIdCounter++;
+    final PolylineId polylineId1 = PolylineId(polylineIdVal1);
+
+    final Polyline polylineSouth = Polyline(
+      polylineId: polylineId1,
+      color: Colors.blue,
+      width: 5,
+      points: southPoints,
+    );
+
+    setState(() {
+      polylines[polylineId1] = polylineSouth;
+    });
+    final String polylineIdVal2 = 'polyline_id_$_polylineIdCounter';
+    _polylineIdCounter++;
+    final PolylineId polylineId2 = PolylineId(polylineIdVal2);
+
+    final Polyline polylineNorth = Polyline(
+      polylineId: polylineId2,
+      color: Colors.purple,
+      width: 5,
+      points: northPoints,
+    );
+
+    setState(() {
+      polylines[polylineId2] = polylineNorth;
+    });
   }
 }
