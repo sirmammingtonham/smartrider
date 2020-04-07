@@ -53,7 +53,7 @@ AutomaticKeepAliveClientMixin<ShuttleList>
           controller: _tabController,
         ),
         Container(
-          height: MediaQuery.of(context).size.height * 0.74,
+          height: MediaQuery.of(context).size.height * 0.7,
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
@@ -84,10 +84,12 @@ Widget shuttleList(int idx, ItemScrollController _scrollController, Function _co
       return Card(
         child: ListTile(
           leading: Icon(Icons.airport_shuttle),
-          title: Text(curStopList[index%curStopList.length]),
+          title: Text(curStopList[index%curStopList.length][0]),
           subtitle: Text(curTimeList[index]),
           trailing: Icon(Icons.arrow_forward),
-          onTap: () {},
+          onTap: () {
+
+          },
         ),
       );
     },

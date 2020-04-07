@@ -1,10 +1,9 @@
 // File to hold a bunch of lists for our listbuilders
-final shuttleStopLists = [south_stops, north_stops, west_stops, weekend_express_stops];
+final shuttleStopLists = [south_stops, north_stops, west_stops];
 final shuttleTimeLists = [
   weekday_south.expand((i) => i).toList(), 
   weekday_north.expand((i) => i).toList(), 
-  weekday_west.expand((i) => i).toList(),
-  weekend_express.expand((i) => i).toList()
+  weekday_west.expand((i) => i).toList()
 ];
 final busStopLists = [
   stops_87,
@@ -19,70 +18,39 @@ final busTimeLists = [
 ];
 
 // Shuttle Schedules //
-List<String> north_stops = [
-  "B-Lot to Union",
-  "Union to Troy Crosswalk",
-  "Troy Crosswalk to 9th St",
-  "9th St to Alumni House",
-  "Alumni House to Jacob",
-  "Jacob to Colonie",
-  "Colonie to Georgian",
-  "Georgian to Brinsmade",
-  "Brinsmade to Sunset 1",
-  "Sunset 1 to Sunset 2",
-  "Sunset 2 to E-Lot",
-  "E-Lot to B-Lot"
-  
+List<List<String>> north_stops = [
+  ["Union to Troy Crosswalk","42.73029109316892","-73.67655873298646","1"],
+  ["Troy Crosswalk to 9th St","42.7312289168093","-73.6801850795746","26"],
+  ["9th St to Alumni House","42.7328759845107","-73.6825019716889","28"],
+  ["Alumni House to Jacob","42.73328577446417","-73.67845773696901","13"],
+  ["Jacob to Colonie","42.73433031016419","-73.6761257175685","31"],
+  ["Colonie to Georgian","42.73637487312414","-73.67058759924475","14"],
+  ["Georgian to Brinsmade","42.736894431805204","-73.6668883604528","39"],
+  ["Brinsmade to Sunset 1","42.73565383452506","-73.66511642932893","15"],
+  ["Sunset 1 to Sunset 2","42.73445074085895","-73.66340217450477","24"],
+  ["Sunset 2 to E-Lot","42.73265532726045","-73.66520762443544","17"],
+  ["E-Lot to B-Lot","42.731418","-73.666462","21"],
+  ["B-Lot to Union","42.731635","-73.669706","18"],
 ];
 
-List<String> south_stops = [
-  "15th/College to Union",
-  "Union to B-Lot",
-  "B-Lot to LXA",
-  "LXA to Tibitts/Orchard",
-  "Tibitts/Orchard to Polytech",
-  "Polytech to 15th/College"
-  
+List<List<String>> south_stops = [
+  ["Union to B-Lot","42.73029109316892","-73.67655873298646","1"],
+  ["B-Lot to LXA","42.731635","-73.669706","18"],
+  ["LXA to Tibitts/Orchard","42.730603231713005","-73.66728060672497","23"],
+  ["Tibitts/Orchard to Polytech","42.72538585964356","-73.66795652333111","33"],
+  ["Polytech to 15th/College","42.72264515147823","-73.67949028031151","34"],
 ];
 
-List<String> west_stops = [
-  "87 Gym to Union",
-  "Union to CBIS/AH",
-  "CBIS/AH to 15th/Off Commons",
-  "15th/Off Commons to 15th/Poly",
-  "15th/Poly to City Station",
-  "City Station to Blitman",
-  "Blitman to Winslow",
-  "Winslow to West",
-  "West to 87 Gym"
-  
-];
-
-List<String> weekend_express_stops = [
-  "15th/Col. to Union",
-  "Union to Colonie",
-  "Colonie to Brinsmade",
-  "Brinsmade to Sunset 1&2",
-  "Sunset 1&2 to E-Lot",
-  "E-lot to B-Lot",
-  "B-lot to 13th/Peoples",
-  "13th/Peoples to Blitman",
-  "Blitman to City Stat.",
-  "City Stat. to Poly",
-  "Poly to 15th/Col."
-];
-
-List<List<String>> weekend_express = [
-  ["4:30p","4:33p","4:36p","4:37p","4:38p","4:39p","4:41p","4:43p","4:45p","4:48p","4:49p","4:50p"],
-  ["4:50p","4:53p","4:56p","4:57p","4:58p","4:59p","5:01p","5:03p","5:05p","5:08p","5:09p","5:10p"],
-  ["5:10p","5:13p","5:16p","5:17p","5:18p","5:19p","5:21p","5:23p","5:25p","5:28p","5:29p","5:30p"],
-  ["5:30p","5:33p","5:36p","5:37p","5:38p","5:39p","5:41p","5:43p","5:45p","5:48p","5:49p","5:50p"],
-  ["5:50p","5:53p","5:56p","5:57p","5:58p","5:59p","6:01p","6:03p","6:05p","6:08p","6:09p","6:10p"],
-  ["6:10p","6:13p","6:16p","6:17p","6:18p","6:19p","6:21p","6:23p","6:25p","6:28p","6:39p","6:40p"],
-  ["6:30p","6:33p","6:36p","6:37p","6:38p","6:39p","6:41p","6:43P","6:45p","6:48p","6:49p","6:50p"],
-  ["6:50p","6:53p","6:56p","6:57p","6:58p","6:59p","7:01p","7:03p","7:05p","7:08p","7:09p","7:10p"],
-  ["7:10p","7:13p","7:16p","7:17p","7:18p","7:19p","7:21p","7:23p","7:25p","7:28p","7:29p","7:30p"],
-  ["7:30p","7:33p","7:36p","7:37p","7:38p","7:39p","7:41p","7:43p","7:45p","7:48p","7:49p","7:50p"]
+List<List<String>> west_stops = [
+  ["Union to CBIS/AH","42.73029109316892","-73.67655873298646","1"],
+  ["CBIS/AH to 15th/Off Commons","42.727836972407424","-73.6781703753778","35"],
+  ["15th/Off Commons to 15th/Poly","42.726823386814196","-73.67809295654298","12"],
+  ["15th/Poly to City Station","42.723073","-73.680344","11"],
+  ["City Station to Blitman","42.72739","-73.687328","10"],
+  ["Blitman to Winslow","42.73080144429565","-73.68637887775277","38"],
+  ["Winslow to West","42.731534","-73.68416","20"],
+  ["West to 87 Gym","42.7315441484621","-73.6813545227051","27"],
+  ["87 Gym to Union","42.73122584540517","-73.68019812550736","29"],
 ];
 
 List<List<String>> weekday_south = [
@@ -372,39 +340,104 @@ List<List<String>> weekday_west =[
 ];
 
 // BUS SCHEDULES //
-List<String> stops_87 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
+List<List<String>> stops_87 = [
+  ["River St & Front St to 4th St & Fulton St","lat","long","id"],
+  ["4th St & Fulton St to Hoosick St & 6th Ave","lat","long","id"],
+  ["Hoosick St & 6th Ave to Burdett Ave & Samaritan Hospital","lat","long","id"],
+  ["Burdett Ave & Samaritan Hospital to 15th St & RPI Walk Over Bridge","lat","long","id"],
+  ["15th St & RPI Walk Over Bridge to 2212 Burdett Ave","lat","long","id"],
+  ["2212 Burdett Ave to 716 Hoosick Rd (Price Chopper)","lat","long","id"],
+  ["716 Hoosick Rd (Price Chopper) to Walmart - Brunswick Plaza","lat","long","id"],
 ];
 
-List<String> stops_286 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
+List<List<String>> stops_286 = [
+  ["Vanderheyden Hall to Main Ave & Atlantic Ave","lat","long","id"],
+  ["Main Ave & Atlantic Ave to Pawling Ave & Spring Ave","lat","long","id"],
+  ["Pawling Ave & Spring Ave to Myrtle Ave","lat","long","id"],
+  ["Myrtle Ave to Congress St & 15th St","lat","long","id"],
+  ["Congress St & 15th St to Sage Ave & Anderson Field","lat","long","id"],
+  ["Sage Ave & Anderson Field to River St & Front St","lat","long","id"],
+  ["River St & Front St to 4th St & Fulton St","lat","long","id"],
+  ["4th St & Fulton St to Sage Ave @ 87 Gymnasium PE Building","lat","long","id"],
+  ["Sage Ave @ 87 Gymnasium PE Building to Sunset Terr & Forsyth Dr","lat","long","id"],
 ];
-List<String> stops_289 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
+List<List<String>> stops_289 = [
+  ["Project St & Madison Ave to Myrtle Ave","lat","long","id"],
+  ["Myrtle Ave to Congress St & 15th St","lat","long","id"],
+  ["Congress St & 15th St to 4th St & Fulton St","lat","long","id"],
+  ["4th St & Fulton St to Sage Ave @ 87 Gymnasium PE Building","lat","long","id"],
+  ["Sage Ave @ 87 Gymnasium PE Building to 15th St & Massachusetts Ave","lat","long","id"],
 ];
 
 List<List<String>> times_87 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",],
+  ["6:25 am","6:30 am","6:32 am","6:37 am","6:40 am","6:44 am","- - - -","6:49 am"],
+  ["6:55 am","7:00 am","7:02 am","7:07 am","7:10 am","7:14 am","7:19 am","7:22 am"],
+  ["7:25 am","7:30 am","7:32 am","7:37 am","7:40 am","7:44 am","- - - -","7:49 am"],
+  ["7:55 am","8:00 am","8:02 am","8:07 am","8:10 am","8:14 am","8:19 am","8:22 am"],
+  ["8:25 am","8:30 am","8:32 am","8:37 am","8:40 am","8:44 am","- - - -","8:49 am"],
+  ["8:55 am","9:00 am","9:02 am","9:07 am","9:10 am","9:14 am","9:19 am","9:22 am"],
+  ["9:25 am","9:30 am","9:34 am","9:40 am","9:43 am","9:48 am","- - - -","9:57 am"],
+  ["9:55 am","10:00 am","10:04 am","10:10 am","10:13 am","10:18 am","10:26 am","10:30 am"],
+  ["10:20 am","10:25 am","10:29 am","10:35 am","10:38 am","10:43 am","- - - -","10:52 am"],
+  ["10:45 am","10:50 am","10:54 am","11:00 am","11:03 am","11:08 am","11:16 am","11:20 am"],
+  ["11:10 am","11:15 am","11:19 am","11:25 am","11:28 am","11:33 am","- - - -","11:42 am"],
+  ["11:35 am","11:40 am","11:44 am","11:50 am","11:53 am","11:58 am","12:06 pm","12:10 pm"],
+  ["12:00 pm","12:05 pm","12:09 pm","12:15 pm","12:18 pm","12:23 pm","- - - -","12:32 pm"],
+  ["12:25 pm","12:30 pm","12:34 pm","12:40 pm","12:43 pm","12:48 pm","12:56 pm","1:00 pm"],
+  ["12:50 pm","12:55 pm","12:59 pm","1:05 pm","1:08 pm","1:13 pm","- - - -","1:22 pm"],
+  ["1:15 pm","1:20 pm","1:24 pm","1:30 pm","1:33 pm","1:38 pm","1:46 pm","1:50 pm"],
+  ["1:40 pm","1:45 pm","1:49 pm","1:55 pm","1:58 pm","2:03 pm","- - - -","2:12 pm"],
+  ["2:05 pm","2:10 pm","2:14 pm","2:20 pm","2:23 pm","2:28 pm","2:36 pm","2:40 pm"],
+  ["2:30 pm","2:35 pm","2:39 pm","2:45 pm","2:48 pm","2:53 pm","- - - -","3:02 pm"],
+  ["2:55 pm","3:00 pm","3:04 pm","3:10 pm","3:13 pm","3:18 pm","3:26 pm","3:30 pm"],
+  ["3:20 pm","3:25 pm","3:29 pm","3:35 pm","3:38 pm","3:43 pm","- - - -","3:52 pm"],
+  ["3:45 pm","3:50 pm","3:54 pm","4:00 pm","4:03 pm","4:08 pm","4:16 pm","4:20 pm"],
+  ["4:10 pm","4:15 pm","4:19 pm","4:25 pm","4:28 pm","4:33 pm","- - - -","4:42 pm"],
+  ["4:35 pm","4:40 pm","4:44 pm","4:50 pm","4:53 pm","4:58 pm","5:06 pm","5:10 pm"],
+  ["5:00 pm","5:05 pm","5:09 pm","5:15 pm","5:18 pm","5:23 pm","- - - -","5:32 pm"],
+  ["5:25 pm","5:30 pm","5:34 pm","5:40 pm","5:43 pm","5:48 pm","5:56 pm","6:00 pm"],
+  ["5:50 pm","5:55 pm","5:59 pm","6:05 pm","6:08 pm","6:13 pm","- - - -","6:22 pm"],
+  ["6:30 pm","6:34 pm","6:37 pm","6:43 pm","6:46 pm","6:51 pm","6:58 pm","7:01 pm"],
+  ["7:10 pm","7:14 pm","7:17 pm","7:23 pm","7:26 pm","7:31 pm","7:38 pm","7:41 pm"],
+  ["7:50 pm","7:54 pm","7:57 pm","8:03 pm","8:06 pm","8:11 pm","8:18 pm","8:21 pm"],
+  ["8:30 pm","8:34 pm","8:37 pm","8:43 pm","8:46 pm","8:51 pm","8:58 pm","9:01 pm"],
+  ["9:35 pm","9:39 pm","9:42 pm","9:48 pm","9:51 pm","9:56 pm","10:03 pm","10:06 pm"],
+  ["10:35 pm","10:39 pm","10:41 pm","10:46 pm","10:49 pm","10:53 pm","10:58 pm","11:02 pm"],
+
 ];
 
 List<List<String>> times_286 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",],
+  ["10:56 am","11:00 am","11:04 am","- - - -","11:08 am","11:10 am","11:15 am","- - - -","- - - -","- - - -"],
+  ["11:56 am","12:00 pm","12:04 pm","- - - -","12:08 pm","12:10 pm","12:15 pm","- - - -","- - - -","- - - -"],
+  ["12:56 pm","1:00 pm","1:04 pm","- - - -","1:08 pm","1:10 pm","1:15 pm","- - - -","- - - -","- - - -"],
+  ["1:56 pm","2:00 pm","2:04 pm","- - - -","2:08 pm","2:10 pm","2:15 pm","- - - -","- - - -","- - - -"],
+  ["2:56 pm","3:00 pm","3:04 pm","- - - -","3:08 pm","3:10 pm","3:15 pm","- - - -","- - - -","- - - -"],
+  ["3:56 pm","4:00 pm","4:04 pm","- - - -","4:08 pm","4:10 pm","4:15 pm","- - - -","- - - -","- - - -"],
+  ["4:56 pm","5:00 pm","5:04 pm","- - - -","5:08 pm","5:10 pm","5:15 pm","- - - -","- - - -","- - - -"],
+  ["5:56 pm","6:00 pm","6:04 pm","- - - -","6:08 pm","6:10 pm","6:15 pm","- - - -","- - - -","- - - -"],
+  ["6:56 pm","7:00 pm","7:04 pm","- - - -","7:08 pm","7:10 pm","7:15 pm","- - - -","- - - -","- - - -"],
+  ["7:56 pm","8:00 pm","8:04 pm","- - - -","8:08 pm","8:10 pm","8:15 pm","- - - -","- - - -","- - - -"],
+  ["- - - -","- - - -","- - - -","9:00 pm","9:03 pm","9:05 pm","9:10 pm","9:15 pm","9:19 pm","9:24 pm"],
+  ["- - - -","- - - -","- - - -","10:00 pm","10:03 pm","10:05 pm","10:10 pm","10:15 pm","10:19 pm","10:24 pm"],
+  ["- - - -","- - - -","- - - -","11:00 pm","11:03 pm","11:05 pm","11:10 pm","11:15 pm","11:19 pm","11:24 pm"],
+  ["- - - -","- - - -","- - - -","12:00 am","12:03 am","12:05 am","12:10 am","12:15 am","12:19 am","12:24 am"],
 ];
 List<List<String>> times_289 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",],
+  ["7:30 am","7:33 am","7:39 am","7:45 am","7:50 am","7:55 am"],
+  ["8:30 am","8:33 am","8:39 am","8:45 am","8:50 am","8:55 am"],
+  ["9:30 am","9:33 am","9:39 am","9:45 am","9:50 am","9:55 am"],
+  ["10:30 am","10:33 am","10:39 am","10:45 am","10:50 am","10:55 am"],
+  ["11:30 am","11:33 am","11:39 am","11:45 am","11:50 am","11:55 am"],
+  ["12:30 pm","12:33 pm","12:39 pm","12:45 pm","12:50 pm","12:55 pm"],
+  ["1:30 pm","1:33 pm","1:39 pm","1:45 pm","1:50 pm","1:55 pm"],
+  ["2:30 pm","2:33 pm","2:39 pm","2:45 pm","2:50 pm","2:55 pm"],
+  ["3:30 pm","3:33 pm","3:39 pm","3:45 pm","3:50 pm","3:55 pm"],
+  ["4:30 pm","4:33 pm","4:39 pm","4:45 pm","4:50 pm","4:55 pm"],
+  ["5:30 pm","5:33 pm","5:39 pm","5:45 pm","5:50 pm","5:55 pm"],
+  ["6:30 pm","6:33 pm","6:39 pm","6:45 pm","6:50 pm","6:55 pm"],
+  ["7:30 pm","7:33 pm","7:39 pm","7:45 pm","7:50 pm","7:55 pm"],
+  ["8:30 pm","8:33 pm","8:39 pm","8:45 pm","8:50 pm","8:55 pm"],
+  ["9:30 pm","9:33 pm","9:39 pm","9:45 pm","9:50 pm","9:55 pm"],
+  ["10:30 pm","10:33 pm","10:39 pm","10:45 pm","10:50 pm","10:55 pm"],
+  ["11:30 pm","11:33 pm","11:39 pm","11:45 pm","- - - -","- - - -"],
 ];

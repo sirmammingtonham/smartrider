@@ -47,7 +47,7 @@ AutomaticKeepAliveClientMixin<BusList>
           controller: _tabController,
         ),
         Container(
-          height: MediaQuery.of(context).size.height * 0.74,
+          height: MediaQuery.of(context).size.height * 0.7,
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
@@ -71,13 +71,13 @@ Widget busList(int idx, ItemScrollController _scrollController, Function _contai
     itemBuilder: (context, index) {
       var curStopList = busStopLists[idx];
       var curTimeList = busTimeLists[idx];
-      if (!_containsFilter(curStopList, curTimeList, index)) {
+      if (!_containsFilter(curStopList, curTimeList, index) || curTimeList[index] == "- - - -") {
         return null;
       }
       return Card(
         child: ListTile(
           leading: Icon(Icons.directions_bus),
-          title: Text(curStopList[index%curStopList.length]),
+          title: Text(curStopList[index%curStopList.length][0]),
           subtitle: Text(curTimeList[index]),
           trailing: Icon(Icons.arrow_forward),
           onTap: () {},
