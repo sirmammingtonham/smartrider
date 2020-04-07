@@ -6,32 +6,15 @@ final shuttleTimeLists = [
   weekday_west.expand((i) => i).toList()
 ];
 final busStopLists = [
-  stops_22,
-  stops_80,
-  stops_85,
   stops_87,
-  stops_182,
-  stops_224,
   stops_286,
   stops_289,
-  stops_522,
-  stops_808,
-  stops_809,
-  stops_815,
+
 ];
 final busTimeLists = [
-  times_22.expand((i) => i).toList(),
-  times_80.expand((i) => i).toList(),
-  times_85.expand((i) => i).toList(),
   times_87.expand((i) => i).toList(),
-  times_182.expand((i) => i).toList(),
-  times_224.expand((i) => i).toList(),
   times_286.expand((i) => i).toList(),
   times_289.expand((i) => i).toList(),
-  times_522.expand((i) => i).toList(),
-  times_808.expand((i) => i).toList(),
-  times_809.expand((i) => i).toList(),
-  times_815.expand((i) => i).toList(),
 ];
 
 // Shuttle Schedules //
@@ -99,24 +82,24 @@ List<List<String>> weekday_south = [
   ["12:08pm","12:10pm","12:11pm","12:13pm","12:16pm","12:18pm"],
   ["12:20pm","12:22pm","12:23pm","12:25pm","12:28pm","12:30pm"],
   ["12:44pm","12:46pm","12:47pm","12:49pm","12:52pm","12:54pm"],
-  ["12:56pm","12:58pm","12:59pm","1:01pm","1:04pm","1:06am"],
-  ["1:08am","1:10pm","1:11pm","1:13pm","1:16pm","1:18pm"],
+  ["12:56pm","12:58pm","12:59pm","1:01pm","1:04pm","1:06pm"],
+  ["1:08pm","1:10pm","1:11pm","1:13pm","1:16pm","1:18pm"],
   ["1:20pm","1:22pm","1:23pm","1:25pm","1:28pm","1:30pm"],
   ["1:44pm","1:46pm","1:47pm","1:49pm","1:52pm","1:54pm"],
   ["1:56pm","1:58pm","1:59pm","2:01pm","2:04pm","2:06pm"],
-  ["2:08am","2:10pm","2:11pm","2:13pm","2:16pm","2:18pm"],
+  ["2:08pm","2:10pm","2:11pm","2:13pm","2:16pm","2:18pm"],
   ["2:20pm","2:22pm","2:23pm","2:25pm","2:28pm","2:30pm"],
   ["2:44pm","2:46pm","2:47pm","2:49pm","2:52pm","2:54pm"],
-  ["2:56pm","2:58pm","2:59pm","3:01pm","3:04pm","3:06am"],
+  ["2:56pm","2:58pm","2:59pm","3:01pm","3:04pm","3:06pm"],
   ["3:08pm","3:10pm","3:11pm","3:13pm","3:16pm","3:18pm"],
   ["3:20pm","3:22pm","3:23pm","3:25pm","3:28pm","3:30pm"],
   ["3:44pm","3:46pm","3:47pm","3:49pm","3:52pm","3:54pm"],
-  ["3:56pm","3:58pm","3:59pm","4:01pm","4:04pm","4:06am"],
+  ["3:56pm","3:58pm","3:59pm","4:01pm","4:04pm","4:06pm"],
   ["4:08pm","4:10pm","4:11pm","4:13pm","4:16pm","4:18pm"],
   ["4:20pm","4:22pm","4:23pm","4:25pm","4:28pm","4:30pm"],
   ["4:44pm","4:46pm","4:47pm","4:49pm","4:52pm","4:54pm"],
   ["4:50pm","4:52pm","4:53pm","4:55pm","4:58pm","5:00pm"],
-  ["4:56pm","4:58pm","4:59pm","5:01pm","5:04pm","5:06am"],
+  ["4:56pm","4:58pm","4:59pm","5:01pm","5:04pm","5:06pm"],
   ["5:02pm","5:04pm","5:05pm","5:07pm","5:10pm","5:12pm"],
   ["5:14pm","5:16pm","5:17pm","5:19pm","5:22pm","5:24pm"],
   ["5:26pm","5:28pm","5:29pm","5:31pm","5:34pm","5:36pm"],
@@ -185,7 +168,7 @@ List<List<String>> weekday_north = [
   ["11:56am","11:58am","11:59am","12:00pm","12:02pm","12:04pm","12:06pm","12:07pm","12:08pm","12:09pm","12:10pm","12:11pm"],
   ["12:03pm","12:05pm","12:06pm","12:07pm","12:09pm","12:11pm","12:13pm","12:14pm","12:15pm","12:16pm","12:17pm","12:18pm"],
   ["12:14pm","12:16pm","12:17pm","12:18pm","12:20pm","12:22pm","12:24pm","12:25pm","12:26pm","12:27pm","12:28pm","12:29pm"],
-  ["12:20am","12:22am","12:23am","12:24am","12:26am","12:28am","12:30pm","12:31pm","12:32pm","12:33pm","12:34pm","12:35pm"],
+  ["12:20pm","12:22pm","12:23pm","12:24pm","12:26pm","12:28pm","12:30pm","12:31pm","12:32pm","12:33pm","12:34pm","12:35pm"],
   ["12:21pm","12:23pm","12:24pm","12:25pm","12:27pm","12:29pm","12:31pm","12:32pm","12:33pm","12:34pm","12:35pm","12:36pm"],
   ["12:32pm","12:34pm","12:35pm","12:36pm","12:38pm","12:40pm","12:42pm","12:43pm","12:44pm","12:45pm","12:46pm","12:47pm"],
   ["12:39pm","12:41pm","12:42pm","12:43pm","12:45pm","12:47pm","12:49pm","12:50pm","12:51pm","12:52pm","12:53pm","12:54pm"],
@@ -357,43 +340,13 @@ List<List<String>> weekday_west =[
 ];
 
 // BUS SCHEDULES //
-// might have to convert this data to a json cus its getting big...
-List<String> stops_22 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
-];
-List<String> stops_80 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
-];
-List<String> stops_85 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
-];
 List<String> stops_87 = [
   "test1",
   "test2",
   "test3",
   "test4",
 ];
-List<String> stops_182 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
-];
-List<String> stops_224 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
-];
+
 List<String> stops_286 = [
   "test1",
   "test2",
@@ -406,87 +359,19 @@ List<String> stops_289 = [
   "test3",
   "test4",
 ];
-List<String> stops_522 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
-];
-List<String> stops_808 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
-];
-List<String> stops_809 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
-];
-List<String> stops_815 = [
-  "test1",
-  "test2",
-  "test3",
-  "test4",
-];
 
-List<List<String>> times_22 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",]
-];
-List<List<String>> times_80 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",],
-];
-List<List<String>> times_85 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",],
-];
 List<List<String>> times_87 = [
   ["1:00am","2:00am","3:00am",],
   ["4:00am","5:00pm","6:00pm",],
   ["7:00pm","8:00pm","9:00pm",],
 ];
-List<List<String>> times_182 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",],
-];
-List<List<String>> times_224 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",],
-];
+
 List<List<String>> times_286 = [
   ["1:00am","2:00am","3:00am",],
   ["4:00am","5:00pm","6:00pm",],
   ["7:00pm","8:00pm","9:00pm",],
 ];
 List<List<String>> times_289 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",],
-];
-List<List<String>> times_522 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",],
-];
-List<List<String>> times_808 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",],
-];
-List<List<String>> times_809 = [
-  ["1:00am","2:00am","3:00am",],
-  ["4:00am","5:00pm","6:00pm",],
-  ["7:00pm","8:00pm","9:00pm",],
-];
-List<List<String>> times_815 = [
   ["1:00am","2:00am","3:00am",],
   ["4:00am","5:00pm","6:00pm",],
   ["7:00pm","8:00pm","9:00pm",],

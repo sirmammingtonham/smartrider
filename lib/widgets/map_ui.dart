@@ -51,9 +51,9 @@ class ShuttleMapState extends State<ShuttleMap> {
   bool _tiltGesturesEnabled = true;
   bool _zoomGesturesEnabled = true;
   bool _indoorViewEnabled = true;
-  bool _myLocationEnabled = false;
+  bool _myLocationEnabled = true;
   bool _myTrafficEnabled = false;
-  bool _myLocationButtonEnabled = true;
+  bool _myLocationButtonEnabled = false;
   GoogleMapController _controller;           
   String _lightMapStyle;
   String _darkMapStyle;
@@ -166,7 +166,6 @@ class ShuttleMapState extends State<ShuttleMap> {
       children: <Widget>[
         // Actual map
         googleMap,
-
         // Location Button
         Positioned(
             right: 20.0,

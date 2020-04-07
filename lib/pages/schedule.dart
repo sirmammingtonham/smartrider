@@ -26,18 +26,9 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
 
   final List<Widget> busTabs = [
     Icon(Icons.airport_shuttle),
-    Tab(text: '22'),
-    Tab(text: '80'),
-    Tab(text: '85'),
-    Tab(text: '87'),
-    Tab(text: '182'),
-    Tab(text: '224'),
-    Tab(text: '286'),
-    Tab(text: '289'),
-    Tab(text: '522'),
-    Tab(text: '808'),
-    Tab(text: '809'),
-    Tab(text: '815'),
+    Tab(text: 'Route 87'),
+    Tab(text: 'Route 286'),
+    Tab(text: 'Route 289'),
   ];
 
   TabController _tabController;
@@ -62,6 +53,8 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
 
   _handleTabSelection() {
     if (_tabController.indexIsChanging) {
+      // currently lags the app a lot
+      // scrollToCurrentTime();
       setState(() {});
     }
     if (_tabController.index == 3 && _isShuttle ) {
@@ -113,6 +106,10 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
   }
 
   scrollToCurrentTime() {
+    // currently lags the app a lot
+    // if ((_tabController.index == 3 && _isShuttle) || (_tabController.index == 0 && !_isShuttle)) {
+    //   return;
+    // }
     // TODO: update so it works with filter
     List curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
                 busTimeLists[_tabController.index-1];
@@ -179,7 +176,6 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
             )
           ],
           bottom: TabBar(
-            isScrollable: !_isShuttle,
             unselectedLabelColor: Colors.white.withOpacity(0.3),
             indicatorColor: Colors.white,
             controller: _tabController,
