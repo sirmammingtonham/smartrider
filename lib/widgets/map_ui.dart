@@ -55,12 +55,12 @@ class ShuttleMapState extends State<ShuttleMap> {
   bool _tiltGesturesEnabled = true;
   bool _zoomGesturesEnabled = true;
   bool _indoorViewEnabled = true;
-  bool _myLocationEnabled = true;
+  bool _myLocationEnabled = false;
   bool _myTrafficEnabled = false;
   bool _myLocationButtonEnabled = true;
-  GoogleMapController _controller;
-  bool _nightMode = false;
-  String _mapStyle;
+  GoogleMapController _controller;           
+  String _lightMapStyle;
+  String _darkMapStyle;
 
   Set<Marker> markers = {};
   Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
@@ -71,8 +71,11 @@ class ShuttleMapState extends State<ShuttleMap> {
   @override
   void initState() {
     super.initState();
+    rootBundle.loadString('assets/map_styles/aubergine.json').then((string) {
+      _darkMapStyle = string;
+    });
     rootBundle.loadString('assets/map_styles/light.json').then((string) {
-    _mapStyle = string;
+      _lightMapStyle = string;
     });
     rootBundle.loadString('assets/shuttle_jsons/stops.json').then((string) {
       var data = json.decode(string);
@@ -91,13 +94,19 @@ class ShuttleMapState extends State<ShuttleMap> {
     super.dispose();
   }
 
-  // Future<String> _getFileData(String path) async {
-  //   return await rootBundle.loadString(path);
-  // }
-
-
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    if (_controller != null ) {
+      if (isDark) {
+          _controller.setMapStyle(_darkMapStyle);
+      }
+      else {
+          _controller.setMapStyle(_lightMapStyle);
+      }
+    }
+
+
     final GoogleMap googleMap = GoogleMap(
       onMapCreated: onMapCreated,
       initialCameraPosition: _kInitialPosition,
@@ -133,10 +142,10 @@ class ShuttleMapState extends State<ShuttleMap> {
             child: FloatingActionButton(
               child: Icon(
                 Icons.gps_fixed,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).brightness == Brightness.light ? Colors.black87 : null,
               ),
+              backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.white : null,
               onPressed: _scrollToLocation,
-              backgroundColor: Colors.white,
             ),
           ),
       ]
