@@ -6,12 +6,9 @@
 
 // ui imports
 import 'package:flutter/material.dart';
-// import 'package:flutter_load_local_json/stops.dart';
-import 'package:google_map_polyline/google_map_polyline.dart';
 import 'dart:convert';
 
 // map imports
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -25,7 +22,6 @@ final LatLngBounds rpiBounds = LatLngBounds(
 const LatLng SOURCE_LOCATION = LatLng(42.73029109316892, -73.67655873298646);
 const LatLng DEST_LOCATION = LatLng(42.73154808884768, -73.68611276149751);
 
-//var json =
 
 class ShuttleMap extends StatefulWidget {
   const ShuttleMap();
@@ -68,12 +64,19 @@ class ShuttleMapState extends State<ShuttleMap> {
   List<LatLng> northPoints = [];
   Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
   int _polylineIdCounter = 1;
+  BitmapDescriptor stopIcon;
   PolylineId selectedPolyline;
-  String googleAPIKey = "AIzaSyDYWcuecs539zm-vuUBxKhR7rEqoFPa_Eg";
 
   @override
   void initState() {
     super.initState();
+
+    BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(),
+      'assets/marker.png').then((onValue) {
+        stopIcon = onValue;
+    });
+
     rootBundle.loadString('assets/map_styles/aubergine.json').then((string) {
       _darkMapStyle = string;
     });
@@ -85,6 +88,7 @@ class ShuttleMapState extends State<ShuttleMap> {
       var data = json.decode(string);
       data.forEach( (stop) {
         markers.add(Marker(
+          icon: stopIcon,
           markerId: MarkerId(stop['id'].toString()),
           position: LatLng(stop['latitude'], stop['longitude'])
         ));

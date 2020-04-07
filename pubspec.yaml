@@ -73,6 +73,7 @@ flutter:
     - assets/shuttle_jsons/west.json
     - assets/shuttle_jsons/south.json
     - assets/shuttle_jsons/north.json
+    - assets/marker.png
    # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
