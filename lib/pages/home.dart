@@ -76,7 +76,8 @@ class _HomePageState extends State<_HomePage> {
           ]
         ),
         panel: NotificationListener<OverscrollNotification>(
-          child: ShuttleSchedule(
+          child: 
+          ShuttleSchedule(
             key: scheduleState,
             panelController: _panelController,
             scheduleChanged: () {
@@ -85,7 +86,7 @@ class _HomePageState extends State<_HomePage> {
             },
           ),
           onNotification: (t) {
-            if (t.overscroll < -15) {
+            if (t.overscroll < -10) {
               _panelController.animatePanelToPosition(0);
               return true;
             }
@@ -95,9 +96,9 @@ class _HomePageState extends State<_HomePage> {
         // when the panel is closed, we can update the position of our list
         //  to the current time (sneaky like so they don't see our slow animations)
         onPanelClosed: () {
-          scheduleState.currentState.scrollToCurrentTime();
+          // scheduleState.currentState.scrollAllTabs();
         },
-      ),
+       ),
     );
   }
 }

@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 // loading custom widgets and data
 import 'package:smartrider/util/schedule_data.dart';
 import 'package:smartrider/widgets/filter_dialog.dart';
+import 'package:smartrider/widgets/shuttle_list.dart';
+import 'package:smartrider/widgets/bus_list.dart';
 
 class ShuttleSchedule extends StatefulWidget {
   final PanelController panelController;
@@ -16,25 +18,16 @@ class ShuttleSchedule extends StatefulWidget {
   ShuttleScheduleState createState() => ShuttleScheduleState();
 }
   
-class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderStateMixin {
-  final List<Widget> shuttleTabs = [
-    Tab(text: 'SOUTH'),
-    Tab(text: 'NORTH'),
-    Tab(text: 'WEST'),
-    Icon(Icons.directions_bus),
-  ];
-
-  final List<Widget> busTabs = [
-    Icon(Icons.airport_shuttle),
-    Tab(text: 'Route 87'),
-    Tab(text: 'Route 286'),
-    Tab(text: 'Route 289'),
+class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderStateMixin  {
+  final List<Widget> _tabs = [
+    Tab(icon: Icon(Icons.airport_shuttle)),
+    Tab(icon: Icon(Icons.directions_bus)),
   ];
 
   TabController _tabController;
   TextEditingController _textController;
-  ItemScrollController _scrollController;
-
+  List<ItemScrollController> _shuttleScrollControllers = List<ItemScrollController>();
+  List<ItemScrollController> _busScrollControllers = List<ItemScrollController>();
   double initial, distance;
   String filter;
   bool _isShuttle; // true if we have to build the shuttle schedule, false if bus
@@ -43,25 +36,32 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
   void initState() {
     super.initState();
     _isShuttle = true;
-    _tabController = new TabController(vsync: this, length: shuttleTabs.length);
+    _tabController = new TabController(vsync: this, length: _tabs.length);
     _textController = new TextEditingController();
-    _scrollController = new ItemScrollController();
     _tabController.addListener(_handleTabSelection);
     _textController.addListener(_handleSearchQuery);
+
+    [0,1,2].forEach((idx) {
+      _shuttleScrollControllers.add(new ItemScrollController());
+    });
+
+    [0,1,2].forEach((idx) {
+      _busScrollControllers.add(new ItemScrollController());
+    });
     filter = null;
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _textController.dispose();
+    super.dispose();
   }
 
   _handleTabSelection() {
     if (_tabController.indexIsChanging) {
-      // currently lags the app a lot
-      // scrollToCurrentTime();
-      setState(() {});
-    }
-    if (_tabController.index == 3 && _isShuttle ) {
-      _switchState();
-    }
-    else if (_tabController.index == 0 && !_isShuttle) {
-      _switchState();
+      _isShuttle = !_isShuttle;
+      this.widget.scheduleChanged();
     }
   }
 
@@ -69,16 +69,6 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
     setState(() {
       filter = _textController.text;
     });
-  }
-  
-  // switches from shuttle state to bus state and vice versa
-  _switchState() {
-    _isShuttle = !_isShuttle;
-    _tabController = new TabController(vsync: this, length: _isShuttle ? shuttleTabs.length : busTabs.length);
-    _tabController.index = _isShuttle ? 2 : 1;
-    _tabController.addListener(_handleTabSelection);
-    this.widget.scheduleChanged(); // notify parent widget so we can modify top appbar text
-    setState(() {});
   }
 
   _displayFilterDialog() async {
@@ -90,29 +80,28 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
   }
 
   bool _containsFilter(var curStopList, var curTimeList, var index) {
-    assert (filter != null);
-    if (double.tryParse(filter) != null) {
-      return curTimeList[index].contains(filter);
+    if (this.filter == null) {
+      return true;
     }
-    if (filter.contains('am') || filter.contains('pm') || filter.contains(':')) {
-      return curTimeList[index].contains(filter);
+    if (double.tryParse(this.filter) != null) {
+      return curTimeList[index].contains(this.filter);
     }
-    if (filter.contains('@')) {
-      var filterSplit = filter.split('@');
+    if (this.filter.contains('am') || this.filter.contains('pm') || this.filter.contains(':')) {
+      return curTimeList[index].contains(this.filter);
+    }
+    if (this.filter.contains('@')) {
+      var filterSplit = this.filter.split('@');
       return (curStopList[index%curStopList.length].toLowerCase().contains(filterSplit[0].toLowerCase()) &&
         curTimeList[index].contains(filterSplit[1]));
     }
-    return curStopList[index%curStopList.length].toLowerCase().contains(filter.toLowerCase().trim());
+    return curStopList[index%curStopList.length].toLowerCase().contains(this.filter.toLowerCase().trim());
   }
 
-  scrollToCurrentTime() {
-    // currently lags the app a lot
-    // if ((_tabController.index == 3 && _isShuttle) || (_tabController.index == 0 && !_isShuttle)) {
-    //   return;
-    // }
+  _scrollToCurrentTime(int idx, ItemScrollController _scrollController) {
     // TODO: update so it works with filter
-    List curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
-                busTimeLists[_tabController.index-1];
+    // List curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
+    //             busTimeLists[_tabController.index-1];
+    List curTimeList = shuttleTimeLists[idx];
     var now = DateTime.now();
     var f = DateFormat('H.m');
     double min = double.maxFinite;
@@ -132,19 +121,22 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
         }
       }
     );
-
-    var idx = curTimeList.indexWhere((element) => element == closest);
-    _scrollController.jumpTo(
-      index: idx,
-    );
+    var jTo = curTimeList.indexWhere((element) => element == closest);
+    _scrollController.jumpTo(index: jTo);
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _textController.dispose();
-    super.dispose();
-  }
+  // scrollAllTabs() {
+  //   print(_shuttleScrollControllers);
+  //   print(_busScrollControllers);
+  //   _shuttleScrollControllers.asMap().forEach((idx, c) {
+  //     print(c.toString());
+  //     _scrollToCurrentTime(idx, c);
+  //   });
+  //   _busScrollControllers.asMap().forEach((idx, c) { 
+  //     print(c.toString());
+  //     _scrollToCurrentTime(idx, c);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -179,69 +171,21 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
             unselectedLabelColor: Colors.white.withOpacity(0.3),
             indicatorColor: Colors.white,
             controller: _tabController,
-            tabs: _isShuttle ? shuttleTabs : busTabs,
+            tabs: _tabs,
           ),
         ),
-        body: GestureDetector(
-          onHorizontalDragStart: (DragStartDetails details) {
-            this.initial = details.globalPosition.dx;
-          },
-          onHorizontalDragUpdate: (DragUpdateDetails details) {
-            this.distance = details.globalPosition.dx - this.initial;  
-          },
-          onHorizontalDragEnd: (DragEndDetails details) {
-            this.initial = 0.0; 
-            // swiped right
-            if (this.distance > 0 && _tabController.index > 0) {
-              _tabController.animateTo(_tabController.index - 1);
-            }
-            // swiped left
-            else if (this.distance < 0 && _tabController.index < (_isShuttle ? shuttleTabs.length : busTabs.length) - 1) {
-              _tabController.animateTo(_tabController.index + 1);
-            }
-          },
-          child: ScrollablePositionedList.builder(
-            itemCount: _isShuttle ? shuttleTimeLists[_tabController.index].length : 
-              busTimeLists[_tabController.index-1].length,
-            itemScrollController: _scrollController,
-            itemBuilder: (context, index) {
-              var curStopList = _isShuttle ? shuttleStopLists[_tabController.index] : 
-                busStopLists[_tabController.index-1];
-              var curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
-                busTimeLists[_tabController.index-1];
-
-              // bit of a hack to prevent us from getting index errors with the new list controller...
-              if (index >= curTimeList.length) {
-                return null;
-              }
-
-              if (filter == null) {
-                return Card(
-                  child: ListTile(
-                    leading: Icon(_isShuttle ? Icons.airport_shuttle : Icons.directions_bus),
-                    title: Text(curStopList[index%curStopList.length]),
-                    subtitle: Text(curTimeList[index]),
-                    trailing: Icon(Icons.arrow_forward),
-                    onTap: () {},
-                  ),
-                );
-              }
-              else if (_containsFilter(curStopList, curTimeList, index)) {
-                return Card(
-                  child: ListTile(
-                    leading: Icon(_isShuttle ? Icons.airport_shuttle : Icons.directions_bus),
-                    title: Text(curStopList[index%curStopList.length]),
-                    subtitle: Text(curTimeList[index]),
-                    trailing: Icon(Icons.arrow_forward),
-                    onTap: () {},
-                  ),
-                );
-              }
-              else {
-                return null;
-              }
-            },
-          ),
+        body: TabBarView(
+          controller: _tabController,
+          children: <Widget>[
+            ShuttleList(
+              scrollControllers: _shuttleScrollControllers,
+              containsFilter: _containsFilter,
+            ),
+            BusList(
+              scrollControllers: _busScrollControllers,
+              containsFilter: _containsFilter,
+            ),
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           heroTag: "Filter",
