@@ -21,6 +21,7 @@ AutomaticKeepAliveClientMixin<ShuttleList>
     Tab(text: 'SOUTH'),
     Tab(text: 'NORTH'),
     Tab(text: 'WEST'),
+    Tab(text: 'WEEKEND'),
   ];
   TabController _tabController;
 
@@ -44,6 +45,7 @@ AutomaticKeepAliveClientMixin<ShuttleList>
     return Column(
       children: <Widget> [
         TabBar(
+          isScrollable: true,
           tabs: shuttleTabs,
           // unselectedLabelColor: Colors.white.withOpacity(0.3),
           labelColor: Colors.black,
@@ -58,6 +60,7 @@ AutomaticKeepAliveClientMixin<ShuttleList>
               shuttleList(0, this.widget.scrollControllers[0], this.widget.containsFilter),
               shuttleList(1, this.widget.scrollControllers[1], this.widget.containsFilter),
               shuttleList(2, this.widget.scrollControllers[2], this.widget.containsFilter),
+              shuttleList(3, this.widget.scrollControllers[3], this.widget.containsFilter),
             ],
           ),
         )
