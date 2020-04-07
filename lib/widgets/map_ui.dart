@@ -6,6 +6,7 @@
 
 // ui imports
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 // map imports
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -13,10 +14,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 
+
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.720779, -73.698129),
   northeast: const LatLng(42.739179, -73.659123),
 );
+const LatLng SOURCE_LOCATION = LatLng(42.73029109316892, -73.67655873298646);
+const LatLng DEST_LOCATION = LatLng(42.73154808884768, -73.68611276149751);
+
 
 class ShuttleMap extends StatefulWidget {
   const ShuttleMap();
@@ -53,15 +58,67 @@ class ShuttleMapState extends State<ShuttleMap> {
   String _lightMapStyle;
   String _darkMapStyle;
 
+  Set<Marker> markers = {};
+  List<LatLng> westPoints = [];
+  List<LatLng> southPoints = [];
+  List<LatLng> northPoints = [];
+  Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
+  int _polylineIdCounter = 1;
+  BitmapDescriptor stopIcon;
+  PolylineId selectedPolyline;
+
   @override
   void initState() {
     super.initState();
+
+    BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(),
+      'assets/marker.png').then((onValue) {
+        stopIcon = onValue;
+    });
+
     rootBundle.loadString('assets/map_styles/aubergine.json').then((string) {
       _darkMapStyle = string;
     });
     rootBundle.loadString('assets/map_styles/light.json').then((string) {
       _lightMapStyle = string;
     });
+
+    rootBundle.loadString('assets/shuttle_jsons/stops.json').then((string) {
+      var data = json.decode(string);
+      data.forEach( (stop) {
+        markers.add(Marker(
+          icon: stopIcon,
+          markerId: MarkerId(stop['id'].toString()),
+          position: LatLng(stop['latitude'], stop['longitude'])
+        ));
+      });
+    });
+
+    rootBundle.loadString('assets/shuttle_jsons/west.json').then((string) {
+      var data = json.decode(string);
+      data.forEach( (point) {
+        westPoints.add(LatLng(point['latitude'], point['longitude']));
+      });
+    });
+
+    rootBundle.loadString('assets/shuttle_jsons/south.json').then((string) {
+      var data = json.decode(string);
+      data.forEach( (point) {
+        southPoints.add(LatLng(point['latitude'], point['longitude']));
+      });
+    });
+
+    rootBundle.loadString('assets/shuttle_jsons/north.json').then((string) {
+      var data = json.decode(string);
+      data.forEach( (point) {
+        northPoints.add(LatLng(point['latitude'], point['longitude']));
+      });
+    });
+
+
+
+    print(markers);
   }
 
   @override
@@ -99,6 +156,9 @@ class ShuttleMapState extends State<ShuttleMap> {
       myLocationButtonEnabled: _myLocationButtonEnabled,
       trafficEnabled: _myTrafficEnabled,
       onCameraMove: _updateCameraPosition,
+
+      polylines: Set<Polyline>.of(polylines.values),
+      markers: markers,
     );
 
     return Stack(
@@ -166,6 +226,62 @@ class ShuttleMapState extends State<ShuttleMap> {
     setState(() {
       _controller = controller;
       _isMapCreated = true;
+
+      setPolylines();
+    });
+  }
+
+
+
+  void setPolylines() {
+    final int polylineCount = polylines.length;
+
+    if (polylineCount == 12) {
+      return;
+    }
+
+    final String polylineIdVal = 'polyline_id_$_polylineIdCounter';
+    _polylineIdCounter++;
+    final PolylineId polylineId = PolylineId(polylineIdVal);
+
+    final Polyline polyline = Polyline(
+      polylineId: polylineId,
+      color: Colors.orange,
+      width: 5,
+      points: westPoints,
+    );
+
+    setState(() {
+      polylines[polylineId] = polyline;
+    });
+
+    final String polylineIdVal1 = 'polyline_id_$_polylineIdCounter';
+    _polylineIdCounter++;
+    final PolylineId polylineId1 = PolylineId(polylineIdVal1);
+
+    final Polyline polylineSouth = Polyline(
+      polylineId: polylineId1,
+      color: Colors.blue,
+      width: 5,
+      points: southPoints,
+    );
+
+    setState(() {
+      polylines[polylineId1] = polylineSouth;
+    });
+    final String polylineIdVal2 = 'polyline_id_$_polylineIdCounter';
+    _polylineIdCounter++;
+    final PolylineId polylineId2 = PolylineId(polylineIdVal2);
+
+    final Polyline polylineNorth = Polyline(
+      polylineId: polylineId2,
+      color: Colors.purple,
+      width: 5,
+      points: northPoints,
+    );
+
+    setState(() {
+      polylines[polylineId2] = polylineNorth;
     });
   }
 }
