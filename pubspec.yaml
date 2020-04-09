@@ -29,12 +29,23 @@ dependencies:
    
   #map dependencies
   google_maps_flutter: ^0.5.24+1
+  google_map_polyline: ^0.2.0+1
+  flutter_polyline_points: ^0.1.0
   geolocator: ^5.3.0
+  google_maps_webservice: ^0.0.16
+  rxdart: ^0.23.1
 
   #ui dependencies
-  sliding_up_panel: ^1.0.0
+  sliding_up_panel: ^1.0.1
+  scrollable_positioned_list: ^0.1.2
   google_fonts: ^0.3.9
   cupertino_icons: ^0.1.2
+  day_night_switch: ^0.0.2+1
+  intl: ^0.16.1
+
+  #state management
+  provider: ^3.1.0
+  shared_preferences: ^0.5.3+4
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +67,14 @@ flutter:
   assets:
     - assets/ridericon.png
     - assets/map_styles/light.json
+    - assets/map_styles/dark.json
+    - assets/map_styles/aubergine.json
+    - assets/shuttle_jsons/stops.json
+    - assets/shuttle_jsons/west.json
+    - assets/shuttle_jsons/south.json
+    - assets/shuttle_jsons/north.json
+    - assets/marker_shuttle.png
+    - assets/marker_bus.png
    # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
