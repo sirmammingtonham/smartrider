@@ -47,6 +47,17 @@ class Authsystem {
       return null;
     }
   }
+   Future signinwithEandP(String email, String pass) async{
+    try{
+      AuthResult result = await fbauth.signInWithEmailAndPassword(email: email, password: pass);
+      FirebaseUser user= result.user;
+     return  user.uid;
+    }
+    catch(e){
+      print(e.toString());
+      return null;
+    }
+  }
   
 
   
