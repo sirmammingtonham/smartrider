@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
 // loading custom widgets and data
@@ -9,16 +10,19 @@ import 'package:smartrider/util/schedule_data.dart';
 import 'package:smartrider/widgets/filter_dialog.dart';
 import 'package:smartrider/widgets/shuttle_list.dart';
 import 'package:smartrider/widgets/bus_list.dart';
+import 'package:smartrider/widgets/map_ui.dart';
 
 class ShuttleSchedule extends StatefulWidget {
+  final GlobalKey<ShuttleMapState> mapState;
   final PanelController panelController;
   final VoidCallback scheduleChanged;
-  ShuttleSchedule({Key key, this.panelController, this.scheduleChanged}) : super(key: key);
+  ShuttleSchedule({Key key, this.mapState, this.panelController, this.scheduleChanged}) : super(key: key);
   @override
   ShuttleScheduleState createState() => ShuttleScheduleState();
 }
   
 class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderStateMixin  {
+
   final List<Widget> _tabs = [
     Tab(icon: Icon(Icons.airport_shuttle)),
     Tab(icon: Icon(Icons.directions_bus)),
@@ -73,7 +77,7 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
 
   _displayFilterDialog() async {
     final builder = (BuildContext ctx) => FilterDialog(
-      stops: _isShuttle ? shuttleStopLists[_tabController.index][0] : busStopLists[_tabController.index][0],
+      stops: _isShuttle ? shuttleStopLists[_tabController.index] : busStopLists[_tabController.index],
       controller: _textController,
     );
     await showDialog(context: context, builder: builder);
@@ -91,39 +95,52 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
     }
     if (this.filter.contains('@')) {
       var filterSplit = this.filter.split('@');
-      return (curStopList[index%curStopList.length].toLowerCase().contains(filterSplit[0].toLowerCase()) &&
+      return (curStopList[index%curStopList.length][0].toLowerCase().contains(filterSplit[0].toLowerCase()) &&
         curTimeList[index].contains(filterSplit[1]));
     }
     return curStopList[index%curStopList.length][0].toLowerCase().contains(this.filter.toLowerCase().trim());
   }
 
-  _scrollToCurrentTime(int idx, ItemScrollController _scrollController) {
-    // TODO: update so it works with filter
-    // List curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
-    //             busTimeLists[_tabController.index-1];
-    List curTimeList = shuttleTimeLists[idx];
-    var now = DateTime.now();
-    var f = DateFormat('H.m');
-    double min = double.maxFinite;
-    double curTime = double.parse(f.format(now));
-    double compTime;
-    String closest;
-    curTimeList.forEach(
-      (time) {
-        var t = time.replaceAll(':', '.');
-        compTime = double.parse(t.substring(0,t.length-2));
-        if (t.endsWith('pm')) {
-          compTime += 12.0;
-        }
-        if ((curTime - compTime).abs() < min) {
-          min = (curTime - compTime).abs();
-          closest = time;
-        }
-      }
-    );
-    var jTo = curTimeList.indexWhere((element) => element == closest);
-    _scrollController.jumpTo(index: jTo);
+  _jumpMap(double lat, double long) {
+    this.widget.panelController.animatePanelToPosition(0);
+    this.widget.mapState.currentState.scrollToLocation(LatLng(lat, long));
   }
+
+  // These functions are broken with the current layout
+  // TODO: FIX THEM!
+
+  // _scrollToCurrentTime(int idx, ItemScrollController _scrollController) {
+  //   // TODO: update so it works with filter
+  //   // List curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
+  //   //             busTimeLists[_tabController.index-1];
+  //   List curTimeList = shuttleTimeLists[idx];
+  //   var now = DateTime.now();
+  //   var f = DateFormat('H.m');
+  //   double min = double.maxFinite;
+  //   double curTime = double.parse(f.format(now));
+  //   double compTime;
+  //   String closest;
+  //   curTimeList.forEach(
+  //     (time) {
+  //       var t = time.replaceAll(':', '.');
+  //       compTime = double.tryParse(t.substring(0,t.length-2));
+  //       if (compTime == null)
+  //         return;
+  //       if (t.endsWith('pm')) {
+  //         compTime += 12.0;
+  //       }
+  //       if ((curTime - compTime).abs() < min) {
+  //         min = (curTime - compTime).abs();
+  //         closest = time;
+  //       }
+  //     }
+  //   );
+  //   var jTo = curTimeList.indexWhere((element) => element == closest);
+  //   assert(_scrollController != null);
+  //   if (_scrollController.isAttached)
+  //     // _scrollController.jumpTo(index: 1);
+  //     _scrollController.jumpTo(index: jTo);
+  // }
 
   // scrollAllTabs() {
   //   print(_shuttleScrollControllers);
@@ -180,10 +197,12 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
             ShuttleList(
               scrollControllers: _shuttleScrollControllers,
               containsFilter: _containsFilter,
+              jumpMap: _jumpMap,
             ),
             BusList(
               scrollControllers: _busScrollControllers,
               containsFilter: _containsFilter,
+              jumpMap: _jumpMap,
             ),
           ],
         ),

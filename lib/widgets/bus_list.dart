@@ -8,7 +8,8 @@ import 'package:smartrider/util/schedule_data.dart';
 class BusList extends StatefulWidget {
   final List<ItemScrollController> scrollControllers;
   final Function containsFilter;
-  BusList({Key key, this.scrollControllers, this.containsFilter}) : super(key: key);
+  final Function jumpMap;
+  BusList({Key key, this.scrollControllers, this.containsFilter, this.jumpMap}) : super(key: key);
   @override
   BusListState createState() => BusListState();
 }
@@ -51,9 +52,9 @@ AutomaticKeepAliveClientMixin<BusList>
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
-              busList(0, this.widget.scrollControllers[0], this.widget.containsFilter),
-              busList(1, this.widget.scrollControllers[1], this.widget.containsFilter),
-              busList(2, this.widget.scrollControllers[2], this.widget.containsFilter),
+              busList(0, this.widget.scrollControllers[0], this.widget.containsFilter, this.widget.jumpMap),
+              busList(1, this.widget.scrollControllers[1], this.widget.containsFilter, this.widget.jumpMap),
+              busList(2, this.widget.scrollControllers[2], this.widget.containsFilter, this.widget.jumpMap),
             ],
           ),
         )
@@ -64,7 +65,7 @@ AutomaticKeepAliveClientMixin<BusList>
   bool get wantKeepAlive => true;
 }
 
-Widget busList(int idx, ItemScrollController _scrollController, Function _containsFilter) {
+Widget busList(int idx, ItemScrollController _scrollController, Function _containsFilter, Function _jumpMap) {
   return ScrollablePositionedList.builder(
     itemCount: busTimeLists[idx].length,
     itemScrollController: _scrollController,
@@ -80,7 +81,9 @@ Widget busList(int idx, ItemScrollController _scrollController, Function _contai
           title: Text(curStopList[index%curStopList.length][0]),
           subtitle: Text(curTimeList[index]),
           trailing: Icon(Icons.arrow_forward),
-          onTap: () {},
+          onTap: () {
+            _jumpMap(double.parse(curStopList[index%curStopList.length][1]), double.parse(curStopList[index%curStopList.length][2]));
+          },
         ),
       );
     },

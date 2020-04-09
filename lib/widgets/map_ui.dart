@@ -13,8 +13,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-
-
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.720779, -73.698129),
   northeast: const LatLng(42.739179, -73.659123),
@@ -24,8 +22,7 @@ const LatLng DEST_LOCATION = LatLng(42.73154808884768, -73.68611276149751);
 
 
 class ShuttleMap extends StatefulWidget {
-  const ShuttleMap();
-
+  ShuttleMap({Key key}) : super(key: key);
   @override
   State<StatefulWidget> createState() => ShuttleMapState();
 }
@@ -73,7 +70,7 @@ class ShuttleMapState extends State<ShuttleMap> {
 
     BitmapDescriptor.fromAssetImage(
       ImageConfiguration(),
-      'assets/marker.png').then((onValue) {
+      'assets/marker_shuttle.png').then((onValue) {
         stopIcon = onValue;
     });
 
@@ -187,14 +184,14 @@ class ShuttleMapState extends State<ShuttleMap> {
                 color: Theme.of(context).brightness == Brightness.light ? Colors.black87 : null,
               ),
               backgroundColor: Theme.of(context).brightness == Brightness.light ? Colors.white : null,
-              onPressed: _scrollToLocation,
+              onPressed: _scrollToCurrentLocation,
             ),
           ),
       ]
     );
   }
 
-  void _scrollToLocation() async {
+  void _scrollToCurrentLocation() async {
     var currentLocation = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
 
@@ -225,6 +222,17 @@ class ShuttleMapState extends State<ShuttleMap> {
       );
     }
   }
+  void scrollToLocation(LatLng loc) {
+    _controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: loc,
+          zoom: 18,
+          tilt: 50)  
+      ),
+    );
+  }
+
 
   void _updateCameraPosition(CameraPosition position) {
     setState(() {

@@ -9,7 +9,8 @@ import 'package:smartrider/util/schedule_data.dart';
 class ShuttleList extends StatefulWidget {
   final List<ItemScrollController> scrollControllers;
   final Function containsFilter;
-  ShuttleList({Key key, this.scrollControllers, this.containsFilter}) : super(key: key);
+  final Function jumpMap;
+  ShuttleList({Key key, this.scrollControllers, this.containsFilter, this.jumpMap}) : super(key: key);
   @override
   ShuttleListState createState() => ShuttleListState();
 }
@@ -57,10 +58,10 @@ AutomaticKeepAliveClientMixin<ShuttleList>
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
-              shuttleList(0, this.widget.scrollControllers[0], this.widget.containsFilter),
-              shuttleList(1, this.widget.scrollControllers[1], this.widget.containsFilter),
-              shuttleList(2, this.widget.scrollControllers[2], this.widget.containsFilter),
-              shuttleList(3, this.widget.scrollControllers[3], this.widget.containsFilter),
+              shuttleList(0, this.widget.scrollControllers[0], this.widget.containsFilter, this.widget.jumpMap),
+              shuttleList(1, this.widget.scrollControllers[1], this.widget.containsFilter, this.widget.jumpMap),
+              shuttleList(2, this.widget.scrollControllers[2], this.widget.containsFilter, this.widget.jumpMap),
+              shuttleList(3, this.widget.scrollControllers[3], this.widget.containsFilter, this.widget.jumpMap),
             ],
           ),
         )
@@ -71,7 +72,7 @@ AutomaticKeepAliveClientMixin<ShuttleList>
   bool get wantKeepAlive => true;
 }
 
-Widget shuttleList(int idx, ItemScrollController _scrollController, Function _containsFilter) {
+Widget shuttleList(int idx, ItemScrollController _scrollController, Function _containsFilter, Function _jumpMap) {
   return ScrollablePositionedList.builder(
     itemCount: shuttleTimeLists[idx].length,
     itemScrollController: _scrollController,
@@ -88,7 +89,7 @@ Widget shuttleList(int idx, ItemScrollController _scrollController, Function _co
           subtitle: Text(curTimeList[index]),
           trailing: Icon(Icons.arrow_forward),
           onTap: () {
-
+            _jumpMap(double.parse(curStopList[index%curStopList.length][1]), double.parse(curStopList[index%curStopList.length][2]));
           },
         ),
       );
