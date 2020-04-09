@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 // loading custom widgets and data
-import 'package:smartrider/util/schedule_data.dart';
+import 'package:smartrider/util/data.dart';
 
 class BusList extends StatefulWidget {
   final List<ItemScrollController> scrollControllers;
