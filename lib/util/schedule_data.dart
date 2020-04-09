@@ -1,3 +1,9 @@
+// ENCODED POLYLINES
+// ROUTE 87:  "y|{cGtum`MdIVHfHwCLsDmIa@pB`K`SbAoCvFR~@eBjAn@mAhBeAu@sFQ_AjC|EhKfNpy@rNlb@lFbXuCfc@hsAnVwD|[gLkAq_@qH~Bu]}c@yHyEto@u@hq@nXdIlG~D@vE|g@jH^wFwh@aGgIaMeHhB"
+// ROUTE 286: "s|pcGvyh`Me@i@a@r@b@h@`@q@x@IKlf@aAzFoEjKw@fDaDxWuAvSeBpMgDxFyB`EcA`FkFnYeE~\_CdQqBrE_FtFqIbPoBjJsAnBcQ`PyDpEiDrCkNlJcFnc@sOaPtE_D|JpKbD}YoFfFqOdKyF~DcKtLeFdG_FpLyAnFgB`AkLvBcAbBt@vM[vBaClD_CmBuMyCgIqAcBAa_@aHnCmb@tA}Ah@sFhBgGt@cCWwAoDmCoImK{AkBk@_@j@`@|AjBnIlKpDlCRzA}CxJq@hGoAhAmCvb@zLdC{AfQo@rEe@n@cB~@oCjCo@hEcCi@z@bFOhDqAxFaCfHnAbBDbFtg@|G`@wF}h@yGkAyA|DiMbBwL"
+// ROUTE 289: "ap{cGtit`MtZlFdy@hOkCfX_HtFs@tE{Bi@v@xHfAmGcCk@z@nI_FtQhAnBBjEbh@jHxA{ZoAgHhBiLrA{FrLkBvFkCrFmJs@wRtQsDhIqUrPoRnH{FrOjPWxEbDbNbGlH}H~BcCtFx@pL{@dBeBH{MgJpNcf@g@wBxCwAvA_L_KgK}EtCmHvFcP`SwIhToQzEp@dRwF|IyF`DwLpBeEtS{BfJkAzOwb@{F"
+
+
 // File to hold a bunch of lists for our listbuilders
 final shuttleStopLists = [south_stops, north_stops, west_stops, weekend_express_stops];
 final shuttleTimeLists = [
