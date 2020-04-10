@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartrider/pages/login.dart';
+import 'package:smartrider/services/userauth.dart';
 
 // theme stuff
 import 'package:smartrider/util/theme_notifier.dart';
@@ -14,6 +16,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool configDarkMode = false, configPush = true, configTest2 = true, configTest3 = true;
   var _darkTheme = true;
+  Authsystem auth = Authsystem();
   @override
   void initState() {
     super.initState();
@@ -259,8 +262,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Text(
                         'SIGN OUT',
                         style: Theme.of(context).textTheme.button,),
-                      onPressed: () {
-                        print('pressed');
+                      onPressed: () async {
+                       await auth.signout();
+                         
+                            Navigator.push(
+                              context,
+                       MaterialPageRoute(builder: (context) => Loginpage()),
+                              );
+                         
                       },
                       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0))
                     ),
