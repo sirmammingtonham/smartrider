@@ -4,7 +4,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
 
 // loading custom widgets and data
-import 'package:smartrider/util/schedule_data.dart';
+import 'package:smartrider/util/data.dart';
 
 class ShuttleList extends StatefulWidget {
   final List<ItemScrollController> scrollControllers;
