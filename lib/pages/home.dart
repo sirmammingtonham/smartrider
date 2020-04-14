@@ -88,7 +88,7 @@ class _HomePageState extends State<_HomePage> {
             },
           ),
           onNotification: (t) {
-            if (t.overscroll < -10) {
+            if (t.overscroll < -10 && t.dragDetails.delta.dx == 0) {
               _panelController.animatePanelToPosition(0);
               return true;
             }

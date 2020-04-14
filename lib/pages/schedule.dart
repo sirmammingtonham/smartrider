@@ -20,7 +20,6 @@ class ShuttleSchedule extends StatefulWidget {
 }
   
 class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderStateMixin  {
-
   final List<Widget> _tabs = [
     Tab(icon: Icon(Icons.airport_shuttle)),
     Tab(icon: Icon(Icons.directions_bus)),
@@ -28,7 +27,6 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
 
   TabController _tabController;
   TextEditingController _textController;
-  double initial, distance;
   String filter;
   bool _isShuttle; // true if we have to build the shuttle schedule, false if bus
 

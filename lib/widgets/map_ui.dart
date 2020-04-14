@@ -41,7 +41,7 @@ class ShuttleMapState extends State<ShuttleMap> {
   CameraPosition _position = _kInitialPosition;
   bool _isMapCreated = false;
   bool _isMoving = false;
-  bool _compassEnabled = true;
+  bool _compassEnabled = false;
   bool _mapToolbarEnabled = true;
   CameraTargetBounds _cameraTargetBounds = CameraTargetBounds(rpiBounds);
   MinMaxZoomPreference _minMaxZoomPreference = MinMaxZoomPreference(14.0, 18.0);
@@ -188,6 +188,7 @@ class ShuttleMapState extends State<ShuttleMap> {
       myLocationButtonEnabled: _myLocationButtonEnabled,
       trafficEnabled: _myTrafficEnabled,
       onCameraMove: _updateCameraPosition,
+      
 
       polylines: Set<Polyline>.of(polylines.values),
       markers: markers,
@@ -311,7 +312,6 @@ class ShuttleMapState extends State<ShuttleMap> {
       width: 5,
       points: westPoints,
     );
-    polylines[polylineId] = polylineWest;
 
     final String polylineIdVal1 = 'polyline_id_$_polylineIdCounter';
     _polylineIdCounter++;
@@ -323,7 +323,6 @@ class ShuttleMapState extends State<ShuttleMap> {
       width: 5,
       points: southPoints,
     );
-    polylines[polylineId1] = polylineSouth;
 
     final String polylineIdVal2 = 'polyline_id_$_polylineIdCounter';
     _polylineIdCounter++;
@@ -336,11 +335,12 @@ class ShuttleMapState extends State<ShuttleMap> {
       points: northPoints,
     );
 
+    // still need to add weekend polyline
+
     setState(() {
       polylines[polylineId] = polylineWest;
       polylines[polylineId1] = polylineSouth;
       polylines[polylineId2] = polylineNorth;
-
     });
   }
 }
