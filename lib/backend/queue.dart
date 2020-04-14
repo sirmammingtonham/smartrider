@@ -5,13 +5,31 @@ import 'dart:collection';
 class QueueService{
   final String usid;
 
+  /*
+  void main() {
+  List<String> other = ["a","b","c"];
+  Queue<String> queue = new Queue<String>();
+  queue.addAll(other);
+  print(queue); // prints "{a, b, c}"
+}
+   */ //THis looks like it will be good for populating the queue
+
   final CollectionReference _Qcollection = Firestore.instance.collection(anything we want here);
   QueueService({this.usid});
-  Queue queue = new Queue();
+  Queue<String> queue = new Queue<String>();
+
+  //queue.add("string");
 
   //function to see the top of the queue (only drivers should be able to do this)
 
+      //String qTop = queue.first()
+      //print(qTop) this will be to test
+
   //function to see how many people are ahead of you in the queue(student)
+
+      //First see if queue is empty
+      // if queue.isEmpty() return 0
+      //
 
   //function to remove top from queue(only drivers should be able to this)
 
