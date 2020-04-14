@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smartrider/backend/database.dart';
+import 'dart:collection';
 
 class QueueService{
   final String usid;
 
   final CollectionReference _Qcollection = Firestore.instance.collection(anything we want here);
   QueueService({this.usid});
+  Queue queue = new Queue();
 
   //function to see the top of the queue (only drivers should be able to do this)
 
