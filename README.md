@@ -25,7 +25,7 @@ Interact with our [mockups](https://xd.adobe.com/view/8a421d6f-ad6f-4196-7089-ff
         - For Intel CPUs: Enable Intel Virtualization Technology in BIOS
         - For AMD CPUs: Enable the Windows Hypervisor Platform in Windows Features
 4. Clone the smartrider repo with `git clone https://github.com/sirmammingtonham/smartrider.git`.
-5. Download the `google-services.json` from the Firebase project and place it in the `android/app` folder.
+5. Download the `google-services.json` from the Firebase Android project and place it in the `android/app` folder.
 6. Copy and rename `android/app/src/main/res/api-keys.template` to `android/app/src/main/res/values/api-keys.xml` (Don't delete the template file!)
     - Copy the API key for the Google Maps SDK from your Google Developers Console project and add it to `android/app/src/main/res/values/api-keys.xml`.
 7. Create a file named `strings.dart` in the `lib/util` folder.
@@ -38,4 +38,39 @@ Interact with our [mockups](https://xd.adobe.com/view/8a421d6f-ad6f-4196-7089-ff
 2. To sign the app for installation on iOS, follow the steps [here](https://medium.com/flutter-community/how-to-sign-flutter-apps-for-ios-automatically-without-a-mac-a2dc9cfa5a6c) to sign with Codemagic. (Note: You will need a Codemagic account and an Apple Developer Account)
 
 ## Setting up (on Mac for iOS Development)
-1. Working on it...
+1. Create an Apple developer account at https://developer.apple.com.
+    - The process is free.
+2. Setup your preferred editor for Flutter/Dart development. (VS Code is recommended)
+    - Follow the steps at https://flutter.dev/docs/get-started/editor?tab=vscode.
+3. Install Xcode >=11 from the app store, and run it once to initialize.
+4. Configure Xcode by running the following commands in a terminal window:
+    - `sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer`
+    - `sudo xcodebuild -runFirstLaunch`
+5. Install the Flutter SDK and add it to your path.
+    - Follow the steps at https://flutter.dev/docs/get-started/install/macos
+6. Setup the iOS emulator.
+    - Run simulator from spotlight or run `sudo xcodebuild -runFirstLaunch` from terminal.
+7. Install and setup cocoapods by running the following commands from terminal.
+    - `sudo gem install cocoapods`
+    - `pod setup`
+8. Clone the smartrider repo with `git clone https://github.com/sirmammingtonham/smartrider.git`.
+9. Setup application signing by opening `ios/Runner.xcworkspace` in Xcode and selecting the blue Runner file.
+    - Under the `Signing and Capabilities` tab, add and select your developer account.
+10. Download the `GoogleService-info.plist` from the Firebase iOS project and link it through Xcode by:
+    - Right clicking the `Runner` folder (not the blue one), and clicking `Add files to "Runner"`, then selecting the plist file.
+11. Create a file named `ApiKeys.plist` in the `ios/Runner/` folder (through Xcode). Add the following:
+
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>GOOG_API_KEY</key>
+            <string>KEY_HERE</string>
+        </dict>
+        </plist>
+and replace `KEY_HERE` with the API key for the Google Maps SDK from your Google Developers Console project.
+12.   Run `pod install` in the `ios/` folder.
+13.   Open the iOS simulator by running `open -a Simulator` in terminal, or by finding the app in Spotlight.
+14.   Debug the application through VS Code, or build it through Xcode.
+    - If one doesn't work, try the other, or open an [issue](https://github.com/sirmammingtonham/smartrider/issues)!
+    - NOTE: Due to a bug with iOS, you cannot test the app on physical iOS devices with software version 13.3.1 (see [here](https://github.com/flutter/flutter/issues/49504))
