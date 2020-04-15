@@ -68,9 +68,9 @@ Interact with our [mockups](https://xd.adobe.com/view/8a421d6f-ad6f-4196-7089-ff
             <string>KEY_HERE</string>
         </dict>
         </plist>
-and replace `KEY_HERE` with the API key for the Google Maps SDK from your Google Developers Console project.
-12.   Run `pod install` in the `ios/` folder.
-13.   Open the iOS simulator by running `open -a Simulator` in terminal, or by finding the app in Spotlight.
-14.   Debug the application through VS Code, or build it through Xcode.
+    - and replace `KEY_HERE` with the API key for the Google Maps SDK from your Google Developers Console project.
+12. Run `pod install` in the `ios/` folder.
+13. Open the iOS simulator by running `open -a Simulator` in terminal, or by finding the app in Spotlight.
+14. Debug the application through VS Code, or build it through Xcode.
     - If one doesn't work, try the other, or open an [issue](https://github.com/sirmammingtonham/smartrider/issues)!
     - NOTE: Due to a bug with iOS, you cannot test the app on physical iOS devices with software version 13.3.1 (see [here](https://github.com/flutter/flutter/issues/49504))
