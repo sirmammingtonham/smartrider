@@ -390,7 +390,7 @@ const List<List<String>> stops_87 = [
 ];
 
 const List<List<String>> stops_286 = [
-  ["Vanderheyden Hall to Main Ave & Atlantic Ave","42.690565","73.614608","10978"],
+  ["Vanderheyden Hall to Main Ave & Atlantic Ave","42.690565","-73.614608","10978"],
   ["Main Ave & Atlantic Ave to Pawling Ave & Spring Ave","42.696309","-73.641741","04339"],
   ["Pawling Ave & Spring Ave to Myrtle Ave","42.708893","-73.663011","04368"],
   ["Myrtle Ave to Congress St & 15th St","42.711505","-73.666573","12357"],
