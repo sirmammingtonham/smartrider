@@ -66,17 +66,17 @@ const List<List<String>> west_stops = [
 ];
 
 const List<List<String>> weekend_express_stops = [
-  ["15th/Col. to Union","lat","long","id"],
-  ["Union to Colonie","lat","long","id"],
-  ["Colonie to Brinsmade","lat","long","id"],
-  ["Brinsmade to Sunset 1&2","lat","long","id"],
-  ["Sunset 1&2 to E-Lot","lat","long","id"],
-  ["E-lot to B-Lot","lat","long","id"],
-  ["B-lot to 13th/Peoples","lat","long","id"],
-  ["13th/Peoples to Blitman","lat","long","id"],
-  ["Blitman to City Stat.","lat","long","id"],
-  ["City Stat. to Poly","lat","long","id"],
-  ["Poly to 15th/Col.", "lat","long","id"],
+  ["15th/Col. to Union","42.726823386814196","-73.67809295654298","12"],
+  ["Union to Colonie","42.73029109316892","-73.67655873298646","1"],
+  ["Colonie to Brinsmade","42.73637487312414","-73.67058759924475","14"],
+  ["Brinsmade to Sunset 1&2","42.73565383452506","-73.66511642932893","15"],
+  ["Sunset 1&2 to E-Lot","42.73445074085895","-73.66340217450477","24"],
+  ["E-lot to B-Lot","42.731418","-73.666462","21"],
+  ["B-lot to 13th/Peoples","42.731635","-73.669706","18"],
+  ["13th/Peoples to Blitman","42.73328577446417","-73.67845773696901","13"],
+  ["Blitman to City Stat.","42.73080144429565","-73.68637887775277","38"],
+  ["City Stat. to Poly","42.72739","-73.687328","10"],
+  ["Poly to 15th/Col.", "42.72264515147823","-73.67949028031151","34"],
 ];
 
 const List<List<String>> weekend_express = [
