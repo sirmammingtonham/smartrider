@@ -66,6 +66,7 @@ class ShuttleMapState extends State<ShuttleMap> {
   int _polylineIdCounter = 1;
   BitmapDescriptor shuttleIcon, busIcon;
   PolylineId selectedPolyline;
+  
 
   @override
   void initState() {
@@ -73,7 +74,7 @@ class ShuttleMapState extends State<ShuttleMap> {
 
     BitmapDescriptor.fromAssetImage(
       ImageConfiguration(),
-      'assets/marker_shuttle.png').then((onValue) {
+      'assets/markers/2.0x/marker_shuttle.png').then((onValue) {
         shuttleIcon = onValue;
         rootBundle.loadString('assets/shuttle_jsons/stops.json').then((string) {
         var data = json.decode(string);
@@ -81,6 +82,7 @@ class ShuttleMapState extends State<ShuttleMap> {
           var position = LatLng(stop['latitude'], stop['longitude']);
           markers.add(Marker(
             icon: shuttleIcon,
+            infoWindow: InfoWindow(title:stop['name']),
             markerId: MarkerId(stop['id'].toString()),
             position: position,
             onTap: () {
@@ -100,13 +102,14 @@ class ShuttleMapState extends State<ShuttleMap> {
 
     BitmapDescriptor.fromAssetImage(
       ImageConfiguration(),
-      'assets/marker_bus.png').then((onValue) {
+      'assets/markers/2.0x/marker_bus.png').then((onValue) {
         busIcon = onValue;
         busStopLists.forEach((List<List<String>> stopList) {
         stopList.forEach((stopData) {
           var position = LatLng(double.parse(stopData[1]), double.parse(stopData[2]));
           markers.add(Marker(
             icon: busIcon,
+            infoWindow: InfoWindow(title:stopData[0]), 
             markerId: MarkerId(stopData[3]),
             position: position,
             onTap: () {
