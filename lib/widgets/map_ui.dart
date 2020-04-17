@@ -15,6 +15,7 @@ import 'package:flutter/services.dart' show rootBundle;
 
 // data imports
 import 'package:smartrider/util/data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final LatLngBounds rpiBounds = LatLngBounds(
   // southwest: const LatLng(42.720779, -73.698129),
@@ -22,6 +23,8 @@ final LatLngBounds rpiBounds = LatLngBounds(
   northeast: const LatLng(42.751583, -73.616713),
   // northeast: const LatLng(42.739179, -73.659123),
 );
+
+final GlobalKey<ShuttleMapState> mapState = GlobalKey<ShuttleMapState>();
 
 
 class ShuttleMap extends StatefulWidget {
@@ -267,20 +270,27 @@ class ShuttleMapState extends State<ShuttleMap> {
   }
 
   void onMapCreated(GoogleMapController controller) {
+    setPolylines();
     setState(() {
       _controller = controller;
       _isMapCreated = true;
-
-      setPolylines();
     });
   }
 
-  void setPolylines() {
+  void setPolylines() async {
+    polylines.clear();
+    final sharedPrefs = await SharedPreferences.getInstance();
     final int polylineCount = polylines.length;
 
     if (polylineCount == 12) {
       return;
     }
+
+    final busIdentifiers = [
+      "87Route",
+      "286Route",
+      "289Route",
+    ];
 
     final busLineColors = [
       Colors.cyan,
@@ -302,7 +312,9 @@ class ShuttleMapState extends State<ShuttleMap> {
         width: 5,
         points: linePoints,
       );
-      polylines[buslineId] = busLine;
+      if (sharedPrefs.getBool(busIdentifiers[idx]) ?? true) {
+        polylines[buslineId] = busLine;
+      }
     });
 
     final String polylineIdVal = 'polyline_id_$_polylineIdCounter';
@@ -312,7 +324,7 @@ class ShuttleMapState extends State<ShuttleMap> {
     final Polyline polylineWest = Polyline(
       polylineId: polylineId,
       color: Colors.orange,
-      width: 5,
+      width: 9,
       points: westPoints,
     );
 
@@ -323,7 +335,7 @@ class ShuttleMapState extends State<ShuttleMap> {
     final Polyline polylineSouth = Polyline(
       polylineId: polylineId1,
       color: Colors.blue,
-      width: 5,
+      width: 7,
       points: southPoints,
     );
 
@@ -341,9 +353,15 @@ class ShuttleMapState extends State<ShuttleMap> {
     // still need to add weekend polyline
 
     setState(() {
-      polylines[polylineId] = polylineWest;
-      polylines[polylineId1] = polylineSouth;
-      polylines[polylineId2] = polylineNorth;
+      if (sharedPrefs.getBool('westRoute') ?? true) {
+        polylines[polylineId] = polylineWest;
+      }
+      if (sharedPrefs.getBool('southRoute') ?? true) {
+        polylines[polylineId1] = polylineSouth;
+      }
+      if (sharedPrefs.getBool('northRoute') ?? true) {
+        polylines[polylineId2] = polylineNorth;
+      }
     });
   }
 }

@@ -22,7 +22,6 @@ class _HomePage extends StatefulWidget{
   _HomePageState createState() => _HomePageState();
 }
 class _HomePageState extends State<_HomePage> {
-  static final GlobalKey<ShuttleMapState> mapState = GlobalKey<ShuttleMapState>();
   PanelController _panelController;
   double _panelHeightOpen;
   double _panelHeightClosed = 95.0;

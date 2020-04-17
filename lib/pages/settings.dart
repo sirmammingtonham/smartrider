@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartrider/pages/login.dart';
 import 'package:smartrider/services/userauth.dart';
+import 'package:smartrider/widgets/map_ui.dart';
 
 // theme stuff
 import 'package:smartrider/util/theme_notifier.dart';
@@ -89,6 +90,7 @@ class _SettingsPageState extends State<SettingsPage> {
           icon: Icon(Icons.arrow_downward),
           tooltip: 'Go back',
           onPressed: () {
+            mapState.currentState.setPolylines();
             Navigator.pop(context);
           },
         ),
@@ -105,6 +107,7 @@ class _SettingsPageState extends State<SettingsPage> {
             icon: Icon(Icons.arrow_downward),
             tooltip: 'Go back',
             onPressed: () {
+              mapState.currentState.setPolylines();
               Navigator.pop(context);
             },
           ),
