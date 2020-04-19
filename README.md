@@ -51,7 +51,7 @@ Interact with our [mockups](https://xd.adobe.com/view/8a421d6f-ad6f-4196-7089-ff
 6. Setup the iOS emulator.
     - Run simulator from spotlight or run `sudo xcodebuild -runFirstLaunch` from terminal.
 7. Install and setup cocoapods by running the following commands from terminal.
-    - `sudo gem install cocoapods`
+    - `sudo gem install cocoapods` (**NOTE:** If you are getting an error when running this command run: `sudo xcode-select --switch /Library/Developer/CommandLineTools`)
     - `pod setup`
 8. Clone the smartrider repo with `git clone https://github.com/sirmammingtonham/smartrider.git`.
 9. Setup application signing by opening `ios/Runner.xcworkspace` in Xcode and selecting the blue Runner file.
