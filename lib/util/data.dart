@@ -21,8 +21,12 @@ final busStopLists = [
   stops_87,
   stops_286,
   stops_289,
-
 ];
+final busStopMap = {
+  '87Route': stops_87,
+  '286Route': stops_286,
+  '289Route': stops_289,
+};
 final busTimeLists = [
   times_87.expand((i) => i).toList(),
   times_286.expand((i) => i).toList(),

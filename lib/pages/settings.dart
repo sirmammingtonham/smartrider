@@ -39,7 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
     sharedPrefs.setBool(key, value);
   }
 
-  _restoreSettings() async {
+   _restoreSettings() async {
     final sharedPrefs = await SharedPreferences.getInstance();
     setState (() {
       // general setting vars
@@ -65,15 +65,15 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    var now = DateTime.now();
-    if (now.weekday == DateTime.saturday || now.weekday == DateTime.sunday) {
+    // var now = DateTime.now();
+    // if (now.weekday == DateTime.saturday || now.weekday == DateTime.sunday) {
       // might have to change this so its only when they open the app for the first time on the weekend, 
       // maybe include this code somewhere else
-      _updateSetting('northRoute', false);
-      _updateSetting('southRoute', false);
-      _updateSetting('westRoute', false);
-      _updateSetting('weekendExpress', true);
-    }
+      // _updateSetting('northRoute', false);
+      // _updateSetting('southRoute', false);
+      // _updateSetting('westRoute', false);
+      // _updateSetting('weekendExpress', true);
+    // }
     _restoreSettings();
   }
 
@@ -150,7 +150,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         children: <Widget>[
                           SwitchListTile(
                             title:  Text('Push Notifications'),
-                            value: _pushNotifications,
+                            value: _pushNotifications ?? false,
                             onChanged: (bool value) {
                               setState(() {
                                 _pushNotifications = value;
@@ -202,7 +202,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       children: <Widget>[
                         SwitchListTile(
                           title:  Text('North Route'),
-                          value: _northRoute,
+                          value: _northRoute ?? false,
                           onChanged: (bool value) {
                             setState(() {
                               _northRoute = value;
@@ -212,7 +212,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           secondary: const Icon(Icons.airport_shuttle),
                         ),
                         SwitchListTile(title:  Text('South Route'),
-                          value: _southRoute,
+                          value: _southRoute ?? false,
                           onChanged: (bool value) {
                             setState(() {
                               _southRoute = value;
@@ -223,7 +223,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         SwitchListTile(
                           title:  Text('West Route'),
-                          value: _westRoute,
+                          value: _westRoute ?? false,
                           onChanged: (bool value) {
                             setState(() {
                               _westRoute = value;
@@ -234,11 +234,12 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         SwitchListTile(
                           title:  Text('Weekend Express'),
-                          value: _weekendExpress,
+                          value: _weekendExpress ?? false,
                           onChanged: (bool value) {
                             setState(() {
                               _weekendExpress = value;
                             });
+                            _updateSetting('weekendExpress', _weekendExpress);
                           },
                           secondary: const Icon(Icons.airport_shuttle),
                         ),
@@ -275,7 +276,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       children: <Widget>[
                         SwitchListTile(
                           title:  Text('87 Route'),
-                          value: _87,
+                          value: _87 ?? false,
                           onChanged: (bool value) {
                             setState(() {
                               _87 = value;
@@ -286,7 +287,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         SwitchListTile(
                           title:  Text('286 Route'),
-                          value: _286,
+                          value: _286 ?? false,
                           onChanged: (bool value) {
                             setState(() {
                               _286 = value;
@@ -297,7 +298,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         SwitchListTile(
                           title:  Text('289 Route'),
-                          value: _289,
+                          value: _289 ?? false,
                           onChanged: (bool value) {
                             setState(() {
                               _289 = value;
@@ -339,7 +340,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       children: <Widget>[
                         SwitchListTile(
                           title:  Text('Placeholder'),
-                          value: _placeholder1,
+                          value: _placeholder1 ?? false,
                           onChanged: (bool value) {
                             setState(() {
                               _placeholder1 = value;
@@ -350,7 +351,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ), 
                         SwitchListTile(
                           title:  Text('Placeholder'),
-                          value: _placeholder2,
+                          value: _placeholder2 ?? false,
                           onChanged: (bool value) {
                             setState(() {
                               _placeholder2 = value;
@@ -388,8 +389,8 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           )
-        ]),
-      ),
+        ])
+      )
     );
   }
 }

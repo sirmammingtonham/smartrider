@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
 
@@ -66,14 +66,10 @@ flutter:
   assets:
     - assets/ridericon.png
     - assets/map_styles/light.json
-    - assets/map_styles/dark.json
     - assets/map_styles/aubergine.json
     - assets/shuttle_jsons/stops.json
-    - assets/shuttle_jsons/west.json
-    - assets/shuttle_jsons/south.json
-    - assets/shuttle_jsons/north.json
+    - assets/shuttle_jsons/routes.json
     - assets/markers/
-   # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
