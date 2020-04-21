@@ -26,18 +26,30 @@ dependencies:
 
   firebase_auth: ^0.14.0+5
   cloud_firestore: ^0.12.9+5
-
+   
+  #map dependencies
   google_maps_flutter: ^0.5.24+1
+  google_map_polyline: ^0.2.0+1
+  flutter_polyline_points: ^0.1.0
+  geolocator: ^5.3.0
+  google_maps_webservice: ^0.0.16
+  rxdart: ^0.23.1
+
+  #ui dependencies
+  sliding_up_panel: ^1.0.1
+  scrollable_positioned_list: ^0.1.2
+  google_fonts: ^0.3.9
+  cupertino_icons: ^0.1.2
+  day_night_switch: ^0.0.2+1
+  intl: ^0.16.1
+
+  #state management
+  provider: ^3.1.0
+  shared_preferences: ^0.5.3+4
 
   google_sign_in: ^4.1.4
 
   location: ^3.0.2
-
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
 
 dev_dependencies:
   flutter_test:
@@ -56,9 +68,18 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/ridericon.png
+    - assets/map_styles/light.json
+    - assets/map_styles/dark.json
+    - assets/map_styles/aubergine.json
+    - assets/shuttle_jsons/stops.json
+    - assets/shuttle_jsons/west.json
+    - assets/shuttle_jsons/south.json
+    - assets/shuttle_jsons/north.json
+    - assets/marker_shuttle.png
+    - assets/marker_bus.png
+   # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -71,7 +92,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
+  fonts:
+    - family:  SR_Icons
+      fonts:
+       - asset: fonts/icons.ttf
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
