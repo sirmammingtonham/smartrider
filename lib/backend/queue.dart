@@ -31,7 +31,13 @@ class QueueService{
       // if queue.isEmpty() return 0
       //
 
-  //function to remove top from queue(only drivers should be able to this)
-
   //function to remove self from queue
+    //first ensure they are in the queue
+    /*bool contains(Object element) {
+    for (E e in this) {
+      if (e == element) return true;
+      }
+      return false;
+    }*/
+    //bool remove(Object value);
 }
