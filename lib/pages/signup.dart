@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/pages/login.dart';
 import 'package:smartrider/services/userauth.dart';
  
 
@@ -36,9 +38,9 @@ import 'package:smartrider/services/userauth.dart';
       Widget build(BuildContext context) {
         
         final titletext = Text(
-            "SignUp for Smartrider", 
+            "Welcome!", 
             textAlign: TextAlign.center,
-            style: GoogleFonts.alef(fontSize: 30),
+            style: GoogleFonts.montserrat(fontSize: 30),
         );
         final emailField = TextFormField(
           validator: (val) {
@@ -55,10 +57,13 @@ import 'package:smartrider/services/userauth.dart';
               email = val;
           },
           decoration: InputDecoration(
-              contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-              hintText: "Enter email",
+               contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+              hintText: "Enter RPI email",
+              hintStyle: style,
+                 filled: true,
+              fillColor: Colors.white.withOpacity(1),
               border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))),
         );
         final passwordField = TextFormField(
           validator: (val){
@@ -80,16 +85,50 @@ import 'package:smartrider/services/userauth.dart';
             });
           },
           decoration: InputDecoration(
-              contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+               contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               hintText: "Enter Password",
+              hintStyle: style,
+                 filled: true,
+              fillColor: Colors.white.withOpacity(1),
               border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))),
+        );
+        final confirmpasswordField = TextFormField(
+          validator: (val){
+            if(val.length<6){
+              return 'confirm password too short.';
+            }
+            else if(val.isEmpty){
+              return "Please confirm your password.";
+            }
+            else if(confirmpassword!=password){
+              return "The passwords entered do not match.";
+            }
+            else{
+              return null;
+            }
+          },
+          obscureText: true,
+          style: style,
+          onChanged: (val){
+            setState(() {
+              confirmpassword = val;
+            });
+          },
+          decoration: InputDecoration(
+               contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+              hintText: "Confirm Password",
+              hintStyle: style,
+                 filled: true,
+              fillColor: Colors.white.withOpacity(1),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))),
         );
         
         final registerButton = Material(
           elevation: 5.0,
-          borderRadius: BorderRadius.circular(50.0),
-          color: Colors.lightBlue,
+          borderRadius: BorderRadius.circular(10.0),
+          color: Color.fromRGBO(93, 188, 210,1),
           child: MaterialButton(
            minWidth: MediaQuery.of(context).size.width,
             padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -98,12 +137,38 @@ import 'package:smartrider/services/userauth.dart';
                     dynamic result = await _auth.registerwithEandP(email, password);
                     if(result == null){
                       setState((){
-                        error= 'bruh';
+                        error= 'error occured';
                       });
                     }
+                    else{
+                       Navigator.push(
+                context,
+                  MaterialPageRoute(builder: (context) => (HomePage())),
+                           );
+                    }
+
                 }
             },
             child: Text("Register",
+                textAlign: TextAlign.center,
+                style: style.copyWith(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        );
+        final backButton = Material(
+          elevation: 5.0,
+          borderRadius: BorderRadius.circular(10.0),
+          color: Color.fromRGBO(93, 188, 210,1),
+          child: MaterialButton(
+           minWidth: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            onPressed: () {
+                    Navigator.push(
+                              context,
+                       MaterialPageRoute(builder: (context) => Loginpage()),
+                              );
+            },
+            child: Text("Back",
                 textAlign: TextAlign.center,
                 style: style.copyWith(
                     color: Colors.white, fontWeight: FontWeight.bold)),
@@ -113,44 +178,38 @@ import 'package:smartrider/services/userauth.dart';
         
 
         return Scaffold(
-          body: Center(
-            child: Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(36.0),
-                child: Form(
-                  key: formkey,
-                                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 50.0,
-                        child: titletext,
-                      ),
-                      // SizedBox(
-                      //   height: 100.0,
-                      //   child: Image.asset(
-                      //     "assets/ridericon.png",
-                      //     fit: BoxFit.contain,
-                      //   ),
-                      // ),  //change this to a signup title
-                      
-                      SizedBox(height: 45.0),
-                      emailField,
-                      SizedBox(height: 25.0),
-                      passwordField,
-                      SizedBox(
-                        height: 35.0,
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      registerButton,
-                      SizedBox(
-                        height:  10.0,
-                      ),
-                    ],
+          body: CustomPaint(
+            painter: BluePainter(),
+                      child: Center(
+              child: Container(
+                
+                child: Padding(
+                  padding: const EdgeInsets.all(36.0),
+                  child: Form(
+                    key: formkey,
+                                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        titletext,
+                        SizedBox(height: 45.0),
+                        emailField,
+                        SizedBox(height: 25.0),
+                        passwordField,
+                        SizedBox(
+                          height: 25.0,
+                        ),
+                        confirmpasswordField,
+                        SizedBox(
+                          height: 30.0,
+                        ),
+                        registerButton,
+                        SizedBox(
+                          height:  10.0,
+                        ),
+                        backButton,
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -159,5 +218,26 @@ import 'package:smartrider/services/userauth.dart';
         );
       }
     }
+  class BluePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final height = size.height;
+    final width = size.width;
+    Paint paint = Paint(); 
+
+    Path mainBackground = Path();
+    mainBackground.addRect(Rect.fromLTRB(0, 0, width, height));
+    paint.color = 	Color.fromRGBO(102, 94, 255,1);
+    var xcoord = width;
+    var ycoord = height/2+40;
+    
+    canvas.drawCircle(Offset(xcoord,ycoord), 200, paint);
+  }
+    
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return oldDelegate != this;
+  }
+  }
 
 

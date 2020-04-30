@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/services/userauth.dart';
 import 'signup.dart';
 
@@ -56,6 +57,7 @@ import 'signup.dart';
           decoration: InputDecoration(
               contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               hintText: "Emails",
+              hintStyle: style,
               filled: true,
               fillColor: Colors.white.withOpacity(1),
               border:
@@ -84,6 +86,7 @@ import 'signup.dart';
           decoration: InputDecoration(
               contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               hintText: "Password",
+              hintStyle: style,
                  filled: true,
               fillColor: Colors.white.withOpacity(1),
               border:
@@ -100,10 +103,15 @@ import 'signup.dart';
                 if(formkey.currentState.validate()){
                  dynamic result = await _auth.signinwithEandP(email, password);
                  if(result == null){
-                   print("error");
+                   setState(() {
+                     error = "Wrong credentials";
+                   });
                  }
                  else{
-                   print("success");
+                     Navigator.push(
+                              context,
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                                );
                  }
 
                 }
@@ -134,7 +142,8 @@ import 'signup.dart';
                     color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         );
-
+        final errortext = Text(error, style: TextStyle(color: Colors.red),);
+       
         
 
         return Scaffold(
@@ -143,7 +152,6 @@ import 'signup.dart';
             painter: BluePainter(),
             child:Center(
             child: Container(
-              
               child: Padding(
                 padding: const EdgeInsets.all(36.0),
                 child: Form(
@@ -154,15 +162,8 @@ import 'signup.dart';
                     children: <Widget>[
                       SizedBox(
                         height: 50.0,
-                        child:Text("SmartRider",style:GoogleFonts.prompt(fontSize: 35),),
+                        child:Text("SmartRider",style:GoogleFonts.montserrat(fontSize: 35),),
                       ),
-                      // SizedBox(
-                      //   height: 100.0,
-                      //   child: Image.asset(
-                      //     "assets/ridericon.png",
-                      //     fit: BoxFit.contain,
-                      //   ),
-                      // ),
                       SizedBox(height: 45.0),
                       emailField,
                       SizedBox(height: 25.0),
@@ -175,6 +176,7 @@ import 'signup.dart';
                         height: 15.0,
                       ),
                       signupButton,
+                      errortext,
                       SizedBox(
                         height:  10.0,
                       ),

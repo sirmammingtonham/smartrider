@@ -15,14 +15,19 @@ import 'package:flutter/services.dart' show rootBundle;
 
 // data imports
 import 'package:smartrider/util/data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final LatLngBounds rpiBounds = LatLngBounds(
-  // southwest: const LatLng(42.720779, -73.698129),
   southwest: const LatLng(42.691255, -73.698129),
   northeast: const LatLng(42.751583, -73.616713),
-  // northeast: const LatLng(42.739179, -73.659123),
 );
 
+final CameraPosition kInitialPosition = const CameraPosition(
+  target: LatLng(42.729280, -73.679056),
+  zoom: 15.0,
+);
+
+final GlobalKey<ShuttleMapState> mapState = GlobalKey<ShuttleMapState>();
 
 class ShuttleMap extends StatefulWidget {
   ShuttleMap({Key key}) : super(key: key);
@@ -33,15 +38,10 @@ class ShuttleMap extends StatefulWidget {
 class ShuttleMapState extends State<ShuttleMap> {
   ShuttleMapState();
 
-  static final CameraPosition _kInitialPosition = const CameraPosition(
-    target: LatLng(42.729280, -73.679056),
-    zoom: 15.0,
-  );
-
-  CameraPosition _position = _kInitialPosition;
+  CameraPosition _position = kInitialPosition;
   bool _isMapCreated = false;
   bool _isMoving = false;
-  bool _compassEnabled = true;
+  bool _compassEnabled = false;
   bool _mapToolbarEnabled = true;
   CameraTargetBounds _cameraTargetBounds = CameraTargetBounds(rpiBounds);
   MinMaxZoomPreference _minMaxZoomPreference = MinMaxZoomPreference(14.0, 18.0);
@@ -58,29 +58,29 @@ class ShuttleMapState extends State<ShuttleMap> {
   String _lightMapStyle;
   String _darkMapStyle;
 
-  Set<Marker> markers = {};
-  List<LatLng> westPoints = [];
-  List<LatLng> southPoints = [];
-  List<LatLng> northPoints = [];
-  Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
-  int _polylineIdCounter = 1;
-  BitmapDescriptor shuttleIcon, busIcon;
-  PolylineId selectedPolyline;
+  // maps of all possible elements we can draw (so ppl can toggle them through settings)
+  Map<String, List<Marker>> _markerMap = <String, List<Marker>>{};
+  Map<String, Polyline> _busPolylines = <String, Polyline>{};
+  Map<String, Polyline> _shuttlePolylines = <String, Polyline>{}; 
+  // the actual elements that we are drawing at a given time
+  Set<Polyline> _currentPolylines = <Polyline>{};
+  Set<Marker> _currentMarkers = <Marker>{};
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> _initMapElements() async {
+    Map<int, Marker> shuttle_markers = {};
+    BitmapDescriptor shuttleIcon, busIcon;
 
-    BitmapDescriptor.fromAssetImage(
+    await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(),
-      'assets/marker_shuttle.png').then((onValue) {
+      'assets/markers/2.0x/marker_shuttle.png').then((onValue) {
         shuttleIcon = onValue;
         rootBundle.loadString('assets/shuttle_jsons/stops.json').then((string) {
         var data = json.decode(string);
         data.forEach( (stop) {
-          var position = LatLng(stop['latitude'], stop['longitude']);
-          markers.add(Marker(
+          LatLng position = LatLng(stop['latitude'], stop['longitude']);
+          shuttle_markers[stop['id']] = Marker(
             icon: shuttleIcon,
+            infoWindow: InfoWindow(title:stop['name']),
             markerId: MarkerId(stop['id'].toString()),
             position: position,
             onTap: () {
@@ -89,24 +89,27 @@ class ShuttleMapState extends State<ShuttleMap> {
                   CameraPosition(
                     target: position,
                     zoom: 18,
-                    tilt: 50)  
+                    tilt: 50
+                  )  
                 ),
               );
             }
-          ));
+          );
         });
       });
     });
 
-    BitmapDescriptor.fromAssetImage(
+    await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(),
-      'assets/marker_bus.png').then((onValue) {
+      'assets/markers/2.0x/marker_bus.png').then((onValue) {
         busIcon = onValue;
-        busStopLists.forEach((List<List<String>> stopList) {
+        busStopMap.forEach((String routeName, List<List<String>> stopList) {
+        List<Marker> m = [];
         stopList.forEach((stopData) {
           var position = LatLng(double.parse(stopData[1]), double.parse(stopData[2]));
-          markers.add(Marker(
+          m.add(Marker(
             icon: busIcon,
+            infoWindow: InfoWindow(title:stopData[0]), 
             markerId: MarkerId(stopData[3]),
             position: position,
             onTap: () {
@@ -120,9 +123,71 @@ class ShuttleMapState extends State<ShuttleMap> {
               );
             }
           ));
+          _markerMap[routeName] = m;
         });
       });
     });
+
+    String string = await rootBundle.loadString('assets/shuttle_jsons/routes.json');
+    var data = json.decode(string);
+    data.forEach( (route) {
+      print(route);
+      String name = route['name'];
+      PolylineId id = PolylineId(name);
+      List<LatLng> points = [];
+      route['points'].forEach((point) {
+        points.add(LatLng(point['latitude'], point['longitude']));
+      });
+      Polyline line = Polyline(
+        polylineId: id,
+        color: Color(int.parse('ff' + route['color'], radix: 16)),
+        width: route['width'],
+        points: points,
+      );
+      _markerMap[name] = List<Marker>();
+      print(route['stop_ids']);
+      route['stop_ids'].forEach( (var id) {
+        _markerMap[name].add(shuttle_markers[id]);
+      });
+      _shuttlePolylines[name] = line;
+    });
+
+    final busLineColors = [
+      Colors.cyan,
+      Colors.pink,
+      Colors.lightGreen,
+    ];
+
+    final busIdentifiers = [
+      "87Route",
+      "286Route",
+      "289Route",
+    ];
+
+    busPolylines.asMap().forEach((int idx, List<List<double>> rawLine) {
+      PolylineId id = PolylineId(busIdentifiers[idx]);
+      List<LatLng> linePoints = List<LatLng>();
+      rawLine.forEach((pair) {
+        linePoints.add(LatLng(pair[0], pair[1]));
+      });
+      Polyline busLine = Polyline(
+        polylineId: id,
+        patterns: <PatternItem>[PatternItem.dash(50), PatternItem.gap(50)],
+        color: busLineColors[idx],
+        width: 5,
+        zIndex: 0,
+        points: linePoints,
+      );
+      _busPolylines[busIdentifiers[idx]] = busLine;
+    });
+
+    return;
+  }
+  
+
+  @override
+  void initState() {
+    super.initState();
 
     rootBundle.loadString('assets/map_styles/aubergine.json').then((string) {
       _darkMapStyle = string;
@@ -131,26 +196,10 @@ class ShuttleMapState extends State<ShuttleMap> {
       _lightMapStyle = string;
     });
 
-    rootBundle.loadString('assets/shuttle_jsons/west.json').then((string) {
-      var data = json.decode(string);
-      data.forEach( (point) {
-        westPoints.add(LatLng(point['latitude'], point['longitude']));
-      });
+    _initMapElements().then((_) {
+      setPolylines();
     });
 
-    rootBundle.loadString('assets/shuttle_jsons/south.json').then((string) {
-      var data = json.decode(string);
-      data.forEach( (point) {
-        southPoints.add(LatLng(point['latitude'], point['longitude']));
-      });
-    });
-
-    rootBundle.loadString('assets/shuttle_jsons/north.json').then((string) {
-      var data = json.decode(string);
-      data.forEach( (point) {
-        northPoints.add(LatLng(point['latitude'], point['longitude']));
-      });
-    });
   }
 
   @override
@@ -161,24 +210,22 @@ class ShuttleMapState extends State<ShuttleMap> {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
-    if (_controller != null ) {
+    if (_controller != null) {
       if (isDark) {
-          _controller.setMapStyle(_darkMapStyle);
+        _controller.setMapStyle(_darkMapStyle);
       }
       else {
-          _controller.setMapStyle(_lightMapStyle);
+        _controller.setMapStyle(_lightMapStyle);
       }
     }
 
-
     final GoogleMap googleMap = GoogleMap(
-      onMapCreated: onMapCreated,
-      initialCameraPosition: _kInitialPosition,
+      onMapCreated: _onMapCreated,
+      initialCameraPosition: kInitialPosition,
       compassEnabled: _compassEnabled,
       mapToolbarEnabled: _mapToolbarEnabled,
       cameraTargetBounds: _cameraTargetBounds,
       minMaxZoomPreference: _minMaxZoomPreference,
-      mapType: _mapType,
       rotateGesturesEnabled: _rotateGesturesEnabled,
       scrollGesturesEnabled: _scrollGesturesEnabled,
       tiltGesturesEnabled: _tiltGesturesEnabled,
@@ -188,9 +235,10 @@ class ShuttleMapState extends State<ShuttleMap> {
       myLocationButtonEnabled: _myLocationButtonEnabled,
       trafficEnabled: _myTrafficEnabled,
       onCameraMove: _updateCameraPosition,
-
-      polylines: Set<Polyline>.of(polylines.values),
-      markers: markers,
+      
+      polylines: _currentPolylines,
+      markers: _currentMarkers,
+      mapType: _mapType,
     );
 
     return Stack(
@@ -244,6 +292,7 @@ class ShuttleMapState extends State<ShuttleMap> {
       );
     }
   }
+
   void scrollToLocation(LatLng loc) {
     _controller.animateCamera(
       CameraUpdate.newCameraPosition(
@@ -262,85 +311,52 @@ class ShuttleMapState extends State<ShuttleMap> {
     });
   }
 
-  void onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) {
     setState(() {
       _controller = controller;
       _isMapCreated = true;
-
-      setPolylines();
     });
   }
 
-  void setPolylines() {
-    final int polylineCount = polylines.length;
+  // function called after settings to rebuild what elements we draw
+  // ( might have to redo this to make use of the "visible" 
+  // property of the markers and polylines for performance reasons )
+  void setPolylines() async {
+    final sharedPrefs = await SharedPreferences.getInstance();
 
-    if (polylineCount == 12) {
-      return;
+    _currentPolylines.clear();
+    _currentMarkers.clear();
+
+    if (sharedPrefs.getBool('87Route') ?? true) {
+      _currentPolylines.add(_busPolylines['87Route']);
+      _currentMarkers.addAll(_markerMap['87Route']);
+    }
+    if (sharedPrefs.getBool('286Route') ?? true) {
+      _currentPolylines.add(_busPolylines['286Route']);
+      _currentMarkers.addAll(_markerMap['286Route']);
+    }
+    if (sharedPrefs.getBool('289Route') ?? true) {
+      _currentPolylines.add(_busPolylines['289Route']);
+      _currentMarkers.addAll(_markerMap['289Route']);
     }
 
-    final busLineColors = [
-      Colors.cyan,
-      Colors.pink,
-      Colors.lightGreen,
-    ];
+    if (sharedPrefs.getBool('westRoute') ?? true) {
+      _currentPolylines.add(_shuttlePolylines['NEW West Route']);
+      _currentMarkers.addAll(_markerMap['NEW West Route']);
+    }
+    if (sharedPrefs.getBool('southRoute') ?? true) {
+      _currentPolylines.add(_shuttlePolylines['NEW South Route']);
+      _currentMarkers.addAll(_markerMap['NEW South Route']);
+    }
+    if (sharedPrefs.getBool('northRoute') ?? true) {
+      _currentPolylines.add(_shuttlePolylines['NEW North Route']);
+      _currentMarkers.addAll(_markerMap['NEW North Route']);
+    }
+    if (sharedPrefs.getBool('weekendExpress') ?? true) {
+      _currentPolylines.add(_shuttlePolylines['Weekend Express']);
+      _currentMarkers.addAll(_markerMap['Weekend Express']);
+    }
 
-    busPolylines.asMap().forEach((int idx, List<List<double>> rawLine) {
-      PolylineId buslineId = PolylineId('polyline_id_$_polylineIdCounter');
-      _polylineIdCounter++;
-      List<LatLng> linePoints = List<LatLng>();
-      rawLine.forEach((pair) {
-        linePoints.add(LatLng(pair[0],pair[1]));
-      });
-      Polyline busLine = Polyline(
-        polylineId: buslineId,
-        patterns: <PatternItem>[PatternItem.dash(50), PatternItem.gap(50)],
-        color: busLineColors[idx],
-        width: 5,
-        points: linePoints,
-      );
-      polylines[buslineId] = busLine;
-    });
-
-    final String polylineIdVal = 'polyline_id_$_polylineIdCounter';
-    _polylineIdCounter++;
-    final PolylineId polylineId = PolylineId(polylineIdVal);
-
-    final Polyline polylineWest = Polyline(
-      polylineId: polylineId,
-      color: Colors.orange,
-      width: 5,
-      points: westPoints,
-    );
-    polylines[polylineId] = polylineWest;
-
-    final String polylineIdVal1 = 'polyline_id_$_polylineIdCounter';
-    _polylineIdCounter++;
-    final PolylineId polylineId1 = PolylineId(polylineIdVal1);
-
-    final Polyline polylineSouth = Polyline(
-      polylineId: polylineId1,
-      color: Colors.blue,
-      width: 5,
-      points: southPoints,
-    );
-    polylines[polylineId1] = polylineSouth;
-
-    final String polylineIdVal2 = 'polyline_id_$_polylineIdCounter';
-    _polylineIdCounter++;
-    final PolylineId polylineId2 = PolylineId(polylineIdVal2);
-
-    final Polyline polylineNorth = Polyline(
-      polylineId: polylineId2,
-      color: Colors.purple,
-      width: 5,
-      points: northPoints,
-    );
-
-    setState(() {
-      polylines[polylineId] = polylineWest;
-      polylines[polylineId1] = polylineSouth;
-      polylines[polylineId2] = polylineNorth;
-
-    });
+    setState(() {});
   }
 }

@@ -22,9 +22,6 @@ class _HomePage extends StatefulWidget{
   _HomePageState createState() => _HomePageState();
 }
 class _HomePageState extends State<_HomePage> {
-  // We create a key so we can call schedule and map functions from this class (needed to scroll to current time)
-  static final GlobalKey<ShuttleScheduleState> scheduleState = GlobalKey<ShuttleScheduleState>();
-  static final GlobalKey<ShuttleMapState> mapState = GlobalKey<ShuttleMapState>();
   PanelController _panelController;
   double _panelHeightOpen;
   double _panelHeightClosed = 95.0;
@@ -49,7 +46,7 @@ class _HomePageState extends State<_HomePage> {
         parallaxEnabled: true,
         renderPanelSheet: false,
         backdropEnabled: true,
-        parallaxOffset: .5,
+        parallaxOffset: .1,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20.0),
         ),
@@ -81,27 +78,22 @@ class _HomePageState extends State<_HomePage> {
         panel: NotificationListener<OverscrollNotification>(
           child: 
           ShuttleSchedule(
-            key: scheduleState,
             mapState: mapState,
             panelController: _panelController,
             scheduleChanged: () {
-              _isShuttle = !_isShuttle;
-              setState(() {});
+              setState(() {
+                _isShuttle = !_isShuttle;
+              });
             },
           ),
           onNotification: (t) {
-            if (t.overscroll < -10) {
+            if (t.overscroll < -10 && t.dragDetails.delta.dx == 0) {
               _panelController.animatePanelToPosition(0);
               return true;
             }
             return false;
           },
         ),
-        // when the panel is closed, we can update the position of our list
-        //  to the current time (sneaky like so they don't see our slow animations)
-        // onPanelClosed: () {
-        //   scheduleState.currentState.scrollAllTabs();
-        // },
        ),
     );
   }

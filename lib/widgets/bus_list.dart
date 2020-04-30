@@ -1,21 +1,20 @@
 // ui dependencies
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:intl/intl.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
 
 class BusList extends StatefulWidget {
-  final List<ItemScrollController> scrollControllers;
   final Function containsFilter;
   final Function jumpMap;
-  BusList({Key key, this.scrollControllers, this.containsFilter, this.jumpMap}) : super(key: key);
+  BusList({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
   @override
   BusListState createState() => BusListState();
 }
   
-class BusListState extends State<BusList> with SingleTickerProviderStateMixin,
-AutomaticKeepAliveClientMixin<BusList> 
+class BusListState extends State<BusList> with SingleTickerProviderStateMixin
 {
   final List<Widget> busTabs = [
     Tab(text: 'Route 87'),
@@ -52,9 +51,9 @@ AutomaticKeepAliveClientMixin<BusList>
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
-              busList(0, this.widget.scrollControllers[0], this.widget.containsFilter, this.widget.jumpMap),
-              busList(1, this.widget.scrollControllers[1], this.widget.containsFilter, this.widget.jumpMap),
-              busList(2, this.widget.scrollControllers[2], this.widget.containsFilter, this.widget.jumpMap),
+              busList(0, this.widget.containsFilter, this.widget.jumpMap),
+              busList(1, this.widget.containsFilter, this.widget.jumpMap),
+              busList(2, this.widget.containsFilter, this.widget.jumpMap),
             ],
           ),
         )
@@ -63,12 +62,41 @@ AutomaticKeepAliveClientMixin<BusList>
   }
   @override
   bool get wantKeepAlive => true;
+
 }
 
-Widget busList(int idx, ItemScrollController _scrollController, Function _containsFilter, Function _jumpMap) {
+_getTimeIndex(List<String> curTimeList) {
+  // TODO: update so it works with filter
+  // List curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
+  //             busTimeLists[_tabController.index-1];
+  var now = DateTime.now();
+  var f = DateFormat('H.m');
+  double min = double.maxFinite;
+  double curTime = double.parse(f.format(now));
+  double compTime;
+  String closest;
+  curTimeList.forEach(
+    (time) {
+      var t = time.replaceAll(':', '.');
+      compTime = double.tryParse(t.substring(0,t.length-2));
+      if (compTime == null)
+        return;
+      if (t.endsWith('pm')) {
+        compTime += 12.0;
+      }
+      if ((curTime - compTime).abs() < min) {
+        min = (curTime - compTime).abs();
+        closest = time;
+      }
+    }
+  );
+  return curTimeList.indexWhere((element) => element == closest);
+}
+
+Widget busList(int idx, Function _containsFilter, Function _jumpMap) {
   return ScrollablePositionedList.builder(
     itemCount: busTimeLists[idx].length,
-    itemScrollController: _scrollController,
+    initialScrollIndex: _getTimeIndex(busTimeLists[idx]),
     itemBuilder: (context, index) {
       var curStopList = busStopLists[idx];
       var curTimeList = busTimeLists[idx];
