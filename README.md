@@ -1,4 +1,7 @@
 # smartrider 🚕
+
+<img src="docs/screenshots/home.png" alt="home_screenshot" height="550px" align="right"/>
+
 **The all-in-one RPI transportation app**
 
 developed with [Flutter](https://flutter.dev/) and [Firebase](https://firebase.google.com/).
@@ -6,17 +9,23 @@ developed with [Flutter](https://flutter.dev/) and [Firebase](https://firebase.g
 *Our goal is to make transportation in and around RPI safer and more intuitive.*
 
 ## Currently planned features:
-* Allows you to call RPI saferide like uber.
-* Contains CDTA bus and RPI shuttle schedule.
-  * And estimated map
-* Sexy UI
+- [ ] Allows you to call RPI saferide like uber.
+- [x] Contains CDTA bus and RPI shuttle schedule.
+    - [x] Allows you to search for specific departures.
+    - [ ] Shows closest stops and estimated departure time in minutes.
+- [x] Displays running routes on a map,
+    - [ ] with live-update shuttle/bus locations.
+- [x] Sexy UI
+    - [x] Dark Mode
+    - [x] Material Design
+    - [x] 3D Map
 
 Interact with our [mockups](https://xd.adobe.com/view/8a421d6f-ad6f-4196-7089-fff92621dc6f-fc73/?fullscreen)!
 
 ## Setting up (on Windows for Android Development)
 1. Install the Flutter SDK and Android Studio.
     - Follow the steps at https://flutter.dev/docs/get-started/install/windows.
-2. Setup your preferred editor for Flutter/Dart development. (You can choose to develop in either VS Code or Android Studio, but in either case Android Studio is needed to install the android emulator)
+2. Setup your preferred editor for Flutter/Dart development. <br> (You can choose to develop in either VS Code or Android Studio, but in either case Android Studio is needed to install the android emulator)
     - Follow the steps at https://flutter.dev/docs/get-started/editor?tab=vscode.
 3. Install an Android emulator.
     - Open Android Studio then open **Tools** -> **AVD Manager** -> **Create Virtual Device**
