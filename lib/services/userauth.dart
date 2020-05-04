@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:smartrider/backend/database.dart';
 class Authsystem {
 
   final FirebaseAuth fbauth = FirebaseAuth.instance;
+  final DatabaseService db = new DatabaseService();
   //   User fireuser(FirebaseUser user) {
   //     if(user != null){
   //       return User(userid: user.uid);
@@ -40,6 +41,7 @@ class Authsystem {
     try{
       AuthResult result = await fbauth.createUserWithEmailAndPassword(email: email, password: pass);
       FirebaseUser user= result.user;
+      db.updateUserData(user.displayName, 'Student');
      return  user.uid;
     }
     catch(e){
