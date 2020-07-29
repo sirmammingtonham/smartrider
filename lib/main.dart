@@ -9,6 +9,9 @@ import 'package:smartrider/util/theme_notifier.dart';
 import 'package:smartrider/data/models/shuttle/shuttle_route.dart';
 import 'package:smartrider/data/repository/shuttle_repository.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+
 void main() => runApp(
       ChangeNotifierProvider<ThemeNotifier>(
         create: (_) => ThemeNotifier(lightTheme),
@@ -22,12 +25,14 @@ class SmartRider extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'SmartRider Prototype',
-        theme: themeNotifier.getTheme(),
-        home: HomePage(),
-        // home: Loginpage(), //uncomment to switch to loginpage as first page
-        );
+      debugShowCheckedModeBanner: false,
+      title: 'SmartRider Prototype',
+      theme: themeNotifier.getTheme(),
+      home: BlocProvider<PrefsBloc>(
+        create: (context) => PrefsBloc(),
+        child: HomePage(), // Loginpage(), //uncomment to switch to loginpage as first page
+     )
+    );
   }
 }
 

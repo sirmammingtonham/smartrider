@@ -9,6 +9,7 @@ import 'package:smartrider/data/repository/shuttle_repository.dart';
 // bloc imports
 import 'package:smartrider/blocs/shuttle/shuttle_bloc.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 // custom widget imports
 import 'package:smartrider/widgets/map_ui.dart';
@@ -76,10 +77,10 @@ class _HomePageState extends State<_HomePage> {
         body: MultiBlocProvider(
           providers: [
             BlocProvider<ShuttleBloc>(
-              create: (BuildContext context) => ShuttleBloc(repository: ShuttleRepository())
+              create: (BuildContext context) => ShuttleBloc(
+                repository: ShuttleRepository()
+              )
             ),
-            // BlocProvider<BusBloc>(create: ,),
-            // BlocProvider<SaferideBloc>(create: ,),
             BlocProvider<MapBloc>(
               create: (context) => MapBloc()
             ),

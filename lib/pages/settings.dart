@@ -7,6 +7,10 @@ import 'package:smartrider/pages/login.dart';
 import 'package:smartrider/services/userauth.dart';
 import 'package:smartrider/widgets/map_ui.dart';
 
+// bloc stuff
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+
 // theme stuff
 import 'package:smartrider/util/theme_notifier.dart';
 import 'package:smartrider/util/theme.dart';
@@ -19,153 +23,155 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   // adding placeholder vars for now, replace these with sharedprefs!
-
-  // general setting vars
-  bool _darkTheme, _pushNotifications;
-
-  // shuttle vars
-  bool _northRoute, _southRoute, _westRoute, _weekendExpress;
-
-  // bus vars
-  bool _87, _286, _289;
-
-  // safe ride vars
-  bool _placeholder1, _placeholder2;
+  Map<String, bool> prefsData;
 
   Authsystem auth = Authsystem();
 
-  _updateSetting(String key, bool value) async {
-    final sharedPrefs = await SharedPreferences.getInstance();
-    sharedPrefs.setBool(key, value);
-  }
-
-   _restoreSettings() async {
-    final sharedPrefs = await SharedPreferences.getInstance();
-    setState (() {
-      // general setting vars
-      _pushNotifications = (sharedPrefs.getBool('pushNotifications') ?? true);
-
-      // shuttle vars
-      _northRoute = (sharedPrefs.getBool('northRoute') ?? true);
-      _southRoute = (sharedPrefs.getBool('southRoute') ?? true);
-      _westRoute = (sharedPrefs.getBool('westRoute') ?? true);
-      _weekendExpress = (sharedPrefs.getBool('weekendExpress') ?? false);
-
-      // bus vars
-      _87 = (sharedPrefs.getBool('87Route') ?? true);
-      _286 = (sharedPrefs.getBool('286Route') ?? true);
-      _289 = (sharedPrefs.getBool('289Route') ?? true);
-
-      // safe ride vars
-      _placeholder1 = (sharedPrefs.getBool('placeholder1') ?? true);
-      _placeholder2 = (sharedPrefs.getBool('placeholder2') ?? true);
-    });
-  }
+  PrefsBloc _bloc;
 
   @override
   void initState() {
     super.initState();
     // var now = DateTime.now();
     // if (now.weekday == DateTime.saturday || now.weekday == DateTime.sunday) {
-      // might have to change this so its only when they open the app for the first time on the weekend, 
-      // maybe include this code somewhere else
-      // _updateSetting('northRoute', false);
-      // _updateSetting('southRoute', false);
-      // _updateSetting('westRoute', false);
-      // _updateSetting('weekendExpress', true);
+    // might have to change this so its only when they open the app for the first time on the weekend,
+    // maybe include this code somewhere else
+    // _updateSetting('northRoute', false);
+    // _updateSetting('southRoute', false);
+    // _updateSetting('westRoute', false);
+    // _updateSetting('weekendExpress', true);
     // }
-    _restoreSettings();
+    _bloc = BlocProvider.of<PrefsBloc>(context);
+    _bloc.add(LoadPrefsEvent());
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
-    _darkTheme = (themeNotifier.getTheme() == darkTheme);
 
+    return BlocBuilder<PrefsBloc, PrefsState>(builder: (context, state) {
+      if (state is PrefsLoadingState) {
+        return Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      } else if (state is PrefsLoadedState) {
+        var prefs = state.prefs.getMapping;
+        return SettingsWidget(
+            bloc: _bloc,
+            prefs: prefs,
+            themeNotifier: themeNotifier,
+            auth: auth,
+            setState: () => setState(() {}));
+      } else {
+        return Center(child: Text("uh oh"));
+      }
+    });
+  }
+}
+
+class SettingsWidget extends StatelessWidget {
+  const SettingsWidget({
+    Key key,
+    @required PrefsBloc bloc,
+    @required this.prefs,
+    @required this.themeNotifier,
+    @required this.auth,
+    @required this.setState,
+  })  : _bloc = bloc,
+        super(key: key);
+
+  final PrefsBloc _bloc;
+  final Map<String, bool> prefs;
+  final ThemeNotifier themeNotifier;
+  final Authsystem auth;
+  final VoidCallback setState;
+
+  @override
+  Widget build(BuildContext context) {
+    bool _darkTheme = (themeNotifier.getTheme() == darkTheme);
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        // first down arrow
-        leading: IconButton(
-          icon: Icon(Icons.arrow_downward),
-          tooltip: 'Go back',
-          onPressed: () {
-            mapState.currentState.setPolylines();
-            Navigator.pop(context);
-          },
-        ),
-        // title
-        title: Text('Settings',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 32
-            ),
-        ),
-        // second down arrow 
-        actions: <Widget>[
-          IconButton(
+        appBar: AppBar(
+          centerTitle: true,
+          // first down arrow
+          leading: IconButton(
             icon: Icon(Icons.arrow_downward),
             tooltip: 'Go back',
             onPressed: () {
-              mapState.currentState.setPolylines();
+              _bloc.add(SavePrefsEvent(prefData: prefs));
+              // mapState.currentState.setPolylines();
               Navigator.pop(context);
             },
           ),
-        ],
-      ),
-
-      body: NotificationListener<OverscrollNotification>(
-        onNotification: (t) {
-          if (t.overscroll < -15) {
-            Navigator.pop(context);
-            return true;
-          }
-          return false;
-        },
-        child: ListView(
-          children: <Widget>[
-            // GENERAL SETTINGS
-            Container(
-              margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-              child: Center(
-                child: Text('General',
-                  style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24
+          // title
+          title: Text(
+            'Settings',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
+          ),
+          // second down arrow
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.arrow_downward),
+              tooltip: 'Go back',
+              onPressed: () {
+                _bloc.add(SavePrefsEvent(prefData: prefs));
+                // mapState.currentState.setPolylines();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+        body: NotificationListener<OverscrollNotification>(
+            onNotification: (t) {
+              if (t.overscroll < -15) {
+                Navigator.pop(context);
+                return true;
+              }
+              return false;
+            },
+            child: ListView(children: <Widget>[
+              // GENERAL SETTINGS
+              Container(
+                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+                child: Center(
+                  child: Text(
+                    'General',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                 ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-              child:  Material(
-                elevation: 5,
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  padding: EdgeInsets.only(right: 10,left: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  child: Center(
+              Container(
+                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+                child: Material(
+                  elevation: 5,
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: Container(
+                    padding: EdgeInsets.only(right: 10, left: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    child: Center(
                       child: Column(
                         children: <Widget>[
                           SwitchListTile(
-                            title:  Text('Push Notifications'),
-                            value: _pushNotifications ?? false,
+                            title: Text('Push Notifications'),
+                            value: prefs['pushNotifications'],
                             onChanged: (bool value) {
-                              setState(() {
-                                _pushNotifications = value;
-                              });
-                              _updateSetting('pushNotifications', _pushNotifications);
+                              prefs['pushNotifications'] = value;
+                              setState();
                             },
                             secondary: const Icon(Icons.notifications),
                           ),
                           SwitchListTile(
-                            title:  Text('Lights Out'),
+                            title: Text('Lights Out'),
                             value: _darkTheme,
                             onChanged: (val) {
-                              setState(() {
-                                _darkTheme = val;
-                              });
+                              _darkTheme = val;
+                              setState();
                               onThemeChanged(val, themeNotifier);
                             },
                             secondary: const Icon(Icons.lightbulb_outline),
@@ -175,230 +181,209 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                 ),
-            ),
-            // SHUTTLE SETTINGS
-            Container(
-              margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-              child: Center(
-                child: Text('Shuttle Settings',
-                  style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24
+              ),
+              // SHUTTLE SETTINGS
+              Container(
+                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+                child: Center(
+                  child: Text(
+                    'Shuttle Settings',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                 ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-              child: Material(
-                elevation: 5,
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  padding: EdgeInsets.only(right: 10,left: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  child: Center(
-                    child: Column(
-                      children: <Widget>[
-                        SwitchListTile(
-                          title:  Text('North Route'),
-                          value: _northRoute ?? false,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _northRoute = value;
-                            });
-                            _updateSetting('northRoute', _northRoute);
-                          },
-                          secondary: const Icon(Icons.airport_shuttle),
-                        ),
-                        SwitchListTile(title:  Text('South Route'),
-                          value: _southRoute ?? false,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _southRoute = value;
-                            });
-                            _updateSetting('southRoute', _southRoute);
-                          },
-                          secondary: const Icon(Icons.airport_shuttle),
-                        ),
-                        SwitchListTile(
-                          title:  Text('West Route'),
-                          value: _westRoute ?? false,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _westRoute = value;
-                            });
-                            _updateSetting('westRoute', _westRoute);
-                          },
-                          secondary: const Icon(Icons.airport_shuttle),
-                        ),
-                        SwitchListTile(
-                          title:  Text('Weekend Express'),
-                          value: _weekendExpress ?? false,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _weekendExpress = value;
-                            });
-                            _updateSetting('weekendExpress', _weekendExpress);
-                          },
-                          secondary: const Icon(Icons.airport_shuttle),
-                        ),
-                      ],
+              Container(
+                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+                child: Material(
+                  elevation: 5,
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: Container(
+                    padding: EdgeInsets.only(right: 10, left: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    child: Center(
+                      child: Column(
+                        children: <Widget>[
+                          SwitchListTile(
+                            title: Text('North Route'),
+                            value: prefs['northRoute'],
+                            onChanged: (bool value) {
+                              prefs['northRoute'] = value;
+                              setState();
+                            },
+                            secondary: const Icon(Icons.airport_shuttle),
+                          ),
+                          SwitchListTile(
+                            title: Text('South Route'),
+                            value: prefs['southRoute'],
+                            onChanged: (bool value) {
+                              prefs['southRoute'] = value;
+                              setState();
+                            },
+                            secondary: const Icon(Icons.airport_shuttle),
+                          ),
+                          SwitchListTile(
+                            title: Text('West Route'),
+                            value: prefs['westRoute'],
+                            onChanged: (bool value) {
+                              prefs['westRoute'] = value;
+                              setState();
+                            },
+                            secondary: const Icon(Icons.airport_shuttle),
+                          ),
+                          SwitchListTile(
+                            title: Text('Weekend Express'),
+                            value: prefs['weekendExpress'],
+                            onChanged: (bool value) {
+                              prefs['weekendExpress'] = value;
+                              setState();
+                            },
+                            secondary: const Icon(Icons.airport_shuttle),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
 
-            // BUS SETTINGS
-            Container(
-              margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-              child: Center(
-                child: Text('Bus Settings',
-                  style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24
+              // BUS SETTINGS
+              Container(
+                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+                child: Center(
+                  child: Text(
+                    'Bus Settings',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                 ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-              child: Material(
-                elevation: 5,
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  padding: EdgeInsets.only(right: 10,left: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  child: Center(
-                    child: Column(
-                      children: <Widget>[
-                        SwitchListTile(
-                          title:  Text('87 Route'),
-                          value: _87 ?? false,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _87 = value;
-                            });
-                            _updateSetting('87Route', _87);
-                          },
-                          secondary: const Icon(Icons.directions_bus),
-                        ),
-                        SwitchListTile(
-                          title:  Text('286 Route'),
-                          value: _286 ?? false,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _286 = value;
-                            });
-                            _updateSetting('286Route', _286);
-                          },
-                          secondary: const Icon(Icons.directions_bus),
-                        ),
-                        SwitchListTile(
-                          title:  Text('289 Route'),
-                          value: _289 ?? false,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _289 = value;
-                            });
-                            _updateSetting('289Route', _289);
-                          },
-                          secondary: const Icon(Icons.directions_bus),
-                        ),
-                      ],
+              Container(
+                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+                child: Material(
+                  elevation: 5,
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: Container(
+                    padding: EdgeInsets.only(right: 10, left: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    child: Center(
+                      child: Column(
+                        children: <Widget>[
+                          SwitchListTile(
+                            title: Text('87 Route'),
+                            value: prefs['route87'],
+                            onChanged: (bool value) {
+                              prefs['route87'] = value;
+                              setState();
+                            },
+                            secondary: const Icon(Icons.directions_bus),
+                          ),
+                          SwitchListTile(
+                            title: Text('286 Route'),
+                            value: prefs['route286'],
+                            onChanged: (bool value) {
+                              prefs['route286'] = value;
+                              setState();
+                            },
+                            secondary: const Icon(Icons.directions_bus),
+                          ),
+                          SwitchListTile(
+                            title: Text('289 Route'),
+                            value: prefs['route289'],
+                            onChanged: (bool value) {
+                              prefs['route289'] = value;
+                              setState();
+                            },
+                            secondary: const Icon(Icons.directions_bus),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
 
-            // SAFE RIDE SETTINGS
-            Container(
-              margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-              child: Center(
-                child: Text('Safe Ride Settings',
-                  style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24
+              // SAFE RIDE SETTINGS
+              Container(
+                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+                child: Center(
+                  child: Text(
+                    'Safe Ride Settings',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                 ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-              child: Material(
-                elevation: 5,
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  padding: EdgeInsets.only(right: 10,left: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  child: Center(
-                    child: Column(
-                      children: <Widget>[
-                        SwitchListTile(
-                          title:  Text('Placeholder'),
-                          value: _placeholder1 ?? false,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _placeholder1 = value;
-                            });
-                            _updateSetting('placeholder1', _placeholder1);
-                          },
-                          secondary: const Icon(Icons.local_taxi),
-                        ), 
-                        SwitchListTile(
-                          title:  Text('Placeholder'),
-                          value: _placeholder2 ?? false,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _placeholder2 = value;
-                            });
-                            _updateSetting('placeholder2', _placeholder2);
-                          },
-                          secondary: const Icon(Icons.local_taxi),
-                        ),
-                      ],
+              Container(
+                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+                child: Material(
+                  elevation: 5,
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: Container(
+                    padding: EdgeInsets.only(right: 10, left: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    child: Center(
+                      child: Column(
+                        children: <Widget>[
+                          SwitchListTile(
+                            title: Text('Placeholder'),
+                            value: prefs['placeholder1'],
+                            onChanged: (bool value) {
+                              // setState(() {
+                              prefs['placeholder1'] = value;
+                              setState();
+                              // });
+                            },
+                            secondary: const Icon(Icons.local_taxi),
+                          ),
+                          SwitchListTile(
+                            title: Text('Placeholder'),
+                            value: prefs['placeholder2'],
+                            onChanged: (bool value) {
+                              prefs['placeholder2'] = value;
+                              setState();
+                            },
+                            secondary: const Icon(Icons.local_taxi),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(
-            child: Stack(
-              alignment: AlignmentDirectional.bottomCenter,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(25.0),
-                  child: RaisedButton(
-                    child: Text(
-                      'SIGN OUT',
-                      style: Theme.of(context).textTheme.button,
+              SizedBox(
+                child: Stack(
+                  alignment: AlignmentDirectional.bottomCenter,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: RaisedButton(
+                          child: Text(
+                            'SIGN OUT',
+                            style: Theme.of(context).textTheme.button,
+                          ),
+                          onPressed: () async {
+                            await auth.signout();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Loginpage()),
+                            );
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(20.0))),
                     ),
-                    onPressed: () async {
-                      await auth.signout();   
-                      Navigator.push( context,
-                        MaterialPageRoute(builder: (context) => Loginpage()),
-                      );
-                    },
-                    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0))
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          )
-        ])
-      )
-    );
+              )
+            ])));
   }
 }
 
 void onThemeChanged(bool value, ThemeNotifier themeNotifier) async {
   (value)
-    ? themeNotifier.setTheme(darkTheme)
-    : themeNotifier.setTheme(lightTheme);
+      ? themeNotifier.setTheme(darkTheme)
+      : themeNotifier.setTheme(lightTheme);
   var prefs = await SharedPreferences.getInstance();
   prefs.setBool('darkMode', value);
 }
