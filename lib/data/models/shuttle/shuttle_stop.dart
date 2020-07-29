@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class ShuttleStop {
   int id;
   double latitude;
@@ -15,6 +17,8 @@ class ShuttleStop {
       this.updated,
       this.name,
       this.description});
+
+  LatLng get getLatLng => LatLng(this.latitude, this.longitude);
 
   ShuttleStop.fromJson(Map<String, dynamic> json) {
     id = json['id'];

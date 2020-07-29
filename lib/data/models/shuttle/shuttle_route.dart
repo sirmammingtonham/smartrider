@@ -1,14 +1,17 @@
+import 'dart:ui';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class ShuttleRoute {
   int id;
   String name;
   String description;
   bool enabled;
-  String color;
+  Color color;
   int width;
   List<int> stopIds;
   String created;
   String updated;
-  List<Points> points;
+  List<Point> points;
   bool active;
   List<Schedule> schedule;
 
@@ -26,20 +29,28 @@ class ShuttleRoute {
       this.active,
       this.schedule});
 
+  Polyline get getPolyline => Polyline(
+        polylineId: PolylineId(this.name),
+        color: this.color,
+        width: 4,
+        points: this.points.map((points) => points.getLatLng).toList(),
+      );
+
+
   ShuttleRoute.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     description = json['description'];
     enabled = json['enabled'];
-    color = json['color'];
+    color = Color(int.parse(json['color'].toString().replaceAll('#', '0xff')));
     width = json['width'];
     stopIds = json['stop_ids'].cast<int>();
     created = json['created'];
     updated = json['updated'];
     if (json['points'] != null) {
-      points = new List<Points>();
+      points = new List<Point>();
       json['points'].forEach((v) {
-        points.add(new Points.fromJson(v));
+        points.add(new Point.fromJson(v));
       });
     }
     active = json['active'];
@@ -73,13 +84,15 @@ class ShuttleRoute {
   }
 }
 
-class Points {
+class Point {
   double latitude;
   double longitude;
 
-  Points({this.latitude, this.longitude});
+  Point({this.latitude, this.longitude});
 
-  Points.fromJson(Map<String, dynamic> json) {
+  LatLng get getLatLng => LatLng(latitude, longitude);
+
+  Point.fromJson(Map<String, dynamic> json) {
     latitude = json['latitude'];
     longitude = json['longitude'];
   }

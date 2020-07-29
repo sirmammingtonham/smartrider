@@ -37,7 +37,9 @@ class SearchBarState extends State<SearchBar> {
               IconButton(
                 icon: Icon(SR_Icons.Settings),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => SettingsPage()
+                  ));
                 },
               ),
               Expanded(

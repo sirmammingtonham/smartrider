@@ -90,7 +90,7 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
 
   _jumpMap(double lat, double long) {
     this.widget.panelController.animatePanelToPosition(0);
-    this.widget.mapState.currentState.scrollToLocation(LatLng(lat, long));
+    // this.widget.mapState.currentState.scrollToLocation(LatLng(lat, long));
   }
 
   @override
