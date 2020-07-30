@@ -27,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Authsystem auth = Authsystem();
 
-  PrefsBloc _bloc;
+  // PrefsBloc _bloc;
 
   @override
   void initState() {
@@ -41,13 +41,13 @@ class _SettingsPageState extends State<SettingsPage> {
     // _updateSetting('westRoute', false);
     // _updateSetting('weekendExpress', true);
     // }
-    _bloc = BlocProvider.of<PrefsBloc>(context);
-    _bloc.add(LoadPrefsEvent());
+    // _bloc = BlocProvider.of<PrefsBloc>(context);
+    // _bloc.add(LoadPrefsEvent());
   }
 
   @override
   void dispose() {
-    _bloc.close();
+    // _bloc.close();
     super.dispose();
   }
 
@@ -56,6 +56,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
 
     return BlocBuilder<PrefsBloc, PrefsState>(builder: (context, state) {
+      // print(state);
       if (state is PrefsLoadingState) {
         return Scaffold(
           body: Center(child: CircularProgressIndicator()),
@@ -63,11 +64,21 @@ class _SettingsPageState extends State<SettingsPage> {
       } else if (state is PrefsLoadedState) {
         var prefs = state.prefs.getMapping;
         return SettingsWidget(
-            bloc: _bloc,
+            bloc: BlocProvider.of<PrefsBloc>(context),
             prefs: prefs,
             themeNotifier: themeNotifier,
             auth: auth,
             setState: () => setState(() {}));
+        // } else if (state is PrefsSavedState) {
+        //   var prefs = state.prefs.getMapping;
+        //   return SettingsWidget(
+        //       bloc: _bloc,
+        //       prefs: prefs,
+        //       themeNotifier: themeNotifier,
+        //       auth: auth,
+        //       setState: () => setState(() {}));
+      } else if (state is PrefsSavingState) {
+        return Center(child: CircularProgressIndicator());
       } else {
         return Center(child: Text("uh oh"));
       }
@@ -103,6 +114,8 @@ class SettingsWidget extends StatelessWidget {
             icon: Icon(Icons.arrow_downward),
             tooltip: 'Go back',
             onPressed: () {
+              print("goback pressed");
+              _bloc.add(LoadPrefsEvent());
               _bloc.add(SavePrefsEvent(prefData: prefs));
               // mapState.currentState.setPolylines();
               Navigator.pop(context);
@@ -119,6 +132,7 @@ class SettingsWidget extends StatelessWidget {
               icon: Icon(Icons.arrow_downward),
               tooltip: 'Go back',
               onPressed: () {
+                print("goback pressed");
                 _bloc.add(SavePrefsEvent(prefData: prefs));
                 // mapState.currentState.setPolylines();
                 Navigator.pop(context);
@@ -206,36 +220,36 @@ class SettingsWidget extends StatelessWidget {
                         children: <Widget>[
                           SwitchListTile(
                             title: Text('North Route'),
-                            value: prefs['northRoute'],
+                            value: prefs['NEW North Route'],
                             onChanged: (bool value) {
-                              prefs['northRoute'] = value;
+                              prefs['NEW North Route'] = value;
                               setState();
                             },
                             secondary: const Icon(Icons.airport_shuttle),
                           ),
                           SwitchListTile(
                             title: Text('South Route'),
-                            value: prefs['southRoute'],
+                            value: prefs['NEW South Route'],
                             onChanged: (bool value) {
-                              prefs['southRoute'] = value;
+                              prefs['NEW South Route'] = value;
                               setState();
                             },
                             secondary: const Icon(Icons.airport_shuttle),
                           ),
                           SwitchListTile(
                             title: Text('West Route'),
-                            value: prefs['westRoute'],
+                            value: prefs['NEW West Route'],
                             onChanged: (bool value) {
-                              prefs['westRoute'] = value;
+                              prefs['NEW West Route'] = value;
                               setState();
                             },
                             secondary: const Icon(Icons.airport_shuttle),
                           ),
                           SwitchListTile(
                             title: Text('Weekend Express'),
-                            value: prefs['weekendExpress'],
+                            value: prefs['Weekend Express'],
                             onChanged: (bool value) {
-                              prefs['weekendExpress'] = value;
+                              prefs['Weekend Express'] = value;
                               setState();
                             },
                             secondary: const Icon(Icons.airport_shuttle),
@@ -363,12 +377,12 @@ class SettingsWidget extends StatelessWidget {
                             style: Theme.of(context).textTheme.button,
                           ),
                           onPressed: () async {
-                            await auth.signout();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Loginpage()),
-                            );
+                            // await auth.signout();
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => Loginpage()),
+                            // );
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(20.0))),

@@ -20,4 +20,5 @@ class SavePrefsEvent extends PrefsEvent {
 
   @override
   List<Object> get props => [this.prefData];
+
 }

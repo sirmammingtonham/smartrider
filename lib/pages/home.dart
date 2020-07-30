@@ -84,6 +84,7 @@ class _HomePageState extends State<_HomePage> {
             BlocProvider<MapBloc>(
               create: (context) => MapBloc()
             ),
+            // BlocProvider<PrefsBloc>(create: (context) => PrefsBloc(),)
           ],
           child: Stack(children: <Widget>[         
             ShuttleMap(

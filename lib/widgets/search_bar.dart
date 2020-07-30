@@ -39,12 +39,10 @@ class SearchBarState extends State<SearchBar> {
               IconButton(
                 icon: Icon(SR_Icons.Settings),
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BlocProvider<PrefsBloc>(
-                            create: (context) => PrefsBloc(),
-                            child: SettingsPage())));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    // BlocProvider.of<PrefsBloc>(context).add(LoadPrefsEvent());
+                    return SettingsPage();
+                  }));
                 },
               ),
               Expanded(

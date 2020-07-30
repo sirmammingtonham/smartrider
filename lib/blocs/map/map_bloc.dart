@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -13,9 +16,24 @@ final LatLngBounds rpiBounds = LatLngBounds(
 
 class MapBloc extends Bloc<MapEvent, MapState> {
   GoogleMapController _controller;
+  // final PrefsBloc prefsBloc;
+  // StreamSubscription prefsBlocSubscription;
 
   /// MapBloc named constructor
   MapBloc() : super(MapInitializingState());
+  // {
+  //   prefsBlocSubscription = prefsBloc.listen((state) {
+  //     if (state is PrefsSavedState) {
+
+  //     }
+  //   });
+  // }
+
+  @override
+  Future<void> close() {
+    // prefsBlocSubscription.cancel();
+    return super.close();
+  }
 
   /// non-state related functions
   GoogleMapController get getMapController => _controller;

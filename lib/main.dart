@@ -14,6 +14,10 @@ import 'package:smartrider/data/repository/shuttle_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:dio/dio.dart';
+
 void main() => runApp(
       ChangeNotifierProvider<ThemeNotifier>(
         create: (_) => ThemeNotifier(lightTheme),
@@ -27,33 +31,44 @@ class SmartRider extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
     final Authsystem userRepository = Authsystem();
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'SmartRider Prototype',
-      theme: themeNotifier.getTheme(),
-      home: MultiBlocProvider(
-              providers:[ BlocProvider<PrefsBloc>(
-          create: (context) => PrefsBloc(), 
-     ),
-     BlocProvider<AuthenticationBloc>(
-       create: (context) => AuthenticationBloc(userRepository: userRepository),
-       )
-              ],
-            child: HomePage(),
-      )
-    );
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<PrefsBloc>(
+            create: (context) => PrefsBloc(),
+          ),
+          BlocProvider<AuthenticationBloc>(
+            create: (context) =>
+                AuthenticationBloc(userRepository: userRepository),
+          )
+        ],
+        child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'SmartRider Prototype',
+            theme: themeNotifier.getTheme(),
+            home: HomePage(),
+            ));
   }
 }
 
 class Test extends StatelessWidget {
-  void _test() async {
-    ShuttleRepository repo = ShuttleRepository();
-    var ye = await repo.getRoutes;
-    int i = 0;
-    ye.forEach((element) {
-      print('${i++}');
-      print(element);
-    });
+  // void _test() async {
+  //   ShuttleRepository repo = ShuttleRepository();
+  //   var ye = await repo.getRoutes;
+  //   int i = 0;
+  //   ye.forEach((element) {
+  //     print('${i++}');
+  //     print(element);
+  //   });
+  // }
+
+  void _test2() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      Response response = await Dio().download('https://www.cdta.org/schedules/google_transit.zip', '${directory.path}/test.zip');
+      print("xxx");
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -65,12 +80,11 @@ class Test extends StatelessWidget {
       body: Center(child: const Text('Press the button below!')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _test();
+          _test2();
         },
         child: Icon(Icons.navigation),
         backgroundColor: Colors.green,
       ),
-
     );
   }
 }

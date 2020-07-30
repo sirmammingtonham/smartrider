@@ -10,22 +10,49 @@ part 'prefs_state.dart';
 
 class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   /// ShuttleBloc named constructor
-  PrefsBloc() : super(PrefsLoadingState());
+  PrefsData _prefs;
+  PrefsBloc() : super(PrefsLoadingState()) {
+    _prefs = PrefsData();
+  }
+
+  _updatePrefsWeekend() async {
+    var curDay = DateTime.now().weekday;
+    if (curDay == DateTime.saturday || curDay == DateTime.sunday) {
+      
+    }
+    final sharedPrefs = await SharedPreferences.getInstance();
+    sharedPrefs.setBool('NEW North Route', false);
+    sharedPrefs.setBool('NEW South Route', false);
+    sharedPrefs.setBool('NEW West Route', false);
+    sharedPrefs.setBool('Weekend Express', true);
+  }
+
+  // probably need some backup stuff to save preferences from last weekday
+  // _updatePrefsWeekday() async {
+  //   final sharedPrefs = await SharedPreferences.getInstance();
+  //   sharedPrefs.setBool('NEW North Route', false);
+  //   sharedPrefs.setBool('NEW South Route', false);
+  //   sharedPrefs.setBool('NEW West Route', false);
+  //   sharedPrefs.setBool('Weekend Express', true);
+  // }
 
   @override
   Stream<PrefsState> mapEventToState(PrefsEvent event) async* {
     if (event is LoadPrefsEvent) {
       final sharedPrefs = await SharedPreferences.getInstance();
-      PrefsData prefs = PrefsData();
-      prefs.getMapping.updateAll((key, value) => sharedPrefs.getBool(key) ?? true);
-      yield PrefsLoadedState(prefs: prefs);
+      _prefs.getMapping
+          .updateAll((key, value) => sharedPrefs.getBool(key) ?? true);
+      print(_prefs.getMapping);
+      yield PrefsLoadedState(prefs: _prefs);
     } else if (event is SavePrefsEvent) {
       yield PrefsSavingState();
       final sharedPrefs = await SharedPreferences.getInstance();
-      event.prefData.forEach((key, value) {
+      _prefs.mapping.forEach((key, value) {
         sharedPrefs.setBool(key, value);
       });
-      yield PrefsSavedState();
+      _prefs.getMapping
+          .updateAll((key, value) => sharedPrefs.getBool(key) ?? true);
+      yield PrefsLoadedState(prefs: _prefs);
     } else {
       yield PrefsErrorState(message: "something wrong with prefs_bloc");
     }

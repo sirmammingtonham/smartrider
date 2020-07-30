@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.2.0 <3.0.0"
+  sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
 
@@ -42,6 +42,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   day_night_switch: ^0.0.2+1
   intl: ^0.16.1
+
+  dio: ^3.0.9
 
   #state management
   flutter_bloc: ^6.0.1
