@@ -11,7 +11,7 @@ class Authsystem {
     print(email);
     print(password);
     return _firebaseAuth.signInWithEmailAndPassword(
-      email: email,
+      email: email.trim(),
       password: password,
     );
   }
