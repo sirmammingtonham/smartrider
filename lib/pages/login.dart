@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
+import 'package:smartrider/main.dart';
 import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/pages/settings.dart';
 import 'package:smartrider/services/user_repository.dart';
 import 'signup.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 
  class Loginpage extends StatelessWidget {
       // This widget is the root of your application.
+      
       @override
       Widget build(BuildContext context) {
         return MaterialApp(
@@ -13,28 +19,73 @@ import 'signup.dart';
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: MyHomePage(title: 'Smartrider Login'),
+          home: BlocBuilder<AuthenticationBloc, AuthenticationState>(builder: (context,state){
+            if(state is AuthenticationInit){  //output loading screen
+              return MyHomePage(title: "SmartRiderLogin",bloc: BlocProvider.of<AuthenticationBloc>(context),err: "");
+            }
+            else if (state is AuthenticationLoggedIn){  //if the user is already logged in stay that way
+              return SettingsPage();
+               //  Navigator.push(
+                //    context,
+                // MaterialPageRoute(builder: (context) => MyHomePage(title: "SmartRiderLogin",bloc: widget.bloc),
+                //   ));
+            }
+            else if (state is AuthenticationSuccess){
+              return Stack(children: <Widget>[Center(
+                              child: RaisedButton(
+                            child: Text(
+                              'SIGN OUT',
+                              style: Theme.of(context).textTheme.button,
+                            ),
+                            onPressed: ()  {
+                              BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationLoggedOut(),);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Loginpage()),
+                              );
+                            },
+                            shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(20.0))),
+              ),],);
+            }
+            else if (state is AuthenticationFailure){
+              return MyHomePage(title: "SmartRiderLogin",bloc: BlocProvider.of<AuthenticationBloc>(context), err:"email or password is incorrect");
+            }
+          }),
         );
       }
     }
 
  class MyHomePage extends StatefulWidget {
-      MyHomePage({Key key, this.title}) : super(key: key);
+   final AuthenticationBloc bloc;
+      MyHomePage({Key key, 
+      @required this.title,
+      @required this.bloc,
+      @required this.err,
+      }) : super(key: key);
       final String title;
+      final String err; // error from previous iteration
+      
       @override
       _MyHomePageState createState() => _MyHomePageState();
     }
 
     class _MyHomePageState extends State<MyHomePage> {
+    
       TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
        String email = '';
       String password = '';
       String error = '';
       final Authsystem _auth = Authsystem();
       final formkey= GlobalKey<FormState>();
+
       @override
       Widget build(BuildContext context) {
-
+        if (widget.err == "") {  //if previous iteration didn't throw auth failure
+        widget.bloc.add(AuthenticationStarted());
+        }
+        error = widget.err;
         final emailField = TextFormField(
           validator:(val) {
              if(val.isEmpty){
@@ -101,23 +152,34 @@ import 'signup.dart';
             padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
             onPressed: () async{
                 if(formkey.currentState.validate()){
-                 dynamic result = await _auth.signinwithEandP(email, password);
-                 if(result == null){
-                   setState(() {
-                     error = "Wrong credentials";
-                   });
-                 }
-                 else{
-                     Navigator.push(
-                              context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
-                                );
-                 }
-
+                 widget.bloc.add(AuthenticationLoggedIn(email,password),);
                 }
 
             },
             child: Text("Login",
+                textAlign: TextAlign.center,
+                style: style.copyWith(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        );
+         final rememberme = Material(
+          elevation: 4.0,
+          borderRadius: BorderRadius.circular(10.0),
+          color: Color.fromRGBO(93, 188, 210,1),
+          child: MaterialButton(
+            minWidth: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            onPressed: () async{
+                if(formkey.currentState.validate()){
+                  widget.bloc.add(AuthenticationLoggedIn(email,password),);
+                //  Navigator.push(
+                //    context,
+                // MaterialPageRoute(builder: (context) => MyHomePage(title: "SmartRiderLogin",bloc: widget.bloc),
+                //   ));
+                }
+
+            },
+            child: Text("Remember Me",
                 textAlign: TextAlign.center,
                 style: style.copyWith(
                     color: Colors.white, fontWeight: FontWeight.bold)),
@@ -131,10 +193,10 @@ import 'signup.dart';
            minWidth: MediaQuery.of(context).size.width,
             padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
             onPressed: () {
-                Navigator.push(
-                   context,
-                MaterialPageRoute(builder: (context) => Signuppage()),
-                  );
+                // Navigator.push(
+                //    context,
+                // MaterialPageRoute(builder: (context) => Signuppage()),
+                //   );
             },
             child: Text("Signup",
                 textAlign: TextAlign.center,
@@ -175,7 +237,7 @@ import 'signup.dart';
                       SizedBox(
                         height: 15.0,
                       ),
-                      signupButton,
+                      //signupButton,
                       errortext,
                       SizedBox(
                         height:  10.0,

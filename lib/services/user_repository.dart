@@ -11,11 +11,12 @@ class Authsystem {
 
 
 
- Future<void> signInWithCredentials(String email, String password) {
+ Future<AuthResult> signInWithCredentials(String email, String password) {
   return _firebaseAuth.signInWithEmailAndPassword(
     email: email,
     password: password,
   );
+  
 }
 
   Future<void> signUp({String email, String password}) async {

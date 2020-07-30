@@ -39,7 +39,9 @@ class SmartRider extends StatelessWidget {
        create: (context) => AuthenticationBloc(userRepository: userRepository),
        )
               ],
-            child: HomePage(),
+            //child: HomePage()
+            ///  uncomment code below to code to test auth
+            child: Loginpage(),
       )
     );
   }

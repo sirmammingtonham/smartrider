@@ -7,7 +7,7 @@ abstract class AuthenticationState extends Equatable {
   List<Object> get props => [];
 }
 
-class AuthenticationInitial extends AuthenticationState {}
+class AuthenticationInit extends AuthenticationState {}
 
 class AuthenticationSuccess extends AuthenticationState {
   final String displayName;
