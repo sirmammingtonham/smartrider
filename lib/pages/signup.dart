@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/pages/login.dart';
-import 'package:smartrider/services/userauth.dart';
+import 'package:smartrider/services/user_repository.dart';
  
 
  class Signuppage extends StatelessWidget {

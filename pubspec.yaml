@@ -24,7 +24,7 @@ dependencies:
   #firebase dependencies
   firebase_core: ^0.4.0+9
   firebase_analytics: ^5.0.2
-  firebase_auth: ^0.14.0+5
+  firebase_auth: ^0.15.0+1
   cloud_firestore: ^0.12.9+5
    
   #map dependencies

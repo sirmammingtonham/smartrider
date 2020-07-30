@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/pages/login.dart';
 import 'package:smartrider/pages/signup.dart';
+import 'package:smartrider/services/user_repository.dart';
 import 'package:smartrider/util/theme.dart';
 import 'package:smartrider/util/theme_notifier.dart';
 
@@ -24,14 +26,21 @@ class SmartRider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
+    final Authsystem userRepository = Authsystem();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'SmartRider Prototype',
       theme: themeNotifier.getTheme(),
-      home: BlocProvider<PrefsBloc>(
-        create: (context) => PrefsBloc(),
-        child: HomePage(), // Loginpage(), //uncomment to switch to loginpage as first page
-     )
+      home: MultiBlocProvider(
+              providers:[ BlocProvider<PrefsBloc>(
+          create: (context) => PrefsBloc(), 
+     ),
+     BlocProvider<AuthenticationBloc>(
+       create: (context) => AuthenticationBloc(userRepository: userRepository),
+       )
+              ],
+            child: HomePage(),
+      )
     );
   }
 }
@@ -61,6 +70,7 @@ class Test extends StatelessWidget {
         child: Icon(Icons.navigation),
         backgroundColor: Colors.green,
       ),
+
     );
   }
 }

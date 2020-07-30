@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 // settings and login stuff
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartrider/pages/login.dart';
-import 'package:smartrider/services/userauth.dart';
+import 'package:smartrider/services/user_repository.dart';
 import 'package:smartrider/widgets/map_ui.dart';
 
 // bloc stuff
