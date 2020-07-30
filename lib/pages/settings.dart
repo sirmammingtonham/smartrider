@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // settings and login stuff
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/pages/login.dart';
 import 'package:smartrider/services/user_repository.dart';
 import 'package:smartrider/widgets/map_ui.dart';
@@ -376,13 +377,13 @@ class SettingsWidget extends StatelessWidget {
                             'SIGN OUT',
                             style: Theme.of(context).textTheme.button,
                           ),
-                          onPressed: () async {
-                            // await auth.signout();
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (context) => Loginpage()),
-                            // );
+                          onPressed: ()  {
+                            BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationLoggedOut(),);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Loginpage()),
+                            );
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(20.0))),

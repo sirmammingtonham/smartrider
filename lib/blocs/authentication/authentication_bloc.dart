@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';
 import 'package:smartrider/services/user_repository.dart';
 part 'authentication_event.dart';
@@ -13,7 +15,8 @@ class AuthenticationBloc
   AuthenticationBloc({@required Authsystem userRepository})
       : assert(userRepository != null),
         _userRepository = userRepository,
-        super(AuthenticationInitial());
+        
+        super(AuthenticationInit());
 
   @override
   Stream<AuthenticationState> mapEventToState(
@@ -22,7 +25,7 @@ class AuthenticationBloc
     if (event is AuthenticationStarted) {
       yield* _mapAuthenticationStartedToState();
     } else if (event is AuthenticationLoggedIn) {
-      yield* _mapAuthenticationLoggedInToState();
+      yield* _mapAuthenticationLoggedInToState(event.email,event.pass);
     } else if (event is AuthenticationLoggedOut) {
       yield* _mapAuthenticationLoggedOutToState();
     }
@@ -38,8 +41,26 @@ class AuthenticationBloc
     }
   }
 
-  Stream<AuthenticationState> _mapAuthenticationLoggedInToState() async* {
-    yield AuthenticationSuccess(await _userRepository.getUser());
+  Stream<AuthenticationState> _mapAuthenticationLoggedInToState(e,p) async* {
+    // Future<String> currentuser =  _userRepository.getUser();
+    // if(currentuser != e){  //cannot find current user
+    //     yield AuthenticationFailure();
+    //     print(currentuser);
+    //     print("adjflajdslkfjasldkfjlkasdjflasdjflasdfasdfasdfasdfsafasfasfsfdf");
+    //     print(e);
+    // }
+    // else{ // can find current user
+     AuthResult result = await _userRepository.signInWithCredentials(e, p);  //attempt to signin user
+
+      if(result==null){   //wrong email or password
+        yield AuthenticationFailure();
+        print("wryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
+      }
+      else{  //enter else if signing in user is successful
+        yield AuthenticationSuccess(e);
+         print("ok");
+      }
+    
   }
 
   Stream<AuthenticationState> _mapAuthenticationLoggedOutToState() async* {
