@@ -29,6 +29,9 @@ class AuthenticationBloc
     } else if (event is AuthenticationLoggedOut) {
       yield* _mapAuthenticationLoggedOutToState();
     }
+    else if (event is AuthenticationSignUp){
+      yield* _mapAuthenticationSignUpToState(event.email, event.pass);
+    }
   }
 
   Stream<AuthenticationState> _mapAuthenticationStartedToState() async* {
@@ -42,23 +45,13 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _mapAuthenticationLoggedInToState(e,p) async* {
-    // Future<String> currentuser =  _userRepository.getUser();
-    // if(currentuser != e){  //cannot find current user
-    //     yield AuthenticationFailure();
-    //     print(currentuser);
-    //     print("adjflajdslkfjasldkfjlkasdjflasdjflasdfasdfasdfasdfsafasfasfsfdf");
-    //     print(e);
-    // }
-    // else{ // can find current user
      AuthResult result = await _userRepository.signInWithCredentials(e, p);  //attempt to signin user
 
       if(result==null){   //wrong email or password
         yield AuthenticationFailure();
-        print("wryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
       }
       else{  //enter else if signing in user is successful
         yield AuthenticationSuccess(e);
-         print("ok");
       }
     
   }
@@ -66,5 +59,15 @@ class AuthenticationBloc
   Stream<AuthenticationState> _mapAuthenticationLoggedOutToState() async* {
     yield AuthenticationFailure();
     _userRepository.signOut();
+  }
+
+  Stream<AuthenticationState> _mapAuthenticationSignUpToState(e,p) async*{
+    AuthResult result = await _userRepository.signUp(e,p);
+     if(result==null){   //wrong email or password
+        yield AuthenticationFailure();
+      }
+      else{  //sign up user is successful
+        yield AuthenticationSuccess(e);
+      }
   }
 }

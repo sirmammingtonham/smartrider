@@ -25,10 +25,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
             }
             else if (state is AuthenticationLoggedIn){  //if the user is already logged in stay that way
               return SettingsPage();
-               //  Navigator.push(
-                //    context,
-                // MaterialPageRoute(builder: (context) => MyHomePage(title: "SmartRiderLogin",bloc: widget.bloc),
-                //   ));
             }
             else if (state is AuthenticationSuccess){
               return Stack(children: <Widget>[Center(
@@ -193,10 +189,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
            minWidth: MediaQuery.of(context).size.width,
             padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
             onPressed: () {
-                // Navigator.push(
-                //    context,
-                // MaterialPageRoute(builder: (context) => Signuppage()),
-                //   );
+                Navigator.push(
+                   context,
+                MaterialPageRoute(builder: (context) => Signuppage()),
+                  );
             },
             child: Text("Signup",
                 textAlign: TextAlign.center,
@@ -237,7 +233,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
                       SizedBox(
                         height: 15.0,
                       ),
-                      //signupButton,
+                      signupButton,
                       errortext,
                       SizedBox(
                         height:  10.0,
