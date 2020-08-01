@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:smartrider/pages/home.dart';
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/data/repository/authentication_repository.dart';
+
+// page imports
+import 'package:smartrider/pages/login.dart';
+import 'package:smartrider/pages/home.dart';
 
 void main() => runApp(SmartRider());
 
@@ -33,7 +36,7 @@ class SmartRider extends StatelessWidget {
           title: 'SmartRider Prototype',
           home: BlocBuilder<PrefsBloc, PrefsState>(
               builder: (context, state) => _buildWithTheme(context, state)),
-          // home: Loginpage()
+          // home: LoginPage()
         ));
   }
 }

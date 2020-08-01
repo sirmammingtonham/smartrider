@@ -355,7 +355,7 @@ class SettingsWidget extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Loginpage()),
+                                  builder: (context) => LoginPage()),
                             );
                           },
                           shape: RoundedRectangleBorder(
