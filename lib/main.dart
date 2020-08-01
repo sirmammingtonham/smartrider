@@ -47,8 +47,8 @@ class SmartRider extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'SmartRider Prototype',
             theme: themeNotifier.getTheme(),
-            //home: HomePage(),
-           home: Loginpage()
+            home: HomePage(),
+       //    home: Loginpage()
             ));
   }
 }
