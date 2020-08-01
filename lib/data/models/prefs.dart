@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 class PrefsData extends Equatable {
   final Map<String, bool> mapping = {
     'pushNotifications': true,
+    'darkMode': false,
     'placeholder1': true,
     'placeholder2': true,
     'NEW North Route': true,

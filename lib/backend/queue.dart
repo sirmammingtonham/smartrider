@@ -14,7 +14,7 @@ class QueueService{
 }
    */ //THis looks like it will be good for populating the queue
 
-  final CollectionReference _Qcollection = Firestore.instance.collection(anything we want here);
+  // final CollectionReference _Qcollection = Firestore.instance.collection(anything we want here);
   QueueService({this.usid});
   Queue<String> queue = new Queue<String>();
 

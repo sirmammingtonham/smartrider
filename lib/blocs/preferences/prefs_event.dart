@@ -20,5 +20,12 @@ class SavePrefsEvent extends PrefsEvent {
 
   @override
   List<Object> get props => [this.prefData];
+}
 
+class ThemeChangedEvent extends PrefsEvent {
+  final bool isDark;
+  const ThemeChangedEvent(this.isDark);
+
+  @override
+  List<Object> get props => [this.isDark];
 }

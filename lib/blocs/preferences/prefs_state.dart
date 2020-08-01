@@ -23,6 +23,8 @@ class PrefsLoadedState extends PrefsState {
 
   @override
   List<Object> get props => [this.prefs];
+
+  ThemeData get getTheme => prefs.getMapping['darkMode'] ? darkTheme : lightTheme;
 }
 
 /// This class represents what user will see when fetching data

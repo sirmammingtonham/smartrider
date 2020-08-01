@@ -2,20 +2,13 @@
 import 'package:flutter/material.dart';
 
 // settings and login stuff
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/pages/login.dart';
 import 'package:smartrider/services/user_repository.dart';
-import 'package:smartrider/widgets/map_ui.dart';
 
 // bloc stuff
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
-
-// theme stuff
-import 'package:smartrider/util/theme_notifier.dart';
-import 'package:smartrider/util/theme.dart';
-import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -28,34 +21,18 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Authsystem auth = Authsystem();
 
-  // PrefsBloc _bloc;
-
   @override
   void initState() {
     super.initState();
-    // var now = DateTime.now();
-    // if (now.weekday == DateTime.saturday || now.weekday == DateTime.sunday) {
-    // might have to change this so its only when they open the app for the first time on the weekend,
-    // maybe include this code somewhere else
-    // _updateSetting('northRoute', false);
-    // _updateSetting('southRoute', false);
-    // _updateSetting('westRoute', false);
-    // _updateSetting('weekendExpress', true);
-    // }
-    // _bloc = BlocProvider.of<PrefsBloc>(context);
-    // _bloc.add(LoadPrefsEvent());
   }
 
   @override
   void dispose() {
-    // _bloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
-
     return BlocBuilder<PrefsBloc, PrefsState>(builder: (context, state) {
       // print(state);
       if (state is PrefsLoadingState) {
@@ -67,17 +44,8 @@ class _SettingsPageState extends State<SettingsPage> {
         return SettingsWidget(
             bloc: BlocProvider.of<PrefsBloc>(context),
             prefs: prefs,
-            themeNotifier: themeNotifier,
             auth: auth,
             setState: () => setState(() {}));
-        // } else if (state is PrefsSavedState) {
-        //   var prefs = state.prefs.getMapping;
-        //   return SettingsWidget(
-        //       bloc: _bloc,
-        //       prefs: prefs,
-        //       themeNotifier: themeNotifier,
-        //       auth: auth,
-        //       setState: () => setState(() {}));
       } else if (state is PrefsSavingState) {
         return Center(child: CircularProgressIndicator());
       } else {
@@ -92,7 +60,6 @@ class SettingsWidget extends StatelessWidget {
     Key key,
     @required PrefsBloc bloc,
     @required this.prefs,
-    @required this.themeNotifier,
     @required this.auth,
     @required this.setState,
   })  : _bloc = bloc,
@@ -100,13 +67,11 @@ class SettingsWidget extends StatelessWidget {
 
   final PrefsBloc _bloc;
   final Map<String, bool> prefs;
-  final ThemeNotifier themeNotifier;
   final Authsystem auth;
   final VoidCallback setState;
 
   @override
   Widget build(BuildContext context) {
-    bool _darkTheme = (themeNotifier.getTheme() == darkTheme);
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -115,8 +80,6 @@ class SettingsWidget extends StatelessWidget {
             icon: Icon(Icons.arrow_downward),
             tooltip: 'Go back',
             onPressed: () {
-              print("goback pressed");
-              _bloc.add(LoadPrefsEvent());
               _bloc.add(SavePrefsEvent(prefData: prefs));
               // mapState.currentState.setPolylines();
               Navigator.pop(context);
@@ -133,7 +96,6 @@ class SettingsWidget extends StatelessWidget {
               icon: Icon(Icons.arrow_downward),
               tooltip: 'Go back',
               onPressed: () {
-                print("goback pressed");
                 _bloc.add(SavePrefsEvent(prefData: prefs));
                 // mapState.currentState.setPolylines();
                 Navigator.pop(context);
@@ -181,16 +143,25 @@ class SettingsWidget extends StatelessWidget {
                             },
                             secondary: const Icon(Icons.notifications),
                           ),
-                          SwitchListTile(
-                            title: Text('Lights Out'),
-                            value: _darkTheme,
-                            onChanged: (val) {
-                              _darkTheme = val;
-                              setState();
-                              onThemeChanged(val, themeNotifier);
-                            },
-                            secondary: const Icon(Icons.lightbulb_outline),
-                          ),
+                          Builder(
+                              builder: (context) => SwitchListTile(
+                                    title: Text('Lights Out'),
+                                    value: prefs['darkMode'],
+                                    onChanged: (bool value) {
+                                      prefs['darkMode'] = value;
+                                      _bloc.add(ThemeChangedEvent(value));
+                                      setState();
+                                      final SnackBar snackbar = SnackBar(
+                                          content: Text(
+                                        'Press the back arrows to save your changes!',
+                                        textAlign: TextAlign.center,
+                                      ));
+                                      Scaffold.of(context)
+                                          .showSnackBar(snackbar);
+                                    },
+                                    secondary:
+                                        const Icon(Icons.lightbulb_outline),
+                                  )),
                         ],
                       ),
                     ),
@@ -377,8 +348,10 @@ class SettingsWidget extends StatelessWidget {
                             'SIGN OUT',
                             style: Theme.of(context).textTheme.button,
                           ),
-                          onPressed: ()  {
-                            BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationLoggedOut(),);
+                          onPressed: () {
+                            BlocProvider.of<AuthenticationBloc>(context).add(
+                              AuthenticationLoggedOut(),
+                            );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -393,12 +366,4 @@ class SettingsWidget extends StatelessWidget {
               )
             ])));
   }
-}
-
-void onThemeChanged(bool value, ThemeNotifier themeNotifier) async {
-  (value)
-      ? themeNotifier.setTheme(darkTheme)
-      : themeNotifier.setTheme(lightTheme);
-  var prefs = await SharedPreferences.getInstance();
-  prefs.setBool('darkMode', value);
 }

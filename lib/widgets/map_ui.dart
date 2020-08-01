@@ -116,11 +116,7 @@ class ShuttleMapState extends State<ShuttleMap> {
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     if (_controller != null) {
-      if (isDark) {
-        _controller.setMapStyle(_darkMapStyle);
-      } else {
-        _controller.setMapStyle(_lightMapStyle);
-      }
+      _controller.setMapStyle(isDark ? _darkMapStyle: _lightMapStyle);
     }
     return BlocBuilder<ShuttleBloc, ShuttleState>(
       builder: (context, state) {
