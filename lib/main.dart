@@ -18,6 +18,8 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 
+import 'data/providers/bus_provider.dart';
+
 void main() => runApp(
       ChangeNotifierProvider<ThemeNotifier>(
         create: (_) => ThemeNotifier(lightTheme),
@@ -63,13 +65,10 @@ class Test extends StatelessWidget {
   // }
 
   void _test2() async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      Response response = await Dio().download('https://www.cdta.org/schedules/google_transit.zip', '${directory.path}/test.zip');
-      print("xxx");
-    } catch (e) {
-      print(e);
-    }
+    WidgetsFlutterBinding.ensureInitialized();
+    final _busProvider = BusProvider();
+    _busProvider.fetch();
+    print("Finished running");
   }
 
   @override
