@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/pages/login.dart';
-import 'package:smartrider/services/user_repository.dart';
+import 'package:smartrider/data/repository/authentication_repository.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -64,7 +64,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
       String password = '';
       String confirmpassword = '';
       String error = '';
-      final Authsystem _auth = Authsystem();
+      final AuthRepository _auth = AuthRepository();
       final formkey= GlobalKey<FormState>();
       @override
       Widget build(BuildContext context) {

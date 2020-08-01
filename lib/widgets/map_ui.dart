@@ -58,7 +58,6 @@ class ShuttleMapState extends State<ShuttleMap> {
   String _lightMapStyle;
   String _darkMapStyle;
 
-
   BitmapDescriptor shuttleIcon, busIcon;
 
   Future<void> _initMapElements() async {
@@ -89,7 +88,6 @@ class ShuttleMapState extends State<ShuttleMap> {
 
     _initMapElements().then((_) {
       BlocProvider.of<ShuttleBloc>(context).add(ShuttleInitDataRequested());
-      BlocProvider.of<PrefsBloc>(context).add(LoadPrefsEvent());
     });
   }
 
@@ -116,7 +114,7 @@ class ShuttleMapState extends State<ShuttleMap> {
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     if (_controller != null) {
-      _controller.setMapStyle(isDark ? _darkMapStyle: _lightMapStyle);
+      _controller.setMapStyle(isDark ? _darkMapStyle : _lightMapStyle);
     }
     return BlocBuilder<ShuttleBloc, ShuttleState>(
       builder: (context, state) {

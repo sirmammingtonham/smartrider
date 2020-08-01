@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:smartrider/backend/user_list.dart';
-import 'package:smartrider/backend/user.dart';
+import 'package:smartrider/data/models/backend/user_list.dart';
+import 'package:smartrider/data/models/backend/user.dart';
 
 /* Contains all the functions for handling the database */
 

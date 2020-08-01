@@ -4,7 +4,7 @@ import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/main.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/pages/settings.dart';
-import 'package:smartrider/services/user_repository.dart';
+import 'package:smartrider/data/repository/authentication_repository.dart';
 import 'signup.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -73,7 +73,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
        String email = '';
       String password = '';
       String error = '';
-      final Authsystem _auth = Authsystem();
+      final AuthRepository _auth = AuthRepository();
       final formkey= GlobalKey<FormState>();
 
       @override

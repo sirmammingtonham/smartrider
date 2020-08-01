@@ -5,7 +5,7 @@ import 'package:smartrider/pages/home.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
-import 'package:smartrider/services/user_repository.dart';
+import 'package:smartrider/data/repository/authentication_repository.dart';
 
 void main() => runApp(SmartRider());
 
@@ -13,7 +13,7 @@ class SmartRider extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final Authsystem userRepository = Authsystem();
+    final AuthRepository authRepository = AuthRepository();
     return MultiBlocProvider(
         providers: [
           BlocProvider<PrefsBloc>(
@@ -25,13 +25,12 @@ class SmartRider extends StatelessWidget {
           ),
           BlocProvider<AuthenticationBloc>(
             create: (context) =>
-                AuthenticationBloc(userRepository: userRepository),
+                AuthenticationBloc(authRepository: authRepository),
           )
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'SmartRider Prototype',
-          // theme: BlocProvider.of<PrefsBloc>(context).getThemeData,
           home: BlocBuilder<PrefsBloc, PrefsState>(
               builder: (context, state) => _buildWithTheme(context, state)),
           // home: Loginpage()
@@ -40,10 +39,6 @@ class SmartRider extends StatelessWidget {
 }
 
 Widget _buildWithTheme(BuildContext context, PrefsState state) {
-  // if (state is PrefsLoadingState) {
-  //   return MaterialApp(home: CircularProgressIndicator());
-  // } else {
-  print(state);
   if (state is PrefsLoadedState) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,

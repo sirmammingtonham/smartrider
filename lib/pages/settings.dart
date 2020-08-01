@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 // settings and login stuff
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/pages/login.dart';
-import 'package:smartrider/services/user_repository.dart';
+import 'package:smartrider/data/repository/authentication_repository.dart';
 
 // bloc stuff
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +19,7 @@ class _SettingsPageState extends State<SettingsPage> {
   // adding placeholder vars for now, replace these with sharedprefs!
   Map<String, bool> prefsData;
 
-  Authsystem auth = Authsystem();
+  AuthRepository auth = AuthRepository();
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class SettingsWidget extends StatelessWidget {
 
   final PrefsBloc _bloc;
   final Map<String, bool> prefs;
-  final Authsystem auth;
+  final AuthRepository auth;
   final VoidCallback setState;
 
   @override
