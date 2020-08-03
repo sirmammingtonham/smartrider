@@ -90,7 +90,7 @@ class _HomePageState extends State<_HomePage> {
             ShuttleMap(
               key: mapState,
             ),
-            //SearchBar(),
+            SearchBar(),
           ]),
         ),
         panel: NotificationListener<OverscrollNotification>(

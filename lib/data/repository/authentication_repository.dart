@@ -8,12 +8,16 @@ class AuthRepository {
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   Future<AuthResult> signInWithCredentials(String email, String password) {
-    print(email);
-    print(password);
-    return _firebaseAuth.signInWithEmailAndPassword(
-      email: email.trim(),
-      password: password,
-    );
+    try {
+      return _firebaseAuth.signInWithEmailAndPassword(
+        email: email.trim(),
+        password: password,
+      );
+    } catch (exception) {
+      print(email);
+      print(password);
+      throw(exception);
+    }
   }
 
   Future<AuthResult> signUp(String email, String password) async {
