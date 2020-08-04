@@ -352,11 +352,12 @@ class SettingsWidget extends StatelessWidget {
                             BlocProvider.of<AuthenticationBloc>(context).add(
                               AuthenticationLoggedOut(),
                             );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SmartRider()),
-                            );
+                            Navigator.pop(context);
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => SmartRider()),
+                            // );
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(20.0))),

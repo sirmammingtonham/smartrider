@@ -29,7 +29,9 @@ class WelcomeScreen extends StatelessWidget {
       } else if (state is AuthenticationSuccess) {
         return homePage;
       } else if (state is AuthenticationFailure) {
-        return SignupUI();
+        return Theme(
+            data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
+            child: SignupUI());
       } else {
         return Center(child: Text("bruh moment occured"));
       }
@@ -144,9 +146,10 @@ class _SignupUIState extends State<SignupUI> {
         validator: valFunc,
         style: TextStyle(
           fontSize: 20,
+          color: Theme.of(context).primaryColor
         ),
         decoration: InputDecoration(
-            hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Theme.of(context).primaryColor),
             hintText: hint,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
@@ -155,11 +158,11 @@ class _SignupUIState extends State<SignupUI> {
                 width: 2,
               ),
             ),
-            border: OutlineInputBorder(
+            focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide(
-                color: Theme.of(context).primaryColor,
-                width: 3,
+                color: Theme.of(context).primaryColorLight,
+                width: 2,
               ),
             ),
             prefixIcon: Padding(
