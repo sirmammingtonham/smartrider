@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 
 // settings and login stuff
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
-import 'package:smartrider/pages/login.dart';
 import 'package:smartrider/data/repository/authentication_repository.dart';
 
 // bloc stuff
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+import 'package:smartrider/main.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -355,7 +355,7 @@ class SettingsWidget extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => LoginPage()),
+                                  builder: (context) => SmartRider()),
                             );
                           },
                           shape: RoundedRectangleBorder(
