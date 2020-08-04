@@ -16,7 +16,6 @@ class SmartRider extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final AuthRepository authRepository = AuthRepository();
     return MultiBlocProvider(
       providers: [
         BlocProvider<PrefsBloc>(
@@ -26,10 +25,12 @@ class SmartRider extends StatelessWidget {
             return pBloc;
           },
         ),
-        BlocProvider<AuthenticationBloc>(
-          create: (context) =>
-              AuthenticationBloc(authRepository: authRepository),
-        )
+        BlocProvider<AuthenticationBloc>(create: (context) {
+          AuthenticationBloc aBloc =
+              AuthenticationBloc(authRepository: AuthRepository());
+          aBloc.add(AuthenticationStarted());
+          return aBloc;
+        })
       ],
       child: BlocBuilder<PrefsBloc, PrefsState>(
           builder: (context, state) => _buildWithTheme(context, state)),

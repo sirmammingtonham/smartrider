@@ -37,7 +37,7 @@ class AuthenticationBloc
       final name = await _authRepository.getUser();
       yield AuthenticationSuccess(name);
     } else {
-      yield AuthenticationFailure();
+      yield AuthenticationInit();
     }
   }
 

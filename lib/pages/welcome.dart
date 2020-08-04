@@ -9,28 +9,31 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-      if (state is AuthenticationInit) {
-        return 
-        Theme(data: Theme.of(context).copyWith(canvasColor: Colors.transparent),child: SignupUI());
-        // bruh this is an event not a state
-        // } else if (state is AuthenticationLoggedIn) {
-        //   return HomePage();
-      } else if (state is AuthenticationSuccess) {
-        return homePage;
-      } else if (state is AuthenticationFailure) {
+    return Scaffold(
+        body: BlocListener<AuthenticationBloc, AuthenticationState>(
+            listener: (context, state) {
+      if (state is AuthenticationFailure) {
         final SnackBar snackbar = SnackBar(
             content: Text(
           "Email or Password is Incorrect",
           textAlign: TextAlign.center,
         ));
         Scaffold.of(context).showSnackBar(snackbar);
+      }
+    }, child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                builder: (context, state) {
+      if (state is AuthenticationInit) {
+        return Theme(
+            data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
+            child: SignupUI());
+      } else if (state is AuthenticationSuccess) {
+        return homePage;
+      } else if (state is AuthenticationFailure) {
         return SignupUI();
       } else {
         return Center(child: Text("bruh moment occured"));
       }
-    }));
+    })));
   }
 }
 
@@ -179,8 +182,7 @@ class _SignupUIState extends State<SignupUI> {
       highlightColor: highlightColor,
       elevation: 0.0,
       color: fillColor,
-      shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       child: Text(
         text,
         style: TextStyle(
