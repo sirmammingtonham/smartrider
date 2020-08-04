@@ -7,24 +7,29 @@ class AuthRepository {
   AuthRepository({FirebaseAuth firebaseAuth})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
-  Future<AuthResult> signInWithCredentials(String email, String password) {
+  Future<AuthResult> signInWithCredentials(
+      String email, String password) async {
     try {
-      return _firebaseAuth.signInWithEmailAndPassword(
+      return await _firebaseAuth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
     } catch (exception) {
-      print(email);
-      print(password);
-      throw(exception);
+      print(exception);
+      return null;
     }
   }
 
   Future<AuthResult> signUp(String email, String password) async {
-    return await _firebaseAuth.createUserWithEmailAndPassword(
-      email: email.trim(),
-      password: password.trim(),
-    );
+    try {
+      return await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
+      );
+    } catch (exception) {
+      print(exception);
+      return null;
+    }
   }
 
   Future<void> signOut() async {
