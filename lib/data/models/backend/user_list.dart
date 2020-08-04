@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smartrider/backEnd/user.dart';
+import 'package:smartrider/data/models/backend/user.dart';
 
 class UserList extends StatefulWidget {
   @override
