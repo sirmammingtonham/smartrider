@@ -32,7 +32,13 @@ class WelcomeScreen extends StatelessWidget {
         return Theme(
             data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
             child: SignupUI());
-      } else {
+      } 
+      else if(state is AwaitEmailVerify){
+          return Theme(
+            data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
+            child: SignupUI());
+      }
+      else {
         return Center(child: Text("bruh moment occured"));
       }
     })));
@@ -214,6 +220,9 @@ class _SignupUIState extends State<SignupUI> {
     if (_formKey.currentState.validate()) {
       BlocProvider.of<AuthenticationBloc>(context).add(
         AuthenticationSignUp(_emailController.text, _passwordController.text),
+      );
+      BlocProvider.of<AuthenticationBloc>(context).add(
+        AuthenticationLoggedIn(_emailController.text, _passwordController.text),
       );
 
       // _email = _emailController.text;
