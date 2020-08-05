@@ -35,10 +35,10 @@ Interact with our [mockups](https://xd.adobe.com/view/8a421d6f-ad6f-4196-7089-ff
         - For AMD CPUs: Enable the Windows Hypervisor Platform in Windows Features
 4. Clone the smartrider repo with `git clone https://github.com/sirmammingtonham/smartrider.git`.
 5. Download the `google-services.json` from the Firebase Android project and place it in the `android/app` folder.
-6. Open Start Menu Search (windows key), type in "env", and choose "Edit the system environment variables".
-    - Create 2 new environment variables by going to  `User variables` and clicking `New...`
-    - Under `Variable name` add `MAPS_API_KEY`, and enter the google maps api key for the value. Click `OK`.
-    - Click `New...` again, create a variable with name `PLACES_API_KEY`, and enter the google places api key for the value.
+6. Open Start Menu Search (windows key), type in `env`, and choose `Edit the system environment variables`.
+    - Create a new environment variable by going to  `User variables for ...` and clicking `New...`
+    - Under `Variable name` type `MAPS_API_KEY`, and enter the google maps api key for the value. Click `OK`.
+    - (note: you have to restart your pc for these changes to take effect)
 7. Download the required packages by following the steps in your editor of choice, or by running `flutter pub get` inside the cloned repository folder.
 8.  Open the emulator and run `lib/main.dart` in your editor, or run `flutter run` in the repo folder.
 
