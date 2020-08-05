@@ -4,4 +4,5 @@ class User {
   final String userType;
 
   User({this.name, this.rin, this.userType});
+
 }

@@ -22,3 +22,4 @@ class AuthenticationSuccess extends AuthenticationState {
 }
 
 class AuthenticationFailure extends AuthenticationState {}
+class AwaitEmailVerify extends AuthenticationState {}
