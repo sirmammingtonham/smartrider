@@ -19,6 +19,13 @@ class WelcomeScreen extends StatelessWidget {
           textAlign: TextAlign.center,
         ));
         Scaffold.of(context).showSnackBar(snackbar);
+      } else if (state is AwaitEmailVerify) {
+        final SnackBar snackbar = SnackBar(
+            content: Text(
+          "Please check your email for verification",
+          textAlign: TextAlign.center,
+        ));
+        Scaffold.of(context).showSnackBar(snackbar);
       }
     }, child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
                 builder: (context, state) {
@@ -32,13 +39,11 @@ class WelcomeScreen extends StatelessWidget {
         return Theme(
             data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
             child: SignupUI());
-      } 
-      else if(state is AwaitEmailVerify){
-          return Theme(
+      } else if (state is AwaitEmailVerify) {
+        return Theme(
             data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
             child: SignupUI());
-      }
-      else {
+      } else {
         return Center(child: Text("bruh moment occured"));
       }
     })));
@@ -55,6 +60,8 @@ class _SignupUIState extends State<SignupUI> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
+  PersistentBottomSheetController _sheetController;
+  bool _obscurePass = true;
 
   Color primary;
 
@@ -143,41 +150,58 @@ class _SignupUIState extends State<SignupUI> {
 
   //input widget
   Widget _input(Icon icon, String hint, TextEditingController controller,
-      bool obscure, Function valFunc) {
+      bool isPassField, Function valFunc) {
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20),
       child: TextFormField(
         controller: controller,
-        obscureText: obscure,
+        obscureText: isPassField ? _obscurePass : false,
         validator: valFunc,
-        style: TextStyle(
-          fontSize: 20,
-          color: Theme.of(context).primaryColor
-        ),
+        style: TextStyle(fontSize: 20, color: Theme.of(context).primaryColor),
         decoration: InputDecoration(
-            hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Theme.of(context).primaryColor),
-            hintText: hint,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(
-                color: Theme.of(context).primaryColor,
-                width: 2,
-              ),
+          hintStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Theme.of(context).primaryColor),
+          hintText: hint,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(
+              color: Theme.of(context).primaryColor,
+              width: 2,
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(
-                color: Theme.of(context).primaryColorLight,
-                width: 2,
-              ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(
+              color: Theme.of(context).primaryColorLight,
+              width: 2,
             ),
-            prefixIcon: Padding(
-              child: IconTheme(
-                data: IconThemeData(color: Theme.of(context).primaryColor),
-                child: icon,
-              ),
-              padding: EdgeInsets.only(left: 30, right: 10),
-            )),
+          ),
+          prefixIcon: Padding(
+            child: IconTheme(
+              data: IconThemeData(color: Theme.of(context).primaryColor),
+              child: icon,
+            ),
+            padding: EdgeInsets.only(left: 30, right: 10),
+          ),
+          // create a password visibility button for password fields
+          suffixIcon: isPassField
+              ? Padding(
+                  child: IconTheme(
+                    data: IconThemeData(color: Theme.of(context).primaryColor),
+                    child: IconButton(
+                        icon: _obscurePass
+                            ? Icon(Icons.visibility)
+                            : Icon(Icons.visibility_off),
+                        onPressed: () => _sheetController.setState(() {
+                              _obscurePass = !_obscurePass;
+                            })),
+                  ),
+                  padding: EdgeInsets.only(left: 30, right: 10),
+                )
+              : null,
+        ),
       ),
     );
   }
@@ -262,7 +286,7 @@ class _SignupUIState extends State<SignupUI> {
   }
 
   void _showLoginSheet() {
-    _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
+    _sheetController = _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
       return Container(
         child: ClipRRect(
           borderRadius: BorderRadius.only(
@@ -376,7 +400,7 @@ class _SignupUIState extends State<SignupUI> {
   }
 
   void _showRegisterSheet() {
-    _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
+     _sheetController = _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
       return Container(
         color: Colors.transparent,
         child: ClipRRect(

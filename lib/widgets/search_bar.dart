@@ -48,7 +48,7 @@ class SearchBarState extends State<SearchBar> {
               Expanded(
                   // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
                   child: PlacesAutocompleteField(
-                apiKey: Platform.environment['PLACES_API_KEY'],
+                apiKey: Platform.environment['MAPS_API_KEY'],
                 hint: "Need a Safe Ride?",
                 location: Location(
                     42.729980, -73.676682), // location of union as center

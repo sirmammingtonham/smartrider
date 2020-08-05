@@ -74,7 +74,10 @@ class AuthenticationBloc
       yield AuthenticationFailure();
     } else {
       //sign up user is successful
-      yield AuthenticationSuccess(e);
+      // yield AuthenticationSuccess(e);
+      FirebaseUser user = await _authRepository.getActualUser();
+      user.sendEmailVerification();
+      yield AwaitEmailVerify();
     }
   }
 }
