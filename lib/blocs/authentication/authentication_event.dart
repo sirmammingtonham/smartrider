@@ -22,6 +22,6 @@ class AuthenticationLoggedIn extends AuthenticationEvent {
 class AuthenticationLoggedOut extends AuthenticationEvent {}
 
 class AuthenticationSignUp extends AuthenticationEvent{
-  final String email,pass;
-  const AuthenticationSignUp(this.email,this.pass);
+  final String email,pass,rin;
+  const AuthenticationSignUp(this.email,this.pass,this.rin);
 }

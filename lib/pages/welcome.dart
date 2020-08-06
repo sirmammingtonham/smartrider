@@ -243,7 +243,7 @@ class _SignupUIState extends State<SignupUI> {
   void _registerUser() {
     if (_formKey.currentState.validate()) {
       BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationSignUp(_emailController.text, _passwordController.text),
+        AuthenticationSignUp(_emailController.text, _passwordController.text, _nameController.text),
       );
       BlocProvider.of<AuthenticationBloc>(context).add(
         AuthenticationLoggedIn(_emailController.text, _passwordController.text),

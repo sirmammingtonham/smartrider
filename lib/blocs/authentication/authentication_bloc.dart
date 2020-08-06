@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 import 'package:smartrider/data/repository/authentication_repository.dart';
+import 'package:smartrider/backend/database.dart';
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
@@ -27,7 +28,7 @@ class AuthenticationBloc
     } else if (event is AuthenticationLoggedOut) {
       yield* _mapAuthenticationLoggedOutToState();
     } else if (event is AuthenticationSignUp) {
-      yield* _mapAuthenticationSignUpToState(event.email, event.pass);
+      yield* _mapAuthenticationSignUpToState(event.email, event.pass, event.rin);
     }
   }
 
@@ -66,17 +67,19 @@ class AuthenticationBloc
     yield AuthenticationInit();
   }
 
-  Stream<AuthenticationState> _mapAuthenticationSignUpToState(e, p) async* {
+  Stream<AuthenticationState> _mapAuthenticationSignUpToState(e, p, r) async* {
     AuthResult result = await _authRepository.signUp(e, p);
-
+    FirebaseUser user = result.user;
+    await DatabaseService(usid: user.uid).updateUserData(user.email,'Student',rin: r); //usertype will be student for now, modify later
     if (result == null) {
       //wrong email or password
       yield AuthenticationFailure();
     } else {
       //sign up user is successful
-      // yield AuthenticationSuccess(e);
-      FirebaseUser user = await _authRepository.getActualUser();
-      user.sendEmailVerification();
+       // yield AuthenticationSuccess(e); 
+      // FirebaseUser user = await _authRepository.getActualUser();
+      // user.sendEmailVerification();  
+
       yield AwaitEmailVerify();
     }
   }
