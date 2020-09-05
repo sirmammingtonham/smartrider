@@ -10,7 +10,7 @@ import '../models/bus/bus_updates.dart';
 import '../models/bus/bus_vehicles.dart';
 
 class BusProvider {
-  Future fetch() async{
+  Future fetch() async {
     var dio = Dio();
     var url = 'https://www.cdta.org/schedules/google_transit.zip';
 
@@ -27,26 +27,27 @@ class BusProvider {
       print(e);
     }
   }
-  
+
   Future unzip() async {
     final directory = await getApplicationDocumentsDirectory();
     final zipFile = File('${directory.path}/gtfs.zip');
     final destinationDir = Directory('${directory.path}');
     try {
       await ZipFile.extractToDirectory(
-        zipFile: zipFile,
-        destinationDir: destinationDir,
-        onExtracting: (zipEntry, progress) {
-          print('progress: ${progress.toStringAsFixed(1)}%');
-          print('name: ${zipEntry.name}');
-          print('isDirectory: ${zipEntry.isDirectory}');
-          print('modificationDate: ${zipEntry.modificationDate.toLocal().toIso8601String()}');
-          print('uncompressedSize: ${zipEntry.uncompressedSize}');
-          print('compressedSize: ${zipEntry.compressedSize}');
-          print('compressionMethod: ${zipEntry.compressionMethod}');
-          print('crc: ${zipEntry.crc}');
-          return ExtractOperation.extract;
-        });
+          zipFile: zipFile,
+          destinationDir: destinationDir,
+          onExtracting: (zipEntry, progress) {
+            print('progress: ${progress.toStringAsFixed(1)}%');
+            print('name: ${zipEntry.name}');
+            print('isDirectory: ${zipEntry.isDirectory}');
+            print(
+                'modificationDate: ${zipEntry.modificationDate.toLocal().toIso8601String()}');
+            print('uncompressedSize: ${zipEntry.uncompressedSize}');
+            print('compressedSize: ${zipEntry.compressedSize}');
+            print('compressionMethod: ${zipEntry.compressionMethod}');
+            print('crc: ${zipEntry.crc}');
+            return ExtractOperation.extract;
+          });
     } catch (e) {
       print(e);
     }

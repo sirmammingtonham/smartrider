@@ -77,16 +77,12 @@ class _HomePageState extends State<_HomePage> {
         body: MultiBlocProvider(
           providers: [
             BlocProvider<ShuttleBloc>(
-              create: (BuildContext context) => ShuttleBloc(
-                repository: ShuttleRepository()
-              )
-            ),
-            BlocProvider<MapBloc>(
-              create: (context) => MapBloc()
-            ),
+                create: (BuildContext context) =>
+                    ShuttleBloc(repository: ShuttleRepository())),
+            BlocProvider<MapBloc>(create: (context) => MapBloc()),
             // BlocProvider<PrefsBloc>(create: (context) => PrefsBloc(),)
           ],
-          child: Stack(children: <Widget>[         
+          child: Stack(children: <Widget>[
             ShuttleMap(
               key: mapState,
             ),

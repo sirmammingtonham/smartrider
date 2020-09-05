@@ -44,17 +44,16 @@ class AuthenticationBloc
   Stream<AuthenticationState> _mapAuthenticationLoggedInToState(e, p) async* {
     AuthResult result = await _authRepository.signInWithCredentials(
         e, p); //attempt to signin user
-     
+
     if (result == null) {
       //wrong email or password
       yield AuthenticationFailure();
     } else {
       //if signing in user is successful
       FirebaseUser user = await _authRepository.getActualUser();
-      if (user.isEmailVerified){
-         yield AuthenticationSuccess(e);
-      }
-      else{
+      if (user.isEmailVerified) {
+        yield AuthenticationSuccess(e);
+      } else {
         user.sendEmailVerification();
         yield AwaitEmailVerify();
       }

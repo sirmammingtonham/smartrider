@@ -72,15 +72,13 @@ class _PlacesAutocompleteState extends PlacesAutocompleteState {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final header = 
-      Container(
+    final header = Container(
         padding: EdgeInsets.symmetric(horizontal: 10.0),
         height: 64,
         child: Material(
-          borderRadius: BorderRadius.circular(10.0),
-          elevation: 5.0,
-          child: Column(
-            children: <Widget>[
+            borderRadius: BorderRadius.circular(10.0),
+            elevation: 5.0,
+            child: Column(children: <Widget>[
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -94,17 +92,16 @@ class _PlacesAutocompleteState extends PlacesAutocompleteState {
                     },
                   ),
                   Expanded(
-                    child: Padding(
-                      child: _textField(context),
-                      padding: const EdgeInsets.only(right: 8.0),
-                    )
-                  ),
+                      child: Padding(
+                    child: _textField(context),
+                    padding: const EdgeInsets.only(right: 8.0),
+                  )),
                 ],
               ),
-        Divider(
-          //height: 1.0,
-        )
-      ])));
+              Divider(
+                  //height: 1.0,
+                  )
+            ])));
 
     Widget body;
 
@@ -128,9 +125,9 @@ class _PlacesAutocompleteState extends PlacesAutocompleteState {
             bottomLeft: bodyBottomLeftBorderRadius,
             bottomRight: bodyBottomRightBorderRadius,
           ),
-          child: 
-          Center( 
-            child: Text("Note: Safe Ride won't go past 1 mile of campus",
+          child: Center(
+            child: Text(
+              "Note: Safe Ride won't go past 1 mile of campus",
               style: TextStyle(
                 fontStyle: FontStyle.italic,
                 fontSize: 12,
@@ -163,15 +160,13 @@ class _PlacesAutocompleteState extends PlacesAutocompleteState {
     }
 
     final container = Container(
-          child: Stack(children: <Widget>[
-            header,
-            Padding(padding: EdgeInsets.only(top: 48.0), child: 
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                child: body
-              )
-            ),
-          ]));
+        child: Stack(children: <Widget>[
+      header,
+      Padding(
+          padding: EdgeInsets.only(top: 48.0),
+          child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.0), child: body)),
+    ]));
 
     if (Theme.of(context).platform == TargetPlatform.iOS) {
       return Padding(padding: EdgeInsets.only(top: 8.0), child: container);
@@ -180,9 +175,8 @@ class _PlacesAutocompleteState extends PlacesAutocompleteState {
   }
 
   Icon get _iconBack => Theme.of(context).platform == TargetPlatform.iOS
-      ? Icon(Icons.arrow_back_ios): Icon(Icons.arrow_back);
-
-
+      ? Icon(Icons.arrow_back_ios)
+      : Icon(Icons.arrow_back);
 
   Widget _textField(BuildContext context) => TextField(
         controller: _queryTextController,
@@ -255,7 +249,6 @@ class PredictionTile extends StatelessWidget {
     );
   }
 }
-
 
 abstract class PlacesAutocompleteState extends State<PlacesAutocompleteWidget> {
   TextEditingController _queryTextController;
@@ -371,25 +364,26 @@ class PlacesAutocomplete {
       ValueChanged<PlacesAutocompleteResponse> onError,
       String proxyBaseUrl,
       Client httpClient,
-      String startText=""}) {
+      String startText = ""}) {
     final builder = (BuildContext ctx) => PlacesAutocompleteWidget(
-        apiKey: apiKey,
-        overlayBorderRadius: overlayBorderRadius,
-        language: language,
-        sessionToken: sessionToken,
-        components: components,
-        types: types,
-        location: location,
-        radius: radius,
-        strictbounds: strictbounds,
-        region: region,
-        offset: offset,
-        hint: hint,
-        logo: logo,
-        onError: onError,
-        proxyBaseUrl: proxyBaseUrl,
-        httpClient: httpClient,
-        startText: startText,);
+          apiKey: apiKey,
+          overlayBorderRadius: overlayBorderRadius,
+          language: language,
+          sessionToken: sessionToken,
+          components: components,
+          types: types,
+          location: location,
+          radius: radius,
+          strictbounds: strictbounds,
+          region: region,
+          offset: offset,
+          hint: hint,
+          logo: logo,
+          onError: onError,
+          proxyBaseUrl: proxyBaseUrl,
+          httpClient: httpClient,
+          startText: startText,
+        );
 
     return showDialog(context: context, builder: builder);
   }

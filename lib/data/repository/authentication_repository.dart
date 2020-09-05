@@ -46,6 +46,7 @@ class AuthRepository {
   Future<String> getUser() async {
     return (await _firebaseAuth.currentUser()).email;
   }
+
   Future<FirebaseUser> getActualUser() async {
     return await _firebaseAuth.currentUser();
   }

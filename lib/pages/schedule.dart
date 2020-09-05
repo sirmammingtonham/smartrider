@@ -14,12 +14,15 @@ class ShuttleSchedule extends StatefulWidget {
   final GlobalKey<ShuttleMapState> mapState;
   final PanelController panelController;
   final VoidCallback scheduleChanged;
-  ShuttleSchedule({Key key, this.mapState, this.panelController, this.scheduleChanged}) : super(key: key);
+  ShuttleSchedule(
+      {Key key, this.mapState, this.panelController, this.scheduleChanged})
+      : super(key: key);
   @override
   ShuttleScheduleState createState() => ShuttleScheduleState();
 }
-  
-class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderStateMixin  {
+
+class ShuttleScheduleState extends State<ShuttleSchedule>
+    with TickerProviderStateMixin {
   final List<Widget> _tabs = [
     Tab(icon: Icon(Icons.airport_shuttle)),
     Tab(icon: Icon(Icons.directions_bus)),
@@ -28,7 +31,8 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
   TabController _tabController;
   TextEditingController _textController;
   String filter;
-  bool _isShuttle; // true if we have to build the shuttle schedule, false if bus
+  bool
+      _isShuttle; // true if we have to build the shuttle schedule, false if bus
 
   @override
   void initState() {
@@ -64,9 +68,11 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
 
   _displayFilterDialog() async {
     final builder = (BuildContext ctx) => FilterDialog(
-      stops: _isShuttle ? shuttleStopLists[_tabController.index] : busStopLists[_tabController.index],
-      controller: _textController,
-    );
+          stops: _isShuttle
+              ? shuttleStopLists[_tabController.index]
+              : busStopLists[_tabController.index],
+          controller: _textController,
+        );
     await showDialog(context: context, builder: builder);
   }
 
@@ -77,15 +83,21 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
     if (double.tryParse(this.filter) != null) {
       return curTimeList[index].contains(this.filter);
     }
-    if (this.filter.contains('am') || this.filter.contains('pm') || this.filter.contains(':')) {
+    if (this.filter.contains('am') ||
+        this.filter.contains('pm') ||
+        this.filter.contains(':')) {
       return curTimeList[index].contains(this.filter);
     }
     if (this.filter.contains('@')) {
       var filterSplit = this.filter.split('@');
-      return (curStopList[index%curStopList.length][0].toLowerCase().contains(filterSplit[0].toLowerCase()) &&
-        curTimeList[index].contains(filterSplit[1]));
+      return (curStopList[index % curStopList.length][0]
+              .toLowerCase()
+              .contains(filterSplit[0].toLowerCase()) &&
+          curTimeList[index].contains(filterSplit[1]));
     }
-    return curStopList[index%curStopList.length][0].toLowerCase().contains(this.filter.toLowerCase().trim());
+    return curStopList[index % curStopList.length][0]
+        .toLowerCase()
+        .contains(this.filter.toLowerCase().trim());
   }
 
   _jumpMap(double lat, double long) {
@@ -96,59 +108,58 @@ class ShuttleScheduleState extends State<ShuttleSchedule> with TickerProviderSta
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(20.0),
-      ),
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(20),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20.0),
+        ),
+        child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
             ),
-          ),
-          title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_downward),
-            onPressed: () {
-              this.widget.panelController.animatePanelToPosition(0);
-            },
-          ),
-          actions: <Widget>[
-            IconButton(
+            title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
+            leading: IconButton(
               icon: Icon(Icons.arrow_downward),
               onPressed: () {
                 this.widget.panelController.animatePanelToPosition(0);
               },
-            )
-          ],
-          bottom: TabBar(
-            unselectedLabelColor: Colors.white.withOpacity(0.3),
-            indicatorColor: Colors.white,
-            controller: _tabController,
-            tabs: _tabs,
+            ),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.arrow_downward),
+                onPressed: () {
+                  this.widget.panelController.animatePanelToPosition(0);
+                },
+              )
+            ],
+            bottom: TabBar(
+              unselectedLabelColor: Colors.white.withOpacity(0.3),
+              indicatorColor: Colors.white,
+              controller: _tabController,
+              tabs: _tabs,
+            ),
           ),
-        ),
-        body: TabBarView(
-          controller: _tabController,
-          children: <Widget>[
-            ShuttleList(
-              containsFilter: _containsFilter,
-              jumpMap: _jumpMap,
-            ),
-            BusList(
-              containsFilter: _containsFilter,
-              jumpMap: _jumpMap,
-            ),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          heroTag: "Filter",
-          child: Icon(Icons.search),
-          elevation: 5.0,
-          onPressed: _displayFilterDialog,
-        ),
-      )
-    );
+          body: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              ShuttleList(
+                containsFilter: _containsFilter,
+                jumpMap: _jumpMap,
+              ),
+              BusList(
+                containsFilter: _containsFilter,
+                jumpMap: _jumpMap,
+              ),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            heroTag: "Filter",
+            child: Icon(Icons.search),
+            elevation: 5.0,
+            onPressed: _displayFilterDialog,
+          ),
+        ));
   }
 }

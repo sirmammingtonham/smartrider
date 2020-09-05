@@ -181,7 +181,7 @@ class _LocationAutocompleteFieldState extends State<PlacesAutocompleteField> {
     Prediction p = await _showAutocomplete();
 
     if (p == null) return;
-    
+
     setState(() {
       _effectiveController.text = p.description;
       if (widget.onChanged != null) {
@@ -208,30 +208,29 @@ class _LocationAutocompleteFieldState extends State<PlacesAutocompleteField> {
           );
 
     Widget child = Container(
-      height: 50, 
-      child: Row(
-        children: <Widget>[
-          widget.leading ?? SizedBox(),
-          SizedBox(
-            width: 16.0,
-          ),
-          Expanded(
-            child: text,
-          ),
-          widget.trailing != null
-              ? GestureDetector(
-                  onTap: widget.trailingOnTap,
-                  child: widget.trailingOnTap != null
-                      ? widget.trailing
-                      : Icon(
-                          widget.trailing.icon,
-                          color: Colors.grey,
-                        ),
-                )
-              : SizedBox()
-        ],
-      )
-    );
+        height: 50,
+        child: Row(
+          children: <Widget>[
+            widget.leading ?? SizedBox(),
+            SizedBox(
+              width: 16.0,
+            ),
+            Expanded(
+              child: text,
+            ),
+            widget.trailing != null
+                ? GestureDetector(
+                    onTap: widget.trailingOnTap,
+                    child: widget.trailingOnTap != null
+                        ? widget.trailing
+                        : Icon(
+                            widget.trailing.icon,
+                            color: Colors.grey,
+                          ),
+                  )
+                : SizedBox()
+          ],
+        ));
 
     if (widget.inputDecoration != null) {
       child = InputDecorator(

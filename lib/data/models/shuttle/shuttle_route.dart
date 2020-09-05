@@ -36,7 +36,6 @@ class ShuttleRoute {
         points: this.points.map((points) => points.getLatLng).toList(),
       );
 
-
   ShuttleRoute.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];

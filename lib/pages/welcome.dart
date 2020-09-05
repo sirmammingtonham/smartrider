@@ -159,6 +159,7 @@ class _SignupUIState extends State<SignupUI> {
         validator: valFunc,
         style: TextStyle(fontSize: 20, color: Theme.of(context).primaryColor),
         decoration: InputDecoration(
+          errorStyle: TextStyle(color: Colors.redAccent),
           hintStyle: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -172,6 +173,20 @@ class _SignupUIState extends State<SignupUI> {
             ),
           ),
           focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(
+              color: Theme.of(context).primaryColorLight,
+              width: 2,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(
+              color: Theme.of(context).accentColor,
+              width: 2,
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
               color: Theme.of(context).primaryColorLight,
@@ -286,7 +301,8 @@ class _SignupUIState extends State<SignupUI> {
   }
 
   void _showLoginSheet() {
-    _sheetController = _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
+    _sheetController =
+        _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
       return Container(
         child: ClipRRect(
           borderRadius: BorderRadius.only(
@@ -400,7 +416,8 @@ class _SignupUIState extends State<SignupUI> {
   }
 
   void _showRegisterSheet() {
-     _sheetController = _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
+    _sheetController =
+        _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
       return Container(
         color: Colors.transparent,
         child: ClipRRect(
