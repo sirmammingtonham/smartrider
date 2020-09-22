@@ -86,7 +86,7 @@ _getTimeIndex(List<String> curTimeList) {
       compTime = double.tryParse(t.substring(0,t.length-2));
       if (compTime == null)
         return;
-      if (t.endsWith('pm')) {
+      if (t.endsWith('pm') && !t.startsWith("12")) {
         compTime += 12.0;
       }
       if ((curTime - compTime).abs() < min) {

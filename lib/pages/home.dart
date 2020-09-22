@@ -2,7 +2,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:smartrider/data/repository/shuttle_repository.dart';
+
+// bloc imports
+import 'package:smartrider/blocs/shuttle/shuttle_bloc.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 // custom widget imports
 import 'package:smartrider/widgets/map_ui.dart';
@@ -17,10 +24,11 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class _HomePage extends StatefulWidget{
+class _HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
+
 class _HomePageState extends State<_HomePage> {
   PanelController _panelController;
   double _panelHeightOpen;
@@ -28,7 +36,7 @@ class _HomePageState extends State<_HomePage> {
   bool _isShuttle; // used to determine what text to display
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _panelController = new PanelController();
     _isShuttle = true;
@@ -61,23 +69,28 @@ class _HomePageState extends State<_HomePage> {
           title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: Icon(Icons.arrow_upward)
-            )
+                padding: const EdgeInsets.only(right: 12.0),
+                child: Icon(Icons.arrow_upward))
           ],
         ),
         // stack the search bar widget over the map ui
-        body: Stack(
-          children: <Widget>[
+        body: MultiBlocProvider(
+          providers: [
+            BlocProvider<ShuttleBloc>(
+                create: (BuildContext context) =>
+                    ShuttleBloc(repository: ShuttleRepository())),
+            BlocProvider<MapBloc>(create: (context) => MapBloc()),
+            // BlocProvider<PrefsBloc>(create: (context) => PrefsBloc(),)
+          ],
+          child: Stack(children: <Widget>[
             ShuttleMap(
               key: mapState,
             ),
             SearchBar(),
-          ]
+          ]),
         ),
         panel: NotificationListener<OverscrollNotification>(
-          child: 
-          ShuttleSchedule(
+          child: ShuttleSchedule(
             mapState: mapState,
             panelController: _panelController,
             scheduleChanged: () {
@@ -94,7 +107,7 @@ class _HomePageState extends State<_HomePage> {
             return false;
           },
         ),
-       ),
+      ),
     );
   }
 }

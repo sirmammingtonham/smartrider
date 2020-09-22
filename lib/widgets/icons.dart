@@ -11,7 +11,7 @@
 ///      fonts:
 ///       - asset: fonts/SmartRider.ttf
 ///
-/// 
+///
 ///
 import 'package:flutter/widgets.dart';
 
@@ -20,5 +20,6 @@ class SR_Icons {
 
   static const _kFontFam = 'SR_Icons';
 
-  static const IconData Settings = const IconData(0xe800, fontFamily: _kFontFam);
+  static const IconData Settings =
+      const IconData(0xe800, fontFamily: _kFontFam);
 }
