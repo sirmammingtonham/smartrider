@@ -23,3 +23,4 @@ developed with [Flutter](https://flutter.dev/) and [Firebase](https://firebase.g
 Interact with our [mockups](https://xd.adobe.com/view/8a421d6f-ad6f-4196-7089-fff92621dc6f-fc73/?fullscreen)!
 
 
+Visit the [Wiki](https://github.com/sirmammingtonham/smartrider/wiki) for dev install instruction!
