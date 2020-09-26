@@ -7,7 +7,7 @@
 developed with [Flutter](https://flutter.dev/) and [Firebase](https://firebase.google.com/).
 
 *Our goal is to make transportation in and around RPI safer and more intuitive.*
-
+*RCOS Project*
 ## Currently planned features:
 - [ ] Allows you to call RPI saferide like uber.
 - [x] Contains CDTA bus and RPI shuttle schedule.
