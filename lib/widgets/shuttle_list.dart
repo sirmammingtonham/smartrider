@@ -13,9 +13,9 @@ class ShuttleList extends StatefulWidget {
   @override
   ShuttleListState createState() => ShuttleListState();
 }
-  
-class ShuttleListState extends State<ShuttleList> with SingleTickerProviderStateMixin
-{
+
+class ShuttleListState extends State<ShuttleList>
+    with SingleTickerProviderStateMixin {
   final List<Widget> shuttleTabs = [
     Tab(text: 'SOUTH'),
     Tab(text: 'NORTH'),
@@ -41,31 +41,34 @@ class ShuttleListState extends State<ShuttleList> with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget> [
-        TabBar(
-          isScrollable: true,
-          tabs: shuttleTabs,
-          // unselectedLabelColor: Colors.white.withOpacity(0.3),
-          labelColor: Theme.of(context).brightness == Brightness.light ? Colors.black : null,
-          unselectedLabelColor: Theme.of(context).brightness == Brightness.light ? Colors.black : null,
+    return Column(children: <Widget>[
+      TabBar(
+        isScrollable: true,
+        tabs: shuttleTabs,
+        // unselectedLabelColor: Colors.white.withOpacity(0.3),
+        labelColor: Theme.of(context).brightness == Brightness.light
+            ? Colors.black
+            : null,
+        unselectedLabelColor: Theme.of(context).brightness == Brightness.light
+            ? Colors.black
+            : null,
+        controller: _tabController,
+      ),
+      Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: TabBarView(
           controller: _tabController,
+          children: <Widget>[
+            shuttleList(0, this.widget.containsFilter, this.widget.jumpMap),
+            shuttleList(1, this.widget.containsFilter, this.widget.jumpMap),
+            shuttleList(2, this.widget.containsFilter, this.widget.jumpMap),
+            shuttleList(3, this.widget.containsFilter, this.widget.jumpMap),
+          ],
         ),
-        Container(
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: TabBarView(
-            controller: _tabController,
-            children: <Widget>[
-              shuttleList(0, this.widget.containsFilter, this.widget.jumpMap),
-              shuttleList(1, this.widget.containsFilter, this.widget.jumpMap),
-              shuttleList(2, this.widget.containsFilter, this.widget.jumpMap),
-              shuttleList(3, this.widget.containsFilter, this.widget.jumpMap),
-            ],
-          ),
-        )
-      ]
-    );
+      )
+    ]);
   }
+
   @override
   bool get wantKeepAlive => true;
 }
@@ -80,21 +83,18 @@ _getTimeIndex(List<String> curTimeList) {
   double curTime = double.parse(f.format(now));
   double compTime;
   String closest;
-  curTimeList.forEach(
-    (time) {
-      var t = time.replaceAll(':', '.');
-      compTime = double.tryParse(t.substring(0,t.length-2));
-      if (compTime == null)
-        return;
-      if (t.endsWith('pm') && !t.startsWith("12")) {
-        compTime += 12.0;
-      }
-      if ((curTime - compTime).abs() < min) {
-        min = (curTime - compTime).abs();
-        closest = time;
-      }
+  curTimeList.forEach((time) {
+    var t = time.replaceAll(':', '.');
+    compTime = double.tryParse(t.substring(0, t.length - 2));
+    if (compTime == null) return;
+    if (t.endsWith('pm') && !t.startsWith("12")) {
+      compTime += 12.0;
     }
-  );
+    if ((curTime - compTime).abs() < min) {
+      min = (curTime - compTime).abs();
+      closest = time;
+    }
+  });
 
   return curTimeList.indexWhere((element) => element == closest);
 }
@@ -106,17 +106,19 @@ Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
     itemBuilder: (context, index) {
       var curStopList = shuttleStopLists[idx];
       var curTimeList = shuttleTimeLists[idx];
-      if (!_containsFilter(curStopList, curTimeList, index) || curTimeList[index] == "- - - -") {
+      if (!_containsFilter(curStopList, curTimeList, index) ||
+          curTimeList[index] == "- - - -") {
         return null;
       }
       return Card(
         child: ListTile(
           leading: Icon(Icons.airport_shuttle),
-          title: Text(curStopList[index%curStopList.length][0]),
+          title: Text(curStopList[index % curStopList.length][0]),
           subtitle: Text(curTimeList[index]),
           trailing: Icon(Icons.arrow_forward),
           onTap: () {
-            _jumpMap(double.parse(curStopList[index%curStopList.length][1]), double.parse(curStopList[index%curStopList.length][2]));
+            _jumpMap(double.parse(curStopList[index % curStopList.length][1]),
+                double.parse(curStopList[index % curStopList.length][2]));
           },
         ),
       );
