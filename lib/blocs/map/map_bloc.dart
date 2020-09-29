@@ -39,8 +39,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   GoogleMapController get getMapController => _controller;
 
   void scrollToCurrentLocation() async {
-    var currentLocation = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    var currentLocation;
+    try {
+      currentLocation =
+          await getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    } on PermissionDeniedException catch (_) {
+      return;
+    }
 
     var loc = LatLng(currentLocation.latitude, currentLocation.longitude);
 
