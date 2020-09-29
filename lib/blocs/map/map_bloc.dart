@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+// import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -39,8 +39,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   GoogleMapController get getMapController => _controller;
 
   void scrollToCurrentLocation() async {
-    var currentLocation = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    var currentLocation;
+    try {
+      currentLocation =
+          await getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    } on PermissionDeniedException catch (_) {
+      return;
+    }
 
     var loc = LatLng(currentLocation.latitude, currentLocation.longitude);
 
