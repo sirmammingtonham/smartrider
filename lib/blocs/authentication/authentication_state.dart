@@ -18,8 +18,19 @@ class AuthenticationSuccess extends AuthenticationState {
   List<Object> get props => [displayName];
 
   @override
-  String toString() => 'AuthenticationSuccess { displayName: $displayName }';
+  String toString() => 'AuthenticationSuccess($displayName)';
 }
 
-class AuthenticationFailure extends AuthenticationState {}
+class AuthenticationFailure extends AuthenticationState {
+  final String errorMessage;
+
+  const AuthenticationFailure(this.errorMessage);
+  
+  @override
+  List<Object> get props => [errorMessage];
+
+  @override
+  String toString() => 'AuthenticationFailure($errorMessage)';
+}
+
 class AwaitEmailVerify extends AuthenticationState {}
