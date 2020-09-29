@@ -28,7 +28,8 @@ class AuthenticationBloc
     } else if (event is AuthenticationLoggedOut) {
       yield* _mapAuthenticationLoggedOutToState();
     } else if (event is AuthenticationSignUp) {
-      yield* _mapAuthenticationSignUpToState(event.email, event.pass, event.rin);
+      yield* _mapAuthenticationSignUpToState(
+          event.email, event.pass, event.rin);
     }
   }
 
@@ -46,10 +47,7 @@ class AuthenticationBloc
     AuthResult result = await _authRepository.signInWithCredentials(
         e, p); //attempt to signin user
 
-    if (result == null) {
-      //wrong email or password
-      yield AuthenticationFailure();
-    } else {
+    if (result is AuthResult) {
       //if signing in user is successful
       FirebaseUser user = await _authRepository.getActualUser();
       if (user.isEmailVerified) {
@@ -58,6 +56,9 @@ class AuthenticationBloc
         user.sendEmailVerification();
         yield AwaitEmailVerify();
       }
+    } else {
+      //wrong email or password
+      yield AuthenticationFailure("Email or Password is Incorrect");
     }
   }
 
@@ -67,19 +68,16 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _mapAuthenticationSignUpToState(e, p, r) async* {
-    AuthResult result = await _authRepository.signUp(e, p);
-    FirebaseUser user = result.user;
-    await DatabaseService(usid: user.uid).updateUserData(user.email,'Student',rin: r); //usertype will be student for now, modify later
-    if (result == null) {
-      //wrong email or password
-      yield AuthenticationFailure();
-    } else {
-      //sign up user is successful
-       // yield AuthenticationSuccess(e); 
-      // FirebaseUser user = await _authRepository.getActualUser();
-      // user.sendEmailVerification();  
-
+    var result = await _authRepository.signUp(e, p);
+    if (result is AuthResult) {
+      FirebaseUser user = result.user;
+      await DatabaseService(usid: user.uid).updateUserData(
+          user.email, 'Student',
+          rin: r); // usertype will be student for now, modify later
+      user.sendEmailVerification();
       yield AwaitEmailVerify();
+    } else {
+      yield AuthenticationFailure(result.message);
     }
   }
 }
