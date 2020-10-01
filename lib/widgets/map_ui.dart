@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 // ignore_for_file: public_member_api_docs
-
+//
+import 'dart:async';
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +20,7 @@ import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/shuttle/shuttle_bloc.dart';
 import 'package:smartrider/data/models/shuttle/shuttle_stop.dart';
+import 'package:smartrider/data/models/shuttle/shuttle_update.dart';
 
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
@@ -89,6 +91,8 @@ class ShuttleMapState extends State<ShuttleMap> {
     _initMapElements().then((_) {
       BlocProvider.of<ShuttleBloc>(context).add(ShuttleInitDataRequested());
     });
+    const refreshDelay = const Duration(seconds: 5);   //refresh every 5 sec
+    new Timer.periodic(refreshDelay, (Timer t) => BlocProvider.of<ShuttleBloc>(context).add(ShuttleUpdateRequested()));  
   }
 
   @override
@@ -96,7 +100,7 @@ class ShuttleMapState extends State<ShuttleMap> {
     super.dispose();
   }
 
-  Marker _stopToMarker(ShuttleStop stop) {
+  Marker _stopToMarker(ShuttleStop stop) {  
     return Marker(
         icon: shuttleIcon,
         infoWindow: InfoWindow(title: stop.name),
@@ -106,6 +110,21 @@ class ShuttleMapState extends State<ShuttleMap> {
           _controller.animateCamera(
             CameraUpdate.newCameraPosition(
                 CameraPosition(target: stop.getLatLng, zoom: 18, tilt: 50)),
+          );
+        });
+  }
+
+   Marker _updateToMarker(ShuttleUpdate update) {  // real time update shuttles 
+   print(update.id);
+    return Marker(
+        icon: busIcon,
+        infoWindow: InfoWindow(title: update.vehicleId.toString()),
+        markerId: MarkerId(update.id.toString()),
+        position: update.getLatLng,
+        onTap: () {
+          _controller.animateCamera(
+            CameraUpdate.newCameraPosition(
+                CameraPosition(target: update.getLatLng, zoom: 18, tilt: 50)),
           );
         });
   }
@@ -134,12 +153,19 @@ class ShuttleMapState extends State<ShuttleMap> {
                 var markerMap = {
                   for (var stop in state.stops) stop.id: _stopToMarker(stop)
                 };
+                  for (var update in state.updates){
+                     Marker m = _updateToMarker(update);
+                     _currentMarkers.add(m);
+                  }
+              
                 prefState.prefs.getEnabledShuttles.forEach((key) {
                   var curRoute = polylineMap[key];
                   _currentPolylines.add(curRoute.getPolyline);
                   curRoute.stopIds.forEach((id) {
                     _currentMarkers.add(markerMap[id]);
                   });
+                  
+                  
                 });
                 final GoogleMap googleMap = GoogleMap(
                   onMapCreated: _onMapCreated,
@@ -167,8 +193,6 @@ class ShuttleMapState extends State<ShuttleMap> {
               }
             },
           );
-        } else if (state is ShuttleUpdateRequested) {
-          return Center();
         } else {
           return Center(child: Text("error bruh"));
         }

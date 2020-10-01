@@ -1,3 +1,4 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 class ShuttleUpdate {
   /// ID of the update
   int id;
@@ -23,10 +24,13 @@ class ShuttleUpdate {
   /// The route ID that the shuttle runs on
   int routeId;
 
+  /// lng and lat
+  dynamic latitude;
+  dynamic longitude;
   /// Uses a super constructor to define lat/lng attributes
   ShuttleUpdate(
-      {latitude,
-      longitude,
+      {this.latitude,
+      this.longitude,
       this.id,
       this.trackerId,
       this.heading,
@@ -35,6 +39,8 @@ class ShuttleUpdate {
       this.created,
       this.vehicleId,
       this.routeId});
+
+  LatLng get getLatLng => LatLng(this.latitude, this.longitude);
 
   factory ShuttleUpdate.fromJson(Map<String, dynamic> json) {
     return ShuttleUpdate(
@@ -50,4 +56,6 @@ class ShuttleUpdate {
       longitude: json['longitude'],
     );
   }
+
+
 }
