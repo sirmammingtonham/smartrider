@@ -40,7 +40,7 @@ class ShuttleBloc extends Bloc<ShuttleEvent, ShuttleState> {
 
       routes = await repository.getRoutes;
       stops = await repository.getStops;
-      // updates = await repository.getUpdates;
+      updates = await repository.getUpdates;
 
       if (repository.getIsConnected) {
         yield ShuttleLoaded(routes: routes, updates: updates, stops: stops);
@@ -62,7 +62,7 @@ class ShuttleBloc extends Bloc<ShuttleEvent, ShuttleState> {
       }
     } else {
       yield ShuttleError(
-          message: "someone did an oopsie (no event type found)");
+          message: "shuttle shit is borked (no event type found)");
     }
   }
 }

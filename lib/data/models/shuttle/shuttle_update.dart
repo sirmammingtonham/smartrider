@@ -51,7 +51,7 @@ class ShuttleUpdate {
       time: json['time'],
       created: json['created'],
       vehicleId: json['vehicle_id'],
-      routeId: json['route_id'],
+      routeId: json['route_id'] ?? -1, // -1 instead of null
       latitude: json['latitude'],
       longitude: json['longitude'],
     );

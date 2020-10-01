@@ -28,9 +28,9 @@ class ShuttleListState extends State<ShuttleList> with SingleTickerProviderState
   void initState() {
     super.initState();
     _tabController = new TabController(vsync: this, length: shuttleTabs.length);
-    _tabController.addListener(() {
-      print(_tabController.indexIsChanging);
-    });
+    // _tabController.addListener(() {
+    //   print(_tabController.indexIsChanging);
+    // });
   }
 
   @override

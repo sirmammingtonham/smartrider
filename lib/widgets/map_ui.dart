@@ -60,20 +60,53 @@ class ShuttleMapState extends State<ShuttleMap> {
   String _lightMapStyle;
   String _darkMapStyle;
 
-  BitmapDescriptor shuttleIcon, busIcon;
+  BitmapDescriptor shuttleStopIcon, busStopIcon;
+  Map<int, BitmapDescriptor> shuttleUpdateIcons = new Map(); // maps id to image
 
   Future<void> _initMapElements() async {
+    var config = ImageConfiguration();
     await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(), 'assets/markers/2.0x/marker_shuttle.png')
+            config, 'assets/stop_markers/marker_shuttle.png')
         .then((onValue) {
-      shuttleIcon = onValue;
+      shuttleStopIcon = onValue;
     });
 
     await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(), 'assets/markers/2.0x/marker_bus.png')
+            config, 'assets/stop_markers/marker_bus.png')
         .then((onValue) {
-      busIcon = onValue;
+      busStopIcon = onValue;
     });
+
+    await BitmapDescriptor.fromAssetImage(
+            config, 'assets/bus_markers/bus_red.png')
+        .then((onValue) {
+      shuttleUpdateIcons[22] = onValue;
+    });
+
+    await BitmapDescriptor.fromAssetImage(
+            config, 'assets/bus_markers/bus_yellow.png')
+        .then((onValue) {
+      shuttleUpdateIcons[21] = onValue;
+    });
+
+    await BitmapDescriptor.fromAssetImage(
+            config, 'assets/bus_markers/bus_blue.png')
+        .then((onValue) {
+      shuttleUpdateIcons[24] = onValue;
+    });
+
+    await BitmapDescriptor.fromAssetImage(
+            config, 'assets/bus_markers/bus_orange.png')
+        .then((onValue) {
+      shuttleUpdateIcons[28] = onValue;
+    });
+
+    await BitmapDescriptor.fromAssetImage(
+            config, 'assets/bus_markers/bus_white.png')
+        .then((onValue) {
+      shuttleUpdateIcons[-1] = onValue;
+    });
+
     return;
   }
 
@@ -91,8 +124,11 @@ class ShuttleMapState extends State<ShuttleMap> {
     _initMapElements().then((_) {
       BlocProvider.of<ShuttleBloc>(context).add(ShuttleInitDataRequested());
     });
-    const refreshDelay = const Duration(seconds: 5);   //refresh every 5 sec
-    new Timer.periodic(refreshDelay, (Timer t) => BlocProvider.of<ShuttleBloc>(context).add(ShuttleUpdateRequested()));  
+    const refreshDelay = const Duration(seconds: 3); // update every 3 sec
+    new Timer.periodic(
+        refreshDelay,
+        (Timer t) => BlocProvider.of<ShuttleBloc>(context)
+            .add(ShuttleUpdateRequested()));
   }
 
   @override
@@ -100,9 +136,9 @@ class ShuttleMapState extends State<ShuttleMap> {
     super.dispose();
   }
 
-  Marker _stopToMarker(ShuttleStop stop) {  
+  Marker _stopToMarker(ShuttleStop stop) {
     return Marker(
-        icon: shuttleIcon,
+        icon: shuttleStopIcon,
         infoWindow: InfoWindow(title: stop.name),
         markerId: MarkerId(stop.id.toString()),
         position: stop.getLatLng,
@@ -114,13 +150,19 @@ class ShuttleMapState extends State<ShuttleMap> {
         });
   }
 
-   Marker _updateToMarker(ShuttleUpdate update) {  // real time update shuttles 
-   print(update.id);
+  Marker _updateToMarker(ShuttleUpdate update) {
+    // real time update shuttles
+    //  print(update.routeId);
     return Marker(
-        icon: busIcon,
-        infoWindow: InfoWindow(title: update.vehicleId.toString()),
+        icon: shuttleUpdateIcons[shuttleUpdateIcons.containsKey(update.routeId)
+            ? update.routeId
+            : -1],
+        infoWindow:
+            InfoWindow(title: "Shuttle ID: ${update.vehicleId.toString()}"),
         markerId: MarkerId(update.id.toString()),
         position: update.getLatLng,
+        rotation: update.heading,
+        anchor: Offset(0.5, 0.5),
         onTap: () {
           _controller.animateCamera(
             CameraUpdate.newCameraPosition(
@@ -153,19 +195,17 @@ class ShuttleMapState extends State<ShuttleMap> {
                 var markerMap = {
                   for (var stop in state.stops) stop.id: _stopToMarker(stop)
                 };
-                  for (var update in state.updates){
-                     Marker m = _updateToMarker(update);
-                     _currentMarkers.add(m);
-                  }
-              
+                for (var update in state.updates) {
+                  Marker m = _updateToMarker(update);
+                  _currentMarkers.add(m);
+                }
+
                 prefState.prefs.getEnabledShuttles.forEach((key) {
                   var curRoute = polylineMap[key];
                   _currentPolylines.add(curRoute.getPolyline);
                   curRoute.stopIds.forEach((id) {
                     _currentMarkers.add(markerMap[id]);
                   });
-                  
-                  
                 });
                 final GoogleMap googleMap = GoogleMap(
                   onMapCreated: _onMapCreated,
@@ -182,7 +222,6 @@ class ShuttleMapState extends State<ShuttleMap> {
                   myLocationEnabled: _myLocationEnabled,
                   myLocationButtonEnabled: _myLocationButtonEnabled,
                   trafficEnabled: _myTrafficEnabled,
-                  // onCameraMove: _updateCameraPosition,
                   polylines: _currentPolylines,
                   markers: _currentMarkers,
                   mapType: _mapType,
