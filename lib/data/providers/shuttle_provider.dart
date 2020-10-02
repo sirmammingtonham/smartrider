@@ -7,7 +7,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/shuttle/shuttle_route.dart';
 import '../models/shuttle/shuttle_stop.dart';
-import '../models/shuttle/shuttle_vehicle.dart';
 import '../models/shuttle/shuttle_update.dart';
 
 /// This class contains methods for providing data to Repository
@@ -37,15 +36,16 @@ class ShuttleProvider {
   bool get getIsConnected => isConnected;
 
   /// Getter method to retrieve the list of routes
-  Future<List<ShuttleRoute>> getRoutes() async {
+  Future<Map<String, ShuttleRoute>> getRoutes() async {
     var response = await fetch('routes');
-    List<ShuttleRoute> routeList = response != null
-        ? json
-            .decode(response.body)
-            .map<ShuttleRoute>((json) => ShuttleRoute.fromJson(json))
-            .toList()
-        : [];
-    return routeList;
+    Map<String, ShuttleRoute> routeMap = response != null
+        ? Map.fromIterable(
+            (json.decode(response.body) as List).where((json) => json['enabled']),
+            key: (json) => json['name'],
+            value: (json) => ShuttleRoute.fromJson(json))
+        : {};
+    // routeList.removeWhere((route) => route == null);
+    return routeMap;
   }
 
   /// Getter method to retrieve the list of stops

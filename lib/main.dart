@@ -33,7 +33,7 @@ class SmartRider extends StatelessWidget {
         })
       ],
       child: BlocBuilder<PrefsBloc, PrefsState>(
-          builder: (context, state) => _buildWithTheme(context, state)),
+        builder: (context, state) => _buildWithTheme(context, state)),
     );
   }
 }

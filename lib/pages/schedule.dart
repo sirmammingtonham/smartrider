@@ -1,7 +1,6 @@
 // ui dependencies
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';

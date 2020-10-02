@@ -1,11 +1,11 @@
 part of 'prefs_bloc.dart';
 
 abstract class PrefsState extends Equatable {
-  final PrefsData prefs;
-  const PrefsState({this.prefs});
+  // final PrefsData prefs;
+  const PrefsState();
 
   @override
-  List<Object> get props => [this.prefs];
+  List<Object> get props => [];
 }
 
 /// This class represents what user will see when fetching data
@@ -18,13 +18,29 @@ class PrefsLoadingState extends PrefsState {
 
 /// This class represents what user will see when data is fetched
 class PrefsLoadedState extends PrefsState {
-  final PrefsData prefs;
-  const PrefsLoadedState({this.prefs});
+  final SharedPreferences prefs;
+  final Map<String, bool> shuttles;
+  final Map<String, bool> buses;
+  final bool modifyActiveRoutes;
+
+  const PrefsLoadedState(this.prefs, this.shuttles, this.buses,
+      {this.modifyActiveRoutes: false});
+
+  ThemeData get getTheme => prefs.getBool('darkMode') ? darkTheme : lightTheme;
 
   @override
-  List<Object> get props => [this.prefs];
+  List<Object> get props => [
+        this.shuttles,
+        this.buses,
+        this.modifyActiveRoutes,
+        this.prefs.getBool('pushNotifications'),
+        this.prefs.getBool('darkMode')
+      ];
+}
 
-  ThemeData get getTheme => prefs.getMapping['darkMode'] ? darkTheme : lightTheme;
+// used only to notify global theme update on change
+class PrefsThemeChangedState extends PrefsState {
+  const PrefsThemeChangedState();
 }
 
 /// This class represents what user will see when fetching data

@@ -1,9 +1,3 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-// ignore_for_file: public_member_api_docs
-//
 import 'dart:async';
 // ui imports
 import 'package:flutter/material.dart';
@@ -152,7 +146,6 @@ class ShuttleMapState extends State<ShuttleMap> {
 
   Marker _updateToMarker(ShuttleUpdate update) {
     // real time update shuttles
-    //  print(update.routeId);
     return Marker(
         icon: shuttleUpdateIcons[shuttleUpdateIcons.containsKey(update.routeId)
             ? update.routeId
@@ -184,29 +177,34 @@ class ShuttleMapState extends State<ShuttleMap> {
         } else if (state is ShuttleLoading) {
           return Center(child: CircularProgressIndicator());
         } else if (state is ShuttleLoaded) {
+          // when app is launched, start event to hide inactive routes
           return BlocBuilder<PrefsBloc, PrefsState>(
             builder: (prefContext, prefState) {
               if (prefState is PrefsLoadedState) {
+                // check if we should hide inactive routes
+                if (prefState.modifyActiveRoutes) {
+                  BlocProvider.of<PrefsBloc>(context).add(InitActiveRoutesEvent(state.routes.values.toList()));
+                }
+
                 Set<Polyline> _currentPolylines = <Polyline>{};
                 Set<Marker> _currentMarkers = <Marker>{};
-                var polylineMap = {
-                  for (var route in state.routes) route.name: route
-                };
                 var markerMap = {
                   for (var stop in state.stops) stop.id: _stopToMarker(stop)
                 };
                 for (var update in state.updates) {
-                  Marker m = _updateToMarker(update);
-                  _currentMarkers.add(m);
+                  _currentMarkers.add(_updateToMarker(update));
                 }
 
-                prefState.prefs.getEnabledShuttles.forEach((key) {
-                  var curRoute = polylineMap[key];
-                  _currentPolylines.add(curRoute.getPolyline);
-                  curRoute.stopIds.forEach((id) {
-                    _currentMarkers.add(markerMap[id]);
-                  });
+                prefState.shuttles.forEach((name, enabled) {
+                  if (enabled) {
+                    _currentPolylines.add(state.routes[name].getPolyline);
+                    state.routes[name].stopIds.forEach((id) {
+                      _currentMarkers.add(markerMap[id]);
+                    });
+                  }
                 });
+
+                state.routes.forEach((key, value) {});
                 final GoogleMap googleMap = GoogleMap(
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: kInitialPosition,

@@ -13,7 +13,7 @@ class ShuttleRepository {
   final _shuttleProvider = ShuttleProvider();
 
 //  void get openSocket => _shuttleProvider.openSocket();
-  Future<List<ShuttleRoute>> get getRoutes async =>
+  Future<Map<String, ShuttleRoute>> get getRoutes async =>
       _shuttleProvider.getRoutes();
   Future<List<ShuttleStop>> get getStops async => _shuttleProvider.getStops();
   Future<List<ShuttleUpdate>> get getUpdates async =>

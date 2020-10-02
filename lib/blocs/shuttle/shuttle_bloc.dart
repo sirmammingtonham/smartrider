@@ -17,7 +17,7 @@ part 'shuttle_state.dart';
 class ShuttleBloc extends Bloc<ShuttleEvent, ShuttleState> {
   /// Initialization of repository class
   final ShuttleRepository repository;
-  List<ShuttleRoute> routes = [];
+  Map<String, ShuttleRoute> routes = {};
   List<ShuttleStop> stops = [];
   List<ShuttleUpdate> updates = [];
   List<ShuttleVehicle> vehicles = [];
@@ -43,7 +43,7 @@ class ShuttleBloc extends Bloc<ShuttleEvent, ShuttleState> {
       updates = await repository.getUpdates;
 
       if (repository.getIsConnected) {
-        yield ShuttleLoaded(routes: routes, updates: updates, stops: stops);
+        yield ShuttleLoaded(routes: routes, stops: stops, updates: updates);
       } else {
         isLoading = true;
         yield ShuttleError(message: 'NETWORK ISSUE');
@@ -55,7 +55,7 @@ class ShuttleBloc extends Bloc<ShuttleEvent, ShuttleState> {
       updates = await repository.getUpdates;
 
       if (repository.getIsConnected) {
-        yield ShuttleLoaded(routes: routes, updates: updates, stops: stops);
+        yield ShuttleLoaded(routes: routes, stops: stops, updates: updates);
       } else {
         isLoading = true;
         yield ShuttleError(message: 'NETWORK ISSUE');
