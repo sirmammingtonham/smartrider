@@ -35,14 +35,19 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
         '289 Route': true,
       };
       _sharedPrefs = await SharedPreferences.getInstance();
+
+      if (!_sharedPrefs.containsKey('darkMode')) {
+        _sharedPrefs.setBool('darkMode', false);
+      }
+      if (!_sharedPrefs.containsKey('pushNotifications')) {
+        _sharedPrefs.setBool('pushNotifications', true);
+      }
       // modify active routes on app launch
       yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses,
           modifyActiveRoutes: true);
     } else if (event is SavePrefsEvent) {
-      // yield PrefsSavingState();
-
+      yield PrefsSavingState();
       _sharedPrefs.setBool(event.name, event.val);
-
       yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
     } else if (event is InitActiveRoutesEvent) {
       event.routes.forEach((route) {
