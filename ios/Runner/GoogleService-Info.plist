@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>412876338159-tkq20qocmbqp5eib8kik47i5ik0f56tu.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.412876338159-tkq20qocmbqp5eib8kik47i5ik0f56tu</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCCRaj0flR10reI8fzQvYxcqTYUr0h3pm4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>412876338159</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.rcos.smartrider</string>
+	<key>PROJECT_ID</key>
+	<string>smartrider-4e9e8</string>
+	<key>STORAGE_BUCKET</key>
+	<string>smartrider-4e9e8.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:412876338159:ios:681441fc08cd6a2509fc1a</string>
+	<key>DATABASE_URL</key>
+	<string>https://smartrider-4e9e8.firebaseio.com</string>
+</dict>
+</plist>
