@@ -15,7 +15,7 @@ class WelcomeScreen extends StatelessWidget {
       if (state is AuthenticationFailure) {
         final SnackBar snackbar = SnackBar(
             content: Text(
-          "Email or Password is Incorrect",
+          state.errorMessage,
           textAlign: TextAlign.center,
         ));
         Scaffold.of(context).showSnackBar(snackbar);
@@ -258,10 +258,8 @@ class _SignupUIState extends State<SignupUI> {
   void _registerUser() {
     if (_formKey.currentState.validate()) {
       BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationSignUp(_emailController.text, _passwordController.text, _nameController.text),
-      );
-      BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationLoggedIn(_emailController.text, _passwordController.text),
+        AuthenticationSignUp(_emailController.text, _passwordController.text,
+            _nameController.text),
       );
 
       // _email = _emailController.text;

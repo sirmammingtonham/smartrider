@@ -5,9 +5,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_archive/flutter_archive.dart';
 
 import '../models/bus/bus_advisory.dart';
-import '../models/bus/bus_gtfs.dart';
-import '../models/bus/bus_updates.dart';
-import '../models/bus/bus_vehicles.dart';
 
 class BusProvider {
   Future fetch() async {
