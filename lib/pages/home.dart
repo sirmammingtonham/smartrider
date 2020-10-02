@@ -15,6 +15,7 @@ import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/widgets/map_ui.dart';
 import 'package:smartrider/widgets/search_bar.dart';
 import 'package:smartrider/pages/schedule.dart';
+import 'package:smartrider/pages/shuttle_dropdown.dart';
 
 class HomePage extends StatelessWidget {
   static const String route = '/';
@@ -47,67 +48,49 @@ class _HomePageState extends State<_HomePage> {
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
     return Material(
       child: SlidingUpPanel(
-        // sliding panel (body is the background, panelBuilder is the actual panel)
-        controller: _panelController,
-        maxHeight: _panelHeightOpen,
-        minHeight: _panelHeightClosed,
-        parallaxEnabled: true,
-        renderPanelSheet: false,
-        backdropEnabled: true,
-        parallaxOffset: .1,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20.0),
-        ),
-        collapsed: AppBar(
-          centerTitle: true,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(18.0),
-            ),
+          // sliding panel (body is the background, panelBuilder is the actual panel)
+          controller: _panelController,
+          maxHeight: _panelHeightOpen,
+          minHeight: _panelHeightClosed,
+          parallaxEnabled: true,
+          renderPanelSheet: false,
+          backdropEnabled: true,
+          parallaxOffset: .1,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20.0),
           ),
-          leading: Icon(Icons.arrow_upward),
-          title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
-          actions: <Widget>[
-            Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: Icon(Icons.arrow_upward))
-          ],
-        ),
-        // stack the search bar widget over the map ui
-        body: MultiBlocProvider(
-          providers: [
-            BlocProvider<ShuttleBloc>(
-                create: (BuildContext context) =>
-                    ShuttleBloc(repository: ShuttleRepository())),
-            BlocProvider<MapBloc>(create: (context) => MapBloc()),
-            // BlocProvider<PrefsBloc>(create: (context) => PrefsBloc(),)
-          ],
-          child: Stack(children: <Widget>[
-            ShuttleMap(
-              key: mapState,
+          collapsed: AppBar(
+            centerTitle: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(18.0),
+              ),
             ),
-            SearchBar(),
-          ]),
-        ),
-        panel: NotificationListener<OverscrollNotification>(
-          child: ShuttleSchedule(
-            mapState: mapState,
-            panelController: _panelController,
-            scheduleChanged: () {
-              setState(() {
-                _isShuttle = !_isShuttle;
-              });
-            },
+            leading: Icon(Icons.arrow_upward),
+            title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
+            actions: <Widget>[
+              Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: Icon(Icons.arrow_upward))
+            ],
           ),
-          onNotification: (t) {
-            if (t.overscroll < -10 && t.dragDetails.delta.dx == 0) {
-              _panelController.animatePanelToPosition(0);
-              return true;
-            }
-            return false;
-          },
-        ),
-      ),
+          // stack the search bar widget over the map ui
+          body: MultiBlocProvider(
+            providers: [
+              BlocProvider<ShuttleBloc>(
+                  create: (BuildContext context) =>
+                      ShuttleBloc(repository: ShuttleRepository())),
+              BlocProvider<MapBloc>(create: (context) => MapBloc()),
+              // BlocProvider<PrefsBloc>(create: (context) => PrefsBloc(),)
+            ],
+            child: Stack(children: <Widget>[
+              ShuttleMap(
+                key: mapState,
+              ),
+              SearchBar(),
+            ]),
+          ),
+          panel: test()),
     );
   }
 }
