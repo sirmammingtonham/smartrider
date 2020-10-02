@@ -9,9 +9,9 @@ class DatabaseService {
   final String usid;
   //reference to the user collection in the database
   final CollectionReference _userCollection = Firestore.instance.collection('users');
-
+  //referencing all rpi shuttles collection  (for future use)
+  final CollectionReference _shuttleCollection = Firestore.instance.collection('active_shuttles');
   DatabaseService({this.usid});
-
   Future updateUserData(String name, String userType, {String rin="0"}) async {
     //Updates the user data for the user corresponding to the usid
     return await _userCollection.document(usid).setData({

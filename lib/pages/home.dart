@@ -10,7 +10,7 @@ import 'package:smartrider/data/repository/shuttle_repository.dart';
 import 'package:smartrider/blocs/shuttle/shuttle_bloc.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
-
+import 'package:smartrider/data/repository/authentication_repository.dart';
 // custom widget imports
 import 'package:smartrider/widgets/map_ui.dart';
 import 'package:smartrider/widgets/search_bar.dart';
@@ -18,6 +18,7 @@ import 'package:smartrider/pages/schedule.dart';
 
 class HomePage extends StatelessWidget {
   static const String route = '/';
+
   @override
   Widget build(BuildContext context) {
     return _HomePage();
@@ -25,6 +26,8 @@ class HomePage extends StatelessWidget {
 }
 
 class _HomePage extends StatefulWidget {
+
+  _HomePage();
   @override
   _HomePageState createState() => _HomePageState();
 }
