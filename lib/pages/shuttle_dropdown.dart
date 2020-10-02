@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 // ui dependencies
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -10,7 +9,7 @@ import 'package:smartrider/widgets/filter_dialog.dart';
 import 'package:smartrider/widgets/shuttle_list.dart';
 import 'package:smartrider/widgets/bus_list.dart';
 import 'package:smartrider/widgets/map_ui.dart';
-=======
+
 // ui imports
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -98,4 +97,3 @@ class _MyStatefulWidgetState extends State<test> {
     );
   }
 }
->>>>>>> Stashed changes
