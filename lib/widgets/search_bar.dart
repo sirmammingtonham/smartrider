@@ -82,10 +82,8 @@ class SearchBarState extends State<SearchBar> {
                               style: TextStyle(color: Colors.white70)),
                           onPressed: () {
                             Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              // BlocProvider.of<PrefsBloc>(context).add(LoadPrefsEvent());
-                              return ProfilePage();
-                            }));
+                                MaterialPageRoute(builder: (context) => ProfilePage(title: computeUsername(widget.name),role: widget.role,email: widget.name,)
+                            ));
                           },
                         ),
                         //Text('JS', style: TextStyle(color: Colors.white70)),
