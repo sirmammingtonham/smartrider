@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartrider/data/models/themes.dart';
-
+import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 abstract class ListItem {
 
   Widget buildTitle(BuildContext context);
@@ -45,7 +46,20 @@ class _ProfilePageState extends State<ProfilePage> {
              subtitle: Text(widget.email),)
            ],),
                     ),
-         )
+         ),
+         RaisedButton(
+                          child: Text(
+                            'SIGN OUT',
+                            style: Theme.of(context).textTheme.button,
+                          ),
+                          onPressed: () {
+                            BlocProvider.of<AuthenticationBloc>(context).add(
+                              AuthenticationLoggedOut(),
+                            );
+                            Navigator.pop(context);
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(20.0)))
         ],
       ),
     ),theme: Theme.of(context));
