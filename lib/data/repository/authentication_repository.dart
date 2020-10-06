@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRepository {
@@ -7,28 +8,28 @@ class AuthRepository {
   AuthRepository({FirebaseAuth firebaseAuth})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
-  Future<AuthResult> signInWithCredentials(
+  Future signInWithCredentials(
       String email, String password) async {
     try {
       return await _firebaseAuth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
-    } catch (exception) {
-      print(exception);
-      return null;
+    } on PlatformException catch (e) {
+      print(e);
+      return e;
     }
   }
 
-  Future<AuthResult> signUp(String email, String password) async {
+  Future signUp(String email, String password) async {
     try {
       return await _firebaseAuth.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
       );
-    } catch (exception) {
-      print(exception);
-      return null;
+    } on PlatformException catch (e) {
+      print(e);
+      return e;
     }
   }
 

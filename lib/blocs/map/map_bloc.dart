@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+// import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
