@@ -43,7 +43,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     try {
       currentLocation =
           await getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
-    } on PermissionDeniedException catch (_) {
+    } catch (_) { // on PermissionDeniedException (doesn't work on ios, removing until we find a fix)
       return;
     }
 
