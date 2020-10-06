@@ -16,7 +16,6 @@ part 'prefs_state.dart';
 class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   /// ShuttleBloc named constructor
   SharedPreferences _sharedPrefs;
-  // bool hideInactiveRoutes;
   Map<String, bool> _shuttles;
   Map<String, bool> _buses;
 
