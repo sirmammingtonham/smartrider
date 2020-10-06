@@ -115,3 +115,4 @@ android/app/src/main/res/values/api-keys.xml
 strings.dart
 android/app/src/main/res/api-keys.template
 ApiKeys.plist
+GoogleService-Info.plist
