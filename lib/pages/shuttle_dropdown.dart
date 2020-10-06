@@ -32,6 +32,8 @@ import 'package:smartrider/pages/schedule.dart';
 //***
 //Natalia added
 import 'package:intl/intl.dart';
+import 'dart:async';
+import 'dart:math';
 
 Color darkGreen = Color(0xff2bae5d),
     lightGreen = Color(0xff49bf88),
@@ -41,7 +43,9 @@ List<Map<String, dynamic>> availableTickets = [];
 //TO FIX: does not work for time <0 (you missed it) or >=60 (more than an hour time)
 //it also needs a way to refresh constantly or when prompted --> might add a button that also
 //tells you the exact time you last refreshed.
-format(Duration d) => d.toString().substring(2, 4);
+format(Duration d) {
+  d.toString().substring(2, 4);
+}
 //*******************************
 
 class Item {
@@ -224,6 +228,7 @@ class TicketContainer extends State<test> {
                               )
                             ],
                           ),
+
                           /*
                         SizedBox(width: 9),
                         Column(
@@ -265,6 +270,7 @@ class TicketContainer extends State<test> {
                     ],
                   ),
                 ),
+                /*
                 Text(
                   //CURRENT CELL PHONE TIME
                   DateFormat("HH:mm").format(DateTime.now()),
@@ -272,6 +278,19 @@ class TicketContainer extends State<test> {
                       .textTheme
                       .body2
                       .apply(color: Colors.blue),
+                ),
+                */
+                RaisedButton.icon(
+                  color: lightGreen,
+                  icon: Icon(Icons.refresh, color: Colors.white),
+                  label: Text(
+                    "Refresh",
+                    style: Theme.of(context)
+                        .textTheme
+                        .button
+                        .apply(color: Colors.white),
+                  ),
+                  onPressed: () => print("pressed"),
                 ),
               ],
             ),
@@ -329,23 +348,6 @@ class TicketContainer extends State<test> {
                   ],
                 ),
                 */
-            /*
-              RaisedButton.icon(
-                color: lightGreen,
-                icon: Icon(Icons.confirmation_number, color: Colors.white),
-                onPressed: () => Navigator.of(context).pushNamed('details'),
-                label: Text(
-                  "Ticket: 70 DA",
-                  style: Theme.of(context)
-                      .textTheme
-                      .button
-                      .apply(color: Colors.white),
-                ),
-              )
-              
-              ],
-            ),
-            */
             ExpansionTile(
               title: Text("RPI Union",
                   style: Theme.of(context).textTheme.subtitle),
