@@ -151,8 +151,9 @@ class TicketContainer extends State<test> {
                           children: [
                             TextSpan(
                               //Text is in string
+                              //FIX: need to count down the minutes
                               text: format(
-                                  DateTime(2020, 10, 4, 15, 59, 50, 0, 0)
+                                  DateTime(2020, 10, 6, 17, 59, 50, 0, 0)
                                       .difference(DateTime.now())),
                               style: Theme.of(context).textTheme.display1,
                             ),
