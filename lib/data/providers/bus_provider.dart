@@ -10,7 +10,7 @@ import '../models/bus/bus_updates.dart';
 import '../models/bus/bus_vehicles.dart';
 
 class BusProvider {
-  Future fetch() async {
+  Future setup() async {
     var dio = Dio();
     var url = 'https://www.cdta.org/schedules/google_transit.zip';
 
@@ -52,4 +52,20 @@ class BusProvider {
       print(e);
     }
   }
+
+  // Use this helper function when fetching a specific txt file
+  Future<String> fetch(String type) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+
+      // Read the file.
+      String contents = await File('${directory.path}/$type.txt').readAsString();
+
+      return contents;
+    } catch (e) {
+      // If encountering an error, return null.
+      return null;
+    }
+  }
+  
 }
