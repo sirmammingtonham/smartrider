@@ -1,10 +1,20 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // model imports
 import 'package:smartrider/data/models/bus/bus_advisory.dart';
+import 'package:smartrider/data/models/bus/bus_agency.dart';
+import 'package:smartrider/data/models/bus/bus_calendar_dates.dart';
+import 'package:smartrider/data/models/bus/bus_calendar.dart';
+import 'package:smartrider/data/models/bus/bus_fare_attributes.dart';
+import 'package:smartrider/data/models/bus/bus_fare_rules.dart';
+import 'package:smartrider/data/models/bus/bus_feed_info.dart';
 import 'package:smartrider/data/models/bus/bus_gtfs.dart';
+import 'package:smartrider/data/models/bus/bus_routes.dart';
+import 'package:smartrider/data/models/bus/bus_shapes.dart';
+import 'package:smartrider/data/models/bus/bus_stop_times.dart';
+import 'package:smartrider/data/models/bus/bus_stops.dart';
+import 'package:smartrider/data/models/bus/bus_trips.dart';
 import 'package:smartrider/data/models/bus/bus_updates.dart';
 import 'package:smartrider/data/models/bus/bus_vehicles.dart';
 
@@ -13,3 +23,52 @@ import 'package:smartrider/data/repository/bus_repository.dart';
 
 part 'bus_event.dart';
 part 'bus_state.dart';
+
+class BusBloc extends Bloc<BusEvent, BusState> {
+  /// Initialization of repository class
+  final BusRepository repository;
+
+  bool isLoading = true;
+
+  /// BusBloc named constructor
+  BusBloc({this.repository}) : super(BusInitial());
+
+  @override
+  Stream<BusState> mapEventToState(BusEvent event) async* {
+    if (event is BusInitDataRequested) {
+      if (isLoading) {
+        yield BusLoading();
+        isLoading = false;
+      } else {
+        /// Poll every 3ish seconds
+        await Future.delayed(const Duration(seconds: 2));
+      }
+
+      // routes = await repository.getRoutes;
+      // stops = await repository.getStops;
+      // updates = await repository.getUpdates;
+
+      if (repository.getIsDownloaded) {
+        yield BusLoaded();
+      } else {
+        isLoading = true;
+        yield BusError(message: 'NETWORK ISSUE');
+      }
+      // await Future.delayed(const Duration(seconds: 2));
+
+    } else if (event is BusUpdateRequested) {
+      // updates.clear();
+      // updates = await repository.getUpdates;
+
+      if (repository.getIsDownloaded) {
+        yield BusLoaded();
+      } else {
+        isLoading = true;
+        yield BusError(message: 'NETWORK ISSUE');
+      }
+    } else {
+      yield BusError(
+          message: "shuttle shit is borked (no event type found)");
+    }
+  }
+}

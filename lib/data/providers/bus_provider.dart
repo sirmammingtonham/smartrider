@@ -10,6 +10,11 @@ import '../models/bus/bus_updates.dart';
 import '../models/bus/bus_vehicles.dart';
 
 class BusProvider {
+  /// Boolean to determine if the gtfs is already downloaded
+  bool isDownloaded;
+
+  bool get getIsDownloaded => isDownloaded;
+
   Future setup() async {
     var dio = Dio();
     var url = 'https://www.cdta.org/schedules/google_transit.zip';
@@ -59,7 +64,8 @@ class BusProvider {
       final directory = await getApplicationDocumentsDirectory();
 
       // Read the file.
-      String contents = await File('${directory.path}/$type.txt').readAsString();
+      String contents =
+          await File('${directory.path}/$type.txt').readAsString();
 
       return contents;
     } catch (e) {
@@ -67,5 +73,4 @@ class BusProvider {
       return null;
     }
   }
-  
 }

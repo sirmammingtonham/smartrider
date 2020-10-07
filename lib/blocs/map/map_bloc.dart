@@ -16,18 +16,9 @@ final LatLngBounds rpiBounds = LatLngBounds(
 
 class MapBloc extends Bloc<MapEvent, MapState> {
   GoogleMapController _controller;
-  // final PrefsBloc prefsBloc;
-  // StreamSubscription prefsBlocSubscription;
 
   /// MapBloc named constructor
   MapBloc() : super(MapInitializingState());
-  // {
-  //   prefsBlocSubscription = prefsBloc.listen((state) {
-  //     if (state is PrefsSavedState) {
-
-  //     }
-  //   });
-  // }
 
   @override
   Future<void> close() {
