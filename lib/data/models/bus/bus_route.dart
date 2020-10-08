@@ -1,4 +1,4 @@
-class BusRoutes {
+class BusRoute {
   String routeId;
   String agencyId;
   String routeShortName;
@@ -10,7 +10,7 @@ class BusRoutes {
   String routeTextColor;
   String routeSortOrder;
 
-  BusRoutes({
+  BusRoute({
     this.routeId,
     this.agencyId,
     this.routeShortName,

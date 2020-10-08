@@ -1,10 +1,10 @@
-class BusShapes {
+class BusShape {
   String shapeId;
   String shapePtLat;
   String shapePtLon;
   String shapePtSequence;
 
-  BusShapes({
+  BusShape({
     this.shapeId,
     this.shapePtLat,
     this.shapePtLon,

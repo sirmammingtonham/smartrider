@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     final _busProvider = BusProvider();
-    _busProvider.fetch();
+    // _busProvider.fetch();
     print("Finished running");
   }
 

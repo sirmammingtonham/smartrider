@@ -1,4 +1,4 @@
-class BusTrips {
+class BusTrip {
   String routeId;
   String serviceId;
   String tripId;
@@ -8,7 +8,7 @@ class BusTrips {
   String wheelchairAccessible;
   String bikesAllowed;
 
-  BusTrips({
+  BusTrip({
     this.routeId,
     this.serviceId,
     this.tripId,

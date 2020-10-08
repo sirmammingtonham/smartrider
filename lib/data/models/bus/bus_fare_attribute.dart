@@ -1,4 +1,4 @@
-class BusFareAttributes {
+class BusFareAttribute {
   String fareId;
   String price;
   String currencyType;
@@ -6,7 +6,7 @@ class BusFareAttributes {
   String transfers;
   String transferDuration;
 
-  BusFareAttributes({
+  BusFareAttribute({
     this.fareId,
     this.price,
     this.currencyType,

@@ -1,4 +1,4 @@
-class BusStops {
+class BusStop {
   String stopId;
   String stopCode;
   String stopName;
@@ -11,7 +11,7 @@ class BusStops {
   String stopTimezone;
   String wheelchairBoarding;
 
-  BusStops({
+  BusStop({
     this.stopId,
     this.stopCode,
     this.stopName,

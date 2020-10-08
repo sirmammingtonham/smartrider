@@ -1,4 +1,4 @@
-class BusStopTimes {
+class BusStopTime {
   String tripId;
   String arrivalTime;
   String departureTime;
@@ -8,7 +8,7 @@ class BusStopTimes {
   String dropOffType;
   String timepoint;
 
-  BusStopTimes({
+  BusStopTime({
     this.tripId,
     this.arrivalTime,
     this.departureTime,

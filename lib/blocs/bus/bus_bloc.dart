@@ -6,17 +6,14 @@ import 'package:smartrider/data/models/bus/bus_advisory.dart';
 import 'package:smartrider/data/models/bus/bus_agency.dart';
 import 'package:smartrider/data/models/bus/bus_calendar_dates.dart';
 import 'package:smartrider/data/models/bus/bus_calendar.dart';
-import 'package:smartrider/data/models/bus/bus_fare_attributes.dart';
-import 'package:smartrider/data/models/bus/bus_fare_rules.dart';
+import 'package:smartrider/data/models/bus/bus_fare_attribute.dart';
+import 'package:smartrider/data/models/bus/bus_fare_rule.dart';
 import 'package:smartrider/data/models/bus/bus_feed_info.dart';
-import 'package:smartrider/data/models/bus/bus_gtfs.dart';
-import 'package:smartrider/data/models/bus/bus_routes.dart';
-import 'package:smartrider/data/models/bus/bus_shapes.dart';
-import 'package:smartrider/data/models/bus/bus_stop_times.dart';
-import 'package:smartrider/data/models/bus/bus_stops.dart';
-import 'package:smartrider/data/models/bus/bus_trips.dart';
-import 'package:smartrider/data/models/bus/bus_updates.dart';
-import 'package:smartrider/data/models/bus/bus_vehicles.dart';
+import 'package:smartrider/data/models/bus/bus_route.dart';
+import 'package:smartrider/data/models/bus/bus_shape.dart';
+import 'package:smartrider/data/models/bus/bus_stop_time.dart';
+import 'package:smartrider/data/models/bus/bus_stop.dart';
+import 'package:smartrider/data/models/bus/bus_trip.dart';
 
 // repository imports
 import 'package:smartrider/data/repository/bus_repository.dart';

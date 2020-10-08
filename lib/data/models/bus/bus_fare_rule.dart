@@ -1,11 +1,11 @@
-class BusFareRules {
+class BusFareRule {
   String fareId;
   String routeId;
   String originId;
   String destinationId;
   String containsId;
 
-  BusFareRules({
+  BusFareRule({
     this.fareId,
     this.routeId,
     this.originId,
