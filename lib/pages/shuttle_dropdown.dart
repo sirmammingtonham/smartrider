@@ -141,7 +141,7 @@ class TicketContainer extends State<test> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      //Departure time
+                      //Arriavl time
                       Text("Arrrives In:"),
                       SizedBox(
                         height: 5.0,
@@ -151,7 +151,10 @@ class TicketContainer extends State<test> {
                           children: [
                             TextSpan(
                               //Text is in string
-                              //FIX: need to count down the minutes
+                              //FIX: need to count down the minutes currently using the refresh button.
+                              //Right now the date and time of when the shuttle will arrive is hard coded.
+                              //We need to pull the data from the schudle_database and have it be able to
+                              //switch on command with the bus_database and the refresh button.
                               text: format(
                                   DateTime(2020, 10, 6, 17, 59, 50, 0, 0)
                                       .difference(DateTime.now())),
@@ -173,7 +176,8 @@ class TicketContainer extends State<test> {
                       RichText(
                         text: TextSpan(
                           children: [
-                            //TO FIX: Have it "refresh"
+                            //TO FIX: this is hard coded to be "Union". it should change as the
+                            //schedule changes.
                             TextSpan(
                                 text: "On Route to: ",
                                 style: TextStyle(color: Colors.black87)),
@@ -204,10 +208,9 @@ class TicketContainer extends State<test> {
                                 height: 3.0,
                               ),
                               Row(
+                                //The Creation of the shuttle icon and shuttle name
                                 children: [
                                   Icon(
-                                    //MAKING THE LITTLE BUS
-                                    //TO FIX:
                                     Icons.directions_bus,
                                     color: Colors.black54,
                                   ),
@@ -218,6 +221,9 @@ class TicketContainer extends State<test> {
                                       color: Colors.orange,
                                       borderRadius: BorderRadius.circular(9.0),
                                     ),
+                                    //TO FIX: this only has North bus.
+                                    //Ideally it would be smart have it as a list that should
+                                    //go through the data instead of hard coding it in.
                                     child: Text(
                                       "NORTH",
                                       style: TextStyle(color: Colors.white),
@@ -279,6 +285,10 @@ class TicketContainer extends State<test> {
                       .apply(color: Colors.blue),
                 ),
                 */
+                //TO FIX: this is the "refresh page" feature. It is needed in order for the
+                //data to stay relevent.
+                //At the moment, the only time the schedule is refreshed when the app
+                //is restarted.
                 RaisedButton.icon(
                   color: lightGreen,
                   icon: Icon(Icons.refresh, color: Colors.white),
@@ -289,6 +299,7 @@ class TicketContainer extends State<test> {
                         .button
                         .apply(color: Colors.white),
                   ),
+                  //This is where it needs to refresh the 'page' instead of print("pressed")
                   onPressed: () => print("pressed"),
                 ),
               ],
@@ -345,10 +356,15 @@ class TicketContainer extends State<test> {
                   ],
                 ),
                 */
+            //TO FIX: This feature should list all the stops the bus will be stopping
+            //to. This is pretty much "what stops are next" list. It should update accordingly
+            //after the shuttle reaches its stop.
             ExpansionTile(
+              //The current stop
               title: Text("RPI Union",
                   style: Theme.of(context).textTheme.subtitle),
               children: <Widget>[
+                //List of "next stops"
                 ListTile(
                   title:
                       Text("DATA", style: Theme.of(context).textTheme.subtitle),
