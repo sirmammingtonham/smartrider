@@ -4,8 +4,10 @@ LOOK HERE LOOK HERE LOOK HERE
 
 For people in the UI improvement team, we are trying to implement this
 panel system into our current schedule slider.
+https://api.flutter.dev/flutter/material/ExpansionPanelList-class.html
+
 To better understand this look at home.dart under pages and change line 93 
-from "panel: test())," to "panel: main()),". And rerun your andriod emulator
+from "panel: test())," to "panel: ShuttleSchedule()),". And rerun your andriod emulator
 to see what is the current schuedle UI.
 Looking at the current scheduele UI we have a top section that has each individual
 shuttle and bus. Clicking on this allows us to see each shuttles stop. Right now 
