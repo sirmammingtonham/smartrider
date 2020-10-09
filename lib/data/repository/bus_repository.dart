@@ -1,15 +1,7 @@
-import '../models/bus/bus_advisory.dart';
-import '../models/bus/bus_agency.dart';
-import '../models/bus/bus_calendar_dates.dart';
-import '../models/bus/bus_calendar.dart';
-import '../models/bus/bus_fare_attribute.dart';
-import '../models/bus/bus_fare_rule.dart';
-import '../models/bus/bus_feed_info.dart';
 import '../models/bus/bus_route.dart';
 import '../models/bus/bus_shape.dart';
 import '../models/bus/bus_stop_time.dart';
 import '../models/bus/bus_stop.dart';
-import '../models/bus/bus_trip.dart';
 
 import '../providers/bus_provider.dart';
 

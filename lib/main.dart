@@ -50,9 +50,7 @@
 //   }
 // }
 import 'package:flutter/material.dart';
-import 'package:smartrider/data/models/bus/bus_agency.dart';
 import 'package:smartrider/data/providers/bus_provider.dart';
-import 'package:smartrider/data/models/bus/bus_agency.dart';
 void main() {
   runApp(new MyApp());
 }
@@ -90,10 +88,10 @@ class _MyHomePageState extends State<MyHomePage> {
     String temp = await _busProvider.fetch("agency");
 
     print('running fromString:');
-    BusAgency agency = BusAgency.fromString(temp);
+    // BusAgency agency = BusAgency.fromString(temp);
 
     print('running printData()');
-    print(agency);
+    // print(agency);
 
     print("Finished running");
   }

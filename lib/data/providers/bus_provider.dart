@@ -4,8 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_archive/flutter_archive.dart';
 
-import '../models/bus/bus_advisory.dart';
-
 class BusProvider {
   /// Boolean to determine if the gtfs is already downloaded
   bool isDownloaded;

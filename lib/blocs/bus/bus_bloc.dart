@@ -2,18 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // model imports
-import 'package:smartrider/data/models/bus/bus_advisory.dart';
-import 'package:smartrider/data/models/bus/bus_agency.dart';
-import 'package:smartrider/data/models/bus/bus_calendar_dates.dart';
-import 'package:smartrider/data/models/bus/bus_calendar.dart';
-import 'package:smartrider/data/models/bus/bus_fare_attribute.dart';
-import 'package:smartrider/data/models/bus/bus_fare_rule.dart';
-import 'package:smartrider/data/models/bus/bus_feed_info.dart';
 import 'package:smartrider/data/models/bus/bus_route.dart';
 import 'package:smartrider/data/models/bus/bus_shape.dart';
 import 'package:smartrider/data/models/bus/bus_stop_time.dart';
 import 'package:smartrider/data/models/bus/bus_stop.dart';
-import 'package:smartrider/data/models/bus/bus_trip.dart';
 
 // repository imports
 import 'package:smartrider/data/repository/bus_repository.dart';
