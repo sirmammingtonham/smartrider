@@ -2,15 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
-import 'package:smartrider/widgets/filter_dialog.dart';
-import 'package:smartrider/widgets/shuttle_list.dart';
-import 'package:smartrider/widgets/bus_list.dart';
-import 'package:smartrider/widgets/map_ui.dart';
 
 class ShuttleList extends StatefulWidget {
   final Function containsFilter;
@@ -18,29 +12,6 @@ class ShuttleList extends StatefulWidget {
   ShuttleList({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
   @override
   ShuttleListState createState() => ShuttleListState();
-}
-
-//Change this
-List<Item> generateItems(int numberOfItems) {
-  return List.generate(numberOfItems, (int index) {
-    return Item(
-      headerValue: 'Panel $index',
-      expandedValue: 'This is item number $index',
-    );
-  });
-}
-
-//Also edit this
-class Item {
-  Item({
-    this.expandedValue,
-    this.headerValue,
-    this.isExpanded = false,
-  });
-
-  String expandedValue;
-  String headerValue;
-  bool isExpanded;
 }
 
 class ShuttleListState extends State<ShuttleList>
@@ -51,7 +22,6 @@ class ShuttleListState extends State<ShuttleList>
     Tab(text: 'WEST'),
     Tab(text: 'WEEKEND'),
   ];
-
   TabController _tabController;
 
   @override
@@ -101,50 +71,6 @@ class ShuttleListState extends State<ShuttleList>
 
   @override
   bool get wantKeepAlive => true;
-
-  Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
-    return ScrollablePositionedList.builder(
-      itemCount: shuttleTimeLists[idx].length,
-      initialScrollIndex: _getTimeIndex(shuttleTimeLists[idx]),
-      itemBuilder: (context, index) {
-        var curStopList = shuttleStopLists[idx];
-        var curTimeList = shuttleTimeLists[idx];
-        if (!_containsFilter(curStopList, curTimeList, index) ||
-            curTimeList[index] == "- - - -") {
-          return null;
-        }
-        List<Item> _data = generateItems(8);
-        return Card(
-            child: ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              _data[index].isExpanded = !isExpanded;
-            });
-          },
-          children: _data.map<ExpansionPanel>((Item item) {
-            return ExpansionPanel(
-              headerBuilder: (BuildContext context, bool isExpanded) {
-                return ListTile(
-                  title: Text(item.headerValue),
-                );
-              },
-              body: ListTile(
-                  title: Text(item.expandedValue),
-                  subtitle:
-                      Text('To delete this panel, tap the trash can icon'),
-                  trailing: Icon(Icons.delete),
-                  onTap: () {
-                    setState(() {
-                      _data.removeWhere((currentItem) => item == currentItem);
-                    });
-                  }),
-              isExpanded: item.isExpanded,
-            );
-          }).toList(),
-        ));
-      },
-    );
-  }
 }
 
 _getTimeIndex(List<String> curTimeList) {
@@ -171,4 +97,31 @@ _getTimeIndex(List<String> curTimeList) {
   });
 
   return curTimeList.indexWhere((element) => element == closest);
+}
+
+Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
+  return ScrollablePositionedList.builder(
+    itemCount: shuttleTimeLists[idx].length,
+    initialScrollIndex: _getTimeIndex(shuttleTimeLists[idx]),
+    itemBuilder: (context, index) {
+      var curStopList = shuttleStopLists[idx];
+      var curTimeList = shuttleTimeLists[idx];
+      if (!_containsFilter(curStopList, curTimeList, index) ||
+          curTimeList[index] == "- - - -") {
+        return null;
+      }
+      return Card(
+        child: ListTile(
+          leading: Icon(Icons.airport_shuttle),
+          title: Text(curStopList[index % curStopList.length][0]),
+          subtitle: Text(curTimeList[index]),
+          trailing: Icon(Icons.arrow_forward),
+          onTap: () {
+            _jumpMap(double.parse(curStopList[index % curStopList.length][1]),
+                double.parse(curStopList[index % curStopList.length][2]));
+          },
+        ),
+      );
+    },
+  );
 }
