@@ -90,7 +90,7 @@ class _HomePageState extends State<_HomePage> {
               SearchBar(),
             ]),
           ),
-          panel: test()),
+          panel: ShuttleSchedule2()),
 
       //panel: ShuttleSchedule()),
     );
