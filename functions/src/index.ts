@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import * as gtfs from "gtfs";
-
+import * as GtfsRealtimeBindings from "gtfs-realtime-bindings";
+import * as request from "request";
 const config = {
   sqlitePath: "./gtfs.db"
 };
@@ -135,4 +136,32 @@ export const busShapes = functions.https.onRequest((req, res) => {
       console.error(err);
       res.status(500);
     });
+});
+
+export const tripUpdates = functions.https.onRequest((req, res) => {
+  var requestSettings = {
+    method: 'GET',
+    url: 'http://64.128.172.149:8080/gtfsrealtime/TripUpdates',
+    encoding: null
+  };
+  request(requestSettings, function (error: any, response: any, body: any) {
+    if (!error && response.statusCode == 200) {
+      var feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
+      res.status(200).json(feed.entity);
+    }
+  });
+});
+
+export const vehicleUpdates = functions.https.onRequest((req, res) => {
+  var requestSettings = {
+    method: 'GET',
+    url: 'http://64.128.172.149:8080/gtfsrealtime/VehiclePositions',
+    encoding: null
+  };
+  request(requestSettings, function (error: any, response: any, body: any) {
+    if (!error && response.statusCode == 200) {
+      var feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
+      res.status(200).json(feed.entity);
+    }
+  });
 });
