@@ -60,3 +60,79 @@ export const busRoutes = functions.https.onRequest((req, res) => {
       res.status(500);
     });
 });
+
+export const busStops = functions.https.onRequest((req, res) => {
+  // return error status if method isn't GET
+  if (req.method !== "GET") {
+    console.log("Invalid request!");
+    res.status(400);
+    return;
+  }
+
+  const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+  const fields = JSON.parse(req.header("fields") ?? "[]");
+  const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
+
+  console.log("Bus stops requested!");
+  gtfs
+    .getStops(query, fields, sortBy)
+    .then((stops: any) => {
+      console.log("Bus stops sent!");
+      res.status(200).json(stops);
+    })
+    .catch((err: any) => {
+      console.error(err);
+      res.status(500);
+    });
+});
+
+export const busStoptimes = functions.https.onRequest((req, res) => {
+  // return error status if method isn't GET
+  if (req.method !== "GET") {
+    console.log("Invalid request!");
+    res.status(400);
+    return;
+  }
+
+  const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+  const fields = JSON.parse(req.header("fields") ?? "[]");
+  const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
+
+  console.log("Bus stoptimes requested!");
+  gtfs
+    .getStoptimes(query, fields, sortBy)
+    .then((stoptimes: any) => {
+      console.log("Bus stoptimes sent!");
+      res.status(200).json(stoptimes);
+    })
+    .catch((err: any) => {
+      console.error(err);
+      res.status(500);
+    });
+});
+
+export const busShapes = functions.https.onRequest((req, res) => {
+  // return error status if method isn't GET
+  if (req.method !== "GET") {
+    console.log("Invalid request!");
+    res.status(400);
+    return;
+  }
+
+  const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+  const fields = JSON.parse(req.header("fields") ?? "[]");
+  const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
+
+  console.log("Bus shapes requested!");
+  // get routes and send json
+  gtfs
+    .getShapes(query, fields, sortBy)
+    .then((shapes: any) => {
+      console.log("Bus shapes sent!");
+      res.status(200).json(shapes);
+    })
+    .catch((err: any) => {
+      console.error(err);
+      res.status(500);
+    });
+});
