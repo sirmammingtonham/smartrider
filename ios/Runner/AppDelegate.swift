@@ -12,7 +12,9 @@ import GoogleMaps
     // let plist = NSDictionary(contentsOfFile:filePath!)
     // let value = plist?.object(forKey: "GOOG_API_KEY") as! String
     // NSString* mapsApiKey = [[NSProcessInfo processInfo] environment[@"MAPS_API_KEY"];
-    let mapsApiKey = [[NSProcessInfo processInfo] environment[@"MAPS_API_KEY"]; // needs work, idk how to translate this line to swift
+    let mapsApiKey = "AIzaSyCMhd769wjacBq8GV-TiykBcckPgrMv0KI"; // temporary as string
+        
+    //let mapsApiKey = [[ProcessInfo processInfo] environment[@"MAPS_API_KEY"]; // needs work, idk how to translate this line to swift
     GMSServices.provideAPIKey(mapsApiKey)
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
