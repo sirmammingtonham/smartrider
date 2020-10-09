@@ -2,6 +2,7 @@ import 'dart:async';
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:io' show Platform;
 
 // map imports
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -59,47 +60,93 @@ class ShuttleMapState extends State<ShuttleMap> {
 
   Future<void> _initMapElements() async {
     var config = ImageConfiguration();
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/stop_markers/marker_shuttle.png')
-        .then((onValue) {
-      shuttleStopIcon = onValue;
-    });
 
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/stop_markers/marker_bus.png')
-        .then((onValue) {
-      busStopIcon = onValue;
-    });
+    if (Platform.isAndroid) {
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/stop_markers/marker_shuttle.png')
+          .then((onValue) {
+        shuttleStopIcon = onValue;
+      });
 
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/bus_markers/bus_red.png')
-        .then((onValue) {
-      shuttleUpdateIcons[22] = onValue;
-    });
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/stop_markers/marker_bus.png')
+          .then((onValue) {
+        busStopIcon = onValue;
+      });
 
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/bus_markers/bus_yellow.png')
-        .then((onValue) {
-      shuttleUpdateIcons[21] = onValue;
-    });
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/bus_markers/bus_red.png')
+          .then((onValue) {
+        shuttleUpdateIcons[22] = onValue;
+      });
 
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/bus_markers/bus_blue.png')
-        .then((onValue) {
-      shuttleUpdateIcons[24] = onValue;
-    });
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/bus_markers/bus_yellow.png')
+          .then((onValue) {
+        shuttleUpdateIcons[21] = onValue;
+      });
 
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/bus_markers/bus_orange.png')
-        .then((onValue) {
-      shuttleUpdateIcons[28] = onValue;
-    });
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/bus_markers/bus_blue.png')
+          .then((onValue) {
+        shuttleUpdateIcons[24] = onValue;
+      });
 
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/bus_markers/bus_white.png')
-        .then((onValue) {
-      shuttleUpdateIcons[-1] = onValue;
-    });
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/bus_markers/bus_orange.png')
+          .then((onValue) {
+        shuttleUpdateIcons[28] = onValue;
+      });
+
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/bus_markers/bus_white.png')
+          .then((onValue) {
+        shuttleUpdateIcons[-1] = onValue;
+      });
+    } else if (Platform.isIOS) {
+      //Needed separation from the Android code because icons too big on iOS
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/stop_markers/0.75x/marker_shuttle.png')
+          .then((onValue) {
+        shuttleStopIcon = onValue;
+      });
+
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/stop_markers/0.75x/marker_bus.png')
+          .then((onValue) {
+        busStopIcon = onValue;
+      });
+
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/bus_markers/0.75x/bus_red.png')
+          .then((onValue) {
+        shuttleUpdateIcons[22] = onValue;
+      });
+
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/bus_markers/0.75x/bus_yellow.png')
+          .then((onValue) {
+        shuttleUpdateIcons[21] = onValue;
+      });
+
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/bus_markers/0.75x/bus_blue.png')
+          .then((onValue) {
+        shuttleUpdateIcons[24] = onValue;
+      });
+
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/bus_markers/0.75x/bus_orange.png')
+          .then((onValue) {
+        shuttleUpdateIcons[28] = onValue;
+      });
+
+      await BitmapDescriptor.fromAssetImage(
+              config, 'assets/bus_markers/0.75x/bus_white.png')
+          .then((onValue) {
+        shuttleUpdateIcons[-1] = onValue;
+      });
+    }
 
     return;
   }
@@ -183,7 +230,8 @@ class ShuttleMapState extends State<ShuttleMap> {
               if (prefState is PrefsLoadedState) {
                 // check if we should hide inactive routes
                 if (prefState.modifyActiveRoutes) {
-                  BlocProvider.of<PrefsBloc>(context).add(InitActiveRoutesEvent(state.routes.values.toList()));
+                  BlocProvider.of<PrefsBloc>(context)
+                      .add(InitActiveRoutesEvent(state.routes.values.toList()));
                 }
 
                 Set<Polyline> _currentPolylines = <Polyline>{};
