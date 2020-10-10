@@ -14,10 +14,11 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "firebase-admin": "^8.10.0",
-    "firebase-functions": "^3.6.1",
+    "firebase-admin": "^9.2.0",
+    "firebase-functions": "^3.11.0",
     "gtfs": "^2.0.5",
-    "gtfs-realtime-bindings": "0.0.6"
+    "gtfs-realtime-bindings": "0.0.6",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "@types/node": "^14.11.5",

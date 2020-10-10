@@ -12,6 +12,7 @@
   "compileOnSave": true,
   "include": [
     "src/index.ts",
+    "src/create_db.ts",
     "decs.d.ts"
   ]
 }
