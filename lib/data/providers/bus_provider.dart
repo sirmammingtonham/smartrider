@@ -1,71 +1,74 @@
+import 'dart:convert';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_archive/flutter_archive.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+
+import '../models/shuttle/shuttle_route.dart';
+import '../models/shuttle/shuttle_stop.dart';
+import '../models/shuttle/shuttle_update.dart';
+
+
 
 class BusProvider {
   /// Boolean to determine if the gtfs is already downloaded
   bool isDownloaded;
 
+  /// This function will fetch the data from the JSON API and return a decoded
+  Future<http.Response> fetch(String type) async {
+    var client = http.Client();
+    http.Response response;
+    try {
+      response = await client.get('https://us-central1-smartrider-4e9e8.cloudfunctions.net/$type');
+      await createJSONFile('$type', response);
+
+      if (response.statusCode == 200) {
+        isDownloaded = true;
+      }
+    } // TODO: better error handling
+    catch (error) {
+      isDownloaded = false;
+    }
+    //print("App has polled $type API: $isConnected");
+    return response;
+  }
+
   bool get getIsDownloaded => isDownloaded;
 
-  Future setup() async {
-    var dio = Dio();
-    var url = 'https://www.cdta.org/schedules/google_transit.zip';
-
-    await downloadZip(dio, url);
-    await unzip();
+  /// Getter method to retrieve the list of routes
+  Future<Map<String, ShuttleRoute>> getBusRoutes() async {
+    var response = await fetch('busroutes');
+    Map<String, ShuttleRoute> routeMap = response != null
+        ? Map.fromIterable(
+            (json.decode(response.body) as List).where((json) => json['enabled']),
+            key: (json) => json['name'],
+            value: (json) => ShuttleRoute.fromJson(json))
+        : {};
+    // routeList.removeWhere((route) => route == null);
+    return routeMap;
   }
 
-  Future downloadZip(Dio dio, String url) async {
-    try {
+Future<List<ShuttleStop>> getBusShapes() async {
+    var response = await fetch('busshapes');
+
+    List<ShuttleStop> shapesList = response != null
+        ? json
+            .decode(response.body)
+            .map<ShuttleStop>((json) => ShuttleStop.fromJson(json))
+            .toList()
+        : [];
+    return shapesList;
+  }
+}
+
+ /// Helper function to create local JSON file
+  Future createJSONFile(String fileName, http.Response response) async {
+    if (response.statusCode == 200) {
       final directory = await getApplicationDocumentsDirectory();
-      Response response = await dio.download(url, '${directory.path}/gtfs.zip');
-      print("Downloaded gtfs data...");
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future unzip() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final zipFile = File('${directory.path}/gtfs.zip');
-    final destinationDir = Directory('${directory.path}');
-    try {
-      await ZipFile.extractToDirectory(
-          zipFile: zipFile,
-          destinationDir: destinationDir,
-          onExtracting: (zipEntry, progress) {
-            print('progress: ${progress.toStringAsFixed(1)}%');
-            print('name: ${zipEntry.name}');
-            print('isDirectory: ${zipEntry.isDirectory}');
-            print(
-                'modificationDate: ${zipEntry.modificationDate.toLocal().toIso8601String()}');
-            print('uncompressedSize: ${zipEntry.uncompressedSize}');
-            print('compressedSize: ${zipEntry.compressedSize}');
-            print('compressionMethod: ${zipEntry.compressionMethod}');
-            print('crc: ${zipEntry.crc}');
-            return ExtractOperation.extract;
-          });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  // Use this helper function when fetching a specific txt file
-  Future<String> fetch(String type) async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-
-      // Read the file.
-      String contents =
-          await File('${directory.path}/$type.txt').readAsString();
-
-      return contents;
-    } catch (e) {
-      // If encountering an error, return null.
-      return null;
+      final file = File('${directory.path}/$fileName.json');
+      await file.writeAsString(response.body);
     }
   }
 }
