@@ -83,9 +83,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() async {
     final _busProvider = BusProvider();
-    _busProvider.setup();
+    //_busProvider.setup();
     print('running fetch:');
-    String temp = await _busProvider.fetch("agency");
+    //String temp = await _busProvider.fetch("agency");
 
     print('running fromString:');
     // BusAgency agency = BusAgency.fromString(temp);
