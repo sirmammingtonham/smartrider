@@ -4,6 +4,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
+    "rootDir": "src",
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
@@ -11,8 +12,7 @@
   },
   "compileOnSave": true,
   "include": [
-    "src/index.ts",
-    "src/create_db.ts",
+    "src/**/*",
     "decs.d.ts"
   ]
 }
