@@ -24,7 +24,7 @@ dependencies:
   #firebase dependencies
   firebase_core: ^0.4.0+9
   firebase_analytics: ^5.0.2
-  firebase_auth: ^0.15.0+1
+  firebase_auth: ^0.15.0+1s
   cloud_firestore: ^0.12.9+5
    
   #map dependencies
@@ -43,6 +43,7 @@ dependencies:
   day_night_switch: ^0.0.2+1
   intl: ^0.16.1
   day_night_switcher: ^0.1.1
+  flutter_dash: ^0.0.1
 
 
   dio: ^3.0.9

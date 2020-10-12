@@ -50,7 +50,6 @@ class ShuttleScheduleState extends State<ShuttleSchedule2>
     Tab(icon: Icon(Icons.airport_shuttle)),
     Tab(icon: Icon(Icons.directions_bus)),
   ];
-  List<Item> _data = generateItems(8);
 
   TabController _tabController;
   TextEditingController _textController;

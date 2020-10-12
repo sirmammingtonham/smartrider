@@ -4,9 +4,11 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_dash/flutter_dash.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
+import 'package:smartrider/pages/shuttle_dropdown.dart';
 import 'package:smartrider/widgets/filter_dialog.dart';
 import 'package:smartrider/widgets/shuttle_list.dart';
 import 'package:smartrider/widgets/bus_list.dart';
@@ -18,29 +20,6 @@ class ShuttleList extends StatefulWidget {
   ShuttleList({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
   @override
   ShuttleListState createState() => ShuttleListState();
-}
-
-//Change this
-List<Item> generateItems(int numberOfItems) {
-  return List.generate(numberOfItems, (int index) {
-    return Item(
-      headerValue: 'Panel $index',
-      expandedValue: 'This is item number $index',
-    );
-  });
-}
-
-//Also edit this
-class Item {
-  Item({
-    this.expandedValue,
-    this.headerValue,
-    this.isExpanded = false,
-  });
-
-  String expandedValue;
-  String headerValue;
-  bool isExpanded;
 }
 
 class ShuttleListState extends State<ShuttleList>
@@ -101,47 +80,72 @@ class ShuttleListState extends State<ShuttleList>
 
   @override
   bool get wantKeepAlive => true;
+  bool isExpanded = true;
 
   Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
     return ScrollablePositionedList.builder(
-      itemCount: shuttleTimeLists[idx].length,
-      initialScrollIndex: _getTimeIndex(shuttleTimeLists[idx]),
+      itemCount: shuttleStopLists[idx].length,
       itemBuilder: (context, index) {
         var curStopList = shuttleStopLists[idx];
-        var curTimeList = shuttleTimeLists[idx];
-        if (!_containsFilter(curStopList, curTimeList, index) ||
-            curTimeList[index] == "- - - -") {
-          return null;
-        }
-        List<Item> _data = generateItems(8);
-        return Card(
-            child: ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              _data[index].isExpanded = !isExpanded;
-            });
-          },
-          children: _data.map<ExpansionPanel>((Item item) {
-            return ExpansionPanel(
-              headerBuilder: (BuildContext context, bool isExpanded) {
-                return ListTile(
-                  title: Text(item.headerValue),
-                );
-              },
-              body: ListTile(
-                  title: Text(item.expandedValue),
-                  subtitle:
-                      Text('To delete this panel, tap the trash can icon'),
-                  trailing: Icon(Icons.delete),
-                  onTap: () {
-                    setState(() {
-                      _data.removeWhere((currentItem) => item == currentItem);
-                    });
-                  }),
-              isExpanded: item.isExpanded,
-            );
-          }).toList(),
-        ));
+        return ExpansionTile(
+          onExpansionChanged: (value) => isExpanded,
+          title: Text(curStopList[index % curStopList.length][0]),
+          // subtitle: Text('Next Arrival: ' +
+          //     _getTimeIndex(shuttleTimeLists[idx]).toString()),
+          leading: index == 0
+              ? Column(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      height: 15,
+                      width: 15,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border:
+                              Border.all(width: .5, color: Colors.greenAccent)),
+                    ),
+                    Dash(
+                        direction: Axis.vertical,
+                        length: 20,
+                        dashLength: 5,
+                        dashColor: Colors.grey),
+                  ],
+                )
+              : Column(
+                  children: <Widget>[
+                    Dash(
+                        direction: Axis.vertical,
+                        length: 20,
+                        dashLength: 5,
+                        dashColor: Colors.grey),
+                    Container(
+                      height: 15,
+                      width: 15,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border:
+                              Border.all(width: .5, color: Colors.greenAccent)),
+                    ),
+                    Dash(
+                        direction: Axis.vertical,
+                        length: 20,
+                        dashLength: 5,
+                        dashColor: Colors.grey),
+                  ],
+                ),
+          trailing:
+              isExpanded ? Text('Show Arrivals +') : Text('Hide Arrivals -'),
+          children: [
+            AppBar(
+              titleSpacing: 1,
+              leading: Dash(
+                  direction: Axis.vertical,
+                  length: 55,
+                  dashLength: 5,
+                  dashColor: Colors.grey),
+            )
+          ],
+        );
       },
     );
   }
