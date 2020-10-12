@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class BusStop {
   String stopId;
   String stopCode;
@@ -31,6 +33,8 @@ class BusStop {
       this.wheelchairBoarding,
       this.levelId,
       this.platformCode});
+
+  LatLng get getLatLng => LatLng(this.stopLat, this.stopLon);
 
   BusStop.fromJson(Map<String, dynamic> json) {
     stopId = json['stop_id'];

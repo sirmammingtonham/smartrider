@@ -43,7 +43,7 @@ class ShuttleBloc extends Bloc<ShuttleEvent, ShuttleState> {
       updates = await repository.getUpdates;
 
       if (repository.getIsConnected) {
-        yield ShuttleLoaded(routes: routes, stops: stops, updates: updates);
+        yield ShuttleLoaded(routes, stops, updates);
       } else {
         isLoading = true;
         yield ShuttleError(message: 'NETWORK ISSUE');
@@ -55,7 +55,7 @@ class ShuttleBloc extends Bloc<ShuttleEvent, ShuttleState> {
       updates = await repository.getUpdates;
 
       if (repository.getIsConnected) {
-        yield ShuttleLoaded(routes: routes, stops: stops, updates: updates);
+        yield ShuttleLoaded(routes, stops, updates);
       } else {
         isLoading = true;
         yield ShuttleError(message: 'NETWORK ISSUE');

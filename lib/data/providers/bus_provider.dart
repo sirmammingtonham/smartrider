@@ -13,46 +13,47 @@ import '../models/bus/bus_trip_update.dart';
 import '../models/bus/bus_vehicle_update.dart';
 
 class BusProvider {
-  /// Boolean to determine if the gtfs is already downloaded
-  bool isDownloaded;
+  /// Boolean to determine if there's an error
+  bool isConnected;
 
-/// This function will fetch the data from the JSON API and return a decoded
-  Future<http.Response> fetch(String type) async {
+  /// This function will fetch the data from the JSON API and return a decoded
+  Future<http.Response> fetch(String type, {Map<String, String> query}) async {
     var client = http.Client();
     http.Response response;
     try {
-      response = await client.get('https://us-central1-smartrider-4e9e8.cloudfunctions.net/$type');
-      await createJSONFile('$type', response);
+      response = await client.get(
+          'https://us-central1-smartrider-4e9e8.cloudfunctions.net/$type',
+          headers: query);
+      // await createJSONFile('$type', response);
 
       if (response.statusCode == 200) {
-        isDownloaded = true;
+        isConnected = true;
       }
-    } // TODO: better error handling
-    catch (error) {
-      isDownloaded = false;
+    } catch (error) {
+      isConnected = false;
     }
     //print("App has polled $type API: $isConnected");
     return response;
   }
 
-  bool get getIsDownloaded => isDownloaded;
-  
+  bool get getIsConnected => isConnected;
+
   /// Getter method to retrieve the list of routes
-  Future<Map<String, BusRoute>> getBusRoutes() async {
-    var response = await fetch('busroutes');
+  Future<Map<String, BusRoute>> getRoutes() async {
+    var response = await fetch('busRoutes',
+        query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
+
     Map<String, BusRoute> routeMap = response != null
-        ? Map.fromIterable(
-            (json.decode(response.body) as List).where((json) => json['enabled']),
-            key: (json) => json['name'],
+        ? Map.fromIterable(json.decode(response.body),
+            key: (json) => json['route_short_name'],
             value: (json) => BusRoute.fromJson(json))
         : {};
-    // routeList.removeWhere((route) => route == null);
     return routeMap;
   }
 
   /// Getter method to retrieve a list of bus shapes
-  Future<List<BusShape>> getBusShapes() async {
-    var response = await fetch('busshapes');
+  Future<List<BusShape>> getShapes() async {
+    var response = await fetch('busShapes');
 
     List<BusShape> shapesList = response != null
         ? json
@@ -63,10 +64,10 @@ class BusProvider {
     return shapesList;
   }
 
-
   /// Getter method to retrieve the list of stops
   Future<List<BusStop>> getStops() async {
-    var response = await fetch('busStops');
+    var response = await fetch('busStops',
+        query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
 
     List<BusStop> stopsList = response != null
         ? json
@@ -76,8 +77,8 @@ class BusProvider {
         : [];
     return stopsList;
   }
-  
-  /// Getter method to retrive list of trip updates
+
+  /// Getter method to retrieve list of trip updates
   Future<List<BusTripUpdate>> getTripUpdates() async {
     var response = await fetch('tripUpdates');
 
@@ -102,8 +103,7 @@ class BusProvider {
         : [];
     return vehicleUpdatesList;
   }
-  
-  /// Helper function to create local JSON file
+
   Future createJSONFile(String fileName, http.Response response) async {
     if (response.statusCode == 200) {
       final directory = await getApplicationDocumentsDirectory();
@@ -111,5 +111,4 @@ class BusProvider {
       await file.writeAsString(response.body);
     }
   }
-
 }

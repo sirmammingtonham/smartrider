@@ -20,12 +20,12 @@ class ShuttleProvider {
     http.Response response;
     try {
       response = await client.get('https://shuttles.rpi.edu/$type');
-      await createJSONFile('$type', response);
+      // await createJSONFile('$type', response);
 
       if (response.statusCode == 200) {
         isConnected = true;
       }
-    } // TODO: better error handling
+    }
     catch (error) {
       isConnected = false;
     }

@@ -20,9 +20,14 @@ class BusLoading extends BusState {
 
 /// This class represents what user will see when data is fetched
 class BusLoaded extends BusState {
-  const BusLoaded();
+  final Map<String, BusRoute> routes;
+  final List<BusShape> shapes;
+  final List<BusStop> stops;
+  final List<BusVehicleUpdate> updates;
+
+  const BusLoaded(this.routes, this.shapes, this.stops, this.updates);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [routes, shapes, stops, updates];
 }
 
 // This class represents what user will see when there is an error

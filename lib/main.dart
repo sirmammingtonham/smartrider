@@ -50,7 +50,9 @@
 //   }
 // }
 import 'package:flutter/material.dart';
-import 'package:smartrider/data/providers/bus_provider.dart';
+import 'package:smartrider/data/repository/bus_repository.dart';
+import 'package:http/http.dart' as http;
+
 void main() {
   runApp(new MyApp());
 }
@@ -82,18 +84,23 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() async {
-    final _busProvider = BusProvider();
+    final _busRepo = BusRepository();
     //_busProvider.setup();
-    print('running fetch:');
-    //String temp = await _busProvider.fetch("agency");
+    // print('running fetch:');
+    var bruh = await _busRepo.getRoutes;
+    var bruh2 = await _busRepo.getUpdates;
+    var bruh3 = await _busRepo.getStops;
 
-    print('running fromString:');
-    // BusAgency agency = BusAgency.fromString(temp);
-
-    print('running printData()');
-    // print(agency);
-
-    print("Finished running");
+    print(bruh);
+    print("---------------");
+    print(bruh2);
+    print("---------------");
+    print(bruh3);
+    // var client = http.Client();
+    // var response = await client.get(
+    //     'https://us-central1-smartrider-4e9e8.cloudfunctions.net/busRoutes',
+    //     headers: query);
+    // print(response.body);
   }
 
   @override
