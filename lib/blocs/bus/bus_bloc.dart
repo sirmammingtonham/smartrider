@@ -39,7 +39,7 @@ class BusBloc extends Bloc<BusEvent, BusState> {
       }
 
       routes = await repository.getRoutes;
-      shapes = await repository.getShapes;
+      // shapes = await repository.getShapes;
       stops = await repository.getStops;
       updates = await repository.getUpdates;
 

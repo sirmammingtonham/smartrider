@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:smartrider/data/repository/shuttle_repository.dart';
 
 // bloc imports
 import 'package:smartrider/blocs/shuttle/shuttle_bloc.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
-import 'package:smartrider/data/repository/authentication_repository.dart';
+import 'package:smartrider/blocs/bus/bus_bloc.dart';
+import 'package:smartrider/data/repository/shuttle_repository.dart';
+import 'package:smartrider/data/repository/bus_repository.dart';
+
 // custom widget imports
 import 'package:smartrider/widgets/map_ui.dart';
 import 'package:smartrider/widgets/search_bar.dart';
@@ -82,8 +83,10 @@ class _HomePageState extends State<_HomePage> {
             BlocProvider<ShuttleBloc>(
                 create: (BuildContext context) =>
                     ShuttleBloc(repository: ShuttleRepository())),
+            BlocProvider<BusBloc>(
+                create: (BuildContext context) =>
+                    BusBloc(repository: BusRepository())),
             BlocProvider<MapBloc>(create: (context) => MapBloc()),
-            // BlocProvider<PrefsBloc>(create: (context) => PrefsBloc(),)
           ],
           child: Stack(children: <Widget>[
             ShuttleMap(

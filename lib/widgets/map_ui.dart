@@ -13,6 +13,11 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/shuttle/shuttle_bloc.dart';
+import 'package:smartrider/blocs/bus/bus_bloc.dart';
+
+// bloc models
+import 'package:smartrider/data/models/bus/bus_stop.dart';
+import 'package:smartrider/data/models/bus/bus_vehicle_update.dart';
 import 'package:smartrider/data/models/shuttle/shuttle_stop.dart';
 import 'package:smartrider/data/models/shuttle/shuttle_update.dart';
 
@@ -117,6 +122,7 @@ class ShuttleMapState extends State<ShuttleMap> {
 
     _initMapElements().then((_) {
       BlocProvider.of<ShuttleBloc>(context).add(ShuttleInitDataRequested());
+      BlocProvider.of<BusBloc>(context).add(BusInitDataRequested());
     });
     const refreshDelay = const Duration(seconds: 3); // update every 3 sec
     new Timer.periodic(
@@ -130,11 +136,24 @@ class ShuttleMapState extends State<ShuttleMap> {
     super.dispose();
   }
 
-  Marker _stopToMarker(ShuttleStop stop) {
+  Marker _shuttleStopToMarker(ShuttleStop stop) {
     return Marker(
         icon: shuttleStopIcon,
         infoWindow: InfoWindow(title: stop.name),
         markerId: MarkerId(stop.id.toString()),
+        position: stop.getLatLng,
+        onTap: () {
+          _controller.animateCamera(
+            CameraUpdate.newCameraPosition(
+                CameraPosition(target: stop.getLatLng, zoom: 18, tilt: 50)),
+          );
+        });
+  }
+  Marker _busStopToMarker(BusStop stop) {
+    return Marker(
+        icon: busStopIcon,
+        infoWindow: InfoWindow(title: stop.stopName),
+        markerId: MarkerId(stop.stopId.toString()),
         position: stop.getLatLng,
         onTap: () {
           _controller.animateCamera(
@@ -171,40 +190,47 @@ class ShuttleMapState extends State<ShuttleMap> {
       _controller.setMapStyle(isDark ? _darkMapStyle : _lightMapStyle);
     }
     return BlocBuilder<ShuttleBloc, ShuttleState>(
-      builder: (context, state) {
-        if (state is ShuttleInitial) {
+        builder: (context, shuttleState) {
+      return BlocBuilder<BusBloc, BusState>(builder: (_, busState) {
+        if (shuttleState is ShuttleInitial || busState is BusInitial) {
           return Center(child: CircularProgressIndicator());
-        } else if (state is ShuttleLoading) {
+        } else if (shuttleState is ShuttleLoading || busState is BusLoading) {
           return Center(child: CircularProgressIndicator());
-        } else if (state is ShuttleLoaded) {
+        } else if (shuttleState is ShuttleLoaded && busState is BusLoaded) {
           // when app is launched, start event to hide inactive routes
           return BlocBuilder<PrefsBloc, PrefsState>(
-            builder: (prefContext, prefState) {
+            builder: (_, prefState) {
               if (prefState is PrefsLoadedState) {
-                // check if we should hide inactive routes
+                // check if we should hide inactive shuttle routes
                 if (prefState.modifyActiveRoutes) {
-                  BlocProvider.of<PrefsBloc>(context).add(InitActiveRoutesEvent(state.routes.values.toList()));
+                  BlocProvider.of<PrefsBloc>(context).add(InitActiveRoutesEvent(
+                      shuttleState.routes.values.toList()));
                 }
-
+                // add markers and polylines to the map
                 Set<Polyline> _currentPolylines = <Polyline>{};
                 Set<Marker> _currentMarkers = <Marker>{};
                 var markerMap = {
-                  for (var stop in state.stops) stop.id: _stopToMarker(stop)
+                  for (var stop in shuttleState.stops)
+                    stop.id: _shuttleStopToMarker(stop)
                 };
-                for (var update in state.updates) {
+                for (var update in shuttleState.updates) {
                   _currentMarkers.add(_updateToMarker(update));
                 }
 
                 prefState.shuttles.forEach((name, enabled) {
                   if (enabled) {
-                    _currentPolylines.add(state.routes[name].getPolyline);
-                    state.routes[name].stopIds.forEach((id) {
+                    _currentPolylines
+                        .add(shuttleState.routes[name].getPolyline);
+                    shuttleState.routes[name].stopIds.forEach((id) {
                       _currentMarkers.add(markerMap[id]);
                     });
                   }
                 });
 
-                state.routes.forEach((key, value) {});
+                busState.stops.forEach((stop) {
+                  _currentMarkers.add(_busStopToMarker(stop));
+                });
+
                 final GoogleMap googleMap = GoogleMap(
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: kInitialPosition,
@@ -233,8 +259,8 @@ class ShuttleMapState extends State<ShuttleMap> {
         } else {
           return Center(child: Text("error bruh"));
         }
-      },
-    );
+      });
+    });
   }
 
   void _onMapCreated(GoogleMapController controller) {
