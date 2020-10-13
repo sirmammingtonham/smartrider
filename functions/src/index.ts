@@ -62,6 +62,34 @@ export const busRoutes = functions
         res.status(500);
       });
   });
+  export const busTrips = functions
+  .runWith(runtimeOpts)
+  .https.onRequest((req, res) => {
+    // return error status if method isn't GET
+    if (req.method !== "GET") {
+      console.log("Invalid request!");
+      res.status(400);
+      return;
+    }
+
+    const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+    const fields = JSON.parse(req.header("fields") ?? "[]");
+    const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
+
+    console.log("Bus trip requested!");
+    // get routes and send json
+    gtfs
+      .getTrips(query, fields, sortBy)
+      .then((trips: any) => {
+        console.log("Bus trip sent!");
+        res.status(200).json(trips);
+      })
+      .catch((err: any) => {
+        console.error(err);
+        res.status(500);
+      });
+  });
+
 
 export const busStops = functions
   .runWith(runtimeOpts)
@@ -154,7 +182,6 @@ export const tripUpdates = functions
       res.status(400);
       return;
     }
-
     const requestSettings = {
       method: "GET",
       url: "http://64.128.172.149:8080/gtfsrealtime/TripUpdates",
