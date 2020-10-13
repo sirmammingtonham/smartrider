@@ -61,10 +61,11 @@ class _SignupUIState extends State<SignupUI> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
-  String role = 'Student';    // default role is student (implement role chooser in the future)
+  String role =
+      'Student'; // default role is student (implement role chooser in the future)
   PersistentBottomSheetController _sheetController;
   bool _obscurePass = true;
-  
+
   Color primary;
 
   final _formKey = GlobalKey<FormState>();
@@ -247,7 +248,8 @@ class _SignupUIState extends State<SignupUI> {
   void _loginUser() {
     if (_formKey.currentState.validate()) {
       BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationLoggedIn(_emailController.text, _passwordController.text,role),
+        AuthenticationLoggedIn(
+            _emailController.text, _passwordController.text, role),
       );
 
       // _email = _emailController.text;
@@ -260,10 +262,12 @@ class _SignupUIState extends State<SignupUI> {
   void _registerUser() {
     if (_formKey.currentState.validate()) {
       BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationSignUp(_emailController.text, _passwordController.text, _nameController.text,role),
+        AuthenticationSignUp(_emailController.text, _passwordController.text,
+            _nameController.text, role),
       );
       BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationLoggedIn(_emailController.text, _passwordController.text,role),
+        AuthenticationLoggedIn(
+            _emailController.text, _passwordController.text, role),
       );
 
       // _email = _emailController.text;
