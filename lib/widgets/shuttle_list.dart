@@ -5,9 +5,11 @@ import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_dash/flutter_dash.dart';
+//import 'package:flutter/rendering.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
+import 'package:smartrider/widgets/custom_expansion_tile.dart';
 import 'package:smartrider/pages/shuttle_dropdown.dart';
 import 'package:smartrider/widgets/filter_dialog.dart';
 import 'package:smartrider/widgets/shuttle_list.dart';
@@ -50,6 +52,7 @@ class ShuttleListState extends State<ShuttleList>
 
   @override
   Widget build(BuildContext context) {
+    //debugPaintSizeEnabled = true;
     return Column(children: <Widget>[
       TabBar(
         isScrollable: true,
@@ -87,11 +90,35 @@ class ShuttleListState extends State<ShuttleList>
       itemCount: shuttleStopLists[idx].length,
       itemBuilder: (context, index) {
         var curStopList = shuttleStopLists[idx];
-        return ExpansionTile(
+        return CustomExpansionTile(
+          //   tilePadding: EdgeInsets.zero,
+          //   subtitle: Text('asdasd'),
+          //   leading: Container(
+          //     margin: const EdgeInsets.only(left: 32.0),
+          //     constraints: BoxConstraints.expand(width: 8),
+          //     decoration: BoxDecoration(
+          //       border: Border(left: BorderSide(color: Colors.red, width: 4)),
+          //     ),
+          //   ),
+          //   title: Text('foo'),
+          //   children: [
+          //     ListTile(
+          //       contentPadding: EdgeInsets.zero,
+          //       leading: Container(
+          //         margin: const EdgeInsets.only(left: 32.0),
+          //         constraints: BoxConstraints.expand(width: 8),
+          //         decoration: BoxDecoration(
+          //           border: Border(left: BorderSide(color: Colors.red, width: 4)),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // );
+
           onExpansionChanged: (value) => isExpanded,
           title: Text(curStopList[index % curStopList.length][0]),
-          // subtitle: Text('Next Arrival: ' +
-          //     _getTimeIndex(shuttleTimeLists[idx]).toString()),
+          subtitle: Text('Next Arrival: ' +
+              _getTimeIndex(shuttleTimeLists[idx]).toString()),
           leading: index == 0
               ? Column(
                   children: <Widget>[
@@ -101,8 +128,7 @@ class ShuttleListState extends State<ShuttleList>
                       width: 15,
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border:
-                              Border.all(width: .5, color: Colors.greenAccent)),
+                          border: Border.all(width: .5, color: Colors.green)),
                     ),
                     Dash(
                         direction: Axis.vertical,
@@ -123,8 +149,7 @@ class ShuttleListState extends State<ShuttleList>
                       width: 15,
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border:
-                              Border.all(width: .5, color: Colors.greenAccent)),
+                          border: Border.all(width: .5, color: Colors.green)),
                     ),
                     Dash(
                         direction: Axis.vertical,
@@ -136,14 +161,18 @@ class ShuttleListState extends State<ShuttleList>
           trailing:
               isExpanded ? Text('Show Arrivals +') : Text('Hide Arrivals -'),
           children: [
-            AppBar(
-              titleSpacing: 1,
-              leading: Dash(
-                  direction: Axis.vertical,
-                  length: 55,
-                  dashLength: 5,
-                  dashColor: Colors.grey),
-            )
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Container(
+                margin: const EdgeInsets.only(left: 20.0),
+                constraints: BoxConstraints.expand(width: 8),
+                child: Dash(
+                    direction: Axis.vertical,
+                    length: 55,
+                    dashLength: 5,
+                    dashColor: Colors.grey),
+              ),
+            ),
           ],
         );
       },
@@ -176,3 +205,20 @@ _getTimeIndex(List<String> curTimeList) {
 
   return curTimeList.indexWhere((element) => element == closest);
 }
+
+// Column( children:
+// [ for (var i=0; i< 3; i++)
+// ExpansionTile(
+//   tilePadding: EdgeInsets.zero,
+//   leading: Container(
+//     margin: const EdgeInsets.only(left: 32.0),
+//     constraints: BoxConstraints.expand(width: 8),
+//     decoration: BoxDecoration( border: Border(left: BorderSide(color: Colors.red, width: 4)), ),),
+//     title: Text('foo'),
+//     children: [
+//       ListTile(
+//         contentPadding: EdgeInsets.zero,
+//         leading: Container( margin: const EdgeInsets.only(left: 32.0),
+//         constraints: BoxConstraints.expand(width: 8),
+//         decoration: BoxDecoration(
+//           border: Border(left: BorderSide(color: Colors.red, width: 4)), ),),),],),],)
