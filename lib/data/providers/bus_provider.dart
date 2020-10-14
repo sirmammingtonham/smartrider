@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
@@ -11,6 +12,7 @@ import '../models/bus/bus_shape.dart';
 import '../models/bus/bus_stop.dart';
 import '../models/bus/bus_trip_update.dart';
 import '../models/bus/bus_vehicle_update.dart';
+import '../models/bus/bus_trip.dart';
 
 class BusProvider {
   /// Boolean to determine if there's an error
@@ -85,6 +87,37 @@ class BusProvider {
     List<BusTripUpdate> tripUpdatesList = response != null
         ? json
             .decode(response.body)
+            .map<BusTripUpdate>((json) => BusTripUpdate.fromJson(json))
+            .toList()
+        : [];
+    return tripUpdatesList;
+  }
+
+  Future<List<BusTrip>> getTrip() async {
+    var response = await fetch('busTrips', query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});  //trips for 87,286 and 289 
+
+    List<BusTrip> tripList = response != null
+        ? json
+            .decode(response.body)
+            .map<BusTrip>((json) => BusTrip.fromJson(json))
+            .toList()
+        : [];
+    return tripList;
+  }
+
+   Future<List<BusTripUpdate>> getTripUpdatesWithParameter() async {  
+    var response = await fetch('tripUpdates');
+    List<BusTrip> trips = await this.getTrip();
+    List<String> tripIDs;
+    for (BusTrip trip in trips){      // add all tripid to be searched through in tripid list
+      if(!tripIDs.contains(trip.tripId)){
+        tripIDs.add(trip.tripId);
+      }
+    }
+    List<BusTripUpdate> tripUpdatesList = response != null
+        ? json
+            .decode(response.body)
+            .where((json)=> tripIDs.contains(json["id"])) 
             .map<BusTripUpdate>((json) => BusTripUpdate.fromJson(json))
             .toList()
         : [];
