@@ -1,4 +1,6 @@
 // ui dependencies
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
@@ -34,14 +36,15 @@ class ShuttleListState extends State<ShuttleList>
   ];
 
   TabController _tabController;
-
+  var isExpandedList = new List<bool>.filled(100, false);
   @override
   void initState() {
     super.initState();
     _tabController = new TabController(vsync: this, length: shuttleTabs.length);
     _tabController.addListener(() {
-      print(_tabController.indexIsChanging);
+      isExpandedList.fillRange(0, 100, false);
     });
+    isExpandedList.fillRange(0, 100, false);
   }
 
   @override
@@ -83,13 +86,23 @@ class ShuttleListState extends State<ShuttleList>
 
   @override
   bool get wantKeepAlive => true;
-  bool isExpanded = true;
 
+  /*void toggle() {
+    if (isExpanded) {
+      isExpanded = false;
+      //return Text('Show Arrivals +');
+    } else {
+      isExpanded = true;
+      //return Text('Hide Arrivals -');
+    }
+  }*/
   Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
     return ScrollablePositionedList.builder(
       itemCount: shuttleStopLists[idx].length,
       itemBuilder: (context, index) {
         var curStopList = shuttleStopLists[idx];
+
+        //print(curStopList);
         return CustomExpansionTile(
           //   tilePadding: EdgeInsets.zero,
           //   subtitle: Text('asdasd'),
@@ -115,7 +128,6 @@ class ShuttleListState extends State<ShuttleList>
           //   ],
           // );
 
-          onExpansionChanged: (value) => isExpanded,
           title: Text(curStopList[index % curStopList.length][0]),
           subtitle: Text('Next Arrival: ' +
               _getTimeIndex(shuttleTimeLists[idx]).toString()),
@@ -159,7 +171,19 @@ class ShuttleListState extends State<ShuttleList>
                   ],
                 ),
           trailing:
-              isExpanded ? Text('Show Arrivals +') : Text('Hide Arrivals -'),
+              //toggle()
+              isExpandedList[index % curStopList.length]
+                  ? Text('Hide Arrivals -')
+                  : Text('Show Arrivals +')
+          //isExpanded ? Text('Hide Arrivals -') : Text('Show Arrivals +')
+          ,
+          onExpansionChanged: (value) {
+            setState(() {
+              isExpandedList[index % curStopList.length] = value;
+              //print(isExpandedList);
+              //isExpanded = isExpanded_temp;
+            });
+          },
           children: [
             ListTile(
               contentPadding: EdgeInsets.zero,
