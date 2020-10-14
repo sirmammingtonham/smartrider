@@ -1,4 +1,5 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class BusVehicleUpdate {
   String id;
   bool isDeleted;
@@ -9,22 +10,22 @@ class BusVehicleUpdate {
   dynamic longitude;
 
   BusVehicleUpdate(
-  {this.latitute, 
-  this.longitude, 
-  this.id, 
-  this.isDeleted, 
-  this.vehicle});
+    {this.latitude, 
+    this.longitude, 
+    this.id, 
+    this.isDeleted, 
+    this.vehicle});
 
 
-  LatLng get getBusLatLng => LatLng(this.latitude, this.longitude);
+  LatLng get getLatLng => LatLng(this.latitude, this.longitude);
 
   BusVehicleUpdate.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     isDeleted = json['isDeleted'];
     vehicle =
         json['vehicle'] != null ? new Vehicle.fromJson(json['vehicle']) : null;
-    latitude = json["latitude"];
-    longitude = json["longitude"];
+    latitude = vehicle.position.latitude;
+    longitude = vehicle.position.longitude;
   }
 
   Map<String, dynamic> toJson() {

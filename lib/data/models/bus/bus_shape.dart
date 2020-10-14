@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class BusShape {
   int id;
   String shapeId;
@@ -13,6 +15,8 @@ class BusShape {
       this.shapePtLon,
       this.shapePtSequence,
       this.shapeDistTraveled});
+
+  LatLng get getLatLng => LatLng(this.shapePtLat, this.shapePtLon);
 
   BusShape.fromJson(Map<String, dynamic> json) {
     id = json['id'];

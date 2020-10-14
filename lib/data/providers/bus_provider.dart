@@ -26,7 +26,7 @@ class BusProvider {
       response = await client.get(
           'https://us-central1-smartrider-4e9e8.cloudfunctions.net/$type',
           headers: query);
-      // await createJSONFile('$type', response);
+      //await createJSONFile('$type', response);
 
       if (response.statusCode == 200) {
         isConnected = true;
