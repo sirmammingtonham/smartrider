@@ -24,5 +24,5 @@ class BusRepository {
   Future<List<BusVehicleUpdate>> get getUpdates async =>
       _busProvider.getVehicleUpdates();
 
-  bool get getIsConnected => _busProvider.getIsConnected;
+  bool get isConnected => _busProvider.getIsConnected;
 }

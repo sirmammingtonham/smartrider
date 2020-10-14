@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 // bloc imports
-import 'package:smartrider/blocs/shuttle/shuttle_bloc.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
-import 'package:smartrider/blocs/bus/bus_bloc.dart';
 import 'package:smartrider/data/repository/shuttle_repository.dart';
 import 'package:smartrider/data/repository/bus_repository.dart';
 
@@ -27,7 +26,6 @@ class HomePage extends StatelessWidget {
 }
 
 class _HomePage extends StatefulWidget {
-
   _HomePage();
   @override
   _HomePageState createState() => _HomePageState();
@@ -77,17 +75,12 @@ class _HomePageState extends State<_HomePage> {
                 child: Icon(Icons.arrow_upward))
           ],
         ),
-        // stack the search bar widget over the map ui
-        body: MultiBlocProvider(
-          providers: [
-            BlocProvider<ShuttleBloc>(
-                create: (BuildContext context) =>
-                    ShuttleBloc(repository: ShuttleRepository())),
-            BlocProvider<BusBloc>(
-                create: (BuildContext context) =>
-                    BusBloc(repository: BusRepository())),
-            BlocProvider<MapBloc>(create: (context) => MapBloc()),
-          ],
+        body: BlocProvider<MapBloc>(
+          create: (context) => MapBloc(
+              shuttleRepo: ShuttleRepository(),
+              busRepo: BusRepository(),
+              prefsBloc: BlocProvider.of<PrefsBloc>(context)),
+          // stack the search bar widget over the map ui
           child: Stack(children: <Widget>[
             ShuttleMap(
               key: mapState,

@@ -22,6 +22,13 @@ class SavePrefsEvent extends PrefsEvent {
   List<Object> get props => [this.name, this.val];
 }
 
+class PrefsUpdateEvent extends PrefsEvent {
+  const PrefsUpdateEvent();
+  
+  @override
+  List<Object> get props => [];
+}
+
 class InitActiveRoutesEvent extends PrefsEvent {
   final List<ShuttleRoute> routes;
   const InitActiveRoutesEvent(this.routes);
