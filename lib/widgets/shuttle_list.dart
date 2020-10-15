@@ -104,72 +104,19 @@ class ShuttleListState extends State<ShuttleList>
 
         //print(curStopList);
         return CustomExpansionTile(
-          //   tilePadding: EdgeInsets.zero,
-          //   subtitle: Text('asdasd'),
-          //   leading: Container(
-          //     margin: const EdgeInsets.only(left: 32.0),
-          //     constraints: BoxConstraints.expand(width: 8),
-          //     decoration: BoxDecoration(
-          //       border: Border(left: BorderSide(color: Colors.red, width: 4)),
-          //     ),
-          //   ),
-          //   title: Text('foo'),
-          //   children: [
-          //     ListTile(
-          //       contentPadding: EdgeInsets.zero,
-          //       leading: Container(
-          //         margin: const EdgeInsets.only(left: 32.0),
-          //         constraints: BoxConstraints.expand(width: 8),
-          //         decoration: BoxDecoration(
-          //           border: Border(left: BorderSide(color: Colors.red, width: 4)),
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // );
-
           title: Text(curStopList[index % curStopList.length][0]),
           subtitle: Text('Next Arrival: ' +
               _getTimeIndex(shuttleTimeLists[idx]).toString()),
-          leading: index == 0
-              ? Column(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(top: 20),
-                      height: 15,
-                      width: 15,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(width: .5, color: Colors.green)),
-                    ),
-                    Dash(
-                        direction: Axis.vertical,
-                        length: 20,
-                        dashLength: 5,
-                        dashColor: Colors.grey),
-                  ],
-                )
-              : Column(
-                  children: <Widget>[
-                    Dash(
-                        direction: Axis.vertical,
-                        length: 20,
-                        dashLength: 5,
-                        dashColor: Colors.grey),
-                    Container(
-                      height: 15,
-                      width: 15,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(width: .5, color: Colors.green)),
-                    ),
-                    Dash(
-                        direction: Axis.vertical,
-                        length: 20,
-                        dashLength: 5,
-                        dashColor: Colors.grey),
-                  ],
-                ),
+          leading: CustomPaint(
+              painter: FillPainter(
+                  circleColor: Theme.of(context).buttonColor,
+                  lineColor: Theme.of(context).primaryColorLight,
+                  first: index == 0,
+                  last: index == curStopList.length - 1),
+              child: Container(
+                height: 50,
+                width: 45,
+              )),
           trailing:
               //toggle()
               isExpandedList[index % curStopList.length]
@@ -188,13 +135,18 @@ class ShuttleListState extends State<ShuttleList>
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Container(
-                margin: const EdgeInsets.only(left: 20.0),
+                margin: const EdgeInsets.only(left: 34.5),
                 constraints: BoxConstraints.expand(width: 8),
-                child: Dash(
-                    direction: Axis.vertical,
-                    length: 55,
-                    dashLength: 5,
-                    dashColor: Colors.grey),
+                child: CustomPaint(
+                    painter: StrokePainter(
+                      circleColor: Theme.of(context).buttonColor,
+                      lineColor: Theme.of(context).primaryColorLight,
+                      last: index== curStopList.length -1,
+                    ),
+                    child: Container(
+                      height: 50,
+                      width: 45,
+                    )),
               ),
             ),
           ],
@@ -230,19 +182,101 @@ _getTimeIndex(List<String> curTimeList) {
   return curTimeList.indexWhere((element) => element == closest);
 }
 
-// Column( children:
-// [ for (var i=0; i< 3; i++)
-// ExpansionTile(
-//   tilePadding: EdgeInsets.zero,
-//   leading: Container(
-//     margin: const EdgeInsets.only(left: 32.0),
-//     constraints: BoxConstraints.expand(width: 8),
-//     decoration: BoxDecoration( border: Border(left: BorderSide(color: Colors.red, width: 4)), ),),
-//     title: Text('foo'),
-//     children: [
-//       ListTile(
-//         contentPadding: EdgeInsets.zero,
-//         leading: Container( margin: const EdgeInsets.only(left: 32.0),
-//         constraints: BoxConstraints.expand(width: 8),
-//         decoration: BoxDecoration(
-//           border: Border(left: BorderSide(color: Colors.red, width: 4)), ),),),],),],)
+class FillPainter extends CustomPainter {
+  final Color circleColor;
+  final Color lineColor;
+  final bool first;
+  final bool last;
+  final double overflow;
+
+  FillPainter(
+      {this.circleColor,
+      this.lineColor,
+      this.first = false,
+      this.last = false,
+      this.overflow = 8.0})
+      : super();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint();
+    // cascade notation, look it up it's pretty cool
+    Paint line = new Paint()
+      ..color = lineColor
+      ..strokeCap = StrokeCap.square
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 6;
+
+    if (first) {
+      canvas.drawLine(Offset(size.width / 2, size.height + overflow),
+          Offset(size.width / 2, size.height / 2), line);
+    } else if (last) {
+      canvas.drawLine(Offset(size.width / 2, size.height / 2),
+          Offset(size.width / 2, -overflow), line);
+    } else {
+      canvas.drawLine(Offset(size.width / 2, size.height + overflow),
+          Offset(size.width / 2, -overflow), line);
+    }
+
+    // set the color property of the paint
+    paint.color = circleColor;
+
+    // center of the canvas is (x,y) => (width/2, height/2)
+    var center = Offset(size.width / 2, size.height / 2);
+
+    canvas.drawCircle(center, 11.0, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class StrokePainter extends CustomPainter {
+  final Color circleColor;
+  final Color lineColor;
+  final bool last;
+  final double
+      circleOffset; // how much to offset lines by based on thiccness of circle stroke
+  final double stroke;
+  StrokePainter(
+      {this.circleColor,
+      this.lineColor,
+      this.last = false,
+      this.circleOffset = 15.0,
+      this.stroke = 3.0})
+      : super();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint();
+    // cascade notation, look it up it's pretty cool
+    Paint line = new Paint()
+      ..color = lineColor
+      ..strokeCap = StrokeCap.square
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 6;
+
+    
+    if (last) {
+      canvas.drawLine(Offset(size.width / 2, (size.height / 2) - circleOffset),
+        Offset(size.width / 2, 0), line);
+    } else {  // two lines to leave middle empty
+      canvas.drawLine(Offset(size.width / 2, (size.height / 2) - circleOffset),
+        Offset(size.width / 2, 0), line);
+    canvas.drawLine(Offset(size.width / 2, (size.height / 2) + circleOffset),
+        Offset(size.width / 2, size.height), line);
+    }
+
+    paint.color = circleColor;
+    paint.style = PaintingStyle.stroke;
+    paint.strokeWidth = stroke;
+
+    // center of the canvas is (x,y) => (width/2, height/2)
+    var center = Offset(size.width / 2, size.height / 2);
+
+    canvas.drawCircle(center, 11.0, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
