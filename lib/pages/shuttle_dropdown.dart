@@ -7,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/filter_dialog.dart';
 import 'package:smartrider/widgets/shuttle_list.dart';
-//import 'package:smartrider/widgets/bus_list.dart';
+//import 'package:smartrider/widgets/bus_list.dart'; OBSOLETE
 import 'package:smartrider/widgets/bus_list_new.dart';
 import 'package:smartrider/widgets/map_ui.dart';
 
