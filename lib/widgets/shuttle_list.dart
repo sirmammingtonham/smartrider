@@ -85,17 +85,6 @@ class ShuttleListState extends State<ShuttleList>
   }
 
   @override
-  bool get wantKeepAlive => true;
-
-  /*void toggle() {
-    if (isExpanded) {
-      isExpanded = false;
-      //return Text('Show Arrivals +');
-    } else {
-      isExpanded = true;
-      //return Text('Hide Arrivals -');
-    }
-  }*/
   Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
     return ScrollablePositionedList.builder(
       itemCount: shuttleStopLists[idx].length,
@@ -132,21 +121,41 @@ class ShuttleListState extends State<ShuttleList>
             });
           },
           children: [
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Container(
-                margin: const EdgeInsets.only(left: 34.5),
-                constraints: BoxConstraints.expand(width: 8),
-                child: CustomPaint(
-                    painter: StrokePainter(
-                      circleColor: Theme.of(context).buttonColor,
-                      lineColor: Theme.of(context).primaryColorLight,
-                      last: index== curStopList.length -1,
+            CustomPaint(
+              painter: StrokePainter(
+                circleColor: Theme.of(context).buttonColor,
+                lineColor: Theme.of(context).primaryColorLight,
+                last: index == curStopList.length - 1,
+              ),
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  margin: const EdgeInsets.only(left: 34.5),
+                  constraints: BoxConstraints.expand(width: 8),
+                ),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Current Time:',
+                      style: TextStyle(fontSize: 12),
                     ),
-                    child: Container(
-                      height: 50,
-                      width: 45,
-                    )),
+                    SizedBox(
+                      width: 140,
+                      height: 30,
+                      child: RaisedButton(
+                          onPressed: () {},
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.location_on),
+                              Text('Show My Stop',
+                                  style: TextStyle(fontSize: 12)),
+                            ],
+                          )),
+                    )
+                  ],
+                ),
               ),
             ),
           ],
@@ -209,17 +218,21 @@ class FillPainter extends CustomPainter {
 
     if (first) {
       canvas.drawLine(Offset(size.width / 2, size.height + overflow),
-          Offset(size.width / 2, size.height / 2), line);
+          Offset(size.width / 2, size.height / 2 + 15), line);
     } else if (last) {
-      canvas.drawLine(Offset(size.width / 2, size.height / 2),
+      canvas.drawLine(Offset(size.width / 2, size.height / 2 - 15.0),
           Offset(size.width / 2, -overflow), line);
     } else {
-      canvas.drawLine(Offset(size.width / 2, size.height + overflow),
+      canvas.drawLine(Offset(size.width / 2, (size.height / 2) - 15.0),
           Offset(size.width / 2, -overflow), line);
+      canvas.drawLine(Offset(size.width / 2, (size.height / 2) + 15.0),
+          Offset(size.width / 2, size.height + overflow), line);
     }
 
     // set the color property of the paint
     paint.color = circleColor;
+    paint.style = PaintingStyle.stroke;
+    paint.strokeWidth = 3.0;
 
     // center of the canvas is (x,y) => (width/2, height/2)
     var center = Offset(size.width / 2, size.height / 2);
@@ -235,46 +248,25 @@ class StrokePainter extends CustomPainter {
   final Color circleColor;
   final Color lineColor;
   final bool last;
-  final double
-      circleOffset; // how much to offset lines by based on thiccness of circle stroke
-  final double stroke;
-  StrokePainter(
-      {this.circleColor,
-      this.lineColor,
-      this.last = false,
-      this.circleOffset = 15.0,
-      this.stroke = 3.0})
-      : super();
+  StrokePainter({
+    this.circleColor,
+    this.lineColor,
+    this.last = false,
+  }) : super();
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint();
     // cascade notation, look it up it's pretty cool
+
     Paint line = new Paint()
       ..color = lineColor
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.fill
       ..strokeWidth = 6;
 
-    
-    if (last) {
-      canvas.drawLine(Offset(size.width / 2, (size.height / 2) - circleOffset),
-        Offset(size.width / 2, 0), line);
-    } else {  // two lines to leave middle empty
-      canvas.drawLine(Offset(size.width / 2, (size.height / 2) - circleOffset),
-        Offset(size.width / 2, 0), line);
-    canvas.drawLine(Offset(size.width / 2, (size.height / 2) + circleOffset),
-        Offset(size.width / 2, size.height), line);
+    if (!last) {
+      canvas.drawLine(Offset(38.5, size.height), Offset(38.5, 0), line);
     }
-
-    paint.color = circleColor;
-    paint.style = PaintingStyle.stroke;
-    paint.strokeWidth = stroke;
-
-    // center of the canvas is (x,y) => (width/2, height/2)
-    var center = Offset(size.width / 2, size.height / 2);
-
-    canvas.drawCircle(center, 11.0, paint);
   }
 
   @override
