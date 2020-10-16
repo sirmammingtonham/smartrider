@@ -266,13 +266,8 @@ class _ExpansionTileState extends State<CustomExpansionTile>
     final Widget result = Offstage(
         child: TickerMode(
           child: Padding(
-            padding: widget.childrenPadding ?? EdgeInsets.zero,
-            child: Column(
-              crossAxisAlignment: widget.expandedCrossAxisAlignment ??
-                  CrossAxisAlignment.center,
-              children: widget.children,
-            ),
-          ),
+              padding: widget.childrenPadding ?? EdgeInsets.zero,
+              child: widget.children[0]),
           enabled: !closed,
         ),
         offstage: closed);
