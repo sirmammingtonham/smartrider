@@ -8,6 +8,7 @@ import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/filter_dialog.dart';
 import 'package:smartrider/widgets/shuttle_list.dart';
 import 'package:smartrider/widgets/bus_list.dart';
+import 'package:smartrider/widgets/bus_list_new.dart'; // This is my NEW busList.
 import 'package:smartrider/widgets/map_ui.dart';
 
 class ShuttleSchedule extends StatefulWidget {

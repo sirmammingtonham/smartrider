@@ -18,21 +18,19 @@ import 'package:smartrider/widgets/shuttle_list.dart';
 import 'package:smartrider/widgets/bus_list.dart';
 import 'package:smartrider/widgets/map_ui.dart';
 
-class ShuttleList extends StatefulWidget {
+class BusList extends StatefulWidget {
   final Function containsFilter;
   final Function jumpMap;
-  ShuttleList({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
+  BusList({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
   @override
-  ShuttleListState createState() => ShuttleListState();
+  BusListState createState() => BusListState();
 }
 
-class ShuttleListState extends State<ShuttleList>
-    with SingleTickerProviderStateMixin {
-  final List<Widget> shuttleTabs = [
-    Tab(text: 'SOUTH'),
-    Tab(text: 'NORTH'),
-    Tab(text: 'WEST'),
-    Tab(text: 'WEEKEND'),
+class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
+  final List<Widget> busTabs = [
+    Tab(text: 'Route 87'),
+    Tab(text: 'Route 286'),
+    Tab(text: 'Route 289'),
   ];
 
   TabController _tabController;
@@ -40,7 +38,7 @@ class ShuttleListState extends State<ShuttleList>
   @override
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, length: shuttleTabs.length);
+    _tabController = new TabController(vsync: this, length: busTabs.length);
     _tabController.addListener(() {
       isExpandedList.fillRange(0, 100, false);
     });
@@ -59,7 +57,7 @@ class ShuttleListState extends State<ShuttleList>
     return Column(children: <Widget>[
       TabBar(
         isScrollable: true,
-        tabs: shuttleTabs,
+        tabs: busTabs,
         // unselectedLabelColor: Colors.white.withOpacity(0.3),
         labelColor: Theme.of(context).brightness == Brightness.light
             ? Colors.black
@@ -74,10 +72,9 @@ class ShuttleListState extends State<ShuttleList>
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            shuttleList(0, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(1, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(2, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(3, this.widget.containsFilter, this.widget.jumpMap),
+            busList(0, this.widget.containsFilter, this.widget.jumpMap),
+            busList(1, this.widget.containsFilter, this.widget.jumpMap),
+            busList(2, this.widget.containsFilter, this.widget.jumpMap),
           ],
         ),
       )
@@ -85,11 +82,11 @@ class ShuttleListState extends State<ShuttleList>
   }
 
   @override
-  Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
+  Widget busList(int idx, Function _containsFilter, Function _jumpMap) {
     return ScrollablePositionedList.builder(
-      itemCount: shuttleStopLists[idx].length,
+      itemCount: busStopLists[idx].length,
       itemBuilder: (context, index) {
-        var curStopList = shuttleStopLists[idx];
+        var curStopList = busStopLists[idx];
 
         //print(curStopList);
         return CustomExpansionTile(
