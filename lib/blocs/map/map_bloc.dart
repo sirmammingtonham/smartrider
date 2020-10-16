@@ -47,7 +47,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Map<String, BusRoute> busRoutes = {};
   List<BusShape> shapes = [];
-  List<BusStop> busStops = [];
+  Map<String, List<BusStop>> busStops = {};
   List<BusVehicleUpdate> busUpdates = [];
 
   Map<String, ShuttleRoute> shuttleRoutes = {};
@@ -128,7 +128,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     busRoutes = await busRepo.getRoutes;
     // shapes = await busRepo.getShapes;
-    // busStops = await busRepo.getStops;
+    busStops = await busRepo.getActiveStops;
     // busUpdates = await busRepo.getUpdates;
 
     prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values.toList()));
@@ -154,7 +154,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       yield MapErrorState(message: 'NETWORK ISSUE');
     }
   }
-
 
   /// non-state related functions
   void scrollToCurrentLocation() async {
@@ -197,7 +196,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           CameraPosition(target: loc, zoom: 18, tilt: 50)),
     );
   }
-
 
   /// helper functions
   Future<void> _initMapElements() async {
@@ -322,10 +320,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         });
       }
     });
-
-    busStops.forEach((stop) {
-      _currentMarkers.add(_busStopToMarker(stop));
+    // var bruh = 0;
+    busStops.forEach((name, stops) {
+      // bruh += stops.length;
+      stops.forEach((stop) {
+        _currentMarkers.add(_busStopToMarker(stop));
+      });
     });
+    // print(bruh);
     return _currentMarkers;
   }
 }
