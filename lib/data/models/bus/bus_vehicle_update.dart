@@ -10,11 +10,11 @@ class BusVehicleUpdate {
   dynamic longitude;
 
   BusVehicleUpdate(
-    {this.latitude, 
-    this.longitude, 
-    this.id, 
-    this.isDeleted, 
-    this.vehicle});
+  {this.latitude, 
+  this.longitude, 
+  this.id, 
+  this.isDeleted, 
+  this.vehicle});
 
 
   LatLng get getLatLng => LatLng(this.latitude, this.longitude);

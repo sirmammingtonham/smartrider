@@ -94,7 +94,9 @@ class BusProvider {
   }
 
   Future<List<BusTrip>> getTrip() async {
-    var response = await fetch('busTrips', query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});  //trips for 87,286 and 289 
+    var response = await fetch('busTrips', query: {
+      'query': '{"route_id": ["87-184","286-184","289-184"]}'
+    }); //trips for 87,286 and 289
 
     List<BusTrip> tripList = response != null
         ? json
@@ -105,23 +107,42 @@ class BusProvider {
     return tripList;
   }
 
-   Future<List<BusTripUpdate>> getTripUpdatesWithParameter() async {  
+  Future<List<BusTripUpdate>> getTripUpdatesWithParameter() async {
     var response = await fetch('tripUpdates');
     List<BusTrip> trips = await this.getTrip();
-    List<String> tripIDs;
-    for (BusTrip trip in trips){      // add all tripid to be searched through in tripid list
-      if(!tripIDs.contains(trip.tripId)){
+    List<String> tripIDs = new List<String>();
+    for (BusTrip trip in trips) {
+      // add all tripid to be searched through in tripid list
+      if (!tripIDs.contains(trip.tripId)) {
         tripIDs.add(trip.tripId);
       }
     }
     List<BusTripUpdate> tripUpdatesList = response != null
         ? json
             .decode(response.body)
-            .where((json)=> tripIDs.contains(json["id"])) 
+            .where((json) =>
+                tripIDs.contains(json["id"]) && json["isDeleted"] == false)
             .map<BusTripUpdate>((json) => BusTripUpdate.fromJson(json))
             .toList()
         : [];
     return tripUpdatesList;
+  }
+
+  Future<Map<String, List<BusStop>>> getActiveStops() async {  // map<routeId, list<busstop>>
+    List<BusTripUpdate> updates = await this.getTripUpdatesWithParameter();
+    List<BusStop> busStops = await this.getStops();
+    Map<String, List<BusStop>> stopMap = new Map<String, List<BusStop>>();
+    for (BusTripUpdate update in updates) {
+      List<String> ids =
+          update.tripUpdate.stopTimeUpdate.map((e) => e.stopId).toList();
+
+      List<BusStop> stops =
+          busStops.where((element) => ids.contains(element.stopId)).toList();
+
+      stopMap[update.tripUpdate.trip.routeId] = stops;
+    }
+
+    return stopMap;
   }
 
   /// Getter method to retrieve list of vehicle updates
