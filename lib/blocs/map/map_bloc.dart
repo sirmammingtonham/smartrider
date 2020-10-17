@@ -7,6 +7,8 @@ import 'package:flutter/services.dart' show rootBundle;
 // map imports
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:fluster/fluster.dart';
+import 'package:meta/meta.dart';
 
 // bloc imports
 import 'package:equatable/equatable.dart';
@@ -30,6 +32,46 @@ import 'package:smartrider/data/models/bus/bus_vehicle_update.dart';
 part 'map_event.dart';
 part 'map_state.dart';
 
+class MapMarker extends Clusterable {
+  String id;
+  LatLng position;
+  BitmapDescriptor icon;
+  String info;
+  MapMarker({
+    @required this.id,
+    @required this.position,
+    @required this.icon,
+    @required this.info,
+    isCluster = false,
+    clusterId,
+    pointsSize,
+    childMarkerId,
+  }) : super(
+          markerId: id,
+          latitude: position.latitude,
+          longitude: position.longitude,
+          isCluster: isCluster,
+          clusterId: clusterId,
+          pointsSize: pointsSize,
+          childMarkerId: childMarkerId,
+        );
+  Marker toMarker() => Marker(
+        markerId: MarkerId(id),
+        position: LatLng(
+          position.latitude,
+          position.longitude,
+        ),
+        infoWindow: InfoWindow(title: this.info),
+        icon: icon,
+      );
+  MapMarker.fromMarker(Marker m) {
+    this.id = m.markerId.toString();
+    this.position = m.position;
+    this.icon = m.icon;
+    isCluster = false;
+  }
+}
+
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
   northeast: const LatLng(42.751583, -73.616713),
@@ -38,7 +80,7 @@ final LatLngBounds rpiBounds = LatLngBounds(
 class MapBloc extends Bloc<MapEvent, MapState> {
   final ShuttleRepository shuttleRepo;
   final BusRepository busRepo;
-
+  double zoomlevel = 15.0;
   final PrefsBloc prefsBloc;
   StreamSubscription prefsStream;
   Map<String, bool> _enabledShuttles = {};
@@ -47,18 +89,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Map<String, BusRoute> busRoutes = {};
   List<BusShape> shapes = [];
-  Map<String, List<BusStop>> busStops = {};
+  //Map<String, List<BusStop>> busStops = {};
+  List<BusStop> busStops = [];
   List<BusVehicleUpdate> busUpdates = [];
 
   Map<String, ShuttleRoute> shuttleRoutes = {};
   List<ShuttleStop> shuttleStops = [];
   List<ShuttleUpdate> shuttleUpdates = [];
-
+  List<MapMarker> mapmarkers = [];
   BitmapDescriptor shuttleStopIcon, busStopIcon;
   Map<int, BitmapDescriptor> shuttleUpdateIcons = new Map(); // maps id to image
 
   bool isLoading = true;
-
+  Fluster<MapMarker> fluster;
   String _lightMapStyle;
   String _darkMapStyle;
 
@@ -98,6 +141,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _controller.setMapStyle(Theme.of(context).brightness == Brightness.dark
         ? _darkMapStyle
         : _lightMapStyle);
+
+  
   }
 
   /// bloc functions
@@ -107,6 +152,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await _initMapElements();
       yield* _mapDataRequestedToState();
     } else if (event is MapUpdateEvent) {
+      zoomlevel = event.zoomlevel ?? 15.0;
       yield* _mapUpdateRequestedToState();
     } else {
       yield MapErrorState();
@@ -128,7 +174,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     busRoutes = await busRepo.getRoutes;
     // shapes = await busRepo.getShapes;
-    busStops = await busRepo.getActiveStops;
+    busStops = await busRepo.getStops;
     // busUpdates = await busRepo.getUpdates;
 
     prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values.toList()));
@@ -273,6 +319,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         });
   }
 
+  MapMarker _busStopToMapMarker(BusStop stop) {
+    return MapMarker(
+        id: stop.stopId, 
+        info: stop.stopName,
+        position: stop.getLatLng, 
+        icon: busStopIcon);
+  }
+
   Marker _updateToMarker(ShuttleUpdate update) {
     // real time update shuttles
     return Marker(
@@ -319,15 +373,54 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _currentMarkers.add(markerMap[id]);
         });
       }
+      
     });
-    // var bruh = 0;
-    busStops.forEach((name, stops) {
-      // bruh += stops.length;
-      stops.forEach((stop) {
-        _currentMarkers.add(_busStopToMarker(stop));
-      });
-    });
-    // print(bruh);
+    // // var bruh = 0;
+    // busStops.forEach((name, stops) {
+    //   // bruh += stops.length;
+    //   stops.forEach((stop) {
+    //     mapmarkers.add(_busStopToMapMarker(stop));
+    //     _currentMarkers.add(_busStopToMarker(stop));
+    //   });
+    // });
+
+    busStops.forEach((value) => mapmarkers.add(_busStopToMapMarker(value)));
+    //busStops.forEach((value) => _currentMarkers.add(_busStopToMarker(value)));   
+       fluster = Fluster<MapMarker>(
+      minZoom: 0, // The min zoom at clusters will show
+      maxZoom: 21, // The max zoom at clusters will show
+      radius: 300, // increase for more aggressive clustering vice versa
+      extent: 2048, // Tile extent. Radius is calculated with it.
+      nodeSize: 64, // Size of the KD-tree leaf node.
+      points: mapmarkers, // The list of markers created before
+      createCluster: (
+        // Create cluster marker
+        BaseCluster cluster,
+        double lng,
+        double lat,
+      ) =>
+          MapMarker(
+        id: cluster.id.toString(),
+        position: LatLng(lat, lng),
+        icon: this.busStopIcon,
+        info: "",
+        isCluster: cluster.isCluster,
+        clusterId: cluster.id,
+        pointsSize: cluster.pointsSize,
+        childMarkerId: cluster.childMarkerId,
+      ),
+    );
+    
+
+      final Set<Marker> googleMarkers = fluster
+      .clusters([rpiBounds.southwest.longitude, rpiBounds.southwest.latitude, 
+      rpiBounds.northeast.longitude, rpiBounds.northeast.latitude], 
+       zoomlevel.round())
+      .map((cluster) => cluster.toMarker())
+      .toSet();
+      _currentMarkers..addAll(googleMarkers);
+    
     return _currentMarkers;
   }
+
 }

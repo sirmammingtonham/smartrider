@@ -4,6 +4,8 @@ import 'dart:async';
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluster/fluster.dart';
+import 'package:meta/meta.dart';
 
 // map imports
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -31,7 +33,6 @@ class ShuttleMap extends StatefulWidget {
 
 class ShuttleMapState extends State<ShuttleMap> {
   ShuttleMapState();
-
   bool _compassEnabled = false;
   bool _mapToolbarEnabled = true;
   CameraTargetBounds _cameraTargetBounds = CameraTargetBounds(rpiBounds);
@@ -45,6 +46,7 @@ class ShuttleMapState extends State<ShuttleMap> {
   bool _myLocationEnabled = true;
   bool _myTrafficEnabled = false;
   bool _myLocationButtonEnabled = false;
+  double currentzoom; 
   MapBloc mapBloc;
 
   @override
@@ -53,9 +55,9 @@ class ShuttleMapState extends State<ShuttleMap> {
 
     mapBloc = BlocProvider.of<MapBloc>(context);
     mapBloc.add(MapInitEvent());
-    const refreshDelay = const Duration(seconds: 3); // update every 3 sec
+    const refreshDelay = const Duration(seconds: 2); // update every 3 sec
     new Timer.periodic(refreshDelay,
-        (Timer t) => BlocProvider.of<MapBloc>(context).add(MapUpdateEvent()));
+        (Timer t) => BlocProvider.of<MapBloc>(context).add(MapUpdateEvent(zoomlevel: currentzoom)));
   }
 
   @override
@@ -71,8 +73,9 @@ class ShuttleMapState extends State<ShuttleMap> {
         return Center(child: CircularProgressIndicator());
       } else if (state is MapLoadedState) {
         final GoogleMap googleMap = GoogleMap(
-          onMapCreated: (controller) =>
-              mapBloc.updateController(context, controller),
+          onMapCreated: (controller){
+              mapBloc.updateController(context, controller);
+              },
           initialCameraPosition: kInitialPosition,
           compassEnabled: _compassEnabled,
           mapToolbarEnabled: _mapToolbarEnabled,
@@ -88,6 +91,10 @@ class ShuttleMapState extends State<ShuttleMap> {
           trafficEnabled: _myTrafficEnabled,
           polylines: state.polylines,
           markers: state.markers,
+          zoomControlsEnabled: true,
+          onCameraMove: (position){
+             currentzoom = position.zoom;
+          },
           mapType: _mapType,
         );
         return MapUI(googleMap: googleMap);

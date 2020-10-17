@@ -12,7 +12,8 @@ class MapInitEvent extends MapEvent {
 }
 
 class MapUpdateEvent extends MapEvent {
-  const MapUpdateEvent();
+  final double zoomlevel;
+  const MapUpdateEvent({@required this.zoomlevel});
 
   @override
   List<Object> get props => [];
