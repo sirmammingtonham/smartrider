@@ -18,8 +18,12 @@ import 'package:smartrider/widgets/autocomplete.dart';
 import 'dart:io';
 
 String computeUsername(String name) {
-  //compute name to be displayed on search bar
-  return (name[name.indexOf('@') - 2] + name[0]).toUpperCase();
+  //compute initials to be displayed on search bar
+  var counter = 1;
+  while ( double.tryParse( name[name.indexOf('@') - counter] ) != null )
+    counter += 1;
+
+  return (name[name.indexOf('@') - counter] + name[0]).toUpperCase();
 }
 
 class SearchBar extends StatefulWidget {
@@ -53,10 +57,10 @@ class SearchBarState extends State<SearchBar> {
             left: 15,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
-              height: 50,
+              height: 55,
               child: Material(
                 borderRadius: BorderRadius.circular(10.0),
-                elevation: 5.0,
+                elevation: 6.0,
                 child: Row(
                   children: <Widget>[
                     IconButton(
@@ -90,7 +94,7 @@ class SearchBarState extends State<SearchBar> {
                         backgroundColor: Theme.of(context).buttonColor,
                         child: IconButton(
                           icon: Text(computeUsername(widget.name),
-                              style: TextStyle(color: Colors.white70)),
+                              style: TextStyle(fontSize: 15, color: Colors.white70)),
                           onPressed: () {
                             Navigator.push(
                                 context,

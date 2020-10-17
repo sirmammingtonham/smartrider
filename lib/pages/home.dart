@@ -61,7 +61,7 @@ class _HomePageState extends State<_HomePage> {
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20.0),
         ),
-        collapsed: AppBar(
+        collapsed: AppBar( titleSpacing: 1.5,
           centerTitle: true,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(

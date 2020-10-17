@@ -97,19 +97,21 @@ class _SignupUIState extends State<SignupUI> {
             )),
             Positioned(
               child: Container(
-                  padding: EdgeInsets.only(right: 35),
-                  height: 130,
+                  //padding: EdgeInsets.only(right: 35),
+                  height: 155,
                   child: Align(
                     child: Text(
-                      "smart",
+                      "SMARTRIDER",
                       style: TextStyle(
-                        fontSize: 48,
+                        fontSize: 21,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColor,
                       ),
                     ),
+                    alignment: Alignment.center,
                   )),
             ),
+            /*
             Positioned(
               child: Container(
                   padding: EdgeInsets.only(left: 40),
@@ -125,6 +127,7 @@ class _SignupUIState extends State<SignupUI> {
                     ),
                   )),
             ),
+            */
             Positioned(
               width: MediaQuery.of(context).size.width * 0.15,
               height: MediaQuery.of(context).size.width * 0.15,
@@ -365,9 +368,9 @@ class _SignupUIState extends State<SignupUI> {
                               Positioned(
                                 child: Container(
                                   child: Text(
-                                    "login",
+                                    "LOGIN",
                                     style: TextStyle(
-                                      fontSize: 60,
+                                      fontSize: 37,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ),
@@ -480,11 +483,11 @@ class _SignupUIState extends State<SignupUI> {
                             ),
                             Positioned(
                               child: Container(
-                                padding: EdgeInsets.only(bottom: 30, right: 44),
+                                //padding: EdgeInsets.only(bottom: 30, right: 44),
                                 child: Text(
-                                  "regi",
+                                  "REGISTER",
                                   style: TextStyle(
-                                    fontSize: 54,
+                                    fontSize: 23,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -492,6 +495,7 @@ class _SignupUIState extends State<SignupUI> {
                                 alignment: Alignment.center,
                               ),
                             ),
+                            /*
                             Positioned(
                               child: Align(
                                 child: Container(
@@ -509,6 +513,7 @@ class _SignupUIState extends State<SignupUI> {
                                 alignment: Alignment.center,
                               ),
                             ),
+                            */
                           ],
                         ),
                       ),
