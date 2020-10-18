@@ -81,6 +81,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final ShuttleRepository shuttleRepo;
   final BusRepository busRepo;
   double zoomlevel = 15.0;
+  bool pollbackend = false;
   final PrefsBloc prefsBloc;
   StreamSubscription prefsStream;
   Map<String, bool> _enabledShuttles = {};
@@ -141,8 +142,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _controller.setMapStyle(Theme.of(context).brightness == Brightness.dark
         ? _darkMapStyle
         : _lightMapStyle);
-
-  
   }
 
   /// bloc functions
@@ -153,6 +152,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       yield* _mapDataRequestedToState();
     } else if (event is MapUpdateEvent) {
       zoomlevel = event.zoomlevel ?? 15.0;
+      pollbackend = event.pollbackend ?? false;
       yield* _mapUpdateRequestedToState();
     } else {
       yield MapErrorState();
@@ -168,14 +168,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await Future.delayed(const Duration(seconds: 2));
     }
 
-    shuttleRoutes = await shuttleRepo.getRoutes;
-    shuttleStops = await shuttleRepo.getStops;
-    shuttleUpdates = await shuttleRepo.getUpdates;
-
-    busRoutes = await busRepo.getRoutes;
-    // shapes = await busRepo.getShapes;
-    busStops = await busRepo.getStops;
+    if (pollbackend || busStops.length == 0) {
+      shuttleRoutes = await shuttleRepo.getRoutes;
+      shuttleStops = await shuttleRepo.getStops;
+      shuttleUpdates = await shuttleRepo.getUpdates;
+      busRoutes = await busRepo.getRoutes;
+      busStops = await busRepo.getStops;
+    }
     // busUpdates = await busRepo.getUpdates;
+    // shapes = await busRepo.getShapes;
 
     prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values.toList()));
 
@@ -321,9 +322,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   MapMarker _busStopToMapMarker(BusStop stop) {
     return MapMarker(
-        id: stop.stopId, 
+        id: stop.stopId,
         info: stop.stopName,
-        position: stop.getLatLng, 
+        position: stop.getLatLng,
         icon: busStopIcon);
   }
 
@@ -373,7 +374,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _currentMarkers.add(markerMap[id]);
         });
       }
-      
     });
     // // var bruh = 0;
     // busStops.forEach((name, stops) {
@@ -383,12 +383,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     //     _currentMarkers.add(_busStopToMarker(stop));
     //   });
     // });
-
     busStops.forEach((value) => mapmarkers.add(_busStopToMapMarker(value)));
-    //busStops.forEach((value) => _currentMarkers.add(_busStopToMarker(value)));   
-       fluster = Fluster<MapMarker>(
-      minZoom: 0, // The min zoom at clusters will show
-      maxZoom: 21, // The max zoom at clusters will show
+    //busStops.forEach((value) => _currentMarkers.add(_busStopToMarker(value)));
+    fluster = Fluster<MapMarker>(
+      minZoom: 15, // The min zoom at clusters will show
+      maxZoom: 17, // The max zoom at clusters will show
       radius: 300, // increase for more aggressive clustering vice versa
       extent: 2048, // Tile extent. Radius is calculated with it.
       nodeSize: 64, // Size of the KD-tree leaf node.
@@ -402,25 +401,28 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           MapMarker(
         id: cluster.id.toString(),
         position: LatLng(lat, lng),
-        icon: this.busStopIcon,
-        info: "",
+        icon: this.busStopIcon, // replace with cluster marker
+        // info: fluster.children(cluster.parentId).length.toString(),
+        info: cluster.isCluster ? "yes" : "no",
         isCluster: cluster.isCluster,
         clusterId: cluster.id,
         pointsSize: cluster.pointsSize,
         childMarkerId: cluster.childMarkerId,
       ),
     );
-    
 
-      final Set<Marker> googleMarkers = fluster
-      .clusters([rpiBounds.southwest.longitude, rpiBounds.southwest.latitude, 
-      rpiBounds.northeast.longitude, rpiBounds.northeast.latitude], 
-       zoomlevel.round())
-      .map((cluster) => cluster.toMarker())
-      .toSet();
-      _currentMarkers..addAll(googleMarkers);
-    
+    final Set<Marker> googleMarkers = fluster
+        .clusters([
+          rpiBounds.southwest.longitude,
+          rpiBounds.southwest.latitude,
+          rpiBounds.northeast.longitude,
+          rpiBounds.northeast.latitude
+        ], zoomlevel.round())
+        .map((cluster) => cluster.toMarker())
+        .toSet();
+
+    _currentMarkers..addAll(googleMarkers);
+
     return _currentMarkers;
   }
-
 }

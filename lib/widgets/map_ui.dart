@@ -55,9 +55,12 @@ class ShuttleMapState extends State<ShuttleMap> {
 
     mapBloc = BlocProvider.of<MapBloc>(context);
     mapBloc.add(MapInitEvent());
-    const refreshDelay = const Duration(seconds: 2); // update every 3 sec
-    new Timer.periodic(refreshDelay,
-        (Timer t) => BlocProvider.of<MapBloc>(context).add(MapUpdateEvent(zoomlevel: currentzoom)));
+    const pollRefreshDelay = const Duration(seconds: 5); // update every 3 sec
+    const clusterRefreshDelay = const Duration(seconds: 1);
+    new Timer.periodic(pollRefreshDelay,
+        (Timer t) => BlocProvider.of<MapBloc>(context).add(MapUpdateEvent(zoomlevel: currentzoom, pollbackend: true)));
+    new Timer.periodic(clusterRefreshDelay,
+        (Timer t) => BlocProvider.of<MapBloc>(context).add(MapUpdateEvent(zoomlevel: currentzoom, pollbackend: false)));
   }
 
   @override
@@ -94,6 +97,7 @@ class ShuttleMapState extends State<ShuttleMap> {
           zoomControlsEnabled: true,
           onCameraMove: (position){
              currentzoom = position.zoom;
+            //  BlocProvider.of<MapBloc>(context).add(MapUpdateEvent(zoomlevel: currentzoom));
           },
           mapType: _mapType,
         );
