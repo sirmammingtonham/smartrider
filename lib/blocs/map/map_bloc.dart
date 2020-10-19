@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 // map imports
@@ -80,8 +81,6 @@ final LatLngBounds rpiBounds = LatLngBounds(
 class MapBloc extends Bloc<MapEvent, MapState> {
   final ShuttleRepository shuttleRepo;
   final BusRepository busRepo;
-  double zoomlevel = 15.0;
-  bool pollbackend = false;
   final PrefsBloc prefsBloc;
   StreamSubscription prefsStream;
   Map<String, bool> _enabledShuttles = {};
@@ -97,7 +96,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Map<String, ShuttleRoute> shuttleRoutes = {};
   List<ShuttleStop> shuttleStops = [];
   List<ShuttleUpdate> shuttleUpdates = [];
-  List<MapMarker> mapmarkers = [];
+  List<MapMarker> mapMarkers = [];
+
+  Set<Marker> _currentMarkers = <Marker>{};
+  Set<Polyline> _currentPolylines = <Polyline>{};
+
   BitmapDescriptor shuttleStopIcon, busStopIcon;
   Map<int, BitmapDescriptor> shuttleUpdateIcons = new Map(); // maps id to image
 
@@ -151,9 +154,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await _initMapElements();
       yield* _mapDataRequestedToState();
     } else if (event is MapUpdateEvent) {
-      zoomlevel = event.zoomlevel ?? 15.0;
-      pollbackend = event.pollbackend ?? false;
-      yield* _mapUpdateRequestedToState();
+      yield* _mapUpdateRequestedToState(event.zoomLevel);
+    } else if (event is MapMoveEvent) {
+      yield* _mapMoveToState(event.zoomLevel);
     } else {
       yield MapErrorState();
     }
@@ -168,38 +171,47 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await Future.delayed(const Duration(seconds: 2));
     }
 
-    if (pollbackend || busStops.length == 0) {
-      shuttleRoutes = await shuttleRepo.getRoutes;
-      shuttleStops = await shuttleRepo.getStops;
-      shuttleUpdates = await shuttleRepo.getUpdates;
-      busRoutes = await busRepo.getRoutes;
-      busStops = await busRepo.getStops;
-    }
+    shuttleRoutes = await shuttleRepo.getRoutes;
+    shuttleStops = await shuttleRepo.getStops;
+    shuttleUpdates = await shuttleRepo.getUpdates;
+
+    // busRoutes = await busRepo.getRoutes;
+    busStops = await busRepo.getStops;
     // busUpdates = await busRepo.getUpdates;
     // shapes = await busRepo.getShapes;
 
-    prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values.toList()));
+    prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values.toList())); // update preferences with currently active routes
 
     if (shuttleRepo.isConnected || busRepo.isConnected) {
+      _getEnabledMarkers();
+      _getEnabledPolylines();
+
       yield MapLoadedState(
-          polylines: _getEnabledPolylines(), markers: _getEnabledMarkers());
+          polylines: _currentPolylines, markers: _currentMarkers.followedBy(_getMarkerClusters(14.0)).toSet());
     } else {
       isLoading = true;
       yield MapErrorState(message: 'NETWORK ISSUE');
     }
   }
 
-  Stream<MapState> _mapUpdateRequestedToState() async* {
+  Stream<MapState> _mapUpdateRequestedToState(double zoomLevel) async* {
     shuttleUpdates = await shuttleRepo.getUpdates;
     // busUpdates = await busRepo.getUpdates;
 
     if (shuttleRepo.isConnected || busRepo.isConnected) {
+      _getEnabledMarkers();
+      _getEnabledPolylines();
       yield MapLoadedState(
-          polylines: _getEnabledPolylines(), markers: _getEnabledMarkers());
+          polylines: _currentPolylines, markers: _currentMarkers.followedBy(_getMarkerClusters(zoomLevel)).toSet());
     } else {
       isLoading = true;
       yield MapErrorState(message: 'NETWORK ISSUE');
     }
+  }
+
+  Stream<MapState> _mapMoveToState(double zoomLevel) async* {
+    Set<Marker> markers = _getMarkerClusters(zoomLevel).followedBy(_currentMarkers).toSet();
+    yield MapLoadedState(polylines: _currentPolylines, markers: markers);
   }
 
   /// non-state related functions
@@ -349,8 +361,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   Set<Polyline> _getEnabledPolylines() {
-    Set<Polyline> _currentPolylines = <Polyline>{};
-
+    // Set<Polyline> _currentPolylines = <Polyline>{};
     _enabledShuttles.forEach((id, enabled) {
       if (enabled) {
         _currentPolylines.add(shuttleRoutes[id].getPolyline);
@@ -359,8 +370,45 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     return _currentPolylines;
   }
 
+  Set<Marker> _getMarkerClusters(double zoomLevel) {
+    fluster = Fluster<MapMarker>(
+      minZoom: 14, // The min zoom at clusters will show
+      maxZoom: 18, // The max zoom at clusters will show
+      radius: 450, // increase for more aggressive clustering vice versa
+      extent: 2048, // Tile extent. Radius is calculated with it.
+      nodeSize: 64, // Size of the KD-tree leaf node.
+      points: mapMarkers, // The list of markers created before
+      createCluster: (
+        // Create cluster marker
+        BaseCluster cluster,
+        double lng,
+        double lat,
+      ) =>
+          MapMarker(
+        id: cluster.id.toString(),
+        position: LatLng(lat, lng),
+        icon: this.busStopIcon, // replace with cluster marker
+        info: fluster.children(cluster.id).length.toString(),
+        isCluster: cluster.isCluster,
+        clusterId: cluster.id,
+        pointsSize: cluster.pointsSize,
+        childMarkerId: cluster.childMarkerId,
+      ),
+    );
+
+    return fluster
+        .clusters([
+          rpiBounds.southwest.longitude,
+          rpiBounds.southwest.latitude,
+          rpiBounds.northeast.longitude,
+          rpiBounds.northeast.latitude
+        ], zoomLevel.round())
+        .map((cluster) => cluster.toMarker())
+        .toSet();
+  }
+
   Set<Marker> _getEnabledMarkers() {
-    Set<Marker> _currentMarkers = <Marker>{};
+    // Set<Marker> _currentMarkers = <Marker>{};
     var markerMap = {
       for (var stop in shuttleStops) stop.id: _shuttleStopToMarker(stop)
     };
@@ -375,53 +423,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         });
       }
     });
-    // // var bruh = 0;
-    // busStops.forEach((name, stops) {
-    //   // bruh += stops.length;
-    //   stops.forEach((stop) {
-    //     mapmarkers.add(_busStopToMapMarker(stop));
-    //     _currentMarkers.add(_busStopToMarker(stop));
-    //   });
-    // });
-    busStops.forEach((value) => mapmarkers.add(_busStopToMapMarker(value)));
-    //busStops.forEach((value) => _currentMarkers.add(_busStopToMarker(value)));
-    fluster = Fluster<MapMarker>(
-      minZoom: 15, // The min zoom at clusters will show
-      maxZoom: 17, // The max zoom at clusters will show
-      radius: 300, // increase for more aggressive clustering vice versa
-      extent: 2048, // Tile extent. Radius is calculated with it.
-      nodeSize: 64, // Size of the KD-tree leaf node.
-      points: mapmarkers, // The list of markers created before
-      createCluster: (
-        // Create cluster marker
-        BaseCluster cluster,
-        double lng,
-        double lat,
-      ) =>
-          MapMarker(
-        id: cluster.id.toString(),
-        position: LatLng(lat, lng),
-        icon: this.busStopIcon, // replace with cluster marker
-        // info: fluster.children(cluster.parentId).length.toString(),
-        info: cluster.isCluster ? "yes" : "no",
-        isCluster: cluster.isCluster,
-        clusterId: cluster.id,
-        pointsSize: cluster.pointsSize,
-        childMarkerId: cluster.childMarkerId,
-      ),
-    );
 
-    final Set<Marker> googleMarkers = fluster
-        .clusters([
-          rpiBounds.southwest.longitude,
-          rpiBounds.southwest.latitude,
-          rpiBounds.northeast.longitude,
-          rpiBounds.northeast.latitude
-        ], zoomlevel.round())
-        .map((cluster) => cluster.toMarker())
-        .toSet();
-
-    _currentMarkers..addAll(googleMarkers);
+    busStops.forEach((value) => mapMarkers.add(_busStopToMapMarker(value)));
 
     return _currentMarkers;
   }

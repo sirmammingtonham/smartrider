@@ -46,7 +46,7 @@ class ShuttleMapState extends State<ShuttleMap> {
   bool _myLocationEnabled = true;
   bool _myTrafficEnabled = false;
   bool _myLocationButtonEnabled = false;
-  double currentzoom; 
+  double currentZoom = 14.0;
   MapBloc mapBloc;
 
   @override
@@ -55,12 +55,11 @@ class ShuttleMapState extends State<ShuttleMap> {
 
     mapBloc = BlocProvider.of<MapBloc>(context);
     mapBloc.add(MapInitEvent());
-    const pollRefreshDelay = const Duration(seconds: 5); // update every 3 sec
-    const clusterRefreshDelay = const Duration(seconds: 1);
-    new Timer.periodic(pollRefreshDelay,
-        (Timer t) => BlocProvider.of<MapBloc>(context).add(MapUpdateEvent(zoomlevel: currentzoom, pollbackend: true)));
-    new Timer.periodic(clusterRefreshDelay,
-        (Timer t) => BlocProvider.of<MapBloc>(context).add(MapUpdateEvent(zoomlevel: currentzoom, pollbackend: false)));
+    const pollRefreshDelay = const Duration(seconds: 3); // update every 3 sec
+    new Timer.periodic(
+        pollRefreshDelay,
+        (Timer t) => BlocProvider.of<MapBloc>(context)
+            .add(MapUpdateEvent(zoomLevel: currentZoom)));
   }
 
   @override
@@ -75,10 +74,11 @@ class ShuttleMapState extends State<ShuttleMap> {
       if (state is MapLoadingState) {
         return Center(child: CircularProgressIndicator());
       } else if (state is MapLoadedState) {
+        // Set<Marker> _currentMarkers = state.markers;
         final GoogleMap googleMap = GoogleMap(
-          onMapCreated: (controller){
-              mapBloc.updateController(context, controller);
-              },
+          onMapCreated: (controller) {
+            mapBloc.updateController(context, controller);
+          },
           initialCameraPosition: kInitialPosition,
           compassEnabled: _compassEnabled,
           mapToolbarEnabled: _mapToolbarEnabled,
@@ -95,9 +95,9 @@ class ShuttleMapState extends State<ShuttleMap> {
           polylines: state.polylines,
           markers: state.markers,
           zoomControlsEnabled: true,
-          onCameraMove: (position){
-             currentzoom = position.zoom;
-            //  BlocProvider.of<MapBloc>(context).add(MapUpdateEvent(zoomlevel: currentzoom));
+          onCameraMove: (position) {
+            currentZoom = position.zoom;
+            mapBloc.add(MapMoveEvent(zoomLevel: currentZoom));
           },
           mapType: _mapType,
         );

@@ -12,12 +12,19 @@ class MapInitEvent extends MapEvent {
 }
 
 class MapUpdateEvent extends MapEvent {
-  final double zoomlevel;
-  final bool pollbackend;
-  const MapUpdateEvent({@required this.zoomlevel,@required this.pollbackend});
+  final double zoomLevel;
+  const MapUpdateEvent({@required this.zoomLevel});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [zoomLevel];
+}
+
+class MapMoveEvent extends MapEvent {
+  final double zoomLevel;
+  const MapMoveEvent({this.zoomLevel});
+
+  @override
+  List<Object> get props => [zoomLevel];
 }
 
 class MapErrorEvent extends MapEvent {
