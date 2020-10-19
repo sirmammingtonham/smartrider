@@ -17,7 +17,6 @@ environment:
   sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
-
   flutter:
     sdk: flutter
 
@@ -26,7 +25,7 @@ dependencies:
   firebase_analytics: ^5.0.2
   firebase_auth: ^0.15.0+1
   cloud_firestore: ^0.12.9+5
-   
+
   #map dependencies
   google_maps_flutter: ^0.5.24+1
   polyline: ^1.0.2
@@ -35,7 +34,7 @@ dependencies:
   http: ^0.12.0+4
   rxdart: ^0.23.1
   fluster: ^1.1.2
-    
+
   #ui dependencies
   sliding_up_panel: ^1.0.1
   scrollable_positioned_list: ^0.1.2
@@ -44,7 +43,6 @@ dependencies:
   day_night_switch: ^0.0.2+1
   intl: ^0.16.1
   day_night_switcher: ^0.1.1
-
 
   dio: ^3.0.9
   flutter_archive: ^1.0.2
@@ -59,20 +57,20 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
   uses-material-design: true
 
   assets:
-# jsons
+    # jsons
     - assets/map_styles/light.json
     - assets/map_styles/aubergine.json
-# map markers
+
+    - assets/bus_jsons/shapes.geojson
+    # map markers
     - assets/stop_markers/marker_bus.png
     - assets/stop_markers/marker_shuttle.png
     - assets/bus_markers/bus_red.png
@@ -81,9 +79,7 @@ flutter:
     - assets/bus_markers/bus_orange.png
     - assets/bus_markers/bus_white.png
 
- 
   fonts:
-    - family:  SR_Icons
+    - family: SR_Icons
       fonts:
-       - asset: fonts/icons.ttf
-
+        - asset: fonts/icons.ttf
