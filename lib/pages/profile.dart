@@ -26,23 +26,22 @@ class _ProfilePageState extends State<ProfilePage> {
         home: Scaffold(
           body: Column(
             children: <Widget>[
-
-            new Padding(padding: const EdgeInsets.symmetric(vertical: 20.0), ), // adds space between button and lower bezel
-            RaisedButton(
-                  child: Text(
-                    'SIGN OUT',
-                    style: Theme.of(context).textTheme.button, 
-                  ),
-                  onPressed: () {
-                    BlocProvider.of<AuthenticationBloc>(context).add(
-                      AuthenticationLoggedOut(),
-                    );
-                    Navigator.pop(context);
-                  },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(20.0))),
-
-
+              new Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+              ), // adds space between button and lower bezel
+              Row(children: <Widget>[
+                //CrossAxisAlignment: CrossAxisAlignment.left,
+                RaisedButton(
+                    child: Text(
+                      '< BACK',
+                      style: Theme.of(context).textTheme.button,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(10.0)))
+              ]),
 
               Container(
                 color: Theme.of(context).buttonColor,
@@ -54,9 +53,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: TextStyle(color: Colors.white70, fontSize: 80),
                 )),
               ),
-
-              
-
 
               Expanded(
                 child: SizedBox(
@@ -86,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
               RaisedButton(
                   child: Text(
                     'SIGN OUT',
-                    style: Theme.of(context).textTheme.button, 
+                    style: Theme.of(context).textTheme.button,
                   ),
                   onPressed: () {
                     BlocProvider.of<AuthenticationBloc>(context).add(
@@ -96,7 +92,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(20.0))),
-                      new Padding(padding: const EdgeInsets.symmetric(vertical: 10.0), ), // adds space between button and lower bezel
+              new Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+              ), // adds space between button and lower bezel
             ],
           ),
         ),

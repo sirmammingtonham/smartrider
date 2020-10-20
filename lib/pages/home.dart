@@ -61,18 +61,28 @@ class _HomePageState extends State<_HomePage> {
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20.0),
         ),
-        collapsed: AppBar( titleSpacing: 1.5,
+        collapsed: AppBar(titleSpacing: 3,
           centerTitle: true,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(18.0),
             ),
           ),
-          leading: Icon(Icons.arrow_upward),
-          title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
+          leading: Padding(
+                padding: const EdgeInsets.only(bottom: 50.0),
+                child: Icon(Icons.arrow_upward)),
+
+
+          title: Padding(
+                padding: const EdgeInsets.only(bottom: 30.0),
+                child: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules')),
+
+
+
+
           actions: <Widget>[
             Padding(
-                padding: const EdgeInsets.only(right: 12.0),
+                padding: const EdgeInsets.only(right: 12.0, bottom: 100.0),
                 child: Icon(Icons.arrow_upward))
           ],
         ),
