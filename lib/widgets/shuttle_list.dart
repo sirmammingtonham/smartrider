@@ -95,7 +95,7 @@ class ShuttleListState extends State<ShuttleList>
         return CustomExpansionTile(
           title: Text(curStopList[index % curStopList.length][0]),
           subtitle: Text('Next Arrival: ' +
-              _getTimeIndex(shuttleTimeLists[idx]).toString()),
+              shuttleTimeLists[idx][_getTimeIndex(shuttleTimeLists[idx])]),
           leading: CustomPaint(
               painter: FillPainter(
                   circleColor: Theme.of(context).buttonColor,
@@ -133,42 +133,69 @@ class ShuttleListState extends State<ShuttleList>
                   margin: const EdgeInsets.only(left: 34.5),
                   constraints: BoxConstraints.expand(width: 8),
                 ),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                title: Row(
                   children: [
-                    Container(
-                      margin: const EdgeInsets.only(left: 18),
-                      child: Text(
-                        'Current Time:',
-                        style: TextStyle(fontSize: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Container(
+                          //   margin: const EdgeInsets.only(left: 18),
+                          //   child: Text(
+                          //     'Current Time: ${DateFormat('H.m').format(DateTime.now())}',
+                          //     style: TextStyle(fontSize: 12),
+                          //   ),
+                          // ),
+                          // SizedBox(height: 10),
+                          Container(
+                              margin: const EdgeInsets.only(left: 18),
+                              child: SizedBox(
+                                width: 140,
+                                height: 60,
+                                child: RaisedButton(
+                                    onPressed: () {
+                                      _jumpMap(
+                                          double.parse(curStopList[
+                                              index % curStopList.length][1]),
+                                          double.parse(curStopList[
+                                              index % curStopList.length][2]));
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.location_on),
+                                        Text('Show This Stop',
+                                            style: TextStyle(fontSize: 12)),
+                                      ],
+                                    )),
+                              )),
+                        ],
                       ),
                     ),
-                    Container(
-                        margin: const EdgeInsets.only(left: 18),
-                        child: SizedBox(
-                          width: 140,
-                          height: 30,
-                          child: RaisedButton(
-                              onPressed: () {},
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Icon(Icons.location_on),
-                                  Text('Show This Stop',
-                                      style: TextStyle(fontSize: 12)),
-                                ],
-                              )),
-                        )),
-                    Container(
-                      margin: const EdgeInsets.only(left: 18),
-                      child: ListView.builder(
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 65),
+                        child: ListView.separated(
                           shrinkWrap: true,
                           itemCount: 5,
                           itemBuilder: (BuildContext context, int index) {
-                            return Text(
-                                'Arrival: ${shuttleTimeLists[idx][index]}');
-                          }),
-                    ),
+                            return Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.access_time,
+                                    size: 15,
+                                  ),
+                                  Text(' ${shuttleTimeLists[idx][index]}'),
+                                ]);
+                          },
+                          separatorBuilder: (BuildContext context, int index) =>
+                              const SizedBox(height: 10),
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
