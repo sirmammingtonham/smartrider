@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:smartrider/data/models/bus/pb/gtfs-realtime.pb.dart';
 
 import '../models/bus/bus_route.dart';
 import '../models/bus/bus_shape.dart';
@@ -128,31 +129,35 @@ class BusProvider {
     return tripUpdatesList;
   }
 
-  Future<Map<String, List<BusStop>>> getActiveStops() async {  // map<routeId, list<busstop>>
-    List<BusTripUpdate> updates = await this.getTripUpdatesWithParameter();
-    List<BusStop> busStops = await this.getStops();
-    Map<String, List<BusStop>> stopMap = new Map<String, List<BusStop>>();
-    for (BusTripUpdate update in updates) {
-      List<String> ids =
-          update.tripUpdate.stopTimeUpdate.map((e) => e.stopId).toList();
+  // Future<Map<String, List<BusStop>>> getActiveStops() async {  // map<routeId, list<busstop>>
+  //   List<BusTripUpdate> updates = await this.getTripUpdatesWithParameter();
+  //   List<BusStop> busStops = await this.getStops();
+  //   Map<String, List<BusStop>> stopMap = new Map<String, List<BusStop>>();
+  //   for (BusTripUpdate update in updates) {
+  //     List<String> ids =
+  //         update.tripUpdate.stopTimeUpdate.map((e) => e.stopId).toList();
 
-      List<BusStop> stops =
-          busStops.where((element) => ids.contains(element.stopId)).toList();
+  //     List<BusStop> stops =
+  //         busStops.where((element) => ids.contains(element.stopId)).toList();
 
-      stopMap[update.tripUpdate.trip.routeId] = stops;
-    }
+  //     stopMap[update.tripUpdate.trip.routeId] = stops;
+  //   }
 
-    return stopMap;
-  }
+  //   return stopMap;
+  // }
 
   /// Getter method to retrieve list of vehicle updates
   Future<List<BusVehicleUpdate>> getVehicleUpdates() async {
-    var response = await fetch('vehicleUpdates');
+    var response = await http
+        .get('http://64.128.172.149:8080/gtfsrealtime/VehiclePositions');
+
+    Set<String> routeIds = {'87', '286', '289'};
 
     List<BusVehicleUpdate> vehicleUpdatesList = response != null
-        ? json
-            .decode(response.body)
-            .map<BusVehicleUpdate>((json) => BusVehicleUpdate.fromJson(json))
+        ? FeedMessage.fromBuffer(response.bodyBytes)
+            .entity
+            .map((entity) => BusVehicleUpdate.fromPBEntity(entity))
+            .where((update) => routeIds.contains(update.routeId))
             .toList()
         : [];
     return vehicleUpdatesList;

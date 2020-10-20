@@ -191,9 +191,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     shuttleUpdates = await shuttleRepo.getUpdates;
 
     // busRoutes = await busRepo.getRoutes;
-    busStops = await busRepo.getStops;
-    // busUpdates = await busRepo.getUpdates;
     // shapes = await busRepo.getShapes;
+    busStops = await busRepo.getStops;
+    busUpdates = await busRepo.getUpdates;
 
     prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values
         .toList())); // update preferences with currently active routes
@@ -214,7 +214,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Stream<MapState> _mapUpdateRequestedToState(double zoomLevel) async* {
     shuttleUpdates = await shuttleRepo.getUpdates;
-    // busUpdates = await busRepo.getUpdates;
+    busUpdates = await busRepo.getUpdates;
 
     if (shuttleRepo.isConnected || busRepo.isConnected) {
       _getEnabledMarkers();
@@ -304,18 +304,27 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             config, 'assets/bus_markers/bus_yellow.png')
         .then((onValue) {
       shuttleUpdateIcons[21] = onValue;
+
+      // temporary until we finalize map marker icons
+      shuttleUpdateIcons[289] = onValue;
     });
 
     await BitmapDescriptor.fromAssetImage(
             config, 'assets/bus_markers/bus_blue.png')
         .then((onValue) {
       shuttleUpdateIcons[24] = onValue;
+
+      // temporary until we finalize map marker icons
+      shuttleUpdateIcons[87] = onValue;
     });
 
     await BitmapDescriptor.fromAssetImage(
             config, 'assets/bus_markers/bus_orange.png')
         .then((onValue) {
       shuttleUpdateIcons[28] = onValue;
+
+      // temporary until we finalize map marker icons
+      shuttleUpdateIcons[286] = onValue;
     });
 
     await BitmapDescriptor.fromAssetImage(
@@ -364,7 +373,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         controller: _controller);
   }
 
-  Marker _updateToMarker(ShuttleUpdate update) {
+  Marker _shuttleUpdateToMarker(ShuttleUpdate update) {
     // real time update shuttles
     return Marker(
         icon: shuttleUpdateIcons[shuttleUpdateIcons.containsKey(update.routeId)
@@ -375,6 +384,25 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         markerId: MarkerId(update.id.toString()),
         position: update.getLatLng,
         rotation: update.heading,
+        anchor: Offset(0.5, 0.5),
+        onTap: () {
+          _controller.animateCamera(
+            CameraUpdate.newCameraPosition(
+                CameraPosition(target: update.getLatLng, zoom: 18, tilt: 50)),
+          );
+        });
+  }
+
+  Marker _busUpdateToMarker(BusVehicleUpdate update) {
+    // real time update shuttles
+    return Marker(
+        icon: shuttleUpdateIcons[shuttleUpdateIcons.containsKey(update.routeId)
+            ? update.routeId
+            : -1],
+        infoWindow: InfoWindow(title: "Shuttle ID: ${update.id.toString()}"),
+        markerId: MarkerId(update.id.toString()),
+        position: update.getLatLng,
+        // rotation: update.heading,   figure out some way to calculate heading? cdta website does somehow
         anchor: Offset(0.5, 0.5),
         onTap: () {
           _controller.animateCamera(
@@ -456,7 +484,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _mapMarkers.clear();
 
     for (var update in shuttleUpdates) {
-      _currentMarkers.add(_updateToMarker(update));
+      _currentMarkers.add(_shuttleUpdateToMarker(update));
+    }
+
+    for (var update in busUpdates) {
+      _currentMarkers.add(_busUpdateToMarker(update));
     }
 
     var shuttleMarkerMap = {
@@ -492,8 +524,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         busMarkerMap[name].forEach((marker) => _mapMarkers.add(marker));
       }
     });
-
-    // busStops.forEach((value) => _mapMarkers.add(_busStopToMapMarker(value)));
 
     return _currentMarkers;
   }

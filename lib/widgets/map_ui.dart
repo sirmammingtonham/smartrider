@@ -4,7 +4,6 @@ import 'dart:async';
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluster/fluster.dart';
 import 'package:meta/meta.dart';
 
 // map imports

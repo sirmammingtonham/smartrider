@@ -35,6 +35,9 @@ dependencies:
   rxdart: ^0.23.1
   fluster: ^1.1.2
 
+  protobuf: ^1.0.1
+
+
   #ui dependencies
   sliding_up_panel: ^1.0.1
   scrollable_positioned_list: ^0.1.2

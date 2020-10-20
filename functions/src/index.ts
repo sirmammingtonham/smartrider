@@ -1,8 +1,7 @@
-import { time } from "console";
 import * as functions from "firebase-functions";
 import * as gtfs from "gtfs";
-import * as GtfsRealtimeBindings from "gtfs-realtime-bindings";
-import * as request from "request";
+// import * as GtfsRealtimeBindings from "gtfs-realtime-bindings";
+// import * as request from "request";
 
 const config = {
   sqlitePath: "./gtfs.db",
@@ -118,9 +117,9 @@ export const busStops = functions
       });
   });
 
-export const busStoptimes = functions
-  .runWith(runtimeOpts)
-  .https.onRequest((req, res) => {
+export const busStoptimes = functions// .runWith(runtimeOpts)
+.https
+  .onRequest((req, res) => {
     // return error status if method isn't GET
     if (req.method !== "GET") {
       console.log("Invalid request!");
@@ -173,105 +172,116 @@ export const busShapes = functions
       });
   });
 
-export const getActiveShapes = functions
-  .runWith(runtimeOpts)
-  .https.onRequest(async (req, res) => {
-    // return error status if method isn't GET
-    if (req.method !== "GET") {
-      console.log("Invalid request!");
-      res.status(400);
-      return;
-    }
+// export const getActiveShapes = functions
+//   .runWith(runtimeOpts)
+//   .https.onRequest(async (req, res) => {
+//     // return error status if method isn't GET
+//     if (req.method !== "GET") {
+//       console.log("Invalid request!");
+//       res.status(400);
+//       return;
+//     }
 
-    const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
-    const fields = JSON.parse(req.header("fields") ?? "[]");
-    const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
+//     const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+//     const fields = JSON.parse(req.header("fields") ?? "[]");
+//     const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
 
-    console.log("Bus shapes requested!");
-    const shapes = await gtfs.getShapes(query, fields, sortBy);
-    const trips = await gtfs.getTrips(query, fields, sortBy);
+//     console.log("Bus shapes requested!");
+//     const shapes = await gtfs.getShapes(query, fields, sortBy);
+//     const trips = await gtfs.getTrips(query, fields, sortBy);
 
-    // trip 'trip_id' -> tripUpdates 'id' -> trip 'shape_id' -> shapes
+//     // trip 'trip_id' -> tripUpdates 'id' -> trip 'shape_id' -> shapes
 
-    const requestSettings = {
-      method: "GET",
-      url: "http://64.128.172.149:8080/gtfsrealtime/TripUpdates",
-      encoding: null,
-    };
+//     const requestSettings = {
+//       method: "GET",
+//       url: "http://64.128.172.149:8080/gtfsrealtime/TripUpdates",
+//       encoding: null,
+//     };
 
-    var update: any;
-    request(requestSettings, function (error: any, response: any, body: any) {
-      if (!error && response.statusCode === 200) {
+//     var update: any;
+//     request(requestSettings, function (error: any, response: any, body: any) {
+//       if (!error && response.statusCode === 200) {
+//         update = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
 
-        update = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
+//         let shapesMap = new Map();
+//         shapesMap.set("87-184", []);
+//         shapesMap.set("286-184", []);
+//         shapesMap.set("289-184", []);
 
-        let shapesMap = new Map();
-        shapesMap.set("87-184", []);
-        shapesMap.set("286-184", []);
-        shapesMap.set("289-184", []);
+//         trips.forEach((trip: any) => {
+//           if (trip["trip_id"] in update.entity) {
+//             shapes.forEach((shape: any) => {
+//               if (trip["shape_id"] in shape) {
+//                 shapesMap.get(trip["route_id"]).push(shape);
+//               }
+//             });
+//           }
+//         });
 
-        trips.forEach((trip: any) => {
-          if (trip["trip_id"] in update.entity) {
-            shapes.forEach((shape: any) => {
-              if (trip["shape_id"] in shape) {
-                shapesMap.get(trip["route_id"]).push(shape);
-              }
-            });
-          }
-        });
-        
-        res.status(200).json(shapesMap);
-      } else {
-        res.status(500);
-      }
-    })
-  });
+//         res.status(200).json(shapesMap);
+//       } else {
+//         res.status(500);
+//       }
+//     });
+//   });
 
-export const tripUpdates = functions
-  .runWith(runtimeOpts)
-  .https.onRequest((req, res) => {
-    // return error status if method isn't GET
-    if (req.method !== "GET") {
-      console.log("Invalid request!");
-      res.status(400);
-      return;
-    }
-    const requestSettings = {
-      method: "GET",
-      url: "http://64.128.172.149:8080/gtfsrealtime/TripUpdates",
-      encoding: null,
-    };
-    request(requestSettings, function (error: any, response: any, body: any) {
-      if (!error && response.statusCode === 200) {
-        const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-          body
-        );
-        res.status(200).json(feed.entity);
-      }
-    });
-  });
+// export const tripUpdates = functions
+//   .runWith(runtimeOpts)
+//   .https.onRequest((req, res) => {
+//     // return error status if method isn't GET
+//     if (req.method !== "GET") {
+//       console.log("Invalid request!");
+//       res.status(400);
+//       return;
+//     }
 
-export const vehicleUpdates = functions
-  .runWith(runtimeOpts)
-  .https.onRequest((req, res) => {
-    // return error status if method isn't GET
-    if (req.method !== "GET") {
-      console.log("Invalid request!");
-      res.status(400);
-      return;
-    }
+//     const requestSettings = {
+//       method: "GET",
+//       url: "http://64.128.172.149:8080/gtfsrealtime/TripUpdates",
+//       encoding: null,
+//     };
+//     request(requestSettings, function (error: any, response: any, body: any) {
+//       if (!error && response.statusCode === 200) {
+//         const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
+//           body
+//         );
+//         res.status(200).json(feed);
+//       }
+//     });
+//   });
 
-    const requestSettings = {
-      method: "GET",
-      url: "http://64.128.172.149:8080/gtfsrealtime/VehiclePositions",
-      encoding: null,
-    };
-    request(requestSettings, function (error: any, response: any, body: any) {
-      if (!error && response.statusCode === 200) {
-        const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-          body
-        );
-        res.status(200).json(feed.entity);
-      }
-    });
-  });
+// export const vehicleUpdates = functions
+//   .runWith(runtimeOpts)
+//   .https.onRequest((req, res) => {
+//     // return error status if method isn't GET
+//     if (req.method !== "GET") {
+//       console.log("Invalid request!");
+//       res.status(400);
+//       return;
+//     }
+
+//     // const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+//     const fields = JSON.parse(req.header("fields") ?? "[]");
+//     // const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
+
+//     const requestSettings = {
+//       method: "GET",
+//       url: "http://64.128.172.149:8080/gtfsrealtime/VehiclePositions",
+//       encoding: null,
+//     };
+//     request(requestSettings, function (error: any, response: any, body: any) {
+//       if (!error && response.statusCode === 200) {
+//         const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
+//           body
+//         );
+//         if (fields.length > 0) {
+//           const filteredUpdates = feed.entity.filter((vehicle: any) => {
+//             return fields.includes(vehicle.vehicle.trip.routeId);
+//           });
+//           res.status(200).json(filteredUpdates);
+//         } else {
+//           res.status(200).json(feed.entity);
+//         }
+//       }
+//     });
+//   });

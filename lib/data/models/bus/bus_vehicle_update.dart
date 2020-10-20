@@ -1,147 +1,89 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'pb/gtfs-realtime.pb.dart';
+import 'package:fixnum/fixnum.dart';
 
 class BusVehicleUpdate {
   String id;
   bool isDeleted;
-  Vehicle vehicle;
 
-  /// lng and lat
-  dynamic latitude;
-  dynamic longitude;
+  // vehicle.trip
+  String tripId;
+  String startTime;
+  String startDate;
+  String routeId;
+
+  // vehicle.position
+  double latitude;
+  double longitude;
+
+  int currentStopSequence;
+  dynamic currentStatus;
+  Int64 timestamp;
+
+  // vehicle.vehicle.id
+  String vehicleId;
 
   BusVehicleUpdate(
-  {this.latitude, 
-  this.longitude, 
-  this.id, 
-  this.isDeleted, 
-  this.vehicle});
-
+      {this.id,
+      this.isDeleted,
+      this.tripId,
+      this.startTime,
+      this.startDate,
+      this.routeId,
+      this.latitude,
+      this.longitude,
+      this.currentStopSequence,
+      this.currentStatus,
+      this.timestamp,
+      this.vehicleId});
 
   LatLng get getLatLng => LatLng(this.latitude, this.longitude);
 
   BusVehicleUpdate.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     isDeleted = json['isDeleted'];
-    vehicle =
-        json['vehicle'] != null ? new Vehicle.fromJson(json['vehicle']) : null;
-    latitude = vehicle.position.latitude;
-    longitude = vehicle.position.longitude;
+
+    tripId = json['vehicle']['trip']['tripId'];
+    startTime = json['vehicle']['trip']['startTime'];
+    startDate = json['vehicle']['trip']['startDate'];
+    routeId = json['vehicle']['trip']['routeId'];
+
+    latitude = json['vehicle']['position']['latitude'];
+    latitude = json['vehicle']['position']['longitude'];
+
+    currentStopSequence = json['vehicle']['currentStopSequence'];
+    currentStatus = json['vehicle']['currentStatus'];
+    timestamp = json['vehicle']['timestamp'];
+
+    vehicleId = json['vehicle']['vehicle']['id'];
   }
 
+  BusVehicleUpdate.fromPBEntity(FeedEntity entity) {
+    id = entity.id;
+    isDeleted = entity.isDeleted;
+
+    tripId = entity.vehicle.trip.tripId;
+    startTime = entity.vehicle.trip.startTime;
+    startDate = entity.vehicle.trip.startDate;
+    routeId = entity.vehicle.trip.routeId;
+
+    latitude = entity.vehicle.position.latitude;
+    latitude = entity.vehicle.position.longitude;
+
+    currentStopSequence = entity.vehicle.currentStopSequence;
+    currentStatus = entity.vehicle.currentStatus;
+    timestamp = entity.vehicle.timestamp;
+
+    vehicleId = entity.vehicle.vehicle.id;
+  }
+
+  // TODO
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['isDeleted'] = this.isDeleted;
-    if (this.vehicle != null) {
-      data['vehicle'] = this.vehicle.toJson();
-    }
-    return data;
-  }
-}
-
-
-class Vehicle {
-  Trip trip;
-  Position position;
-  int currentStopSequence;
-  String currentStatus;
-  String timestamp;
-  VehicleId vehicleId;
-
-  Vehicle(
-      {this.trip,
-      this.position,
-      this.currentStopSequence,
-      this.currentStatus,
-      this.timestamp,
-      this.vehicleId});
-
-  Vehicle.fromJson(Map<String, dynamic> json) {
-    trip = json['trip'] != null ? new Trip.fromJson(json['trip']) : null;
-    position = json['position'] != null
-        ? new Position.fromJson(json['position'])
-        : null;
-    currentStopSequence = json['currentStopSequence'];
-    currentStatus = json['currentStatus'];
-    timestamp = json['timestamp'];
-    vehicleId =
-        json['vehicle'] != null ? new VehicleId.fromJson(json['vehicle']) : null;
+    return Map();
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.trip != null) {
-      data['trip'] = this.trip.toJson();
-    }
-    if (this.position != null) {
-      data['position'] = this.position.toJson();
-    }
-    data['currentStopSequence'] = this.currentStopSequence;
-    data['currentStatus'] = this.currentStatus;
-    data['timestamp'] = this.timestamp;
-    if (this.vehicleId != null) {
-      data['vehicle'] = this.vehicleId.toJson();
-    }
-    return data;
-  }
-}
-
-class Trip {
-  String tripId;
-  String startTime;
-  String startDate;
-  String routeId;
-
-  Trip({this.tripId, this.startTime, this.startDate, this.routeId});
-
-  Trip.fromJson(Map<String, dynamic> json) {
-    tripId = json['tripId'];
-    startTime = json['startTime'];
-    startDate = json['startDate'];
-    routeId = json['routeId'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['tripId'] = this.tripId;
-    data['startTime'] = this.startTime;
-    data['startDate'] = this.startDate;
-    data['routeId'] = this.routeId;
-    return data;
-  }
-}
-
-class Position {
-  double latitude;
-  double longitude;
-
-  Position({this.latitude, this.longitude});
-
-  Position.fromJson(Map<String, dynamic> json) {
-    latitude = json['latitude'];
-    longitude = json['longitude'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['latitude'] = this.latitude;
-    data['longitude'] = this.longitude;
-    return data;
-  }
-}
-
-class VehicleId {
-  String id;
-
-  VehicleId({this.id});
-
-  VehicleId.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    return data;
+  // TODO
+  FeedEntity toFeedEntity() {
+    return FeedEntity();
   }
 }

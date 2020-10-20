@@ -24,7 +24,7 @@ class BusRepository {
   Future<List<BusVehicleUpdate>> get getUpdates async =>
       _busProvider.getVehicleUpdates();
   
-  Future<Map<String,List<BusStop>>> get getActiveStops async => _busProvider.getActiveStops();
+  // Future<Map<String,List<BusStop>>> get getActiveStops async => _busProvider.getActiveStops();
 
   bool get isConnected => _busProvider.getIsConnected;
 }
