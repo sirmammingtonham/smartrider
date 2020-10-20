@@ -49,7 +49,7 @@ class BusVehicleUpdate {
     routeId = json['vehicle']['trip']['routeId'];
 
     latitude = json['vehicle']['position']['latitude'];
-    latitude = json['vehicle']['position']['longitude'];
+    longitude = json['vehicle']['position']['longitude'];
 
     currentStopSequence = json['vehicle']['currentStopSequence'];
     currentStatus = json['vehicle']['currentStatus'];
@@ -68,7 +68,7 @@ class BusVehicleUpdate {
     routeId = entity.vehicle.trip.routeId;
 
     latitude = entity.vehicle.position.latitude;
-    latitude = entity.vehicle.position.longitude;
+    longitude = entity.vehicle.position.longitude;
 
     currentStopSequence = entity.vehicle.currentStopSequence;
     currentStatus = entity.vehicle.currentStatus;
