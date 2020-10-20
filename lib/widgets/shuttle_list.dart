@@ -18,6 +18,7 @@ import 'package:smartrider/widgets/shuttle_list.dart';
 import 'package:smartrider/widgets/bus_list.dart';
 import 'package:smartrider/widgets/map_ui.dart';
 
+/// Creates an object that contains all the shuttles and their respective stops.
 class ShuttleList extends StatefulWidget {
   final Function containsFilter;
   final Function jumpMap;
@@ -26,6 +27,7 @@ class ShuttleList extends StatefulWidget {
   ShuttleListState createState() => ShuttleListState();
 }
 
+/// Defines each shuttle and makes a tab for each one atop of the schedule panel.
 class ShuttleListState extends State<ShuttleList>
     with SingleTickerProviderStateMixin {
   final List<Widget> shuttleTabs = [
@@ -38,6 +40,8 @@ class ShuttleListState extends State<ShuttleList>
   TabController _tabController;
   var isExpandedList = new List<bool>.filled(100, false);
   @override
+
+  /// Affects the expansion of each shuttles list of stops
   void initState() {
     super.initState();
     _tabController = new TabController(vsync: this, length: shuttleTabs.length);
@@ -53,14 +57,14 @@ class ShuttleListState extends State<ShuttleList>
     super.dispose();
   }
 
+  /// Builds each tab for each shuttle and also accounts for the users
+  /// light preferences.
   @override
   Widget build(BuildContext context) {
-    //debugPaintSizeEnabled = true;
     return Column(children: <Widget>[
       TabBar(
         isScrollable: true,
         tabs: shuttleTabs,
-        // unselectedLabelColor: Colors.white.withOpacity(0.3),
         labelColor: Theme.of(context).brightness == Brightness.light
             ? Colors.black
             : null,
@@ -84,14 +88,14 @@ class ShuttleListState extends State<ShuttleList>
     ]);
   }
 
+  /// Builds the shuttlelist widget which contains all the stops and
+  /// useful user information like the next arrival.
   @override
   Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
     return ScrollablePositionedList.builder(
       itemCount: shuttleStopLists[idx].length,
       itemBuilder: (context, index) {
         var curStopList = shuttleStopLists[idx];
-
-        //print(curStopList);
         return CustomExpansionTile(
           title: Text(curStopList[index % curStopList.length][0]),
           subtitle: Text('Next Arrival: ' +
@@ -111,13 +115,10 @@ class ShuttleListState extends State<ShuttleList>
               isExpandedList[index % curStopList.length]
                   ? Text('Hide Arrivals -')
                   : Text('Show Arrivals +')
-          //isExpanded ? Text('Hide Arrivals -') : Text('Show Arrivals +')
           ,
           onExpansionChanged: (value) {
             setState(() {
               isExpandedList[index % curStopList.length] = value;
-              //print(isExpandedList);
-              //isExpanded = isExpanded_temp;
             });
           },
           children: [
@@ -139,14 +140,6 @@ class ShuttleListState extends State<ShuttleList>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Container(
-                          //   margin: const EdgeInsets.only(left: 18),
-                          //   child: Text(
-                          //     'Current Time: ${DateFormat('H.m').format(DateTime.now())}',
-                          //     style: TextStyle(fontSize: 12),
-                          //   ),
-                          // ),
-                          // SizedBox(height: 10),
                           Container(
                               margin: const EdgeInsets.only(left: 18),
                               child: SizedBox(
@@ -207,10 +200,8 @@ class ShuttleListState extends State<ShuttleList>
   }
 }
 
+/// Returns the stop that is closest to the current time.
 _getTimeIndex(List<String> curTimeList) {
-  // TODO: update so it works with filter
-  // List curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
-  //             busTimeLists[_tabController.index-1];
   var now = DateTime.now();
   var f = DateFormat('H.m');
   double min = double.maxFinite;
@@ -233,6 +224,9 @@ _getTimeIndex(List<String> curTimeList) {
   return curTimeList.indexWhere((element) => element == closest);
 }
 
+/// Creates our "lines and circles" on the left hand side of the
+/// schedule list for each shuttle. This particular class is responsible
+/// for the first stop.
 class FillPainter extends CustomPainter {
   final Color circleColor;
   final Color lineColor;
@@ -286,6 +280,9 @@ class FillPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
+/// Creates our "lines and circles" on the left hand side of the
+/// schedule list for each shuttle. This particular class is responsible
+/// for all stops but the first.
 class StrokePainter extends CustomPainter {
   final Color circleColor;
   final Color lineColor;
@@ -298,8 +295,6 @@ class StrokePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // cascade notation, look it up it's pretty cool
-
     Paint line = new Paint()
       ..color = lineColor
       ..strokeCap = StrokeCap.square
