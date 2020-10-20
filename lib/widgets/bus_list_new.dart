@@ -6,7 +6,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-//import 'package:flutter_dash/flutter_dash.dart';
+import 'package:flutter_dash/flutter_dash.dart';
 //import 'package:flutter/rendering.dart';
 
 // loading custom widgets and data
@@ -133,24 +133,38 @@ class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Current Time:',
-                      style: TextStyle(fontSize: 12),
+                    Container(
+                      margin: const EdgeInsets.only(left: 18),
+                      child: Text(
+                        'Current Time:',
+                        style: TextStyle(fontSize: 12),
+                      ),
                     ),
-                    SizedBox(
-                      width: 140,
-                      height: 30,
-                      child: RaisedButton(
-                          onPressed: () {},
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(Icons.location_on),
-                              Text('Show My Stop',
-                                  style: TextStyle(fontSize: 12)),
-                            ],
-                          )),
-                    )
+                    Container(
+                        margin: const EdgeInsets.only(left: 18),
+                        child: SizedBox(
+                          width: 140,
+                          height: 30,
+                          child: RaisedButton(
+                              onPressed: () {},
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.location_on),
+                                  Text('Show This Stop',
+                                      style: TextStyle(fontSize: 12)),
+                                ],
+                              )),
+                        )),
+                    Container(
+                      margin: const EdgeInsets.only(left: 18),
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: 5,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Text('Arrival: ${busTimeLists[idx][index]}');
+                          }),
+                    ),
                   ],
                 ),
               ),
@@ -200,7 +214,8 @@ class FillPainter extends CustomPainter {
       this.lineColor,
       this.first = false,
       this.last = false,
-      this.overflow = 8.0})
+      this.overflow =
+          20.0}) // might need to be modified for abnormal route lengths.
       : super();
 
   @override
@@ -220,9 +235,9 @@ class FillPainter extends CustomPainter {
       canvas.drawLine(Offset(size.width / 2, size.height / 2 - 15.0),
           Offset(size.width / 2, -overflow), line);
     } else {
-      canvas.drawLine(Offset(size.width / 2, (size.height / 2) - 15.0),
+      canvas.drawLine(Offset(size.width / 2, (size.height / 2) - 15),
           Offset(size.width / 2, -overflow), line);
-      canvas.drawLine(Offset(size.width / 2, (size.height / 2) + 15.0),
+      canvas.drawLine(Offset(size.width / 2, (size.height / 2) + 15),
           Offset(size.width / 2, size.height + overflow), line);
     }
 
