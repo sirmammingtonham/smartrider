@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import '../models/shuttle/shuttle_route.dart';
 import '../models/shuttle/shuttle_stop.dart';
 import '../models/shuttle/shuttle_update.dart';
+import '../models/shuttle/shuttle_eta.dart';
 
 /// This class contains methods for providing data to Repository
 class ShuttleProvider {
@@ -25,8 +26,7 @@ class ShuttleProvider {
       if (response.statusCode == 200) {
         isConnected = true;
       }
-    }
-    catch (error) {
+    } catch (error) {
       isConnected = false;
     }
     //print("App has polled $type API: $isConnected");
@@ -40,7 +40,8 @@ class ShuttleProvider {
     var response = await fetch('routes');
     Map<String, ShuttleRoute> routeMap = response != null
         ? Map.fromIterable(
-            (json.decode(response.body) as List).where((json) => json['enabled']),
+            (json.decode(response.body) as List)
+                .where((json) => json['enabled']),
             key: (json) => json['name'],
             value: (json) => ShuttleRoute.fromJson(json))
         : {};
@@ -72,6 +73,19 @@ class ShuttleProvider {
             .toList()
         : [];
     return updatesList;
+  }
+
+  /// Getter method to retrieve the list of shuttle eta (estimated times of arrival)
+  Future<List<ShuttleEta>> getEtas() async {
+    var response = await fetch('eta');
+    List<ShuttleEta> etas = [];
+    Map<String, dynamic> etamap = response != null
+        ? (json.decode(response.body) as Map<String, dynamic>)
+        : [];
+    etamap.forEach((key, value) {
+      etas.add(ShuttleEta.fromJson(value));
+    });
+    return etas;
   }
 
   /// Helper function to create local JSON file
