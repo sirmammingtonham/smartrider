@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import * as gtfs from "gtfs";
 // import * as GtfsRealtimeBindings from "gtfs-realtime-bindings";
 // import * as request from "request";
+// import {genShapeGeoJSON} from "./genShapeGeoJSON";
 
 const config = {
   sqlitePath: "./gtfs.db",
@@ -172,15 +173,44 @@ export const busShapes = functions
       });
   });
 
-// export const getActiveShapes = functions
-//   .runWith(runtimeOpts)
-//   .https.onRequest(async (req, res) => {
-//     // return error status if method isn't GET
-//     if (req.method !== "GET") {
-//       console.log("Invalid request!");
-//       res.status(400);
-//       return;
-//     }
+export const busShapesAsGeoJSON = functions
+  .runWith(runtimeOpts)
+  .https.onRequest((req, res) => {
+    // return error status if method isn't GET
+    if (req.method !== "GET") {
+      console.log("Invalid request!");
+      res.status(400);
+      return;
+    }
+
+    // const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+
+    // console.log(genShapeGeoJSON(query));
+
+    // console.log("Bus GeoJSON requested!");
+    // // get routes and send json
+    // gtfs
+    //   .getShapesAsGeoJSON(query)
+    //   .then((shapes: any) => {
+    //     console.log("Bus GeoJSON sent!");
+    //     res.status(200).json(shapes);
+    //   })
+    //   .catch((err: any) => {
+    //     console.error(err);
+    //     res.status(500);
+    //   });
+  });
+
+export const getActiveShapes = functions
+  .runWith(runtimeOpts)
+  .https.onRequest(async (req, res) => {
+    // return error status if method isn't GET
+    if (req.method !== "GET") {
+      console.log("Invalid request!");
+      res.status(400);
+      return;
+    }
+  });
 
 //     const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
 //     const fields = JSON.parse(req.header("fields") ?? "[]");
