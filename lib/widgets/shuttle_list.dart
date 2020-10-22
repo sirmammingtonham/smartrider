@@ -20,6 +20,8 @@ import 'package:smartrider/widgets/shuttle_list.dart';
 import 'package:smartrider/widgets/bus_list.dart';
 import 'package:smartrider/widgets/map_ui.dart';
 
+List<String> choices = ['See on map', 'View on timetable'];
+
 /// Creates an object that contains all the shuttles and their respective stops.
 class ShuttleList extends StatefulWidget {
   final Function containsFilter;
@@ -135,14 +137,14 @@ class ShuttleListState extends State<ShuttleList>
                     margin: const EdgeInsets.only(left: 34.5),
                     constraints: BoxConstraints.expand(width: 8),
                   ),
-                    title: Container(
-                      // height: 100.0,
-                      // margin: const EdgeInsets.only(left: 0),
-                      child: 
-                      RefreshIndicator(
-                        onRefresh: () => Future.delayed(const Duration(seconds: 1), () => "1"),
-                        displacement: 1,
-                        child: ListView.separated(
+                  title: Container(
+                    // height: 100.0,
+                    // margin: const EdgeInsets.only(left: 0),
+                    child: RefreshIndicator(
+                      onRefresh: () =>
+                          Future.delayed(const Duration(seconds: 1), () => "1"),
+                      displacement: 1,
+                      child: ListView.separated(
                         shrinkWrap: true,
                         itemCount: 5,
                         itemBuilder: (BuildContext context, int timeIndex) {
@@ -151,18 +153,23 @@ class ShuttleListState extends State<ShuttleList>
                               Icons.access_time,
                             ),
                             title: Text('${shuttleTimeLists[idx][timeIndex]}'),
-                            trailing: Text('In 11 minutes'),
-                            onTap: () => _jumpMap(
-                                double.parse(shuttleStopLists[idx][index][1]),
-                                double.parse(shuttleStopLists[idx][index][2])),
+                            subtitle: Text('In 11 minutes'),
+                            trailing: PopupMenuButton<String>(
+                                onSelected: null,
+                                itemBuilder: (BuildContext context) => choices
+                                    .map((choice) => PopupMenuItem<String>(
+                                        value: choice, child: Text(choice)))
+                                    .toList()),
+                            // onTap: () => _jumpMap(
+                            //     double.parse(shuttleStopLists[idx][index][1]),
+                            //     double.parse(shuttleStopLists[idx][index][2])),
                           );
                         },
                         separatorBuilder: (BuildContext context, int index) =>
                             const SizedBox(height: 1),
                       ),
                     ),
-                    )
-                  ),
+                  )),
             ),
           ],
         );
