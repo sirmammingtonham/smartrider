@@ -2,11 +2,13 @@
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_dash/flutter_dash.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
 //import 'package:flutter/rendering.dart';
 
 // loading custom widgets and data
@@ -114,8 +116,7 @@ class ShuttleListState extends State<ShuttleList>
               //toggle()
               isExpandedList[index % curStopList.length]
                   ? Text('Hide Arrivals -')
-                  : Text('Show Arrivals +')
-          ,
+                  : Text('Show Arrivals +'),
           onExpansionChanged: (value) {
             setState(() {
               isExpandedList[index % curStopList.length] = value;
@@ -129,69 +130,39 @@ class ShuttleListState extends State<ShuttleList>
                 last: index == curStopList.length - 1,
               ),
               child: ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Container(
-                  margin: const EdgeInsets.only(left: 34.5),
-                  constraints: BoxConstraints.expand(width: 8),
-                ),
-                title: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              margin: const EdgeInsets.only(left: 18),
-                              child: SizedBox(
-                                width: 140,
-                                height: 60,
-                                child: RaisedButton(
-                                    onPressed: () {
-                                      _jumpMap(
-                                          double.parse(curStopList[
-                                              index % curStopList.length][1]),
-                                          double.parse(curStopList[
-                                              index % curStopList.length][2]));
-                                    },
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.location_on),
-                                        Text('Show This Stop',
-                                            style: TextStyle(fontSize: 12)),
-                                      ],
-                                    )),
-                              )),
-                        ],
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    margin: const EdgeInsets.only(left: 34.5),
+                    constraints: BoxConstraints.expand(width: 8),
+                  ),
+                    title: Container(
+                      // height: 100.0,
+                      // margin: const EdgeInsets.only(left: 0),
+                      child: 
+                      RefreshIndicator(
+                        onRefresh: () => Future.delayed(const Duration(seconds: 1), () => "1"),
+                        displacement: 1,
+                        child: ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: 5,
+                        itemBuilder: (BuildContext context, int timeIndex) {
+                          return ListTile(
+                            leading: Icon(
+                              Icons.access_time,
+                            ),
+                            title: Text('${shuttleTimeLists[idx][timeIndex]}'),
+                            trailing: Text('In 11 minutes'),
+                            onTap: () => _jumpMap(
+                                double.parse(shuttleStopLists[idx][index][1]),
+                                double.parse(shuttleStopLists[idx][index][2])),
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const SizedBox(height: 1),
                       ),
                     ),
-                    SizedBox(height: 10),
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 65),
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: 5,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    Icons.access_time,
-                                    size: 15,
-                                  ),
-                                  Text(' ${shuttleTimeLists[idx][index]}'),
-                                ]);
-                          },
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const SizedBox(height: 10),
-                        ),
-                      ),
                     )
-                  ],
-                ),
-              ),
+                  ),
             ),
           ],
         );
@@ -199,6 +170,16 @@ class ShuttleListState extends State<ShuttleList>
     );
   }
 }
+
+// _calculateTimeAway(String time) {
+//   var now = DateTime.now();
+//   var f = DateFormat('H.m');
+//   double curTime = double.parse(f.format(now));
+//   var t = time.replaceAll(':', '.');
+//   var compTime =
+//       double.tryParse(t.substring(0, t.length - 2)); // comparison time
+//   return (curTime - compTime).round();
+// }
 
 /// Returns the stop that is closest to the current time.
 _getTimeIndex(List<String> curTimeList) {

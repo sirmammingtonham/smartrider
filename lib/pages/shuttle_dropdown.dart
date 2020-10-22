@@ -1,7 +1,9 @@
 // ui dependencies
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
@@ -126,7 +128,7 @@ class ShuttleScheduleState extends State<ShuttleSchedule2>
 
   _jumpMap(double lat, double long) {
     this.widget.panelController.animatePanelToPosition(0);
-    // this.widget.mapState.currentState.scrollToLocation(LatLng(lat, long));
+    BlocProvider.of<MapBloc>(context).scrollToLocation(LatLng(lat, long));
   }
 
   @override

@@ -47,6 +47,8 @@ class _HomePageState extends State<_HomePage> {
   Widget build(BuildContext context) {
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
     return Material(
+        child: BlocProvider<MapBloc>(
+      create: (context) => MapBloc(),
       child: SlidingUpPanel(
           // sliding panel (body is the background, panelBuilder is the actual panel)
           controller: _panelController,
@@ -80,7 +82,7 @@ class _HomePageState extends State<_HomePage> {
               BlocProvider<ShuttleBloc>(
                   create: (BuildContext context) =>
                       ShuttleBloc(repository: ShuttleRepository())),
-              BlocProvider<MapBloc>(create: (context) => MapBloc()),
+              // BlocProvider<MapBloc>(create: (context) => MapBloc()),
               // BlocProvider<PrefsBloc>(create: (context) => PrefsBloc(),)
             ],
             child: Stack(children: <Widget>[
@@ -90,9 +92,9 @@ class _HomePageState extends State<_HomePage> {
               SearchBar(),
             ]),
           ),
-          panel: ShuttleSchedule2()),
+          panel: ShuttleSchedule2(panelController: _panelController,)),
 
       //panel: ShuttleSchedule()),
-    );
+    ));
   }
 }
