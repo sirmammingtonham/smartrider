@@ -1,18 +1,21 @@
+/// packages used for protocol buffer implementation
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'pb/gtfs-realtime.pb.dart';
 import 'package:fixnum/fixnum.dart';
 
+/// Bus Vehicle Update model:
+/// Contains data related to realtime vehicle updates 
 class BusVehicleUpdate {
   String id;
   bool isDeleted;
 
-  // vehicle.trip
+  /// Representation of [vehicle.trip] attributes
   String tripId;
   String startTime;
   String startDate;
   String routeId;
 
-  // vehicle.position
+  /// Representation of [vehicle.position] attributes
   double latitude;
   double longitude;
 
@@ -20,7 +23,7 @@ class BusVehicleUpdate {
   dynamic currentStatus;
   Int64 timestamp;
 
-  // vehicle.vehicle.id
+  /// Represenation of [vehicle.vehicle.id]
   String vehicleId;
 
   BusVehicleUpdate(

@@ -1,4 +1,3 @@
-// thx flutter shuttle tracker lol
 import 'dart:convert';
 import 'dart:io';
 
@@ -15,11 +14,19 @@ import '../models/bus/bus_trip_update.dart';
 import '../models/bus/bus_vehicle_update.dart';
 import '../models/bus/bus_trip.dart';
 
+
+/// A provider for Bus data.
+///
+/// Implemented as a collection of functions that utilizes
+/// a REST API to retrieve json files of bus data.
+/// Each member function decodes a json file and returns
+/// a dart iterable containing the relevent bus data object.
 class BusProvider {
-  /// Boolean to determine if there's an error
+
+  /// The connection status of BusProvider.
   bool isConnected;
 
-  /// This function will fetch the data from the JSON API and return a decoded
+  /// Fetchs data from the JSON API and returns a decoded JSON.
   Future<http.Response> fetch(String type, {Map<String, String> query}) async {
     var client = http.Client();
     http.Response response;
@@ -39,9 +46,10 @@ class BusProvider {
     return response;
   }
 
+  /// The status of the most recent [fetch] call.
   bool get getIsConnected => isConnected;
 
-  /// Getter method to retrieve the list of routes
+  /// Returns a [Map] of <[BusRoute.routeShortName], [BusRoute]>  pairs.
   Future<Map<String, BusRoute>> getRoutes() async {
     var response = await fetch('busRoutes',
         query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
@@ -54,7 +62,7 @@ class BusProvider {
     return routeMap;
   }
 
-  /// Getter method to retrieve a list of bus shapes
+  /// Returns a [List] of [BusShape] objects.
   Future<List<BusShape>> getShapes() async {
     var response = await fetch('busShapes');
 
@@ -67,7 +75,7 @@ class BusProvider {
     return shapesList;
   }
 
-  /// Getter method to retrieve the list of stops
+  /// Returns a [List] of [BusStop] objects.
   Future<List<BusStop>> getStops() async {
     var response = await fetch('busStops',
         query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
@@ -81,7 +89,7 @@ class BusProvider {
     return stopsList;
   }
 
-  /// Getter method to retrieve list of trip updates
+  /// Returns a [List] of [BusTripUpdate] objects.
   Future<List<BusTripUpdate>> getTripUpdates() async {
     var response = await fetch('tripUpdates');
 
@@ -94,6 +102,7 @@ class BusProvider {
     return tripUpdatesList;
   }
 
+  /// Returns a [List] of [BusTrip] objects.
   Future<List<BusTrip>> getTrip() async {
     var response = await fetch('busTrips', query: {
       'query': '{"route_id": ["87-184","286-184","289-184"]}'
@@ -105,29 +114,10 @@ class BusProvider {
             .map<BusTrip>((json) => BusTrip.fromJson(json))
             .toList()
         : [];
+        
     return tripList;
   }
-
-  Future<List<BusTripUpdate>> getTripUpdatesWithParameter() async {
-    var response = await fetch('tripUpdates');
-    List<BusTrip> trips = await this.getTrip();
-    List<String> tripIDs = new List<String>();
-    for (BusTrip trip in trips) {
-      // add all tripid to be searched through in tripid list
-      if (!tripIDs.contains(trip.tripId)) {
-        tripIDs.add(trip.tripId);
-      }
-    }
-    List<BusTripUpdate> tripUpdatesList = response != null
-        ? json
-            .decode(response.body)
-            .where((json) =>
-                tripIDs.contains(json["id"]) && json["isDeleted"] == false)
-            .map<BusTripUpdate>((json) => BusTripUpdate.fromJson(json))
-            .toList()
-        : [];
-    return tripUpdatesList;
-  }
+  
 
   // Future<Map<String, List<BusStop>>> getActiveStops() async {  // map<routeId, list<busstop>>
   //   List<BusTripUpdate> updates = await this.getTripUpdatesWithParameter();
@@ -146,7 +136,7 @@ class BusProvider {
   //   return stopMap;
   // }
 
-  /// Getter method to retrieve list of vehicle updates
+  /// Returns a [List] of [BusVehicleUpdate] objects.
   Future<List<BusVehicleUpdate>> getVehicleUpdates() async {
     var response = await http
         .get('http://64.128.172.149:8080/gtfsrealtime/VehiclePositions');
@@ -163,6 +153,9 @@ class BusProvider {
     return vehicleUpdatesList;
   }
 
+  /// Creates a JSON file [fileName] and stores it in a local directory.
+  /// 
+  /// Does nothing if [fetch] cannot establish a connection 
   Future createJSONFile(String fileName, http.Response response) async {
     if (response.statusCode == 200) {
       final directory = await getApplicationDocumentsDirectory();

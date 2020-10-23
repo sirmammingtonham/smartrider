@@ -1,5 +1,8 @@
+/// package used for LatLng object
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+/// Bus Stop model:
+/// Contains data related to Bus Stops
 class BusStop {
   String stopId;
   String stopCode;

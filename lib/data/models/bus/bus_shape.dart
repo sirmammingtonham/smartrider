@@ -1,5 +1,8 @@
+///package used for LatLng object
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+/// Bus Shape model:
+/// Contains data related to individual points that make up a route
 class BusShape {
   int id;
   String shapeId;

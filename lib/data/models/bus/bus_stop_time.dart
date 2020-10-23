@@ -1,3 +1,5 @@
+/// Bus Stoptime model:
+/// Contains data related to stop times
 class BusStoptime {
   int id;
   String tripId;

@@ -1,3 +1,5 @@
+/// Bus route model: 
+/// Contains data related to individual routes
 class BusRoute {
   String routeId;
   String agencyId;

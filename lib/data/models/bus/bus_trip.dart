@@ -1,3 +1,5 @@
+/// Bus Trip model:
+/// Contains data for individual trips
 class BusTrip {
   String tripId;
   String routeId;

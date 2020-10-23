@@ -1,17 +1,20 @@
+/// packages used for protocol buffer implementation
 import 'package:smartrider/data/models/bus/pb/gtfs-realtime.pbserver.dart';
 import 'package:fixnum/fixnum.dart';
 
+/// Bus Trip Update model:
+/// Contains data related to realtime trip updates
 class BusTripUpdate {
   String id;
   bool isDeleted;
 
-  // tripUpdate.trip
+  /// Representation of [tripUpdate.trip] attributes
   String tripId;
   String startTime;
   String startDate;
   String routeId;
 
-  // tripUpdate.stopTimeUpdate
+  /// Representation of [tripUpdate.stopTimeUpdate] attribute
   List<StopTimeUpdate> stopTimeUpdate;
 
   String vehicleId;
@@ -67,6 +70,7 @@ class BusTripUpdate {
   }
 }
 
+/// Modified [BusStoptime] class to account for realtime data
 class StopTimeUpdate {
   int stopSequence;
   Int64 arrivalTime;
