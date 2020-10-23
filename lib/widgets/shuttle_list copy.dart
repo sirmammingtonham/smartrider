@@ -6,15 +6,15 @@ import 'package:intl/intl.dart';
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
 
-class ShuttleList extends StatefulWidget {
+class ShuttleList2 extends StatefulWidget {
   final Function containsFilter;
   final Function jumpMap;
-  ShuttleList({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
+  ShuttleList2({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
   @override
-  ShuttleListState createState() => ShuttleListState();
+  ShuttleList2State createState() => ShuttleList2State();
 }
 
-class ShuttleListState extends State<ShuttleList>
+class ShuttleList2State extends State<ShuttleList2>
     with SingleTickerProviderStateMixin {
   final List<Widget> shuttleTabs = [
     Tab(text: 'SOUTH'),
@@ -41,32 +41,34 @@ class ShuttleListState extends State<ShuttleList>
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      TabBar(
-        isScrollable: true,
-        tabs: shuttleTabs,
-        // unselectedLabelColor: Colors.white.withOpacity(0.3),
-        labelColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.black
-            : null,
-        unselectedLabelColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.black
-            : null,
-        controller: _tabController,
-      ),
-      Container(
-        height: MediaQuery.of(context).size.height * 0.7,
-        child: TabBarView(
+    return Material(
+      child: Column(children: <Widget>[
+        TabBar(
+          isScrollable: true,
+          tabs: shuttleTabs,
+          // unselectedLabelColor: Colors.white.withOpacity(0.3),
+          labelColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.black
+              : null,
+          unselectedLabelColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.black
+              : null,
           controller: _tabController,
-          children: <Widget>[
-            shuttleList(0, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(1, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(2, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(3, this.widget.containsFilter, this.widget.jumpMap),
-          ],
         ),
-      )
-    ]);
+        Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          child: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              shuttleList2(0, this.widget.containsFilter, this.widget.jumpMap),
+              shuttleList2(1, this.widget.containsFilter, this.widget.jumpMap),
+              shuttleList2(2, this.widget.containsFilter, this.widget.jumpMap),
+              shuttleList2(3, this.widget.containsFilter, this.widget.jumpMap),
+            ],
+          ),
+        )
+      ]),
+    );
   }
 
   @override
@@ -99,7 +101,7 @@ _getTimeIndex(List<String> curTimeList) {
   return curTimeList.indexWhere((element) => element == closest);
 }
 
-Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
+Widget shuttleList2(int idx, Function _containsFilter, Function _jumpMap) {
   return ScrollablePositionedList.builder(
     itemCount: shuttleTimeLists[idx].length,
     initialScrollIndex: _getTimeIndex(shuttleTimeLists[idx]),
@@ -117,8 +119,10 @@ Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
           subtitle: Text(curTimeList[index]),
           trailing: Icon(Icons.arrow_forward),
           onTap: () {
-            _jumpMap(double.parse(curStopList[index % curStopList.length][1]),
-                double.parse(curStopList[index % curStopList.length][2]));
+            Navigator.pop(context);
+
+            // _jumpMap(double.parse(curStopList[index % curStopList.length][1]),
+            //     double.parse(curStopList[index % curStopList.length][2]));
           },
         ),
       );
