@@ -60,6 +60,7 @@ class _SignupUIState extends State<SignupUI> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _rinController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
   String role =
       'Student'; // default role is student (implement role chooser in the future)
@@ -265,8 +266,8 @@ class _SignupUIState extends State<SignupUI> {
   void _registerUser() {
     if (_formKey.currentState.validate()) {
       BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationSignUp(_emailController.text, _passwordController.text,
-            _nameController.text, role),
+        AuthenticationSignUp(_emailController.text, _nameController.text,
+            _passwordController.text, _rinController.text, role),
       );
       BlocProvider.of<AuthenticationBloc>(context).add(
         AuthenticationLoggedIn(
@@ -275,10 +276,10 @@ class _SignupUIState extends State<SignupUI> {
 
       // _email = _emailController.text;
       // _password = _passwordController.text;
-      // _rin = _nameController.text;
+      // _rin = _rinController.text;
       // _emailController.clear();
       // _passwordController.clear();
-      // _nameController.clear();
+      // _rinController.clear();
     }
   }
 
@@ -305,6 +306,13 @@ class _SignupUIState extends State<SignupUI> {
   String _rinValidation(String val) {
     if (val.trim().length != 9 || !val.startsWith("66")) {
       return 'Please enter a valid RIN';
+    }
+    return null;
+  }
+
+  String _nameValidation(String val) {
+    if (val.trim().length == 0) {
+      return "Please don't leave the name field blank";
     }
     return null;
   }
@@ -446,7 +454,7 @@ class _SignupUIState extends State<SignupUI> {
                             Navigator.of(context).pop();
                             _emailController.clear();
                             _passwordController.clear();
-                            _nameController.clear();
+                            _rinController.clear();
                           },
                           icon: Icon(
                             Icons.highlight_off,
@@ -522,8 +530,15 @@ class _SignupUIState extends State<SignupUI> {
                           bottom: 20,
                           top: 60,
                         ),
-                        child: _input(Icon(Icons.account_circle), "RIN",
-                            _nameController, false, _rinValidation),
+                        child: _input(Icon(Icons.contacts), "RIN",
+                            _rinController, false, _rinValidation),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: 20,
+                        ),
+                        child: _input(Icon(Icons.account_circle), "FIRST NAME",
+                            _nameController, false, _nameValidation),
                       ),
                       Padding(
                         padding: EdgeInsets.only(
@@ -568,6 +583,18 @@ class _SignupUIState extends State<SignupUI> {
 
   @override
   Widget build(BuildContext context) {
+    /*
+      Area to implement bypass if auto signed in
+
+      return Scaffold(
+        body: BlocListener<AuthenticationBloc, AuthenticationState>(
+            listener: (context, state) {
+      if (state is AuthenticationSuccess) {
+        return homePage;
+      }})
+
+    */
+
     primary = Theme.of(context).primaryColor;
     return Scaffold(
         resizeToAvoidBottomPadding: false,

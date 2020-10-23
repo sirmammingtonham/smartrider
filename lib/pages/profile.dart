@@ -12,7 +12,12 @@ abstract class ListItem {
 class ProfilePage extends StatefulWidget {
   final String role;
   final String email;
-  ProfilePage({this.title, @required this.role, @required this.email});
+  final String name;
+  ProfilePage(
+      {this.title,
+      @required this.name,
+      @required this.role,
+      @required this.email});
   final String title;
 
   @override
@@ -30,7 +35,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
               ), // adds space between button and lower bezel
               Row(children: <Widget>[
-                //CrossAxisAlignment: CrossAxisAlignment.left,
                 RaisedButton(
                     child: Text(
                       '< BACK',
@@ -49,8 +53,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 height: 175.0,
                 child: Center(
                     child: Text(
-                  widget.title,
-                  style: TextStyle(color: Colors.white70, fontSize: 80),
+                  'Hello, ' + widget.role,
+                  style: TextStyle(color: Colors.white70, fontSize: 50),
                 )),
               ),
 

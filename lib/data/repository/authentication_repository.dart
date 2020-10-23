@@ -8,8 +8,7 @@ class AuthRepository {
   AuthRepository({FirebaseAuth firebaseAuth})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
-  Future signInWithCredentials(
-      String email, String password) async {
+  Future signInWithCredentials(String email, String password) async {
     try {
       return await _firebaseAuth.signInWithEmailAndPassword(
         email: email.trim(),

@@ -11,8 +11,8 @@ abstract class AuthenticationEvent extends Equatable {
 class AuthenticationStarted extends AuthenticationEvent {}
 
 class AuthenticationLoggedIn extends AuthenticationEvent {
-  final String email,pass,role;
-  const AuthenticationLoggedIn(this.email,this.pass,this.role);
+  final String email, pass, role;
+  const AuthenticationLoggedIn(this.email, this.pass, this.role);
   @override
   String get getemail => email;
   @override
@@ -23,7 +23,8 @@ class AuthenticationLoggedIn extends AuthenticationEvent {
 
 class AuthenticationLoggedOut extends AuthenticationEvent {}
 
-class AuthenticationSignUp extends AuthenticationEvent{
-  final String email,pass,rin,role;
-  const AuthenticationSignUp(this.email,this.pass,this.rin, this.role);
+class AuthenticationSignUp extends AuthenticationEvent {
+  final String email, name, pass, rin, role;
+  const AuthenticationSignUp(
+      this.email, this.name, this.pass, this.rin, this.role);
 }

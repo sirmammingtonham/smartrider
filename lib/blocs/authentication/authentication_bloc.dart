@@ -25,11 +25,13 @@ class AuthenticationBloc
     if (event is AuthenticationStarted) {
       yield* _mapAuthenticationStartedToState();
     } else if (event is AuthenticationLoggedIn) {
-      yield* _mapAuthenticationLoggedInToState(event.email, event.pass,event.role);
+      yield* _mapAuthenticationLoggedInToState(
+          event.email, event.pass, event.role);
     } else if (event is AuthenticationLoggedOut) {
       yield* _mapAuthenticationLoggedOutToState();
     } else if (event is AuthenticationSignUp) {
-      yield* _mapAuthenticationSignUpToState(event.email, event.pass, event.rin,event.role);
+      yield* _mapAuthenticationSignUpToState(
+          event.email, event.name, event.pass, event.rin, event.role);
     }
   }
 
@@ -37,13 +39,14 @@ class AuthenticationBloc
     final isSignedIn = await _authRepository.isSignedIn();
     if (isSignedIn) {
       final name = await _authRepository.getUser();
-      yield AuthenticationSuccess(name,'Student');
+      yield AuthenticationSuccess(name, 'Student');
     } else {
       yield AuthenticationInit();
     }
   }
 
-  Stream<AuthenticationState> _mapAuthenticationLoggedInToState(e, p, role) async* {
+  Stream<AuthenticationState> _mapAuthenticationLoggedInToState(
+      e, p, role) async* {
     AuthResult result = await _authRepository.signInWithCredentials(
         e, p); //attempt to signin user
 
@@ -51,7 +54,7 @@ class AuthenticationBloc
       //if signing in user is successful
       FirebaseUser user = await _authRepository.getActualUser();
       if (user.isEmailVerified) {
-        yield AuthenticationSuccess(e,role);
+        yield AuthenticationSuccess(e, role);
       } else {
         user.sendEmailVerification();
         yield AwaitEmailVerify();
@@ -67,13 +70,13 @@ class AuthenticationBloc
     yield AuthenticationInit();
   }
 
-  Stream<AuthenticationState> _mapAuthenticationSignUpToState(e, p, r,role) async* {
+  Stream<AuthenticationState> _mapAuthenticationSignUpToState(
+      e, n, p, r, role) async* {
     var result = await _authRepository.signUp(e, p);
     if (result is AuthResult) {
       FirebaseUser user = result.user;
-      await DatabaseService(usid: user.uid).updateUserData(
-          user.email, role,
-          rin: r); // usertype will be student for now, modify later
+      await DatabaseService(usid: user.uid).updateUserData(user.email, role,
+          rin: r, name: n); // usertype will be student for now, modify later
       user.sendEmailVerification();
       yield AwaitEmailVerify();
     } else {
