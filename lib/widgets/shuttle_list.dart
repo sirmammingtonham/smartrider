@@ -19,7 +19,7 @@ import 'package:smartrider/widgets/filter_dialog.dart';
 import 'package:smartrider/widgets/shuttle_list.dart';
 import 'package:smartrider/widgets/bus_list.dart';
 import 'package:smartrider/widgets/map_ui.dart';
-import 'package:smartrider/widgets/shuttle_list copy.dart';
+import 'package:smartrider/widgets/shuttle_list_copy.dart';
 
 List<String> choices = ['See on map', 'View on timetable'];
 
@@ -151,26 +151,27 @@ class ShuttleListState extends State<ShuttleList>
                         itemExtent: 50,
                         itemBuilder: (BuildContext context, int timeIndex) {
                           return ListTile(
-                              dense: true,
-                              leading: Icon(Icons.access_time, size: 20),
-                              title: Text(
-                                '${shuttleTimeLists[idx][timeIndex]}',
-                                style: TextStyle(fontSize: 15),
-                              ),
-                              subtitle: Text('In 11 minutes'),
-                              trailing: PopupMenuButton<String>(
-                                  onSelected: null,
-                                  itemBuilder: (BuildContext context) => choices
-                                      .map((choice) => PopupMenuItem<String>(
-                                          value: choice, child: Text(choice)))
-                                      .toList()),
-                              onTap: () {
-                                _jumpMap(
-                                    double.parse(
-                                        shuttleStopLists[idx][index][1]),
-                                    double.parse(
-                                        shuttleStopLists[idx][index][2]));
-                              });
+                            dense: true,
+                            leading: Icon(Icons.access_time, size: 20),
+                            title: Text(
+                              '${shuttleTimeLists[idx][timeIndex]}',
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            subtitle: Text('In 11 minutes'),
+                            trailing: PopupMenuButton<String>(
+                                onSelected: null,
+                                itemBuilder: (BuildContext context) => choices
+                                    .map((choice) => PopupMenuItem<String>(
+                                        value: choice, child: Text(choice)))
+                                    .toList()),
+                          );
+                          // onTap: () {
+                          //   _jumpMap(
+                          //       double.parse(
+                          //           shuttleStopLists[idx][index][1]),
+                          //       double.parse(
+                          //           shuttleStopLists[idx][index][2]));
+                          // });
                         },
                         // separatorBuilder: (BuildContext context, int index) =>
                         //     const SizedBox(height: 1),
