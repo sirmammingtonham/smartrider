@@ -2,13 +2,11 @@
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_dash/flutter_dash.dart';
-import 'package:smartrider/blocs/map/map_bloc.dart';
 //import 'package:flutter/rendering.dart';
 
 // loading custom widgets and data
@@ -19,37 +17,28 @@ import 'package:smartrider/widgets/filter_dialog.dart';
 import 'package:smartrider/widgets/shuttle_list.dart';
 import 'package:smartrider/widgets/bus_list.dart';
 import 'package:smartrider/widgets/map_ui.dart';
-import 'package:smartrider/widgets/shuttle_list_copy.dart';
 
-List<String> choices = ['See on map', 'View on timetable'];
-
-/// Creates an object that contains all the shuttles and their respective stops.
-class ShuttleList extends StatefulWidget {
+class BusList extends StatefulWidget {
   final Function containsFilter;
   final Function jumpMap;
-  ShuttleList({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
+  BusList({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
   @override
-  ShuttleListState createState() => ShuttleListState();
+  BusListState createState() => BusListState();
 }
 
-/// Defines each shuttle and makes a tab for each one atop of the schedule panel.
-class ShuttleListState extends State<ShuttleList>
-    with SingleTickerProviderStateMixin {
-  final List<Widget> shuttleTabs = [
-    Tab(text: 'SOUTH'),
-    Tab(text: 'NORTH'),
-    Tab(text: 'WEST'),
-    Tab(text: 'WEEKEND'),
+class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
+  final List<Widget> busTabs = [
+    Tab(text: 'Route 87'),
+    Tab(text: 'Route 286'),
+    Tab(text: 'Route 289'),
   ];
 
   TabController _tabController;
   var isExpandedList = new List<bool>.filled(100, false);
   @override
-
-  /// Affects the expansion of each shuttles list of stops
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, length: shuttleTabs.length);
+    _tabController = new TabController(vsync: this, length: busTabs.length);
     _tabController.addListener(() {
       isExpandedList.fillRange(0, 100, false);
     });
@@ -62,14 +51,14 @@ class ShuttleListState extends State<ShuttleList>
     super.dispose();
   }
 
-  /// Builds each tab for each shuttle and also accounts for the users
-  /// light preferences.
   @override
   Widget build(BuildContext context) {
+    //debugPaintSizeEnabled = true;
     return Column(children: <Widget>[
       TabBar(
         isScrollable: true,
-        tabs: shuttleTabs,
+        tabs: busTabs,
+        // unselectedLabelColor: Colors.white.withOpacity(0.3),
         labelColor: Theme.of(context).brightness == Brightness.light
             ? Colors.black
             : null,
@@ -83,28 +72,27 @@ class ShuttleListState extends State<ShuttleList>
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            shuttleList(0, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(1, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(2, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(3, this.widget.containsFilter, this.widget.jumpMap),
+            busList(0, this.widget.containsFilter, this.widget.jumpMap),
+            busList(1, this.widget.containsFilter, this.widget.jumpMap),
+            busList(2, this.widget.containsFilter, this.widget.jumpMap),
           ],
         ),
       )
     ]);
   }
 
-  /// Builds the shuttlelist widget which contains all the stops and
-  /// useful user information like the next arrival.
   @override
-  Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
+  Widget busList(int idx, Function _containsFilter, Function _jumpMap) {
     return ScrollablePositionedList.builder(
-      itemCount: shuttleStopLists[idx].length,
+      itemCount: busStopLists[idx].length,
       itemBuilder: (context, index) {
-        var curStopList = shuttleStopLists[idx];
+        var curStopList = busStopLists[idx];
+
+        //print(curStopList);
         return CustomExpansionTile(
           title: Text(curStopList[index % curStopList.length][0]),
           subtitle: Text('Next Arrival: ' +
-              shuttleTimeLists[idx][_getTimeIndex(shuttleTimeLists[idx])]),
+              busTimeLists[idx][_getTimeIndex(busTimeLists[idx])]),
           leading: CustomPaint(
               painter: FillPainter(
                   circleColor: Theme.of(context).buttonColor,
@@ -119,10 +107,14 @@ class ShuttleListState extends State<ShuttleList>
               //toggle()
               isExpandedList[index % curStopList.length]
                   ? Text('Hide Arrivals -')
-                  : Text('Show Arrivals +'),
+                  : Text('Show Arrivals +')
+          //isExpanded ? Text('Hide Arrivals -') : Text('Show Arrivals +')
+          ,
           onExpansionChanged: (value) {
             setState(() {
               isExpandedList[index % curStopList.length] = value;
+              //print(isExpandedList);
+              //isExpanded = isExpanded_temp;
             });
           },
           children: [
@@ -133,51 +125,77 @@ class ShuttleListState extends State<ShuttleList>
                 last: index == curStopList.length - 1,
               ),
               child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Container(
-                    margin: const EdgeInsets.only(left: 34.5),
-                    constraints: BoxConstraints.expand(width: 8),
-                  ),
-                  title: Container(
-                    // height: 100.0,
-                    // margin: const EdgeInsets.only(left: 0),
-                    child: RefreshIndicator(
-                      onRefresh: () =>
-                          Future.delayed(const Duration(seconds: 1), () => "1"),
-                      displacement: 1,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: 5,
-                        itemExtent: 50,
-                        itemBuilder: (BuildContext context, int timeIndex) {
-                          return ListTile(
-                            dense: true,
-                            leading: Icon(Icons.access_time, size: 20),
-                            title: Text(
-                              '${shuttleTimeLists[idx][timeIndex]}',
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            subtitle: Text('In 11 minutes'),
-                            trailing: PopupMenuButton<String>(
-                                onSelected: null,
-                                itemBuilder: (BuildContext context) => choices
-                                    .map((choice) => PopupMenuItem<String>(
-                                        value: choice, child: Text(choice)))
-                                    .toList()),
-                          );
-                          // onTap: () {
-                          //   _jumpMap(
-                          //       double.parse(
-                          //           shuttleStopLists[idx][index][1]),
-                          //       double.parse(
-                          //           shuttleStopLists[idx][index][2]));
-                          // });
-                        },
-                        // separatorBuilder: (BuildContext context, int index) =>
-                        //     const SizedBox(height: 1),
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  margin: const EdgeInsets.only(left: 34.5),
+                  constraints: BoxConstraints.expand(width: 8),
+                ),
+                title: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Container(
+                          //   margin: const EdgeInsets.only(left: 18),
+                          //   child: Text(
+                          //     'Current Time: ${DateFormat('H.m').format(DateTime.now())}',
+                          //     style: TextStyle(fontSize: 12),
+                          //   ),
+                          // ),
+                          // SizedBox(height: 10),
+                          Container(
+                              margin: const EdgeInsets.only(left: 18),
+                              child: SizedBox(
+                                width: 140,
+                                height: 60,
+                                child: RaisedButton(
+                                    onPressed: () {
+                                      _jumpMap(
+                                          double.parse(curStopList[
+                                              index % curStopList.length][1]),
+                                          double.parse(curStopList[
+                                              index % curStopList.length][2]));
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.location_on),
+                                        Text('Show This Stop',
+                                            style: TextStyle(fontSize: 12)),
+                                      ],
+                                    )),
+                              )),
+                        ],
                       ),
                     ),
-                  )),
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 65),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: 5,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.access_time,
+                                    size: 15,
+                                  ),
+                                  Text(' ${busTimeLists[idx][index]}'),
+                                ]);
+                          },
+                          separatorBuilder: (BuildContext context, int index) =>
+                              const SizedBox(height: 10),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
           ],
         );
@@ -186,18 +204,10 @@ class ShuttleListState extends State<ShuttleList>
   }
 }
 
-// _calculateTimeAway(String time) {
-//   var now = DateTime.now();
-//   var f = DateFormat('H.m');
-//   double curTime = double.parse(f.format(now));
-//   var t = time.replaceAll(':', '.');
-//   var compTime =
-//       double.tryParse(t.substring(0, t.length - 2)); // comparison time
-//   return (curTime - compTime).round();
-// }
-
-/// Returns the stop that is closest to the current time.
 _getTimeIndex(List<String> curTimeList) {
+  // TODO: update so it works with filter
+  // List curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
+  //             busTimeLists[_tabController.index-1];
   var now = DateTime.now();
   var f = DateFormat('H.m');
   double min = double.maxFinite;
@@ -220,9 +230,6 @@ _getTimeIndex(List<String> curTimeList) {
   return curTimeList.indexWhere((element) => element == closest);
 }
 
-/// Creates our "lines and circles" on the left hand side of the
-/// schedule list for each shuttle. This particular class is responsible
-/// for the first stop.
 class FillPainter extends CustomPainter {
   final Color circleColor;
   final Color lineColor;
@@ -235,7 +242,7 @@ class FillPainter extends CustomPainter {
       this.lineColor,
       this.first = false,
       this.last = false,
-      this.overflow = 8.0})
+      this.overflow = 20.0})
       : super();
 
   @override
@@ -276,9 +283,6 @@ class FillPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
-/// Creates our "lines and circles" on the left hand side of the
-/// schedule list for each shuttle. This particular class is responsible
-/// for all stops but the first.
 class StrokePainter extends CustomPainter {
   final Color circleColor;
   final Color lineColor;
@@ -291,6 +295,8 @@ class StrokePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // cascade notation, look it up it's pretty cool
+
     Paint line = new Paint()
       ..color = lineColor
       ..strokeCap = StrokeCap.square

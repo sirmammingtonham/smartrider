@@ -15,6 +15,7 @@ import 'package:smartrider/data/repository/bus_repository.dart';
 import 'package:smartrider/widgets/map_ui.dart';
 import 'package:smartrider/widgets/search_bar.dart';
 import 'package:smartrider/pages/schedule.dart';
+import 'package:smartrider/pages/shuttle_dropdown.dart';
 
 class HomePage extends StatelessWidget {
   static const String route = '/';
@@ -48,65 +49,50 @@ class _HomePageState extends State<_HomePage> {
   Widget build(BuildContext context) {
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
     return Material(
-      child: SlidingUpPanel(
-        // sliding panel (body is the background, panelBuilder is the actual panel)
-        controller: _panelController,
-        maxHeight: _panelHeightOpen,
-        minHeight: _panelHeightClosed,
-        parallaxEnabled: true,
-        renderPanelSheet: false,
-        backdropEnabled: true,
-        parallaxOffset: .1,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20.0),
-        ),
-        collapsed: AppBar(
-          centerTitle: true,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(18.0),
-            ),
-          ),
-          leading: Icon(Icons.arrow_upward),
-          title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
-          actions: <Widget>[
-            Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: Icon(Icons.arrow_upward))
-          ],
-        ),
-        body: BlocProvider<MapBloc>(
+      child: BlocProvider<MapBloc>(
           create: (context) => MapBloc(
-              shuttleRepo: ShuttleRepository(),
+              prefsBloc: BlocProvider.of<PrefsBloc>(context),
               busRepo: BusRepository(),
-              prefsBloc: BlocProvider.of<PrefsBloc>(context)),
-          // stack the search bar widget over the map ui
-          child: Stack(children: <Widget>[
-            ShuttleMap(
-              key: mapState,
-            ),
-            SearchBar(),
-          ]),
-        ),
-        panel: NotificationListener<OverscrollNotification>(
-          child: ShuttleSchedule(
-            mapState: mapState,
-            panelController: _panelController,
-            scheduleChanged: () {
-              setState(() {
-                _isShuttle = !_isShuttle;
-              });
-            },
-          ),
-          onNotification: (t) {
-            if (t.overscroll < -10 && t.dragDetails.delta.dx == 0) {
-              _panelController.animatePanelToPosition(0);
-              return true;
-            }
-            return false;
-          },
-        ),
-      ),
+              shuttleRepo: ShuttleRepository()),
+          child: SlidingUpPanel(
+              // sliding panel (body is the background, panelBuilder is the actual panel)
+              controller: _panelController,
+              maxHeight: _panelHeightOpen,
+              minHeight: _panelHeightClosed,
+              parallaxEnabled: true,
+              renderPanelSheet: false,
+              backdropEnabled: true,
+              parallaxOffset: .1,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(20.0),
+              ),
+              collapsed: AppBar(
+                centerTitle: true,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(18.0),
+                  ),
+                ),
+                leading: Icon(Icons.arrow_upward),
+                title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
+                actions: <Widget>[
+                  Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: Icon(Icons.arrow_upward))
+                ],
+              ),
+              // stack the search bar widget over the map ui
+              body: Stack(children: <Widget>[
+                ShuttleMap(
+                  key: mapState,
+                ),
+                SearchBar(),
+              ]),
+              panel: ShuttleSchedule2(
+                panelController: _panelController,
+              ))),
+
+      //panel: ShuttleSchedule()),
     );
   }
 }
