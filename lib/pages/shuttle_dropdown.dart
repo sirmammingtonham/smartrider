@@ -24,29 +24,6 @@ class ShuttleSchedule2 extends StatefulWidget {
   ShuttleScheduleState createState() => ShuttleScheduleState();
 }
 
-//Change this
-List<Item> generateItems(int numberOfItems) {
-  return List.generate(numberOfItems, (int index) {
-    return Item(
-      headerValue: 'Panel $index',
-      expandedValue: 'This is item number $index',
-    );
-  });
-}
-
-//Also edit this
-class Item {
-  Item({
-    this.expandedValue,
-    this.headerValue,
-    this.isExpanded = false,
-  });
-
-  String expandedValue;
-  String headerValue;
-  bool isExpanded;
-}
-
 class ShuttleScheduleState extends State<ShuttleSchedule2>
     with TickerProviderStateMixin {
   final List<Widget> _tabs = [
