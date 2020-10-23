@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="gtfs-realtime.pbjson library API docs, for the Dart programming language.">
+  <title>gtfs-realtime.pbjson library - Dart API</title>
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500,400i,400,300|Source+Sans+Pro:400,300,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static-assets/github.css">
+  <link rel="stylesheet" href="../static-assets/styles.css">
+  <link rel="icon" href="../static-assets/favicon.png">
+
+</head>
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">smartrider</a></li>
+    <li class="self-crumb">gtfs-realtime.pbjson library</li>
+  </ol>
+  <div class="self-name">gtfs-realtime.pbjson</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+  <div id="dartdoc-sidebar-left" class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+      <form class="search-sidebar" role="search">
+        <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+      </form>
+    </header>
+    
+    <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+      <li><a href="../index.html">smartrider</a></li>
+      <li class="self-crumb">gtfs-realtime.pbjson library</li>
+    </ol>
+    
+    <h5><span class="package-name">smartrider</span> <span class="package-kind">package</span></h5>
+    <ol>
+          <li class="section-title">Libraries</li>
+          <li><a href="../blocs_authentication_authentication_bloc/blocs_authentication_authentication_bloc-library.html">authentication_bloc</a></li>
+          <li><a href="../data_providers_authentication_provider/data_providers_authentication_provider-library.html">authentication_provider</a></li>
+          <li><a href="../data_repository_authentication_repository/data_repository_authentication_repository-library.html">authentication_repository</a></li>
+          <li><a href="../widgets_autocomplete/widgets_autocomplete-library.html">autocomplete</a></li>
+          <li><a href="../widgets_bus_list/widgets_bus_list-library.html">bus_list</a></li>
+          <li><a href="../data_providers_bus_provider/data_providers_bus_provider-library.html">bus_provider</a></li>
+          <li><a href="../data_repository_bus_repository/data_repository_bus_repository-library.html">bus_repository</a></li>
+          <li><a href="../data_models_bus_bus_route/data_models_bus_bus_route-library.html">bus_route</a></li>
+          <li><a href="../data_models_bus_bus_shape/data_models_bus_bus_shape-library.html">bus_shape</a></li>
+          <li><a href="../data_models_bus_bus_stop/data_models_bus_bus_stop-library.html">bus_stop</a></li>
+          <li><a href="../data_models_bus_bus_stop_time/data_models_bus_bus_stop_time-library.html">bus_stop_time</a></li>
+          <li><a href="../data_models_bus_bus_trip/data_models_bus_bus_trip-library.html">bus_trip</a></li>
+          <li><a href="../data_models_bus_bus_trip_update/data_models_bus_bus_trip_update-library.html">bus_trip_update</a></li>
+          <li><a href="../data_models_bus_bus_vehicle_update/data_models_bus_bus_vehicle_update-library.html">bus_vehicle_update</a></li>
+          <li><a href="../util_data/util_data-library.html">data</a></li>
+          <li><a href="../data_providers_database/data_providers_database-library.html">database</a></li>
+          <li><a href="../widgets_filter_dialog/widgets_filter_dialog-library.html">filter_dialog</a></li>
+          <li><a href="../widgets_flutter_google_places/widgets_flutter_google_places-library.html">flutter_google_places</a></li>
+          <li><a href="../data_models_bus_pb_gtfs-realtime.pb/data_models_bus_pb_gtfs-realtime.pb-library.html">gtfs-realtime.pb</a></li>
+          <li><a href="../data_models_bus_pb_gtfs-realtime.pbenum/data_models_bus_pb_gtfs-realtime.pbenum-library.html">gtfs-realtime.pbenum</a></li>
+          <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/data_models_bus_pb_gtfs-realtime.pbjson-library.html">gtfs-realtime.pbjson</a></li>
+          <li><a href="../data_models_bus_pb_gtfs-realtime.pbserver/data_models_bus_pb_gtfs-realtime.pbserver-library.html">gtfs-realtime.pbserver</a></li>
+          <li><a href="../pages_home/pages_home-library.html">home</a></li>
+          <li><a href="../widgets_icons/widgets_icons-library.html">icons</a></li>
+          <li><a href="../main/main-library.html">main</a></li>
+          <li><a href="../blocs_map_map_bloc/blocs_map_map_bloc-library.html">map_bloc</a></li>
+          <li><a href="../widgets_map_ui/widgets_map_ui-library.html">map_ui</a></li>
+          <li><a href="../blocs_preferences_prefs_bloc/blocs_preferences_prefs_bloc-library.html">prefs_bloc</a></li>
+          <li><a href="../pages_profile/pages_profile-library.html">profile</a></li>
+          <li><a href="../blocs_saferide_saferide_bloc/blocs_saferide_saferide_bloc-library.html">saferide_bloc</a></li>
+          <li><a href="../data_providers_saferide_provider/data_providers_saferide_provider-library.html">saferide_provider</a></li>
+          <li><a href="../data_repository_saferide_repository/data_repository_saferide_repository-library.html">saferide_repository</a></li>
+          <li><a href="../blocs_saferide_saferide_state/blocs_saferide_saferide_state-library.html">saferide_state</a></li>
+          <li><a href="../pages_schedule/pages_schedule-library.html">schedule</a></li>
+          <li><a href="../widgets_search_bar/widgets_search_bar-library.html">search_bar</a></li>
+          <li><a href="../pages_settings/pages_settings-library.html">settings</a></li>
+          <li><a href="../data_models_shuttle_shuttle_eta/data_models_shuttle_shuttle_eta-library.html">shuttle_eta</a></li>
+          <li><a href="../widgets_shuttle_list/widgets_shuttle_list-library.html">shuttle_list</a></li>
+          <li><a href="../data_providers_shuttle_provider/data_providers_shuttle_provider-library.html">shuttle_provider</a></li>
+          <li><a href="../data_repository_shuttle_repository/data_repository_shuttle_repository-library.html">shuttle_repository</a></li>
+          <li><a href="../data_models_shuttle_shuttle_route/data_models_shuttle_shuttle_route-library.html">shuttle_route</a></li>
+          <li><a href="../data_models_shuttle_shuttle_stop/data_models_shuttle_shuttle_stop-library.html">shuttle_stop</a></li>
+          <li><a href="../data_models_shuttle_shuttle_update/data_models_shuttle_shuttle_update-library.html">shuttle_update</a></li>
+          <li><a href="../data_models_shuttle_shuttle_vehicle/data_models_shuttle_shuttle_vehicle-library.html">shuttle_vehicle</a></li>
+          <li><a href="../util_strings/util_strings-library.html">strings</a></li>
+          <li><a href="../data_models_themes/data_models_themes-library.html">themes</a></li>
+          <li><a href="../data_models_backend_user/data_models_backend_user-library.html">user</a></li>
+          <li><a href="../data_models_backend_user_list/data_models_backend_user_list-library.html">user_list</a></li>
+          <li><a href="../pages_welcome/pages_welcome-library.html">welcome</a></li>
+    </ol>
+  </div>
+
+  <div id="dartdoc-main-content" class="col-xs-12 col-sm-9 col-md-8 main-content">
+      <div><h1><span class="kind-library">gtfs-realtime.pbjson</span> library  </h1></div>
+
+    
+
+
+
+    <section class="summary offset-anchor" id="constants">
+      <h2>Constants</h2>
+
+      <dl class="properties">
+        <dt id="Alert$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/Alert$json-constant.html">Alert$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;Alert&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;active_period&#39;, &#39;3&#39; : 1, &#39;4&#39; : 3, &#39;5&#39; : 11, &#39;6&#39; : &#39;.transit_realtime.TimeRa…</code></span>
+          </div>
+        </dd>
+        <dt id="Alert_Cause$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/Alert_Cause$json-constant.html">Alert_Cause$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;Cause&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;UNKNOWN_CAUSE&#39;, &#39;2&#39; : 1}, const {&#39;1&#39; : &#39;OTHER_CAUSE&#39;, &#39;2&#39; : 2}, const {&#39;1&#…</code></span>
+          </div>
+        </dd>
+        <dt id="Alert_Effect$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/Alert_Effect$json-constant.html">Alert_Effect$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;Effect&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;NO_SERVICE&#39;, &#39;2&#39; : 1}, const {&#39;1&#39; : &#39;REDUCED_SERVICE&#39;, &#39;2&#39; : 2}, const {&#39;1…</code></span>
+          </div>
+        </dd>
+        <dt id="Alert_SeverityLevel$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/Alert_SeverityLevel$json-constant.html">Alert_SeverityLevel$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;SeverityLevel&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;UNKNOWN_SEVERITY&#39;, &#39;2&#39; : 1}, const {&#39;1&#39; : &#39;INFO&#39;, &#39;2&#39; : 2}, const {&#39…</code></span>
+          </div>
+        </dd>
+        <dt id="EntitySelector$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/EntitySelector$json-constant.html">EntitySelector$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;EntitySelector&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;agency_id&#39;, &#39;3&#39; : 1, &#39;4&#39; : 1, &#39;5&#39; : 9, &#39;10&#39; : &#39;agencyId&#39;}, con…</code></span>
+          </div>
+        </dd>
+        <dt id="FeedEntity$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/FeedEntity$json-constant.html">FeedEntity$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;FeedEntity&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;id&#39;, &#39;3&#39; : 1, &#39;4&#39; : 2, &#39;5&#39; : 9, &#39;10&#39; : &#39;id&#39;}, const {&#39;1&#39; :…</code></span>
+          </div>
+        </dd>
+        <dt id="FeedHeader$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/FeedHeader$json-constant.html">FeedHeader$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;FeedHeader&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;gtfs_realtime_version&#39;, &#39;3&#39; : 1, &#39;4&#39; : 2, &#39;5&#39; : 9, &#39;10&#39; : &#39;gtfsRealtim…</code></span>
+          </div>
+        </dd>
+        <dt id="FeedHeader_Incrementality$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/FeedHeader_Incrementality$json-constant.html">FeedHeader_Incrementality$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;Incrementality&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;FULL_DATASET&#39;, &#39;2&#39; : 0}, const {&#39;1&#39; : &#39;DIFFERENTIAL&#39;, &#39;2&#39; : 1}]}</code></span>
+          </div>
+        </dd>
+        <dt id="FeedMessage$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/FeedMessage$json-constant.html">FeedMessage$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;FeedMessage&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;header&#39;, &#39;3&#39; : 1, &#39;4&#39; : 2, &#39;5&#39; : 11, &#39;6&#39; : &#39;.transit_realtime.FeedHea…</code></span>
+          </div>
+        </dd>
+        <dt id="Position$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/Position$json-constant.html">Position$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;Position&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;latitude&#39;, &#39;3&#39; : 1, &#39;4&#39; : 2, &#39;5&#39; : 2, &#39;10&#39; : &#39;latitude&#39;}, const {&#3…</code></span>
+          </div>
+        </dd>
+        <dt id="TimeRange$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TimeRange$json-constant.html">TimeRange$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;TimeRange&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;start&#39;, &#39;3&#39; : 1, &#39;4&#39; : 1, &#39;5&#39; : 4, &#39;10&#39; : &#39;start&#39;}, const {&#39;1&#…</code></span>
+          </div>
+        </dd>
+        <dt id="TranslatedString$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TranslatedString$json-constant.html">TranslatedString$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;TranslatedString&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;translation&#39;, &#39;3&#39; : 1, &#39;4&#39; : 3, &#39;5&#39; : 11, &#39;6&#39; : &#39;.transit_realti…</code></span>
+          </div>
+        </dd>
+        <dt id="TranslatedString_Translation$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TranslatedString_Translation$json-constant.html">TranslatedString_Translation$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;Translation&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;text&#39;, &#39;3&#39; : 1, &#39;4&#39; : 2, &#39;5&#39; : 9, &#39;10&#39; : &#39;text&#39;}, const {&#39;1&#…</code></span>
+          </div>
+        </dd>
+        <dt id="TripDescriptor$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripDescriptor$json-constant.html">TripDescriptor$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;TripDescriptor&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;trip_id&#39;, &#39;3&#39; : 1, &#39;4&#39; : 1, &#39;5&#39; : 9, &#39;10&#39; : &#39;tripId&#39;}, const {…</code></span>
+          </div>
+        </dd>
+        <dt id="TripDescriptor_ScheduleRelationship$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripDescriptor_ScheduleRelationship$json-constant.html">TripDescriptor_ScheduleRelationship$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;ScheduleRelationship&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;SCHEDULED&#39;, &#39;2&#39; : 0}, const {&#39;1&#39; : &#39;ADDED&#39;, &#39;2&#39; : 1}, const {&#3…</code></span>
+          </div>
+        </dd>
+        <dt id="TripUpdate$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripUpdate$json-constant.html">TripUpdate$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;TripUpdate&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;trip&#39;, &#39;3&#39; : 1, &#39;4&#39; : 2, &#39;5&#39; : 11, &#39;6&#39; : &#39;.transit_realtime.TripDescri…</code></span>
+          </div>
+        </dd>
+        <dt id="TripUpdate_StopTimeEvent$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripUpdate_StopTimeEvent$json-constant.html">TripUpdate_StopTimeEvent$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;StopTimeEvent&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;delay&#39;, &#39;3&#39; : 1, &#39;4&#39; : 1, &#39;5&#39; : 5, &#39;10&#39; : &#39;delay&#39;}, const {&#39…</code></span>
+          </div>
+        </dd>
+        <dt id="TripUpdate_StopTimeUpdate$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripUpdate_StopTimeUpdate$json-constant.html">TripUpdate_StopTimeUpdate$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;StopTimeUpdate&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;stop_sequence&#39;, &#39;3&#39; : 1, &#39;4&#39; : 1, &#39;5&#39; : 13, &#39;10&#39; : &#39;stopSequence&#…</code></span>
+          </div>
+        </dd>
+        <dt id="TripUpdate_StopTimeUpdate_ScheduleRelationship$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripUpdate_StopTimeUpdate_ScheduleRelationship$json-constant.html">TripUpdate_StopTimeUpdate_ScheduleRelationship$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;ScheduleRelationship&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;SCHEDULED&#39;, &#39;2&#39; : 0}, const {&#39;1&#39; : &#39;SKIPPED&#39;, &#39;2&#39; : 1}, const {&…</code></span>
+          </div>
+        </dd>
+        <dt id="VehicleDescriptor$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/VehicleDescriptor$json-constant.html">VehicleDescriptor$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;VehicleDescriptor&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;id&#39;, &#39;3&#39; : 1, &#39;4&#39; : 1, &#39;5&#39; : 9, &#39;10&#39; : &#39;id&#39;}, const {&#39;1…</code></span>
+          </div>
+        </dd>
+        <dt id="VehiclePosition$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/VehiclePosition$json-constant.html">VehiclePosition$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;VehiclePosition&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;trip&#39;, &#39;3&#39; : 1, &#39;4&#39; : 1, &#39;5&#39; : 11, &#39;6&#39; : &#39;.transit_realtime.TripD…</code></span>
+          </div>
+        </dd>
+        <dt id="VehiclePosition_CongestionLevel$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/VehiclePosition_CongestionLevel$json-constant.html">VehiclePosition_CongestionLevel$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;CongestionLevel&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;UNKNOWN_CONGESTION_LEVEL&#39;, &#39;2&#39; : 0}, const {&#39;1&#39; : &#39;RUNNING_SMOOTHLY&#39;, &#39;2&…</code></span>
+          </div>
+        </dd>
+        <dt id="VehiclePosition_OccupancyStatus$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/VehiclePosition_OccupancyStatus$json-constant.html">VehiclePosition_OccupancyStatus$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;OccupancyStatus&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;EMPTY&#39;, &#39;2&#39; : 0}, const {&#39;1&#39; : &#39;MANY_SEATS_AVAILABLE&#39;, &#39;2&#39; : 1}, cons…</code></span>
+          </div>
+        </dd>
+        <dt id="VehiclePosition_VehicleStopStatus$json" class="constant">
+          <span class="name "><a href="../data_models_bus_pb_gtfs-realtime.pbjson/VehiclePosition_VehicleStopStatus$json-constant.html">VehiclePosition_VehicleStopStatus$json</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>const {&#39;1&#39; : &#39;VehicleStopStatus&#39;, &#39;2&#39; : const [const {&#39;1&#39; : &#39;INCOMING_AT&#39;, &#39;2&#39; : 0}, const {&#39;1&#39; : &#39;STOPPED_AT&#39;, &#39;2&#39; : 1}, const …</code></span>
+          </div>
+        </dd>
+      </dl>
+    </section>
+
+
+
+
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
+    <h5>gtfs-realtime.pbjson library</h5>
+    <ol>
+    
+    
+    
+      <li class="section-title"><a href="../data_models_bus_pb_gtfs-realtime.pbjson/data_models_bus_pb_gtfs-realtime.pbjson-library.html#constants">Constants</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/Alert$json-constant.html">Alert$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/Alert_Cause$json-constant.html">Alert_Cause$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/Alert_Effect$json-constant.html">Alert_Effect$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/Alert_SeverityLevel$json-constant.html">Alert_SeverityLevel$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/EntitySelector$json-constant.html">EntitySelector$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/FeedEntity$json-constant.html">FeedEntity$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/FeedHeader$json-constant.html">FeedHeader$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/FeedHeader_Incrementality$json-constant.html">FeedHeader_Incrementality$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/FeedMessage$json-constant.html">FeedMessage$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/Position$json-constant.html">Position$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TimeRange$json-constant.html">TimeRange$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TranslatedString$json-constant.html">TranslatedString$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TranslatedString_Translation$json-constant.html">TranslatedString_Translation$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripDescriptor$json-constant.html">TripDescriptor$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripDescriptor_ScheduleRelationship$json-constant.html">TripDescriptor_ScheduleRelationship$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripUpdate$json-constant.html">TripUpdate$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripUpdate_StopTimeEvent$json-constant.html">TripUpdate_StopTimeEvent$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripUpdate_StopTimeUpdate$json-constant.html">TripUpdate_StopTimeUpdate$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/TripUpdate_StopTimeUpdate_ScheduleRelationship$json-constant.html">TripUpdate_StopTimeUpdate_ScheduleRelationship$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/VehicleDescriptor$json-constant.html">VehicleDescriptor$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/VehiclePosition$json-constant.html">VehiclePosition$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/VehiclePosition_CongestionLevel$json-constant.html">VehiclePosition_CongestionLevel$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/VehiclePosition_OccupancyStatus$json-constant.html">VehiclePosition_OccupancyStatus$json</a></li>
+      <li><a href="../data_models_bus_pb_gtfs-realtime.pbjson/VehiclePosition_VehicleStopStatus$json-constant.html">VehiclePosition_VehicleStopStatus$json</a></li>
+    
+    
+    
+    
+    
+    </ol>
+  </div><!--/sidebar-offcanvas-right-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    smartrider
+      1.0.0+1
+  </span>
+
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="../static-assets/typeahead.bundle.min.js"></script>
+<script src="../static-assets/highlight.pack.js"></script>
+<script src="../static-assets/URI.js"></script>
+<script src="../static-assets/script.js"></script>
+
+
+</body>
+
+</html>
