@@ -1,25 +1,11 @@
 // ui dependencies
-import 'dart:isolate';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_dash/flutter_dash.dart';
-import 'package:smartrider/blocs/map/map_bloc.dart';
-//import 'package:flutter/rendering.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
-import 'package:smartrider/pages/shuttle_dropdown.dart';
-import 'package:smartrider/widgets/filter_dialog.dart';
-import 'package:smartrider/widgets/shuttle_list.dart';
-import 'package:smartrider/widgets/bus_list.dart';
-import 'package:smartrider/widgets/map_ui.dart';
-import 'package:smartrider/widgets/shuttle_list_copy.dart';
 
 List<String> choices = ['See on map', 'View on timetable'];
 
@@ -136,8 +122,6 @@ class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
                     constraints: BoxConstraints.expand(width: 8),
                   ),
                   title: Container(
-                    // height: 100.0,
-                    // margin: const EdgeInsets.only(left: 0),
                     child: RefreshIndicator(
                       onRefresh: () =>
                           Future.delayed(const Duration(seconds: 1), () => "1"),
@@ -162,16 +146,7 @@ class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
                                         value: choice, child: Text(choice)))
                                     .toList()),
                           );
-                          // onTap: () {
-                          //   _jumpMap(
-                          //       double.parse(
-                          //           shuttleStopLists[idx][index][1]),
-                          //       double.parse(
-                          //           shuttleStopLists[idx][index][2]));
-                          // });
                         },
-                        // separatorBuilder: (BuildContext context, int index) =>
-                        //     const SizedBox(height: 1),
                       ),
                     ),
                   )),
@@ -182,16 +157,6 @@ class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
     );
   }
 }
-
-// _calculateTimeAway(String time) {
-//   var now = DateTime.now();
-//   var f = DateFormat('H.m');
-//   double curTime = double.parse(f.format(now));
-//   var t = time.replaceAll(':', '.');
-//   var compTime =
-//       double.tryParse(t.substring(0, t.length - 2)); // comparison time
-//   return (curTime - compTime).round();
-// }
 
 /// Returns the stop that is closest to the current time.
 _getTimeIndex(List<String> curTimeList) {
