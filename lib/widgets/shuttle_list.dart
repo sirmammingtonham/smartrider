@@ -2,24 +2,15 @@
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_dash/flutter_dash.dart';
-import 'package:smartrider/blocs/map/map_bloc.dart';
+
 //import 'package:flutter/rendering.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
-import 'package:smartrider/pages/shuttle_dropdown.dart';
-import 'package:smartrider/widgets/filter_dialog.dart';
-import 'package:smartrider/widgets/shuttle_list.dart';
-import 'package:smartrider/widgets/bus_list.dart';
-import 'package:smartrider/widgets/map_ui.dart';
-import 'package:smartrider/widgets/shuttle_list_copy.dart';
 
 List<String> choices = ['See on map', 'View on timetable'];
 
@@ -159,22 +150,21 @@ class ShuttleListState extends State<ShuttleList>
                             ),
                             subtitle: Text('In 11 minutes'),
                             trailing: PopupMenuButton<String>(
-                                onSelected: null,
+                                onSelected: (String selected) {
+                                  if (selected == choices[0]) {
+                                    _jumpMap(
+                                        double.parse(
+                                            shuttleStopLists[idx][index][1]),
+                                        double.parse(
+                                            shuttleStopLists[idx][index][2]));
+                                  }
+                                },
                                 itemBuilder: (BuildContext context) => choices
                                     .map((choice) => PopupMenuItem<String>(
                                         value: choice, child: Text(choice)))
                                     .toList()),
                           );
-                          // onTap: () {
-                          //   _jumpMap(
-                          //       double.parse(
-                          //           shuttleStopLists[idx][index][1]),
-                          //       double.parse(
-                          //           shuttleStopLists[idx][index][2]));
-                          // });
                         },
-                        // separatorBuilder: (BuildContext context, int index) =>
-                        //     const SizedBox(height: 1),
                       ),
                     ),
                   )),

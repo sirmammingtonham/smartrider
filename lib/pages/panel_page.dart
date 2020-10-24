@@ -1,30 +1,28 @@
 // ui dependencies
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/filter_dialog.dart';
 import 'package:smartrider/widgets/shuttle_list.dart';
 //import 'package:smartrider/widgets/bus_list.dart'; OBSOLETE
+import 'package:smartrider/widgets/bus_list_new.dart';
 
-import 'package:smartrider/widgets/bus_list.dart';
-//import 'package:smartrider/widgets/bus_list_new.dart'; // This is my NEW busList.
-
-import 'package:smartrider/widgets/map_ui.dart';
-
-class ShuttleSchedule extends StatefulWidget {
-  final GlobalKey<ShuttleMapState> mapState;
+class PanelPage extends StatefulWidget {
   final PanelController panelController;
   final VoidCallback scheduleChanged;
-  ShuttleSchedule(
-      {Key key, this.mapState, this.panelController, this.scheduleChanged})
+  PanelPage(
+      {Key key, this.panelController, this.scheduleChanged})
       : super(key: key);
   @override
-  ShuttleScheduleState createState() => ShuttleScheduleState();
+  PanelPageState createState() => PanelPageState();
 }
 
-class ShuttleScheduleState extends State<ShuttleSchedule>
+class PanelPageState extends State<PanelPage>
     with TickerProviderStateMixin {
   final List<Widget> _tabs = [
     Tab(icon: Icon(Icons.airport_shuttle)),
@@ -105,7 +103,7 @@ class ShuttleScheduleState extends State<ShuttleSchedule>
 
   _jumpMap(double lat, double long) {
     this.widget.panelController.animatePanelToPosition(0);
-    // this.widget.mapState.currentState.scrollToLocation(LatLng(lat, long));
+    BlocProvider.of<MapBloc>(context).scrollToLocation(LatLng(lat, long));
   }
 
   @override
@@ -159,7 +157,7 @@ class ShuttleScheduleState extends State<ShuttleSchedule>
           ),
           floatingActionButton: FloatingActionButton(
             heroTag: "Filter",
-            child: Icon(Icons.search),
+            child: Icon(Icons.toc),
             elevation: 5.0,
             onPressed: _displayFilterDialog,
           ),

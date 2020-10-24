@@ -6,13 +6,13 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_dash/flutter_dash.dart';
+// import 'package:flutter_dash/flutter_dash.dart';
 //import 'package:flutter/rendering.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
-import 'package:smartrider/pages/shuttle_dropdown.dart';
+// import 'package:smartrider/pages/shuttle_dropdown.dart';
 import 'package:smartrider/widgets/filter_dialog.dart';
 import 'package:smartrider/widgets/shuttle_list.dart';
 import 'package:smartrider/widgets/bus_list.dart';

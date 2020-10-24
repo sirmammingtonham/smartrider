@@ -14,8 +14,7 @@ import 'package:smartrider/data/repository/bus_repository.dart';
 // custom widget imports
 import 'package:smartrider/widgets/map_ui.dart';
 import 'package:smartrider/widgets/search_bar.dart';
-import 'package:smartrider/pages/schedule.dart';
-import 'package:smartrider/pages/shuttle_dropdown.dart';
+import 'package:smartrider/pages/panel_page.dart';
 
 class HomePage extends StatelessWidget {
   static const String route = '/';
@@ -88,7 +87,7 @@ class _HomePageState extends State<_HomePage> {
                 ),
                 SearchBar(),
               ]),
-              panel: ShuttleSchedule2(
+              panel: PanelPage(
                 panelController: _panelController,
               ))),
 
