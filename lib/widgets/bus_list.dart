@@ -84,14 +84,20 @@ class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
   /// useful user information like the next arrival.
   @override
   Widget busList(int idx, Function _containsFilter, Function _jumpMap) {
+    /// Returns the scrollable list for our bus stops to be contained in.
     return ScrollablePositionedList.builder(
       itemCount: busStopLists[idx].length,
       itemBuilder: (context, index) {
+        /// Contains the current stops for the busses.
         var curStopList = busStopLists[idx];
+
+        /// Contains our Expansion Tile to control how the user views each bus stop.
         return CustomExpansionTile(
           title: Text(curStopList[index % curStopList.length][0]),
           subtitle: Text('Next Arrival: ' +
               busTimeLists[idx][_getTimeIndex(busTimeLists[idx])]),
+
+          /// Controls the leading circle icon in front of each bus stop.
           leading: CustomPaint(
               painter: FillPainter(
                   circleColor: Theme.of(context).buttonColor,
@@ -102,16 +108,16 @@ class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
                 height: 50,
                 width: 45,
               )),
-          trailing:
-              //toggle()
-              isExpandedList[index % curStopList.length]
-                  ? Text('Hide Arrivals -')
-                  : Text('Show Arrivals +'),
+          trailing: isExpandedList[index % curStopList.length]
+              ? Text('Hide Arrivals -')
+              : Text('Show Arrivals +'),
           onExpansionChanged: (value) {
             setState(() {
               isExpandedList[index % curStopList.length] = value;
             });
           },
+
+          /// Contains everything below the ExpansionTile when it is expanded.
           children: [
             CustomPaint(
               painter: StrokePainter(
@@ -119,6 +125,8 @@ class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
                 lineColor: Theme.of(context).primaryColorLight,
                 last: index == curStopList.length - 1,
               ),
+
+              /// A list item for every arrival time for the selected bus stop.
               child: ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: Container(
@@ -130,11 +138,14 @@ class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
                       onRefresh: () =>
                           Future.delayed(const Duration(seconds: 1), () => "1"),
                       displacement: 1,
+
+                      /// A list of the upcoming bus stop arrivals.
                       child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: 5,
                         itemExtent: 50,
                         itemBuilder: (BuildContext context, int timeIndex) {
+                          /// The container in which the bus stop arrival times are displayed.
                           return ListTile(
                             dense: true,
                             leading: Icon(Icons.access_time, size: 20),
@@ -170,6 +181,8 @@ _getTimeIndex(List<String> curTimeList) {
   double curTime = double.parse(f.format(now));
   double compTime;
   String closest;
+
+  /// Formats the times to be displayed.
   curTimeList.forEach((time) {
     var t = time.replaceAll(':', '.');
     compTime = double.tryParse(t.substring(0, t.length - 2));
@@ -183,6 +196,7 @@ _getTimeIndex(List<String> curTimeList) {
     }
   });
 
+  /// Returns the time that the first bus will arrive to the current selected bus stop.
   return curTimeList.indexWhere((element) => element == closest);
 }
 
@@ -194,6 +208,9 @@ class FillPainter extends CustomPainter {
   final Color lineColor;
   final bool first;
   final bool last;
+
+  /// WARNING: Default value for overflow may need to be changed based on how
+  /// much space the names of the
   final double overflow;
 
   FillPainter(
@@ -204,6 +221,7 @@ class FillPainter extends CustomPainter {
       this.overflow = 20.0})
       : super();
 
+  /// Controls how the circle and lines are drawn.
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint();
