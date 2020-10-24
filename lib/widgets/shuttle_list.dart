@@ -1,6 +1,4 @@
 // ui dependencies
-import 'dart:isolate';
-
 import 'package:flutter/material.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -175,16 +173,6 @@ class ShuttleListState extends State<ShuttleList>
     );
   }
 }
-
-// _calculateTimeAway(String time) {
-//   var now = DateTime.now();
-//   var f = DateFormat('H.m');
-//   double curTime = double.parse(f.format(now));
-//   var t = time.replaceAll(':', '.');
-//   var compTime =
-//       double.tryParse(t.substring(0, t.length - 2)); // comparison time
-//   return (curTime - compTime).round();
-// }
 
 /// Returns the stop that is closest to the current time.
 _getTimeIndex(List<String> curTimeList) {
