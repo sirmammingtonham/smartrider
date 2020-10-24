@@ -7,3 +7,11 @@ class ScheduleInitialState extends ScheduleState{
   @override
   List<Object> get props => [];
 }
+class ScheduleDefaultState extends ScheduleState{
+  @override
+  List<Object> get props => [];
+}
+class ScheduleTableState extends ScheduleState{
+  @override
+  List<Object> get props => [];
+}
