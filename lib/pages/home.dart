@@ -16,6 +16,7 @@ import 'package:smartrider/widgets/map_ui.dart';
 import 'package:smartrider/widgets/search_bar.dart';
 import 'package:smartrider/pages/panel_page.dart';
 
+/// Default page that is displayed once the user logs in.
 class HomePage extends StatelessWidget {
   static const String route = '/';
 
@@ -25,12 +26,15 @@ class HomePage extends StatelessWidget {
   }
 }
 
+/// When refreshed, calls the _HomePageState to refresh the bus routes and
+/// bus schedules if needed.
 class _HomePage extends StatefulWidget {
   _HomePage();
   @override
   _HomePageState createState() => _HomePageState();
 }
 
+/// Builds the current instance of the home page.
 class _HomePageState extends State<_HomePage> {
   PanelController _panelController;
   double _panelHeightOpen;
@@ -44,6 +48,7 @@ class _HomePageState extends State<_HomePage> {
     _isShuttle = true;
   }
 
+  /// Builds the map and the schedule dropdown based on passed-in data.
   @override
   Widget build(BuildContext context) {
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
