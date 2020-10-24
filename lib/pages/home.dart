@@ -8,6 +8,7 @@ import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/data/repository/shuttle_repository.dart';
 import 'package:smartrider/data/repository/bus_repository.dart';
 
@@ -53,11 +54,15 @@ class _HomePageState extends State<_HomePage> {
   Widget build(BuildContext context) {
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
     return Material(
-      child: BlocProvider<MapBloc>(
-          create: (context) => MapBloc(
-              prefsBloc: BlocProvider.of<PrefsBloc>(context),
-              busRepo: BusRepository(),
-              shuttleRepo: ShuttleRepository()),
+      child: MultiBlocProvider(
+          providers: [
+            BlocProvider<MapBloc>(
+                create: (context) => MapBloc(
+                    prefsBloc: BlocProvider.of<PrefsBloc>(context),
+                    busRepo: BusRepository(),
+                    shuttleRepo: ShuttleRepository())),
+            BlocProvider<ScheduleBloc>(create: (context) => ScheduleBloc())
+          ],
           child: SlidingUpPanel(
               // sliding panel (body is the background, panelBuilder is the actual panel)
               controller: _panelController,

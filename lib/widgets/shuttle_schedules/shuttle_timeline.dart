@@ -13,16 +13,16 @@ import 'package:smartrider/widgets/custom_expansion_tile.dart';
 List<String> choices = ['See on map', 'View on timetable'];
 
 /// Creates an object that contains all the shuttles and their respective stops.
-class ShuttleList extends StatefulWidget {
+class ShuttleTimeline extends StatefulWidget {
   final Function containsFilter;
   final Function jumpMap;
-  ShuttleList({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
+  ShuttleTimeline({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
   @override
-  ShuttleListState createState() => ShuttleListState();
+  ShuttleTimelineState createState() => ShuttleTimelineState();
 }
 
 /// Defines each shuttle and makes a tab for each one atop of the schedule panel.
-class ShuttleListState extends State<ShuttleList>
+class ShuttleTimelineState extends State<ShuttleTimeline>
     with SingleTickerProviderStateMixin {
   final List<Widget> shuttleTabs = [
     Tab(text: 'SOUTH'),

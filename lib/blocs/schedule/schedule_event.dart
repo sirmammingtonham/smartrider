@@ -4,15 +4,15 @@ part of 'schedule_bloc.dart';
 abstract class ScheduleEvent extends Equatable {
   const ScheduleEvent();
 }
-class ScheduleInit extends ScheduleEvent{
+class ScheduleInitEvent extends ScheduleEvent{
   @override
   List<Object> get props => [];
 }
-class ScheduleDefault extends ScheduleEvent{
+class ScheduleTimelineEvent extends ScheduleEvent{
   @override
   List<Object> get props => [];
 }
-class ScheduleTable extends ScheduleEvent{
+class ScheduleTableEvent extends ScheduleEvent{
   @override
   List<Object> get props => [];
 }

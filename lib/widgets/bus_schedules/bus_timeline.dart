@@ -10,16 +10,16 @@ import 'package:smartrider/widgets/custom_expansion_tile.dart';
 List<String> choices = ['See on map', 'View on timetable'];
 
 /// Creates an object that contains all the busses and their respective stops.
-class BusList extends StatefulWidget {
+class BusTimeline extends StatefulWidget {
   final Function containsFilter;
   final Function jumpMap;
-  BusList({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
+  BusTimeline({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
   @override
-  BusListState createState() => BusListState();
+  BusTimelineState createState() => BusTimelineState();
 }
 
 /// Defines each bus and makes a tab for each one atop of the schedule panel.
-class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
+class BusTimelineState extends State<BusTimeline> with SingleTickerProviderStateMixin {
   final List<Widget> busTabs = [
     Tab(text: 'Route 87'),
     Tab(text: 'Route 286'),

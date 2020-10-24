@@ -7,7 +7,7 @@ class ScheduleInitialState extends ScheduleState{
   @override
   List<Object> get props => [];
 }
-class ScheduleDefaultState extends ScheduleState{
+class ScheduleTimelineState extends ScheduleState{
   @override
   List<Object> get props => [];
 }

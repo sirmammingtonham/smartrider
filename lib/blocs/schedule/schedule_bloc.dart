@@ -15,16 +15,24 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ScheduleBloc() : super(ScheduleInitialState());
 
   Stream<ScheduleState> mapEventToState(ScheduleEvent event) async* {
-    if (event is ScheduleInit) {
+    if (event is ScheduleInitEvent) {
       yield* _mapScheduleInitToState();
-    } else if (event is ScheduleDefault) {
-      yield* _mapScheduleDefaultToState();
-    } else if (event is ScheduleTable) {
+    } else if (event is ScheduleTimelineEvent) {
+      yield* _mapScheduleTimelineToState();
+    } else if (event is ScheduleTableEvent) {
       yield* _mapScheduleTableToState();
     }
   }
 
-  Stream<ScheduleState> _mapScheduleInitToState() async* {}
-  Stream<ScheduleState> _mapScheduleDefaultToState() async* {}
-  Stream<ScheduleState> _mapScheduleTableToState() async* {}
+  Stream<ScheduleState> _mapScheduleInitToState() async* {
+    yield ScheduleTimelineState();
+  }
+
+  Stream<ScheduleState> _mapScheduleTimelineToState() async* {
+    yield ScheduleTimelineState();
+  }
+
+  Stream<ScheduleState> _mapScheduleTableToState() async* {
+    yield ScheduleTableState();
+  }
 }
