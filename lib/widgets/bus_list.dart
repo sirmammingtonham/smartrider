@@ -50,7 +50,9 @@ class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
   /// light preferences.
   @override
   Widget build(BuildContext context) {
+    /// Controls the format (tabs on top, list of bus stops on bottom).
     return Column(children: <Widget>[
+      /// The tab bar displayed when the bus icon is selected.
       TabBar(
         isScrollable: true,
         tabs: busTabs,
@@ -62,6 +64,8 @@ class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
             : null,
         controller: _tabController,
       ),
+
+      /// The list of bus stops to be displayed.
       Container(
         height: MediaQuery.of(context).size.height * 0.7,
         child: TabBarView(
