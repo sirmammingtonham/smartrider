@@ -96,6 +96,7 @@ class BusListState extends State<BusList> with SingleTickerProviderStateMixin {
           title: Text(curStopList[index % curStopList.length][0]),
           subtitle: Text('Next Arrival: ' +
               busTimeLists[idx][_getTimeIndex(busTimeLists[idx])]),
+          tilePadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
 
           /// Controls the leading circle icon in front of each bus stop.
           leading: CustomPaint(
@@ -218,7 +219,7 @@ class FillPainter extends CustomPainter {
       this.lineColor,
       this.first = false,
       this.last = false,
-      this.overflow = 20.0})
+      this.overflow = 22.0})
       : super();
 
   /// Controls how the circle and lines are drawn.
