@@ -118,8 +118,7 @@ export const busStops = functions
       });
   });
 
-export const busStoptimes = functions// .runWith(runtimeOpts)
-.https
+export const busStoptimes = functions.https // .runWith(runtimeOpts)
   .onRequest((req, res) => {
     // return error status if method isn't GET
     if (req.method !== "GET") {
@@ -173,9 +172,9 @@ export const busShapes = functions
       });
   });
 
-export const busShapesAsGeoJSON = functions
+export const busTimetable = functions
   .runWith(runtimeOpts)
-  .https.onRequest((req, res) => {
+  .https.onRequest(async (req, res) => {
     // return error status if method isn't GET
     if (req.method !== "GET") {
       console.log("Invalid request!");
@@ -185,133 +184,57 @@ export const busShapesAsGeoJSON = functions
 
     // const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
 
-    // console.log(genShapeGeoJSON(query));
+    const query = {
+      route_ids: "('87-184','286-184','289-184')",
+      days: "monday = 1",
+    }; // test query, eventually allow this to be passed in header
 
-    // console.log("Bus GeoJSON requested!");
-    // // get routes and send json
-    // gtfs
-    //   .getShapesAsGeoJSON(query)
-    //   .then((shapes: any) => {
-    //     console.log("Bus GeoJSON sent!");
-    //     res.status(200).json(shapes);
-    //   })
-    //   .catch((err: any) => {
-    //     console.error(err);
-    //     res.status(500);
-    //   });
+    console.log("Bus timetable requested!");
+
+    const db = await gtfs.getDb();
+    
+    const query_res = await db.all(`
+    SELECT r.route_id, r.route_short_name, r.route_long_name, s.stop_name, s.stop_id, 
+      s.stop_lat, s.stop_lon, st.arrival_time, st.stop_sequence, c.service_id
+    FROM routes r, trips t, stop_times st, stops s, calendar c
+    WHERE r.route_id = t.route_id
+    AND c.${query.days}
+    AND c.service_id = t.service_id
+    AND t.trip_id = st.trip_id
+    AND st.stop_id = s.stop_id
+    AND r.route_id IN ${query.route_ids}
+    ORDER BY r.route_id, s.stop_id, s.arrival_time;`
+    );
+
+    let stop_map = new Map();
+    query_res.forEach((row: any) => {
+      let obj; // stores stop info in the stop_map
+      if ((obj = stop_map.get(row.stop_id))) {
+        obj.stop_times.push(row.arrival_time);
+      } else {
+        stop_map.set(row.stop_id, {
+          route_id: row.route_id,
+          stop_name: row.stop_name,
+          service_id: row.service_id,
+          stop_lat: row.stop_lat,
+          stop_lon: row.stop_lon,
+          stop_sequence: row.stop_sequence,
+          stop_times: [row.arrival_time],
+        });
+      }
+    });
+
+    let route_map: any = new Object();
+    stop_map.forEach((value, _) => {
+      let obj; // stores stop info in the stop_map
+      if ((obj = route_map[value.route_id])) {
+        obj.stops.push(value);
+      } else {
+        route_map[value.route_id] = {
+          stops: [value],
+        };
+      }
+    });
+
+    res.status(200).json(route_map);
   });
-
-export const getActiveShapes = functions
-  .runWith(runtimeOpts)
-  .https.onRequest(async (req, res) => {
-    // return error status if method isn't GET
-    if (req.method !== "GET") {
-      console.log("Invalid request!");
-      res.status(400);
-      return;
-    }
-  });
-
-//     const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
-//     const fields = JSON.parse(req.header("fields") ?? "[]");
-//     const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
-
-//     console.log("Bus shapes requested!");
-//     const shapes = await gtfs.getShapes(query, fields, sortBy);
-//     const trips = await gtfs.getTrips(query, fields, sortBy);
-
-//     // trip 'trip_id' -> tripUpdates 'id' -> trip 'shape_id' -> shapes
-
-//     const requestSettings = {
-//       method: "GET",
-//       url: "http://64.128.172.149:8080/gtfsrealtime/TripUpdates",
-//       encoding: null,
-//     };
-
-//     var update: any;
-//     request(requestSettings, function (error: any, response: any, body: any) {
-//       if (!error && response.statusCode === 200) {
-//         update = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
-
-//         let shapesMap = new Map();
-//         shapesMap.set("87-184", []);
-//         shapesMap.set("286-184", []);
-//         shapesMap.set("289-184", []);
-
-//         trips.forEach((trip: any) => {
-//           if (trip["trip_id"] in update.entity) {
-//             shapes.forEach((shape: any) => {
-//               if (trip["shape_id"] in shape) {
-//                 shapesMap.get(trip["route_id"]).push(shape);
-//               }
-//             });
-//           }
-//         });
-
-//         res.status(200).json(shapesMap);
-//       } else {
-//         res.status(500);
-//       }
-//     });
-//   });
-
-// export const tripUpdates = functions
-//   .runWith(runtimeOpts)
-//   .https.onRequest((req, res) => {
-//     // return error status if method isn't GET
-//     if (req.method !== "GET") {
-//       console.log("Invalid request!");
-//       res.status(400);
-//       return;
-//     }
-
-//     const requestSettings = {
-//       method: "GET",
-//       url: "http://64.128.172.149:8080/gtfsrealtime/TripUpdates",
-//       encoding: null,
-//     };
-//     request(requestSettings, function (error: any, response: any, body: any) {
-//       if (!error && response.statusCode === 200) {
-//         const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-//           body
-//         );
-//         res.status(200).json(feed);
-//       }
-//     });
-//   });
-
-// export const vehicleUpdates = functions
-//   .runWith(runtimeOpts)
-//   .https.onRequest((req, res) => {
-//     // return error status if method isn't GET
-//     if (req.method !== "GET") {
-//       console.log("Invalid request!");
-//       res.status(400);
-//       return;
-//     }
-
-//     // const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
-//     const fields = JSON.parse(req.header("fields") ?? "[]");
-//     // const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
-
-//     const requestSettings = {
-//       method: "GET",
-//       url: "http://64.128.172.149:8080/gtfsrealtime/VehiclePositions",
-//       encoding: null,
-//     };
-//     request(requestSettings, function (error: any, response: any, body: any) {
-//       if (!error && response.statusCode === 200) {
-//         const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-//           body
-//         );
-//         if (fields.length > 0) {
-//           const filteredUpdates = feed.entity.filter((vehicle: any) => {
-//             return fields.includes(vehicle.vehicle.trip.routeId);
-//           });
-//           res.status(200).json(filteredUpdates);
-//         } else {
-//           res.status(200).json(feed.entity);
-//         }
-//       }
-//     });
-//   });

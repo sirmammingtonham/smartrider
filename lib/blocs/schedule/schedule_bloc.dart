@@ -13,7 +13,9 @@ part 'schedule_state.dart';
 
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ScheduleBloc() : super(ScheduleInitialState());
-
+  bool isShuttle =
+      true; //true if we have to build the shuttle schedule, false if bus
+  ScheduleState prevState;
   Stream<ScheduleState> mapEventToState(ScheduleEvent event) async* {
     if (event is ScheduleInitEvent) {
       yield* _mapScheduleInitToState();
@@ -21,18 +23,32 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       yield* _mapScheduleTimelineToState();
     } else if (event is ScheduleTableEvent) {
       yield* _mapScheduleTableToState();
+    } else if (event is ScheduleChangeEvent) {
+      this.isShuttle = !this.isShuttle;
+      if (this.prevState is ScheduleTimelineState) {
+        yield* _mapScheduleTimelineToState();
+      } else if (this.prevState is ScheduleTableState) {
+        yield* _mapScheduleTableToState();
+      }
+    } else if (event is ScheduleTransitionEvent){
+      this.prevState = event.currentstate;
+      yield* _mapScheduleTransitionToState();
     }
   }
 
   Stream<ScheduleState> _mapScheduleInitToState() async* {
-    yield ScheduleTimelineState();
+    yield ScheduleTimelineState(isShuttle: this.isShuttle);
   }
 
   Stream<ScheduleState> _mapScheduleTimelineToState() async* {
-    yield ScheduleTimelineState();
+    yield ScheduleTimelineState(
+        isShuttle: this.isShuttle); // is shuttle default to true
   }
 
   Stream<ScheduleState> _mapScheduleTableToState() async* {
-    yield ScheduleTableState();
+    yield ScheduleTableState(isShuttle: this.isShuttle);
+  }
+  Stream<ScheduleState> _mapScheduleTransitionToState() async*{
+    yield ScheduleTransitionState(currentState: this.prevState, isShuttle: this.isShuttle);  
   }
 }
