@@ -1,8 +1,10 @@
 import * as gtfs from "gtfs";
 import * as turf from "@turf/turf";
 import * as gj from "geojson";
-export {default as nearestPointToLine} from '@turf/nearest-point-to-line';
-export {default as pointToLineDistance} from '@turf/point-to-line-distance';
+import { Polygon } from "@turf/helpers";
+// import { polygon } from "@turf/helpers";
+// export {default as nearestPointToLine} from '@turf/nearest-point-to-line';
+// export {default as pointToLineDistance} from '@turf/point-to-line-distance';
 
 function onlyUnique(value: any, index: any, self: any) {
   return self.indexOf(value) === index;
@@ -107,10 +109,12 @@ async function getGeoJSON() {
 
       if (!turf.booleanWithin(this_shape, area)) {
         let this_shape_polygon = turf.lineToPolygon(this_shape);
-        let new_part = turf.difference(area, this_shape_polygon);
+        let new_part = turf.difference(area, this_shape_polygon) as turf.Feature<Polygon>;
         console.log(new_part);
-        let multiline_polygon = turf.lineToPolygon(multiline);   
+        
+        let multiline_polygon = turf.lineToPolygon(multiline); 
         let unioned_multiline = turf.union(multiline_polygon, new_part);
+
           area = turf.buffer(multiline, 0.0001);
       }
     });
