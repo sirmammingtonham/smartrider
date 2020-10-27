@@ -167,7 +167,7 @@ class SettingsWidget extends StatelessWidget {
                         onChanged: (bool value) {
                           state.shuttles[key] = value;
                           BlocProvider.of<PrefsBloc>(context)
-                                .add(SavePrefsEvent(key, value));
+                              .add(SavePrefsEvent(key, value));
                           setState();
                         },
                         secondary: const Icon(Icons.directions_bus),
@@ -191,7 +191,7 @@ class SettingsWidget extends StatelessWidget {
                         onChanged: (bool value) {
                           state.buses[key] = value;
                           BlocProvider.of<PrefsBloc>(context)
-                                .add(SavePrefsEvent(key, value));
+                              .add(SavePrefsEvent(key, value));
                           setState();
                         },
                         secondary: const Icon(Icons.directions_bus),

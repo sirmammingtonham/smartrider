@@ -14,7 +14,8 @@ class BusTable extends StatefulWidget {
   BusTableState createState() => BusTableState();
 }
 
-class BusTableState extends State<BusTable> with SingleTickerProviderStateMixin {
+class BusTableState extends State<BusTable>
+    with SingleTickerProviderStateMixin {
   final List<Widget> busTabs = [
     Tab(text: 'Route 87'),
     Tab(text: 'Route 286'),
@@ -92,28 +93,53 @@ _getTimeIndex(List<String> curTimeList) {
 }
 
 Widget busList(int idx, Function _containsFilter, Function _jumpMap) {
-  return ScrollablePositionedList.builder(
-    itemCount: busTimeLists[idx].length,
-    initialScrollIndex: _getTimeIndex(busTimeLists[idx]),
-    itemBuilder: (context, index) {
-      var curStopList = busStopLists[idx];
-      var curTimeList = busTimeLists[idx];
-      // if (!_containsFilter(curStopList, curTimeList, index) ||
-      //     curTimeList[index] == "- - - -") {
-      //   return null;
-      // }
-      return Card(
-        child: ListTile(
-          leading: Icon(Icons.directions_bus),
-          title: Text(curStopList[index % curStopList.length][0]),
-          subtitle: Text(curTimeList[index]),
-          trailing: Icon(Icons.arrow_forward),
-          onTap: () {
-            // _jumpMap(double.parse(curStopList[index % curStopList.length][1]),
-            //     double.parse(curStopList[index % curStopList.length][2]));
-          },
+  var curStopList = busStopLists[idx];
+  var curTimeList = busTimeLists[idx];
+
+  return DataTable(
+      columns: const <DataColumn>[
+        DataColumn(
+          label: Text(
+            'Stops',
+          ),
         ),
-      );
-    },
-  );
+        DataColumn(
+          label: Text(
+            'Arrival Time',
+          ),
+        ),
+      ],
+      rows: List<DataRow>.generate(
+          busTimeLists[idx].length,
+          (index) => DataRow(
+                cells: <DataCell>[
+                  DataCell(Text(curStopList[index % curStopList.length][0])),
+                  DataCell(Text(curTimeList[index]))
+                ],
+              )));
+
+  // return ScrollablePositionedList.builder(
+  //   itemCount: busTimeLists[idx].length,
+  //   initialScrollIndex: _getTimeIndex(busTimeLists[idx]),
+  //   itemBuilder: (context, index) {
+  //     var curStopList = busStopLists[idx];
+  //     var curTimeList = busTimeLists[idx];
+  //     // if (!_containsFilter(curStopList, curTimeList, index) ||
+  //     //     curTimeList[index] == "- - - -") {
+  //     //   return null;
+  //     // }
+  //     return Card(
+  //       child: ListTile(
+  //         leading: Icon(Icons.directions_bus),
+  //         title: Text(curStopList[index % curStopList.length][0]),
+  //         subtitle: Text(curTimeList[index]),
+  //         trailing: Icon(Icons.arrow_forward),
+  //         onTap: () {
+  //           // _jumpMap(double.parse(curStopList[index % curStopList.length][1]),
+  //           //     double.parse(curStopList[index % curStopList.length][2]));
+  //         },
+  //       ),
+  //     );
+  //   },
+  // );
 }
