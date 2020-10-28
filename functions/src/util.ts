@@ -3,7 +3,7 @@ import * as turf from "@turf/turf";
 import { uniqBy } from "lodash";
 
 const fetchGeoJSON = async (routeId: string, directionId: string) => {
-  let query: any = {};
+  const query: any = {};
 
   if (routeId !== undefined && directionId !== undefined) {
     query.route_id = routeId;
@@ -59,7 +59,7 @@ const simplifyGeoJSON = (geojson: any) => {
 export async function genShapeGeoJSON(query: any, fields: any, sortBy: any) {
   const routes = await gtfs.getRoutes(query, fields, sortBy);
 
-  let raw_geojsons = Array();
+  const raw_geojsons = Array();
 
   // gets and simplifies the geojson shape for all trips
   await Promise.all(
@@ -84,7 +84,7 @@ export async function genShapeGeoJSON(query: any, fields: any, sortBy: any) {
   );
 
   // group shapes by route_id
-  let shapes_by_route = new Map();
+  const shapes_by_route = new Map();
   for (const geojson of raw_geojsons) {
     let obj: any;
     if ((obj = shapes_by_route.get(geojson.properties.route_id))) {
@@ -97,10 +97,10 @@ export async function genShapeGeoJSON(query: any, fields: any, sortBy: any) {
   }
 
   // combine different shapes into single multiline string by route
-  let output = Array();
+  const output = Array();
   for (const [route_id, shape] of shapes_by_route) {
-    let fc = turf.featureCollection(shape.shapes);
-    let line = turf.combine(fc);
+    const fc = turf.featureCollection(shape.shapes);
+    const line = turf.combine(fc);
     if (line !== null) {
       line.properties = {
         route_id: route_id,
@@ -127,7 +127,7 @@ export async function genBusTimetable(query: any) {
   AND r.route_id IN ${query.route_ids}
   ORDER BY r.route_id, s.stop_id, st.arrival_time;`);
 
-  let stop_map = new Map();
+  const stop_map = new Map();
   query_res.forEach((row: any) => {
     let obj; // stores stop info in the stop_map
     if ((obj = stop_map.get(row.stop_id))) {
@@ -145,7 +145,7 @@ export async function genBusTimetable(query: any) {
     }
   });
 
-  let route_map: any = new Object();
+  const route_map: any = new Object();
   stop_map.forEach((value, _) => {
     let obj; // stores stop info in the stop_map
     if ((obj = route_map[value.route_id])) {

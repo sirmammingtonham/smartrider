@@ -7,9 +7,11 @@ const config = {
 };
 
 const runtimeOpts: functions.RuntimeOptions = {
-  timeoutSeconds: 2, // timeout function after 2 secs
+  timeoutSeconds: 3, // timeout function after 2 secs
   memory: "256MB", // allocate 256MB of mem per function
 };
+
+const default_query = '{route_id: ["87-184","286-184","289-184"]}';
 
 gtfs
   .openDb(config)
@@ -44,7 +46,7 @@ export const busRoutes = functions
       return;
     }
 
-    const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+    const query = JSON.parse(req.header("query") ?? default_query); // get query, set to empty if null
     const fields = JSON.parse(req.header("fields") ?? "[]");
     const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
 
@@ -72,7 +74,7 @@ export const busTrips = functions
       return;
     }
 
-    const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+    const query = JSON.parse(req.header("query") ?? default_query); // get query, set to empty if null
     const fields = JSON.parse(req.header("fields") ?? "[]");
     const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
 
@@ -100,7 +102,7 @@ export const busStops = functions
       return;
     }
 
-    const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+    const query = JSON.parse(req.header("query") ?? default_query); // get query, set to empty if null
     const fields = JSON.parse(req.header("fields") ?? "[]");
     const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
 
@@ -127,7 +129,7 @@ export const busGeoJSONs = functions
       return;
     }
 
-    const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+    const query = JSON.parse(req.header("query") ?? default_query); // get query, set to empty if null
     const fields = JSON.parse(req.header("fields") ?? "[]");
     const sortBy = JSON.parse(req.header("sortBy") ?? "[]");
 
@@ -155,7 +157,7 @@ export const busTimetables = functions
       return;
     }
 
-    // const query = JSON.parse(req.header("query") ?? "{}"); // get query, set to empty if null
+    // const query = JSON.parse(req.header("query") ?? default_query); // get query, set to empty if null
 
     const query = {
       route_ids: "('87-184','286-184','289-184')",
