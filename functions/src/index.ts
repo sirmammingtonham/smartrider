@@ -203,7 +203,7 @@ export const busTimetable = functions
     AND t.trip_id = st.trip_id
     AND st.stop_id = s.stop_id
     AND r.route_id IN ${query.route_ids}
-    ORDER BY r.route_id, s.stop_id, s.arrival_time;`
+    ORDER BY r.route_id, s.stop_id, st.arrival_time;`
     );
 
     let stop_map = new Map();

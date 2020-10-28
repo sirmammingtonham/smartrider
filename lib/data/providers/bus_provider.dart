@@ -13,6 +13,7 @@ import '../models/bus/bus_stop.dart';
 import '../models/bus/bus_trip_update.dart';
 import '../models/bus/bus_vehicle_update.dart';
 import '../models/bus/bus_trip.dart';
+import '../models/bus/bus_timetable.dart';
 
 
 /// A provider for Bus data.
@@ -152,6 +153,24 @@ class BusProvider {
         : [];
     return vehicleUpdatesList;
   }
+
+  ///Returns a [Map] of <[BusStop],[BusTimeTable]>
+  Future<Map<String,List<BusTimeTable>>> getBusTimeTable() async{
+    var response = await fetch("busTimetable");
+    Map<String,List<BusTimeTable>> retmap = {};
+    Map<String, dynamic> tablemap = response != null
+        ? (json.decode(response.body) as Map<String, dynamic>)
+        : [];
+    tablemap.forEach((key, value) {
+      List<dynamic> b = value["stops"];
+      List<BusTimeTable> bl = b.map((element) => BusTimeTable.fromJson(element)).toList();
+      retmap[key] = bl;
+    });
+    return retmap;
+      
+  }
+
+
 
   /// Creates a JSON file [fileName] and stores it in a local directory.
   /// 

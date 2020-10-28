@@ -11,7 +11,17 @@ import 'package:smartrider/data/repository/authentication_repository.dart';
 import 'package:smartrider/pages/welcome.dart';
 import 'package:smartrider/pages/home.dart';
 
-void main() => runApp(SmartRider());
+import 'package:smartrider/data/providers/bus_provider.dart';
+void main() async { 
+  BusProvider b = BusProvider();
+  var timetable = await b.getBusTimeTable();
+  timetable.forEach((key, value) {
+    print(key);
+    print(value.length);
+    });
+  runApp(SmartRider());
+  
+  }
 
 class SmartRider extends StatelessWidget {
   // This widget is the root of your application.
