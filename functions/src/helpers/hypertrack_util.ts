@@ -1,9 +1,12 @@
 import * as moment from "moment";
-import * as request from "request-promise";
+// trying to convert to axios becaues requests is deprecated
+import axios from "axios";
+import * as config from "./keys.json";
 import { Base64 } from "js-base64";
 
-const AUTHORIZATION = "Basic " + Base64.encode("AccountId:SecretKey");
-
+const AUTHORIZATION =
+  "Basic " +
+  Base64.encode(`${config.hypertrack_id}:${config.hypertrack_secret}`);
 const DATE_FORMAT = "YYYY-MM-DD[T]HH:mm:ss[Z]";
 
 export async function acceptOrder(change: any, _: any) {
@@ -96,15 +99,24 @@ export async function createTrip(deviceId: string, coordinates: any) {
       },
     };
 
-    const parsedBody = await request({
-      method: "POST",
-      uri: "https://v3.api.hypertrack.com/trips/",
-      headers: {
-        Authorization: AUTHORIZATION,
-      },
-      body: data,
-      json: true, // Automatically stringifies the body to JSON
-    });
+    // const parsedBody_ = await request({
+    //   method: "POST",
+    //   uri: "https://v3.api.hypertrack.com/trips/",
+    //   headers: {
+    //     Authorization: AUTHORIZATION,
+    //   },
+    //   body: data,
+    //   json: true, // Automatically stringifies the body to JSON
+    // });
+
+    const parsedBody = (
+      await axios.post("https://v3.api.hypertrack.com/trips/", data, {
+        headers: {
+          Authorization: AUTHORIZATION,
+        },
+      })
+    ).data;
+
     console.log("createTrip: " + JSON.stringify(parsedBody));
     console.log("createTrip:trip_id: " + parsedBody["trip_id"]);
 
@@ -118,14 +130,27 @@ export async function createTrip(deviceId: string, coordinates: any) {
 export async function completeTrip(tripId: string) {
   if (tripId) {
     try {
-      const parsedBody = await request({
-        method: "POST",
-        uri: `https://v3.api.hypertrack.com/trips/${tripId}/complete`,
-        headers: {
-          Authorization: AUTHORIZATION,
-        },
-        body: null,
-      });
+      // const parsedBody = await request({
+      //   method: "POST",
+      //   uri: `https://v3.api.hypertrack.com/trips/${tripId}/complete`,
+      //   headers: {
+      //     Authorization: AUTHORIZATION,
+      //   },
+      //   body: null,
+      // });
+      
+      const parsedBody = (
+        await axios.post(
+          `https://v3.api.hypertrack.com/trips/${tripId}/complete`,
+          null,
+          {
+            headers: {
+              Authorization: AUTHORIZATION,
+            },
+          }
+        )
+      ).data;
+
       console.log("completeTrip: " + JSON.stringify(parsedBody));
 
       return parsedBody;
