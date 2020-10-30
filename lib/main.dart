@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/data/repository/authentication_repository.dart';
-
+import 'package:smartrider/data/models/time/time.dart';
 // page imports
 import 'package:smartrider/pages/welcome.dart';
 import 'package:smartrider/pages/home.dart';
@@ -40,7 +40,6 @@ void main() async {
   runApp(SmartRider());
 }
   
-
 class SmartRider extends StatelessWidget {
   // This widget is the root of your application.
   @override
