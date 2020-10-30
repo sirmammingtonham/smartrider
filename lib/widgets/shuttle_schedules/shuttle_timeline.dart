@@ -1,8 +1,10 @@
 // ui dependencies
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
+import 'package:smartrider/main.dart';
 
 //import 'package:flutter/rendering.dart';
 
@@ -10,7 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
 
-List<String> choices = ['See on map', 'View on timetable'];
+List<String> choices = ['See on map', 'View on timetable', 'Add Reminder'];
 
 /// Creates an object that contains all the shuttles and their respective stops.
 class ShuttleTimeline extends StatefulWidget {
@@ -51,6 +53,8 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     super.dispose();
   }
 
+
+
   /// Builds each tab for each shuttle and also accounts for the users
   /// light preferences.
   @override
@@ -81,6 +85,8 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
       )
     ]);
   }
+
+
 
   /// Builds the shuttlelist widget which contains all the stops and
   /// useful user information like the next arrival.
@@ -156,6 +162,10 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                                         double.parse(
                                             shuttleStopLists[idx][index][2]));
                                   }
+                                  if (selected == choices[2]) {
+                                    scheduleAlarm();
+                                  }
+
                                 },
                                 itemBuilder: (BuildContext context) => choices
                                     .map((choice) => PopupMenuItem<String>(
@@ -168,10 +178,42 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                   )),
             ),
           ],
+
         );
       },
+
     );
+
   }
+
+  void scheduleAlarm() async {
+    var scheduledNotificationDateTime =
+    DateTime.now().add(Duration(seconds: 10));
+
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'alarm_notif',
+      'alarm_notif',
+      'Channel for Alarm notification',
+      icon: 'app_notf_icon',
+      ///sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
+      largeIcon: DrawableResourceAndroidBitmap('app_notf_icon'),
+    );
+
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails(
+      ///sound: 'a_long_cold_sting.wav',
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true);
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.schedule(
+        0,
+        'Test',
+        'Vincent Big Dumb',
+        scheduledNotificationDateTime,
+        platformChannelSpecifics);
+  }
+
 }
 
 /// Returns the stop that is closest to the current time.
@@ -283,3 +325,6 @@ class StrokePainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
+
+
+

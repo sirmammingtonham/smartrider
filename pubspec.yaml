@@ -37,6 +37,8 @@ dependencies:
 
   protobuf: ^1.0.1
 
+  #notication dependencies
+  flutter_local_notifications: ^1.4.4+2
 
   #ui dependencies
   sliding_up_panel: ^1.0.1
@@ -82,6 +84,9 @@ flutter:
     - assets/bus_markers/bus_yellow.png
     - assets/bus_markers/bus_orange.png
     - assets/bus_markers/bus_white.png
+
+    #notification
+    - assets/Notification_Icons/app_logo.png
 
   fonts:
     - family: SR_Icons
