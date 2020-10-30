@@ -1,43 +1,34 @@
-///package used for LatLng object
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/material.dart';
 
-/// Bus Shape model:
-/// Contains data related to individual points that make up a route
 class BusShape {
-  int id;
-  String shapeId;
-  double shapePtLat;
-  double shapePtLon;
-  int shapePtSequence;
-  Null shapeDistTraveled;
+  String routeId;
+  List<LatLng> coordinates;
 
-  BusShape(
-      {this.id,
-      this.shapeId,
-      this.shapePtLat,
-      this.shapePtLon,
-      this.shapePtSequence,
-      this.shapeDistTraveled});
-
-  LatLng get getLatLng => LatLng(this.shapePtLat, this.shapePtLon);
+  BusShape({this.routeId, this.coordinates});
 
   BusShape.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    shapeId = json['shape_id'];
-    shapePtLat = json['shape_pt_lat'];
-    shapePtLon = json['shape_pt_lon'];
-    shapePtSequence = json['shape_pt_sequence'];
-    shapeDistTraveled = json['shape_dist_traveled'];
+    this.routeId = json['properties']['route_id'];
+    this.coordinates = [];
+
+    json['features'][0]['geometry']['coordinates'].forEach((l) {
+      l.forEach((p) {
+        coordinates.add(LatLng(p[1], p[0]));
+      });
+    });
   }
+
+  Polyline get getPolyline => Polyline(
+      polylineId: PolylineId(this.routeId),
+      color: Colors.white.withAlpha(200),
+      width: 4,
+      patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
+      points: this.coordinates);
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['shape_id'] = this.shapeId;
-    data['shape_pt_lat'] = this.shapePtLat;
-    data['shape_pt_lon'] = this.shapePtLon;
-    data['shape_pt_sequence'] = this.shapePtSequence;
-    data['shape_dist_traveled'] = this.shapeDistTraveled;
+    data['route_id'] = this.routeId;
+    data['coordinates'] = this.coordinates;
     return data;
   }
 }
