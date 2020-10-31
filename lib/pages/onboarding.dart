@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smartrider/pages/welcome.dart';
+import 'package:smartrider/pages/home.dart';
 
 
 final kTitleStyle = TextStyle(
   color: Colors.white,
   fontFamily: 'CM Sans Serif',
-  fontSize: 26.0,
+  fontSize: 36.0,
   height: 1.5,
 );
 
 final kSubtitleStyle = TextStyle(
   color: Colors.white,
-  fontSize: 18.0,
+  fontSize: 28.0,
   height: 1.2,
 );
 
@@ -73,7 +75,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 Container(
                   alignment: Alignment.centerRight,
                   child: FlatButton(
-                    onPressed: () => print('Skip'),
+                    onPressed: () {
+                      print('Skip');
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WelcomeScreen(homePage: HomePage())),
+                      );
+                    },
                     child: Text(
                       'Skip',
                       style: TextStyle(
@@ -106,7 +115,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ),
                             SizedBox(height: 15.0),
                             Text(
-                              'The transportation tool that will allow you travel around campus in an efficient and safe manner',
+                              'The transportation tool that will allow you to travel around campus in an efficient and safe manner',
                               style: kSubtitleStyle,
                             ),
                           ],
@@ -119,7 +128,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           children: <Widget>[
                             SizedBox(height: 30.0),
                             Text(
-                              'Text 2',
+                              'Navigation',
                               style: kTitleStyle,
                             ),
                             SizedBox(height: 15.0),
@@ -137,7 +146,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           children: <Widget>[
                             SizedBox(height: 30.0),
                             Text(
-                              'Text 3',
+                              'SafeRide',
                               style: kTitleStyle,
                             ),
                             SizedBox(height: 15.0),
@@ -200,7 +209,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               width: double.infinity,
               color: Colors.white,
               child: GestureDetector(
-                onTap: () => print('Get started'),
+                onTap: () {
+                  print('Get Started');
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WelcomeScreen(homePage: HomePage())),
+                  );
+                },
                 child: Center(
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 30.0),
