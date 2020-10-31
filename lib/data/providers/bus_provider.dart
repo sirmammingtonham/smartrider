@@ -90,12 +90,16 @@ class BusProvider {
 
   /// Returns a [List] of [BusTripUpdate] objects.
   Future<List<BusTripUpdate>> getTripUpdates() async {
-    var response = await fetch('tripUpdates');
+    var response = await http
+        .get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
+        
+    Set<String> routeIds = {'87', '286', '289'};
 
     List<BusTripUpdate> tripUpdatesList = response != null
-        ? json
-            .decode(response.body)
-            .map<BusTripUpdate>((json) => BusTripUpdate.fromJson(json))
+        ? FeedMessage.fromBuffer(response.bodyBytes)
+            .entity
+            .map((entity) => BusTripUpdate.fromPBEntity(entity))
+            .where((update) => routeIds.contains(update.routeId))
             .toList()
         : [];
     return tripUpdatesList;
