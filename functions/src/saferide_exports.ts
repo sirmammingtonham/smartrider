@@ -51,13 +51,12 @@ export const srOnTripUpdate = functions
   .https.onRequest(async (req, res) => {
     const data = JSON.parse(req.rawBody.toString());
     console.log("onTripUpdate:data: " + JSON.stringify(data));
-    for (let i = 0; i < data.length; i++) {
-      const event = data[i];
+    for (const event of data) {
       console.log("onTripUpdate:event: " + JSON.stringify(event));
       if (event.type === "trip" && event.data.value === "destination_arrival") {
-        let ordersRef = firestore.collection("orders");
+        const ordersRef = firestore.collection("orders");
 
-        let querySnapshot = await ordersRef
+        const querySnapshot = await ordersRef
           .where("trip_id", "==", event.data.trip_id)
           .limit(1)
           .get();

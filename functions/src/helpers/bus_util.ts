@@ -1,5 +1,6 @@
 import * as gtfs from "gtfs";
 import * as turf from "@turf/turf";
+import * as dissolve from "geojson-dissolve";
 import { uniqBy } from "lodash";
 
 const fetchGeoJSON = async (routeId: string, directionId: string) => {
@@ -15,32 +16,6 @@ const fetchGeoJSON = async (routeId: string, directionId: string) => {
   return shapesGeojson;
 };
 
-const truncateCoordinate = (coordinate: Array<number>, precision: number) => {
-  return [
-    Math.round(coordinate[0] * 10 ** precision) / 10 ** precision,
-    Math.round(coordinate[1] * 10 ** precision) / 10 ** precision,
-  ];
-};
-
-const truncateGeoJSONDecimals = (geojson: any) => {
-  for (const feature of geojson.features) {
-    if (feature.geometry.coordinates) {
-      if (feature.geometry.type.toLowerCase() === "point") {
-        feature.geometry.coordinates = truncateCoordinate(
-          feature.geometry.coordinates,
-          5
-        );
-      } else if (feature.geometry.type.toLowerCase() === "linestring") {
-        feature.geometry.coordinates = feature.geometry.coordinates.map(
-          (coordinate: Array<number>) => truncateCoordinate(coordinate, 5)
-        );
-      }
-    }
-  }
-
-  return geojson;
-};
-
 const simplifyGeoJSON = (geojson: any) => {
   try {
     const simplifiedGeojson = turf.simplify(geojson, {
@@ -48,20 +23,21 @@ const simplifyGeoJSON = (geojson: any) => {
       highQuality: true,
     });
 
-    return truncateGeoJSONDecimals(simplifiedGeojson);
+    return simplifiedGeojson;
   } catch {
     console.warn("Unable to simplify geojson");
 
-    return truncateGeoJSONDecimals(geojson);
+    return geojson;
   }
 };
 
 export async function genShapeGeoJSON(query: any, fields: any, sortBy: any) {
   const routes = await gtfs.getRoutes(query, fields, sortBy);
-
-  const raw_geojsons = Array();
+  console.log(routes);
+  const shapes_by_route = new Map();
 
   // gets and simplifies the geojson shape for all trips
+  // adds them to map that separates shapes by route
   await Promise.all(
     routes.map(async (route: any) => {
       const trips = await gtfs.getTrips(
@@ -76,37 +52,27 @@ export async function genShapeGeoJSON(query: any, fields: any, sortBy: any) {
           const geojson = simplifyGeoJSON(
             await fetchGeoJSON(route.route_id, direction.direction_id)
           );
-          geojson.properties = { route_id: route.route_id };
-          raw_geojsons.push(geojson);
-        })
-      );
+
+          let obj: any;
+          if ((obj = shapes_by_route.get(route.route_id))) {
+            obj.shapes.push(...geojson.features);
+          } else {
+            shapes_by_route.set(route.route_id, {
+              shapes: [...geojson.features]
+            });
+          }
+        }));
     })
   );
 
-  // group shapes by route_id
-  const shapes_by_route = new Map();
-  for (const geojson of raw_geojsons) {
-    let obj: any;
-    if ((obj = shapes_by_route.get(geojson.properties.route_id))) {
-      obj.shapes.push(...geojson.features);
-    } else {
-      shapes_by_route.set(geojson.properties.route_id, {
-        shapes: [...geojson.features],
-      });
-    }
-  }
 
   // combine different shapes into single multiline string by route
   const output = Array();
-  for (const [route_id, shape] of shapes_by_route) {
-    const fc = turf.featureCollection(shape.shapes);
-    const line = turf.combine(fc);
-    if (line !== null) {
-      line.properties = {
-        route_id: route_id,
-      };
-      output.push(line);
-    }
+  let combined:any;
+  for (const [route_id, shapes] of shapes_by_route) {
+    combined = dissolve(shapes.shapes);
+    combined.properties = {route_id: route_id};
+    output.push(combined);
   }
 
   return output;
@@ -160,27 +126,22 @@ export async function genBusTimetable(query: any) {
   return route_map;
 }
 
-/// testing functions, leave out when deploying!
-///
-// const config = {
-//   sqlitePath: "./gtfs.db",
-// };
+// / testing functions, leave out when deploying!
+// /
+const config = {
+  sqlitePath: "./gtfs.db",
+};
 
-// gtfs
-//   .openDb(config)
-//   .then(() => {
-//     console.log("[getGeoJSON] Database loaded");
-
-//     genShapeGeoJSON({route_id: ["87-184","286-184","289-184"]}, [], [])
-//       .then((output) => {
-//         console.log("[getGeoJSON] Finished!");
-//         console.log(JSON.stringify(output));
-//       })
-//       .catch((err: any) => {
-//         console.log("[getGeoJSON] error: " + err);
-//       });
-
-//   })
-//   .catch((err: any) => {
-//     console.log("[getGeoJSON] openDb error: " + err);
-//   });
+gtfs
+  .openDb(config)
+  .then(() => {
+    console.log("[getGeoJSON] Database loaded");
+    // {route_id: ["87-184","286-184","289-184"]}
+    genShapeGeoJSON({ route_id: ["87-184","286-184","289-184"]}, [], []).then((output) => {
+      console.log("[getGeoJSON] Finished!");
+      console.log(JSON.stringify(output));
+    });
+  })
+  .catch((err: any) => {
+    console.log("[getGeoJSON] openDb error: " + err);
+  });

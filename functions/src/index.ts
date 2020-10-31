@@ -6,7 +6,7 @@ export const helloWorld = bus.helloWorld;
 export const busRoutes = bus.busRoutes;
 export const busTrips = bus.busTrips;
 export const busStops = bus.busStops;
-export const busGeoJSONs = bus.busGeoJSONs;
+export const busShapes = bus.busShapes;
 export const busTimetables = bus.busTimetables;
 
 // saferide functions
