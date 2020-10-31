@@ -15,7 +15,6 @@ import '../models/bus/bus_vehicle_update.dart';
 import '../models/bus/bus_trip.dart';
 import '../models/bus/bus_timetable.dart';
 
-
 /// A provider for Bus data.
 ///
 /// Implemented as a collection of functions that utilizes
@@ -23,7 +22,6 @@ import '../models/bus/bus_timetable.dart';
 /// Each member function decodes a json file and returns
 /// a dart iterable containing the relevent bus data object.
 class BusProvider {
-
   /// The connection status of BusProvider.
   bool isConnected;
 
@@ -65,8 +63,9 @@ class BusProvider {
 
   /// Returns a [List] of [BusShape] objects.
   Future<Map<String, BusShape>> getShapes() async {
-    var response = await fetch('busGeoJSONs', query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
-    // print(response.body);
+    var response = await fetch('busShapes',
+        query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
+
     Map<String, BusShape> shapesMap = response != null
         ? Map.fromIterable(json.decode(response.body),
             key: (json) => json['properties']['route_id'],
@@ -114,10 +113,10 @@ class BusProvider {
             .map<BusTrip>((json) => BusTrip.fromJson(json))
             .toList()
         : [];
-        
+
     return tripList;
   }
-  
+
   /// Returns a [List] of [BusVehicleUpdate] objects.
   Future<List<BusVehicleUpdate>> getVehicleUpdates() async {
     var response = await http
@@ -136,26 +135,24 @@ class BusProvider {
   }
 
   ///Returns a [Map] of <[BusStop],[BusTimeTable]>
-  Future<Map<String,List<BusTimeTable>>> getBusTimeTable() async{
+  Future<Map<String, List<BusTimeTable>>> getBusTimeTable() async {
     var response = await fetch("busTimetable");
-    Map<String,List<BusTimeTable>> retmap = {};
+    Map<String, List<BusTimeTable>> retmap = {};
     Map<String, dynamic> tablemap = response != null
         ? (json.decode(response.body) as Map<String, dynamic>)
         : [];
     tablemap.forEach((key, value) {
       List<dynamic> b = value["stops"];
-      List<BusTimeTable> bl = b.map((element) => BusTimeTable.fromJson(element)).toList();
+      List<BusTimeTable> bl =
+          b.map((element) => BusTimeTable.fromJson(element)).toList();
       retmap[key] = bl;
     });
     return retmap;
-      
   }
 
-
-
   /// Creates a JSON file [fileName] and stores it in a local directory.
-  /// 
-  /// Does nothing if [fetch] cannot establish a connection 
+  ///
+  /// Does nothing if [fetch] cannot establish a connection
   Future createJSONFile(String fileName, http.Response response) async {
     if (response.statusCode == 200) {
       final directory = await getApplicationDocumentsDirectory();
