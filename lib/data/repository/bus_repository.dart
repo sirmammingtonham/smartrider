@@ -14,7 +14,7 @@ class BusRepository {
 
   Future<Map<String, BusRoute>> get getRoutes async => _busProvider.getRoutes();
 
-  Future<List<BusShape>> get getShapes async => _busProvider.getShapes();
+  Future<Map<String, BusShape>> get getShapes async => _busProvider.getShapes();
 
   Future<List<BusStop>> get getStops async => _busProvider.getStops();
 

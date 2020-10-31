@@ -64,16 +64,15 @@ class BusProvider {
   }
 
   /// Returns a [List] of [BusShape] objects.
-  Future<List<BusShape>> getShapes() async {
-    var response = await fetch('busShapes');
-
-    List<BusShape> shapesList = response != null
-        ? json
-            .decode(response.body)
-            .map<BusShape>((json) => BusShape.fromJson(json))
-            .toList()
-        : [];
-    return shapesList;
+  Future<Map<String, BusShape>> getShapes() async {
+    var response = await fetch('busGeoJSONs', query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
+    // print(response.body);
+    Map<String, BusShape> shapesMap = response != null
+        ? Map.fromIterable(json.decode(response.body),
+            key: (json) => json['properties']['route_id'],
+            value: (json) => BusShape.fromJson(json))
+        : {};
+    return shapesMap;
   }
 
   /// Returns a [List] of [BusStop] objects.
@@ -119,24 +118,6 @@ class BusProvider {
     return tripList;
   }
   
-
-  // Future<Map<String, List<BusStop>>> getActiveStops() async {  // map<routeId, list<busstop>>
-  //   List<BusTripUpdate> updates = await this.getTripUpdatesWithParameter();
-  //   List<BusStop> busStops = await this.getStops();
-  //   Map<String, List<BusStop>> stopMap = new Map<String, List<BusStop>>();
-  //   for (BusTripUpdate update in updates) {
-  //     List<String> ids =
-  //         update.tripUpdate.stopTimeUpdate.map((e) => e.stopId).toList();
-
-  //     List<BusStop> stops =
-  //         busStops.where((element) => ids.contains(element.stopId)).toList();
-
-  //     stopMap[update.tripUpdate.trip.routeId] = stops;
-  //   }
-
-  //   return stopMap;
-  // }
-
   /// Returns a [List] of [BusVehicleUpdate] objects.
   Future<List<BusVehicleUpdate>> getVehicleUpdates() async {
     var response = await http
