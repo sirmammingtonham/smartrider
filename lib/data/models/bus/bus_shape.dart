@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class BusShape {
   String routeId;
-  List<LatLng> coordinates;
+  List<List<LatLng>> coordinates;
 
   BusShape({this.routeId, this.coordinates});
 
@@ -12,18 +12,25 @@ class BusShape {
     this.coordinates = [];
 
     json['features'][0]['geometry']['coordinates'].forEach((l) {
+      List<LatLng> linestring = [];
       l.forEach((p) {
-        coordinates.add(LatLng(p[1], p[0]));
+        linestring.add(LatLng(p[1], p[0]));
       });
+      coordinates.add(linestring);
     });
   }
 
-  Polyline get getPolyline => Polyline(
-      polylineId: PolylineId(this.routeId),
-      color: Colors.white.withAlpha(200),
-      width: 4,
-      patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
-      points: this.coordinates);
+  List<Polyline> get getPolylines {
+    int i = 0;
+    return coordinates
+        .map((linestring) => Polyline(
+            polylineId: PolylineId('${this.routeId}${i++}'),
+            color: Colors.white.withAlpha(200),
+            width: 4,
+            patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
+            points: linestring))
+        .toList();
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

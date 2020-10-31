@@ -10,6 +10,6 @@ export const busGeoJSONs = bus.busGeoJSONs;
 export const busTimetables = bus.busTimetables;
 
 // saferide functions
-export const srUpdateOrderStatus = saferide.srUpdateOrderStatus;
-export const srDelOrder = saferide.srDelOrder;
+// export const srUpdateOrderStatus = saferide.srUpdateOrderStatus;
+// export const srDelOrder = saferide.srDelOrder;
 export const srOnTripUpdate = saferide.srOnTripUpdate;

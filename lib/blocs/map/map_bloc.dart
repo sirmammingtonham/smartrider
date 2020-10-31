@@ -102,7 +102,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   GoogleMapController _controller;
 
   Map<String, BusRoute> busRoutes = {};
-  Map<String, BusShape> shapes = {};
+  Map<String, BusShape> busShapes = {};
   //Map<String, List<BusStop>> busStops = {};
   List<BusStop> busStops = [];
   List<BusVehicleUpdate> busUpdates = [];
@@ -191,7 +191,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     shuttleUpdates = await shuttleRepo.getUpdates;
 
     // busRoutes = await busRepo.getRoutes;
-    shapes = await busRepo.getShapes;
+    busShapes = await busRepo.getShapes;
     busStops = await busRepo.getStops;
     busUpdates = await busRepo.getUpdates;
 
@@ -241,8 +241,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   void scrollToCurrentLocation() async {
     var currentLocation;
     try {
-      currentLocation =
-          await getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+      currentLocation = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
     } on PermissionDeniedException catch (_) {
       return;
     }
@@ -419,68 +419,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         _currentPolylines.add(shuttleRoutes[id].getPolyline);
       }
     });
-
     _enabledBuses.forEach((id, enabled) {
-      if (enabled){
-        _currentPolylines.add(shapes[id].getPolyline);
+      if (enabled) {
+        _currentPolylines.addAll(busShapes[id].getPolylines);
       }
     });
-
-    // rootBundle.loadString('assets/bus_jsons/shapes.geojson').then((string) {
-    //   var test = json.decode(string);
-    //   int i = 0;
-    //   test['features'].forEach((feature) {
-    //     if (_enabledBuses['87 Route'] == true &&
-    //         feature['properties']['route_id'] == '87-184') {
-    //       var shapeObj = feature['geometry']['coordinates'];
-    //       shapeObj.forEach((f) {
-    //         List<LatLng> list = [];
-    //         f.forEach((p) {
-    //           list.add(LatLng(p[1], p[0]));
-    //         });
-    //         _currentPolylines.add(Polyline(
-    //             polylineId: PolylineId('870$i'),
-    //             color: Colors.white.withAlpha(200),
-    //             width: 4,
-    //             patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
-    //             points: list));
-    //         i++;
-    //       });
-    //     } else if (_enabledBuses['286 Route'] == true &&
-    //         feature['properties']['route_id'] == '286-184') {
-    //       var shapeObj = feature['geometry']['coordinates'];
-    //       shapeObj.forEach((f) {
-    //         List<LatLng> list = [];
-    //         f.forEach((p) {
-    //           list.add(LatLng(p[1], p[0]));
-    //         });
-    //         _currentPolylines.add(Polyline(
-    //             polylineId: PolylineId('286$i'),
-    //             color: Colors.purpleAccent.withAlpha(200),
-    //             width: 4,
-    //             patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
-    //             points: list));
-    //         i++;
-    //       });
-    //     } else if (_enabledBuses['289 Route'] == true &&
-    //         feature['properties']['route_id'] == '289-184') {
-    //       var shapeObj = feature['geometry']['coordinates'];
-    //       shapeObj.forEach((f) {
-    //         List<LatLng> list = [];
-    //         f.forEach((p) {
-    //           list.add(LatLng(p[1], p[0]));
-    //         });
-    //         _currentPolylines.add(Polyline(
-    //             polylineId: PolylineId('289$i'),
-    //             color: Colors.tealAccent.withAlpha(200),
-    //             width: 4,
-    //             patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
-    //             points: list));
-    //         i++;
-    //       });
-    //     }
-    //   });
-    // });
 
     return _currentPolylines;
   }
@@ -511,15 +454,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     // hardcoding these for now, should be handled in backend
     var busMarkerMap = {
-      '87 Route': busStops
+      '87-184': busStops
           .sublist(0, 60)
           .map((stop) => _busStopToMapMarker(stop))
           .toList(),
-      '286 Route': busStops
+      '286-184': busStops
           .sublist(60, 135)
           .map((stop) => _busStopToMapMarker(stop))
           .toList(),
-      '289 Route': busStops
+      '289-184': busStops
           .sublist(135)
           .map((stop) => _busStopToMapMarker(stop))
           .toList(),
