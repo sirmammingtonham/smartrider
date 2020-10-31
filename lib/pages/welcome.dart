@@ -76,6 +76,39 @@ class _SignupUIState extends State<SignupUI> {
     super.initState();
   }
 
+  //Image(image: AssetImage('assets/app_icons/App\ Logo\ v1.png'))
+
+  Widget logo() {
+    return Padding(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
+      child: Align(
+        child: Container(
+          height: 250.0,
+          width: 250.0,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/app_icons/logo_v1.png")),
+          ),
+        ),
+        alignment: Alignment.center,
+      ),
+    );
+    Padding(padding: EdgeInsets.only(top: 15),
+    child: Align(
+      child: Text( // THIS TEXT IS NOT APPEARING FOR SOME REASON
+        "SMARTRIDER",
+        style: TextStyle(
+          fontSize: 100,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).unselectedWidgetColor,
+        ),
+      ),
+      alignment: Alignment.center,
+    ));
+  }
+
+  /*
+
   Widget logo() {
     return Padding(
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
@@ -99,7 +132,7 @@ class _SignupUIState extends State<SignupUI> {
             Positioned(
               child: Container(
                   //padding: EdgeInsets.only(right: 35),
-                  height: 155,
+                  height: 10,
                   child: Align(
                     child: Text(
                       "SMARTRIDER",
@@ -154,6 +187,7 @@ class _SignupUIState extends State<SignupUI> {
       ),
     );
   }
+  */
 
   //input widget
   Widget _input(Icon icon, String hint, TextEditingController controller,
@@ -607,9 +641,9 @@ class _SignupUIState extends State<SignupUI> {
               child: Container(
                 child: _button("LOGIN", primary, Colors.white, Colors.white,
                     primary, _showLoginSheet),
-                height: 50,
+                height: 65,
               ),
-              padding: EdgeInsets.only(top: 80, left: 20, right: 20),
+              padding: EdgeInsets.only(top: 200, left: 20, right: 20),
             ),
             Padding(
               child: Container(
@@ -634,7 +668,7 @@ class _SignupUIState extends State<SignupUI> {
                     _showRegisterSheet();
                   },
                 ),
-                height: 50,
+                height: 65,
               ),
               padding: EdgeInsets.only(top: 10, left: 20, right: 20),
             ),
@@ -643,7 +677,7 @@ class _SignupUIState extends State<SignupUI> {
                 child: ClipPath(
                   child: Container(
                     color: Colors.white,
-                    height: 300,
+                    height: 450,
                   ),
                   clipper: BottomWaveClipper(),
                 ),

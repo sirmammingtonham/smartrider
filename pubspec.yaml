@@ -68,6 +68,8 @@ flutter:
   uses-material-design: true
 
   assets:
+# app icons
+    - assets/app_icons/logo_v1.png
 # jsons
     - assets/map_styles/light.json
     - assets/map_styles/aubergine.json
