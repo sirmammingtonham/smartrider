@@ -4,3 +4,4 @@ declare module "request"
 declare module "geojson"
 declare module '@turf/point-to-line-distance';
 declare module '@turf/nearest-point-to-line';
+declare module "geojson-dissolve";

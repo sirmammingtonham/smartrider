@@ -123,7 +123,7 @@ export const busStops = functions
       });
   });
 
-export const busGeoJSONs = functions
+export const busShapes = functions
   .runWith(runtimeOpts)
   .https.onRequest((req, res) => {
     // return error status if method isn't GET
