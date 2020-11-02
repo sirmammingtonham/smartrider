@@ -16,13 +16,13 @@ import 'package:smartrider/data/providers/bus_provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   var initializationSettingsAndroid =
-  AndroidInitializationSettings('app_notf_icon');
+      AndroidInitializationSettings('app_notf_icon');
   var initializationSettingsIOS = IOSInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -33,13 +33,13 @@ void main() async {
       initializationSettingsAndroid, initializationSettingsIOS);
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {
-        if (payload != null) {
-          debugPrint('notification payload: ' + payload);
-        }
-      });
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+  });
   runApp(SmartRider());
 }
-  
+
 class SmartRider extends StatelessWidget {
   // This widget is the root of your application.
   @override
