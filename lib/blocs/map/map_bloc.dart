@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:smartrider/util/bitmap_helpers.dart';
 
 // map imports
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -280,59 +281,35 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   /// helper functions
   Future<void> _initMapElements() async {
-    var config = ImageConfiguration();
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/stop_markers/marker_shuttle.png')
-        .then((onValue) {
-      shuttleStopIcon = onValue;
-    });
+    final stopMarkerSize = Size(80, 80);
+    final vehicleUpdateSize = Size(100, 100);
+    shuttleStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+        'assets/shuttle_icons/marker_shuttle.svg',
+        size: stopMarkerSize);
+    busStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+        'assets/bus_icons/marker_bus.svg',
+        size: stopMarkerSize);
 
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/stop_markers/marker_bus.png')
-        .then((onValue) {
-      busStopIcon = onValue;
-    });
+    shuttleUpdateIcons[22] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+        'assets/bus_icons/bus_red.svg', size: vehicleUpdateSize);
+    shuttleUpdateIcons[21] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+        'assets/bus_icons/bus_yellow.svg', size: vehicleUpdateSize);
+    shuttleUpdateIcons[24] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+        'assets/bus_icons/bus_blue.svg', size: vehicleUpdateSize);
+    shuttleUpdateIcons[28] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+        'assets/bus_icons/bus_orange.svg', size: vehicleUpdateSize);
+    shuttleUpdateIcons[-1] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+        'assets/bus_icons/bus_white.svg', size: vehicleUpdateSize);
 
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/bus_markers/bus_red.png')
-        .then((onValue) {
-      shuttleUpdateIcons[22] = onValue;
-    });
-
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/bus_markers/bus_yellow.png')
-        .then((onValue) {
-      shuttleUpdateIcons[21] = onValue;
-
-      // temporary until we finalize map marker icons
-      shuttleUpdateIcons[289] = onValue;
-    });
-
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/bus_markers/bus_blue.png')
-        .then((onValue) {
-      shuttleUpdateIcons[24] = onValue;
-
-      // temporary until we finalize map marker icons
-      shuttleUpdateIcons[87] = onValue;
-    });
-
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/bus_markers/bus_orange.png')
-        .then((onValue) {
-      shuttleUpdateIcons[28] = onValue;
-
-      // temporary until we finalize map marker icons
-      shuttleUpdateIcons[286] = onValue;
-    });
-
-    await BitmapDescriptor.fromAssetImage(
-            config, 'assets/bus_markers/bus_white.png')
-        .then((onValue) {
-      shuttleUpdateIcons[-1] = onValue;
-    });
-
-    return;
+    // temporary until we finalize map marker icons
+    shuttleUpdateIcons[87] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+        'assets/bus_icons/bus_blue.svg', size: vehicleUpdateSize);
+    shuttleUpdateIcons[286] =
+        await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+            'assets/bus_icons/bus_orange.svg', size: vehicleUpdateSize);
+    shuttleUpdateIcons[289] =
+        await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+            'assets/bus_icons/bus_yellow.svg', size: vehicleUpdateSize);
   }
 
   Marker _shuttleStopToMarker(ShuttleStop stop) {
