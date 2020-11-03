@@ -100,13 +100,11 @@ class _CustomStickyHeadersTableState extends State<CustomStickyHeadersTable> {
                     children: List.generate(
                       widget.columnsLength,
                       (i) => Container(
-                        width: widget.cellDimensions.contentCellWidth,
-                        height: widget.cellDimensions.stickyLegendHeight,
-                        child: FittedBox(
-                          fit: widget.cellFit,
-                          child: widget.columnsTitleBuilder(i),
-                        ),
-                      ),
+                          width: widget.cellDimensions.contentCellWidth,
+                          height: widget.cellDimensions.stickyLegendHeight,
+                          child: SizedBox(
+                            child: widget.columnsTitleBuilder(i),
+                          )),
                     ),
                   ),
                   controller: _horizontalTitleController,

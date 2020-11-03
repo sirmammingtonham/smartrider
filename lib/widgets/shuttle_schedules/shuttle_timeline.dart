@@ -18,7 +18,8 @@ List<String> choices = ['See on map', 'View on timetable', 'Add Reminder'];
 class ShuttleTimeline extends StatefulWidget {
   final Function containsFilter;
   final Function jumpMap;
-  ShuttleTimeline({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
+  ShuttleTimeline({Key key, this.containsFilter, this.jumpMap})
+      : super(key: key);
   @override
   ShuttleTimelineState createState() => ShuttleTimelineState();
 }
@@ -53,8 +54,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     super.dispose();
   }
 
-
-
   /// Builds each tab for each shuttle and also accounts for the users
   /// light preferences.
   @override
@@ -85,8 +84,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
       )
     ]);
   }
-
-
 
   /// Builds the shuttlelist widget which contains all the stops and
   /// useful user information like the next arrival.
@@ -165,7 +162,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                                   if (selected == choices[2]) {
                                     scheduleAlarm();
                                   }
-
                                 },
                                 itemBuilder: (BuildContext context) => choices
                                     .map((choice) => PopupMenuItem<String>(
@@ -178,29 +174,28 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                   )),
             ),
           ],
-
         );
       },
-
     );
-
   }
 
   void scheduleAlarm() async {
     var scheduledNotificationDateTime =
-    DateTime.now().add(Duration(seconds: 10));
+        DateTime.now().add(Duration(seconds: 10));
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'alarm_notif',
       'alarm_notif',
       'Channel for Alarm notification',
       icon: 'app_notf_icon',
+
       ///sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
       largeIcon: DrawableResourceAndroidBitmap('app_notf_icon'),
     );
 
     var iOSPlatformChannelSpecifics = IOSNotificationDetails(
-      ///sound: 'a_long_cold_sting.wav',
+
+        ///sound: 'a_long_cold_sting.wav',
         presentAlert: true,
         presentBadge: true,
         presentSound: true);
@@ -213,7 +208,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
         scheduledNotificationDateTime,
         platformChannelSpecifics);
   }
-
 }
 
 /// Returns the stop that is closest to the current time.
@@ -325,6 +319,3 @@ class StrokePainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
-
-
-
