@@ -21,25 +21,32 @@ import 'package:smartrider/pages/panel_page.dart';
 class HomePage extends StatelessWidget {
   static const String route = '/';
 
+  /// Builds our Home Page by calling the constructor for
+  /// the class that builds the homepage.
   @override
   Widget build(BuildContext context) {
     return _HomePage();
   }
 }
 
-/// When refreshed, calls the _HomePageState to refresh the bus routes and
-/// bus schedules if needed.
+/// Class that represents the HomePage.
 class _HomePage extends StatefulWidget {
   _HomePage();
+
+  /// Grabs the current state of the HomePage
+  /// given from dynamic data.
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 /// Builds the current instance of the home page.
 class _HomePageState extends State<_HomePage> {
-  PanelController _panelController;
+  PanelController _panelController; // Lets the user control the stop tabs
+
+  // The height of the tab when the user is viewing the shuttle and bus stops
   double _panelHeightOpen;
-  double _panelHeightClosed = 95.0;
+
+  double _panelHeightClosed = 95.0; // Height of the closed tab
   bool _isShuttle; // used to determine what text to display
 
   @override
@@ -49,9 +56,10 @@ class _HomePageState extends State<_HomePage> {
     _isShuttle = true;
   }
 
-  /// Builds the map and the schedule dropdown based on passed-in data.
+  /// Builds the map and the schedule dropdown based on dynamic data.
   @override
   Widget build(BuildContext context) {
+    /// Height of the stop schedules when open
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
     return Material(
       child: MultiBlocProvider(
@@ -100,8 +108,6 @@ class _HomePageState extends State<_HomePage> {
               panel: PanelPage(
                 panelController: _panelController,
               ))),
-
-      //panel: ShuttleSchedule()),
     );
   }
 }
