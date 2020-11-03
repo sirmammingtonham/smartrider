@@ -29,7 +29,8 @@ dependencies:
   #map dependencies
   google_maps_flutter: ^0.5.24+1
   polyline: ^1.0.2
-  geolocator: ^6.0.0+4
+  geolocator: ^6.1.4
+
   google_maps_webservice: ^0.0.16
   http: ^0.12.0+4
   rxdart: ^0.23.1

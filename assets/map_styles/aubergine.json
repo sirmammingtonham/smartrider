@@ -96,6 +96,15 @@
       ]
     },
     {
+      "featureType": "poi.business",
+      "elementType": "labels.text",
+      "stylers": [
+        {
+          "visibility": "off"
+        }
+      ]
+    },
+    {
       "featureType": "poi.park",
       "elementType": "geometry.fill",
       "stylers": [
