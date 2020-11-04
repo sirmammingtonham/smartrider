@@ -1,6 +1,5 @@
 // ui dependencies
 import 'package:flutter/material.dart';
-import 'package:table_sticky_headers/table_sticky_headers.dart';
 import 'package:intl/intl.dart';
 
 // loading custom widgets and data

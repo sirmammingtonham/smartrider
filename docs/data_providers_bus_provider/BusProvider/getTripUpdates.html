@@ -68,6 +68,7 @@
         <li class="section-title"><a href="../../data_providers_bus_provider/BusProvider-class.html#instance-methods">Methods</a></li>
         <li><a href="../../data_providers_bus_provider/BusProvider/createJSONFile.html">createJSONFile</a></li>
         <li><a href="../../data_providers_bus_provider/BusProvider/fetch.html">fetch</a></li>
+        <li><a href="../../data_providers_bus_provider/BusProvider/getBusTimeTable.html">getBusTimeTable</a></li>
         <li><a href="../../data_providers_bus_provider/BusProvider/getRoutes.html">getRoutes</a></li>
         <li><a href="../../data_providers_bus_provider/BusProvider/getShapes.html">getShapes</a></li>
         <li><a href="../../data_providers_bus_provider/BusProvider/getStops.html">getStops</a></li>
@@ -103,12 +104,16 @@
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">Future&lt;List&lt;BusTripUpdate&gt;&gt; getTripUpdates() async {
-  var response = await fetch(&#39;tripUpdates&#39;);
+  var response = await http
+      .get(&#39;http:&#47;&#47;64.128.172.149:8080&#47;gtfsrealtime&#47;TripUpdates&#39;);
+
+  Set&lt;String&gt; routeIds = {&#39;87&#39;, &#39;286&#39;, &#39;289&#39;};
 
   List&lt;BusTripUpdate&gt; tripUpdatesList = response != null
-      ? json
-          .decode(response.body)
-          .map&lt;BusTripUpdate&gt;((json) =&gt; BusTripUpdate.fromJson(json))
+      ? FeedMessage.fromBuffer(response.bodyBytes)
+          .entity
+          .map((entity) =&gt; BusTripUpdate.fromPBEntity(entity))
+          .where((update) =&gt; routeIds.contains(update.routeId))
           .toList()
       : [];
   return tripUpdatesList;

@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/pages/profile.dart';
 import 'package:smartrider/widgets/icons.dart';
+import 'dart:io' show Platform;
+
 // auth bloc import
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 // import map background
@@ -14,38 +16,51 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:smartrider/widgets/autocomplete.dart';
 
 import 'dart:io';
-String computeUsername(String name){  //compute name to be displayed on search bar
-   return (name[name.indexOf('@')-2]+name[0]).toUpperCase();
-}
-class SearchBar extends StatefulWidget {
-  String name = 'A';
-  String role = 'A';
 
+String computeUsername(String name) {
+  //compute initials to be displayed on search bar
+  var counter = 1;
+  while (double.tryParse(name[name.indexOf('@') - counter]) != null)
+    counter += 1;
+
+  return (name[name.indexOf('@') - counter] + name[0]).toUpperCase();
+}
+
+class SearchBar extends StatefulWidget {
   SearchBar();
   @override
   State<StatefulWidget> createState() => SearchBarState();
 }
 
 class SearchBarState extends State<SearchBar> {
+  String name;
+  String role;
+
   SearchBarState();
 
   @override
   Widget build(BuildContext context) {
+    var topBarDist; //Distance between top of phone bezel & top search bar
+    if (Platform.isAndroid) {
+      topBarDist = 30.0;
+    } else {
+      topBarDist = 45.0;
+    }
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
         if (state is AuthenticationSuccess) {
-          widget.name = state.displayName;
-          widget.role = state.role;
+          name = state.displayName;
+          role = state.role;
           return Positioned(
-            top: 30,
+            top: topBarDist,
             right: 15,
             left: 15,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
-              height: 50,
+              height: 55,
               child: Material(
                 borderRadius: BorderRadius.circular(10.0),
-                elevation: 5.0,
+                elevation: 6.0,
                 child: Row(
                   children: <Widget>[
                     IconButton(
@@ -78,14 +93,19 @@ class SearchBarState extends State<SearchBar> {
                       child: CircleAvatar(
                         backgroundColor: Theme.of(context).buttonColor,
                         child: IconButton(
-                          icon: Text(computeUsername(widget.name),
-                              style: TextStyle(color: Colors.white70)),
+                          icon: Text(computeUsername(name),
+                              style: TextStyle(
+                                  fontSize: 15, color: Colors.white70)),
                           onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              // BlocProvider.of<PrefsBloc>(context).add(LoadPrefsEvent());
-                              return ProfilePage();
-                            }));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProfilePage(
+                                          title: computeUsername(name),
+                                          name: null,
+                                          role: role,
+                                          email: name,
+                                        )));
                           },
                         ),
                         //Text('JS', style: TextStyle(color: Colors.white70)),
@@ -98,6 +118,8 @@ class SearchBarState extends State<SearchBar> {
           );
         } else {
           print("something's wrong with auth bloc");
+          return Positioned(
+              child: Container(child: CircularProgressIndicator()));
         }
       },
     );

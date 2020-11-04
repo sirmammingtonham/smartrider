@@ -52,7 +52,7 @@ dependencies:
   intl: ^0.16.1
   day_night_switcher: ^0.1.1
   flutter_svg: ^0.19.1
-  table_sticky_headers: ^1.1.2
+  # table_sticky_headers: ^1.1.2
 
   dio: ^3.0.9
   flutter_archive: ^1.0.2
@@ -75,15 +75,16 @@ flutter:
   uses-material-design: true
 
   assets:
-    # jsons
+    - assets/app_icons/logo_v1.png
+# jsons
     - assets/map_styles/light.json
     - assets/map_styles/aubergine.json
 
-    # map icons
+# map icons
     - assets/bus_icons/
     - assets/shuttle_icons/
 
-    #notification
+#notification
     - assets/Notification_Icons/app_logo.png
 
   fonts:

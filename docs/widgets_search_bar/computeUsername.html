@@ -79,8 +79,13 @@
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">String computeUsername(String name){  &#47;&#47;compute name to be displayed on search bar
-   return (name[name.indexOf(&#39;@&#39;)-2]+name[0]).toUpperCase();
+      <pre class="language-dart"><code class="language-dart">String computeUsername(String name) {
+  &#47;&#47;compute initials to be displayed on search bar
+  var counter = 1;
+  while (double.tryParse(name[name.indexOf(&#39;@&#39;) - counter]) != null)
+    counter += 1;
+
+  return (name[name.indexOf(&#39;@&#39;) - counter] + name[0]).toUpperCase();
 }</code></pre>
     </section>
 

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the panelAppBar function from the panel_page library, for the Dart programming language.">
+  <title>panelAppBar function - panel_page library - Dart API</title>
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500,400i,400,300|Source+Sans+Pro:400,300,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static-assets/github.css">
+  <link rel="stylesheet" href="../static-assets/styles.css">
+  <link rel="icon" href="../static-assets/favicon.png">
+
+</head>
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">smartrider</a></li>
+    <li><a href="../pages_panel_page/pages_panel_page-library.html">panel_page</a></li>
+    <li class="self-crumb">panelAppBar function</li>
+  </ol>
+  <div class="self-name">panelAppBar</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+  <div id="dartdoc-sidebar-left" class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+      <form class="search-sidebar" role="search">
+        <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+      </form>
+    </header>
+    
+    <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+      <li><a href="../index.html">smartrider</a></li>
+      <li><a href="../pages_panel_page/pages_panel_page-library.html">panel_page</a></li>
+      <li class="self-crumb">panelAppBar function</li>
+    </ol>
+    
+    <h5>panel_page library</h5>
+    <ol>
+      <li class="section-title"><a href="../pages_panel_page/pages_panel_page-library.html#classes">Classes</a></li>
+      <li><a href="../pages_panel_page/PanelPage-class.html">PanelPage</a></li>
+      <li><a href="../pages_panel_page/PanelPageState-class.html">PanelPageState</a></li>
+    
+    
+    
+    
+    
+      <li class="section-title"><a href="../pages_panel_page/pages_panel_page-library.html#functions">Functions</a></li>
+      <li><a href="../pages_panel_page/panelAppBar.html">panelAppBar</a></li>
+    
+    
+    
+    </ol>
+  </div><!--/.sidebar-offcanvas-left-->
+
+  <div id="dartdoc-main-content" class="col-xs-12 col-sm-9 col-md-8 main-content">
+      <div><h1><span class="kind-function">panelAppBar</span> function  </h1></div>
+
+    <section class="multi-line-signature">
+        <span class="returntype">dynamic</span>
+                <span class="name ">panelAppBar</span>
+(<wbr><ol class="parameter-list"><li><span class="parameter" id="panelAppBar-param-isShuttle"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isShuttle</span>, </span></li>
+<li><span class="parameter" id="panelAppBar-param-panelController"><span class="type-annotation">dynamic</span> <span class="parameter-name">panelController</span>, </span></li>
+<li><span class="parameter" id="panelAppBar-param-tabController"><span class="type-annotation">dynamic</span> <span class="parameter-name">tabController</span>, </span></li>
+<li><span class="parameter" id="panelAppBar-param-tabs"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a></span> <span class="parameter-name">tabs</span></span></li>
+</ol>)
+    </section>
+    
+    <section class="summary source-code" id="source">
+      <h2><span>Implementation</span></h2>
+      <pre class="language-dart"><code class="language-dart">Widget panelAppBar(bool isShuttle, PanelController panelController,
+    TabController tabController, List&lt;Widget&gt; tabs) {
+  return AppBar(
+    centerTitle: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      ),
+    ),
+    title: Text(isShuttle ? &#39;Shuttle Schedules&#39; : &#39;Bus Schedules&#39;),
+    leading: IconButton(
+      icon: Icon(Icons.arrow_downward),
+      onPressed: () {
+        panelController.animatePanelToPosition(0);
+      },
+    ),
+    actions: &lt;Widget&gt;[
+      IconButton(
+        icon: Icon(Icons.arrow_downward),
+        onPressed: () {
+          panelController.animatePanelToPosition(0);
+        },
+      )
+    ],
+    bottom: TabBar(
+      unselectedLabelColor: Colors.white.withOpacity(0.3),
+      indicatorColor: Colors.white,
+      controller: tabController,
+      tabs: tabs,
+    ),
+  );
+}</code></pre>
+    </section>
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    smartrider
+      1.0.0+1
+  </span>
+
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="../static-assets/typeahead.bundle.min.js"></script>
+<script src="../static-assets/highlight.pack.js"></script>
+<script src="../static-assets/URI.js"></script>
+<script src="../static-assets/script.js"></script>
+
+
+</body>
+
+</html>

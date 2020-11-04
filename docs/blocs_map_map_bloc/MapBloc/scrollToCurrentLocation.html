@@ -62,6 +62,7 @@
         </li>
         <li><a href="../../blocs_map_map_bloc/MapBloc/busRepo.html">busRepo</a></li>
         <li><a href="../../blocs_map_map_bloc/MapBloc/busRoutes.html">busRoutes</a></li>
+        <li><a href="../../blocs_map_map_bloc/MapBloc/busShapes.html">busShapes</a></li>
         <li><a href="../../blocs_map_map_bloc/MapBloc/busStopIcon.html">busStopIcon</a></li>
         <li><a href="../../blocs_map_map_bloc/MapBloc/busStops.html">busStops</a></li>
         <li><a href="../../blocs_map_map_bloc/MapBloc/busUpdates.html">busUpdates</a></li>
@@ -71,7 +72,6 @@
         <li><a href="../../blocs_map_map_bloc/MapBloc/prefsBloc.html">prefsBloc</a></li>
         <li><a href="../../blocs_map_map_bloc/MapBloc/prefsStream.html">prefsStream</a></li>
         <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
-        <li><a href="../../blocs_map_map_bloc/MapBloc/shapes.html">shapes</a></li>
         <li><a href="../../blocs_map_map_bloc/MapBloc/shuttleRepo.html">shuttleRepo</a></li>
         <li><a href="../../blocs_map_map_bloc/MapBloc/shuttleRoutes.html">shuttleRoutes</a></li>
         <li><a href="../../blocs_map_map_bloc/MapBloc/shuttleStopIcon.html">shuttleStopIcon</a></li>
@@ -116,8 +116,8 @@
       <pre class="language-dart"><code class="language-dart">void scrollToCurrentLocation() async {
   var currentLocation;
   try {
-    currentLocation =
-        await getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    currentLocation = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
   } on PermissionDeniedException catch (_) {
     return;
   }

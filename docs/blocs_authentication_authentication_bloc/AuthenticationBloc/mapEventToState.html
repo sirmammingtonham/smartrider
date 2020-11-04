@@ -103,11 +103,13 @@ Stream&lt;AuthenticationState&gt; mapEventToState(
   if (event is AuthenticationStarted) {
     yield* _mapAuthenticationStartedToState();
   } else if (event is AuthenticationLoggedIn) {
-    yield* _mapAuthenticationLoggedInToState(event.email, event.pass,event.role);
+    yield* _mapAuthenticationLoggedInToState(
+        event.email, event.pass, event.role);
   } else if (event is AuthenticationLoggedOut) {
     yield* _mapAuthenticationLoggedOutToState();
   } else if (event is AuthenticationSignUp) {
-    yield* _mapAuthenticationSignUpToState(event.email, event.pass, event.rin,event.role);
+    yield* _mapAuthenticationSignUpToState(
+        event.email, event.name, event.pass, event.rin, event.role);
   }
 }</code></pre>
     </section>
