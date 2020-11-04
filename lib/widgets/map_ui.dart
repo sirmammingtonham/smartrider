@@ -1,24 +1,16 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-// ignore_for_file: public_member_api_docs
+// implementation imports
+import 'dart:async';
 
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meta/meta.dart';
 
 // map imports
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-// parsing imports
-import 'package:flutter/services.dart' show rootBundle;
-
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
-import 'package:smartrider/blocs/shuttle/shuttle_bloc.dart';
-import 'package:smartrider/data/models/shuttle/shuttle_stop.dart';
 
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
@@ -40,7 +32,6 @@ class ShuttleMap extends StatefulWidget {
 
 class ShuttleMapState extends State<ShuttleMap> {
   ShuttleMapState();
-
   bool _compassEnabled = false;
   bool _mapToolbarEnabled = true;
   CameraTargetBounds _cameraTargetBounds = CameraTargetBounds(rpiBounds);
@@ -54,133 +45,65 @@ class ShuttleMapState extends State<ShuttleMap> {
   bool _myLocationEnabled = true;
   bool _myTrafficEnabled = false;
   bool _myLocationButtonEnabled = false;
-  GoogleMapController _controller;
-  String _lightMapStyle;
-  String _darkMapStyle;
-
-  BitmapDescriptor shuttleIcon, busIcon;
-
-  Future<void> _initMapElements() async {
-    await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(), 'assets/markers/2.0x/marker_shuttle.png')
-        .then((onValue) {
-      shuttleIcon = onValue;
-    });
-
-    await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(), 'assets/markers/2.0x/marker_bus.png')
-        .then((onValue) {
-      busIcon = onValue;
-    });
-    return;
-  }
+  double currentZoom = 14.0;
+  MapBloc mapBloc;
 
   @override
   void initState() {
     super.initState();
 
-    rootBundle.loadString('assets/map_styles/aubergine.json').then((string) {
-      _darkMapStyle = string;
-    });
-    rootBundle.loadString('assets/map_styles/light.json').then((string) {
-      _lightMapStyle = string;
-    });
-
-    _initMapElements().then((_) {
-      BlocProvider.of<ShuttleBloc>(context).add(ShuttleInitDataRequested());
-    });
+    mapBloc = BlocProvider.of<MapBloc>(context);
+    mapBloc.add(MapInitEvent());
+    const pollRefreshDelay = const Duration(seconds: 3); // update every 3 sec
+    new Timer.periodic(
+        pollRefreshDelay,
+        (Timer t) => BlocProvider.of<MapBloc>(context)
+            .add(MapUpdateEvent(zoomLevel: currentZoom)));
   }
 
   @override
   void dispose() {
+    mapBloc.close();
     super.dispose();
-  }
-
-  Marker _stopToMarker(ShuttleStop stop) {
-    return Marker(
-        icon: shuttleIcon,
-        infoWindow: InfoWindow(title: stop.name),
-        markerId: MarkerId(stop.id.toString()),
-        position: stop.getLatLng,
-        onTap: () {
-          _controller.animateCamera(
-            CameraUpdate.newCameraPosition(
-                CameraPosition(target: stop.getLatLng, zoom: 18, tilt: 50)),
-          );
-        });
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
-    if (_controller != null) {
-      _controller.setMapStyle(isDark ? _darkMapStyle : _lightMapStyle);
-    }
-    return BlocBuilder<ShuttleBloc, ShuttleState>(
-      builder: (context, state) {
-        if (state is ShuttleInitial) {
-          return Center(child: CircularProgressIndicator());
-        } else if (state is ShuttleLoading) {
-          return Center(child: CircularProgressIndicator());
-        } else if (state is ShuttleLoaded) {
-          return BlocBuilder<PrefsBloc, PrefsState>(
-            builder: (prefContext, prefState) {
-              if (prefState is PrefsLoadedState) {
-                Set<Polyline> _currentPolylines = <Polyline>{};
-                Set<Marker> _currentMarkers = <Marker>{};
-                var polylineMap = {
-                  for (var route in state.routes) route.name: route
-                };
-                var markerMap = {
-                  for (var stop in state.stops) stop.id: _stopToMarker(stop)
-                };
-                prefState.prefs.getEnabledShuttles.forEach((key) {
-                  var curRoute = polylineMap[key];
-                  _currentPolylines.add(curRoute.getPolyline);
-                  curRoute.stopIds.forEach((id) {
-                    _currentMarkers.add(markerMap[id]);
-                  });
-                });
-                final GoogleMap googleMap = GoogleMap(
-                  onMapCreated: _onMapCreated,
-                  initialCameraPosition: kInitialPosition,
-                  compassEnabled: _compassEnabled,
-                  mapToolbarEnabled: _mapToolbarEnabled,
-                  cameraTargetBounds: _cameraTargetBounds,
-                  minMaxZoomPreference: _minMaxZoomPreference,
-                  rotateGesturesEnabled: _rotateGesturesEnabled,
-                  scrollGesturesEnabled: _scrollGesturesEnabled,
-                  tiltGesturesEnabled: _tiltGesturesEnabled,
-                  zoomGesturesEnabled: _zoomGesturesEnabled,
-                  indoorViewEnabled: _indoorViewEnabled,
-                  myLocationEnabled: _myLocationEnabled,
-                  myLocationButtonEnabled: _myLocationButtonEnabled,
-                  trafficEnabled: _myTrafficEnabled,
-                  // onCameraMove: _updateCameraPosition,
-                  polylines: _currentPolylines,
-                  markers: _currentMarkers,
-                  mapType: _mapType,
-                );
-                return MapUI(googleMap: googleMap);
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
-          );
-        } else if (state is ShuttleUpdateRequested) {
-          return Center();
-        } else {
-          return Center(child: Text("error bruh"));
-        }
-      },
-    );
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    setState(() {
-      _controller = controller;
-      BlocProvider.of<MapBloc>(context)
-          .add(MapInitialized(controller: _controller));
+    return BlocBuilder<MapBloc, MapState>(builder: (context, state) {
+      if (state is MapLoadingState) {
+        return Center(child: CircularProgressIndicator());
+      } else if (state is MapLoadedState) {
+        // Set<Marker> _currentMarkers = state.markers;
+        final GoogleMap googleMap = GoogleMap(
+          onMapCreated: (controller) {
+            mapBloc.updateController(context, controller);
+          },
+          initialCameraPosition: kInitialPosition,
+          compassEnabled: _compassEnabled,
+          mapToolbarEnabled: _mapToolbarEnabled,
+          cameraTargetBounds: _cameraTargetBounds,
+          minMaxZoomPreference: _minMaxZoomPreference,
+          rotateGesturesEnabled: _rotateGesturesEnabled,
+          scrollGesturesEnabled: _scrollGesturesEnabled,
+          tiltGesturesEnabled: _tiltGesturesEnabled,
+          zoomGesturesEnabled: _zoomGesturesEnabled,
+          indoorViewEnabled: _indoorViewEnabled,
+          myLocationEnabled: _myLocationEnabled,
+          myLocationButtonEnabled: _myLocationButtonEnabled,
+          trafficEnabled: _myTrafficEnabled,
+          polylines: state.polylines,
+          markers: state.markers,
+          zoomControlsEnabled: true,
+          onCameraMove: (position) {
+            currentZoom = position.zoom;
+            mapBloc.add(MapMoveEvent(zoomLevel: currentZoom));
+          },
+          mapType: _mapType,
+        );
+        return MapUI(googleMap: googleMap);
+      } else {
+        return Center(child: Text("error bruh"));
+      }
     });
   }
 }
@@ -208,7 +131,7 @@ class MapUI extends StatelessWidget {
             Icons.gps_fixed,
             color: Theme.of(context).brightness == Brightness.light
                 ? Colors.black87
-                : null,
+                : Colors.white70,
           ),
           backgroundColor: Theme.of(context).brightness == Brightness.light
               ? Colors.white

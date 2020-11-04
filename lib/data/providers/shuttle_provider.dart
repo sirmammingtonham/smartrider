@@ -7,8 +7,8 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/shuttle/shuttle_route.dart';
 import '../models/shuttle/shuttle_stop.dart';
-import '../models/shuttle/shuttle_vehicle.dart';
 import '../models/shuttle/shuttle_update.dart';
+import '../models/shuttle/shuttle_eta.dart';
 
 /// This class contains methods for providing data to Repository
 class ShuttleProvider {
@@ -21,13 +21,12 @@ class ShuttleProvider {
     http.Response response;
     try {
       response = await client.get('https://shuttles.rpi.edu/$type');
-      await createJSONFile('$type', response);
+      // await createJSONFile('$type', response);
 
       if (response.statusCode == 200) {
         isConnected = true;
       }
-    } // TODO: better error handling
-    catch (error) {
+    } catch (error) {
       isConnected = false;
     }
     //print("App has polled $type API: $isConnected");
@@ -37,19 +36,42 @@ class ShuttleProvider {
   bool get getIsConnected => isConnected;
 
   /// Getter method to retrieve the list of routes
-  Future<List<ShuttleRoute>> getRoutes() async {
+  Future<Map<String, ShuttleRoute>> getRoutes() async {
+  /// Returns a map that contains the bus id and its routes.
+  ///
+  /// Fetch 'routes' data from the JSON API and store in varaible 'response'.
+  /// If unable to retreive data, repsonse is set to null
+  /// New map is created to hold the shuttle id's and values.
+  /// Create a map instance where the keys and its values are computed
+  /// using a hashmap. Decode the data. 
+  /// Using json, the key is assigned by getting the 'name'
+  /// and the value is assigned to the routes of the shuttle
+  /// 
+  ///
+  ///     return routeMap;
     var response = await fetch('routes');
-    List<ShuttleRoute> routeList = response != null
-        ? json
-            .decode(response.body)
-            .map<ShuttleRoute>((json) => ShuttleRoute.fromJson(json))
-            .toList()
-        : [];
-    return routeList;
+    Map<String, ShuttleRoute> routeMap = response != null
+        ? Map.fromIterable(
+            (json.decode(response.body) as List)
+                .where((json) => json['enabled']),
+            key: (json) => json['name'],
+            value: (json) => ShuttleRoute.fromJson(json))
+        : {};
+    // routeList.removeWhere((route) => route == null);
+    return routeMap;
   }
 
   /// Getter method to retrieve the list of stops
   Future<List<ShuttleStop>> getStops() async {
+  /// Returns a list of shuttle stops.
+  ///
+  /// Fetch 'stops' data from JSON API and store in variable 'response'
+  /// If unable to retreive data, response is set equal to null. 
+  /// Create list to store data.
+  /// Decode the data and insert values into the list.
+  /// 
+  ///
+  ///     return stopsList;
     var response = await fetch('stops');
 
     List<ShuttleStop> stopsList = response != null
@@ -63,6 +85,15 @@ class ShuttleProvider {
 
   /// Getter method to retrieve the list of updated shuttles
   Future<List<ShuttleUpdate>> getUpdates() async {
+  /// Returns a list of shuttle updates.
+  ///
+  /// Fetch 'updates' data from JSON API and store in variable 'response'
+  /// If unable to retreive data, response is set equal to null. 
+  /// Create list to store data.
+  /// Decode the data and insert values into the list.
+  /// 
+  ///
+  ///     return updatesList;
     var response = await fetch('updates');
 
     List<ShuttleUpdate> updatesList = response != null
@@ -72,6 +103,29 @@ class ShuttleProvider {
             .toList()
         : [];
     return updatesList;
+  }
+
+  /// Getter method to retrieve the list of shuttle eta (estimated times of arrival)
+  Future<List<ShuttleEta>> getEtas() async {
+  /// Returns a list of shuttle eta (estimated times of arriaval).
+  ///
+  /// Fetch 'eta' data from JSON API and store in variable 'response'
+  /// If unable to retreive data, response is set equal to null. 
+  /// Create empty list 'etas'
+  /// Store data in a map. 
+  /// Decode the in the map and trasfer contents in to etas list
+  /// 
+  /// 
+  ///     return etas;
+    var response = await fetch('eta');
+    List<ShuttleEta> etas = [];
+    Map<String, dynamic> etamap = response != null
+        ? (json.decode(response.body) as Map<String, dynamic>)
+        : [];
+    etamap.forEach((key, value) {
+      etas.add(ShuttleEta.fromJson(value));
+    });
+    return etas;
   }
 
   /// Helper function to create local JSON file

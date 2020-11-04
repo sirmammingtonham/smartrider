@@ -4,31 +4,26 @@ abstract class MapState extends Equatable {
   const MapState();
 }
 
-class MapInitializingState extends MapState {
-
-  const MapInitializingState();
+class MapLoadingState extends MapState {
+  const MapLoadingState();
 
   @override
   List<Object> get props => [];
 }
 
-/// This class allows us to pass the map controller around
-class MapControllerState extends MapState {
-  final GoogleMapController controller;
-
-  const MapControllerState({this.controller});
+class MapLoadedState extends MapState {
+  final Set<Polyline> polylines;
+  final Set<Marker> markers;
+  const MapLoadedState({@required this.polylines, @required this.markers});
 
   @override
-  List<Object> get props => [controller];
-
-  GoogleMapController get getMapController => controller;
+  List<Object> get props => [polylines, markers];
 }
 
 class MapErrorState extends MapState {
-
-  const MapErrorState();
+  final String message;
+  const MapErrorState({this.message});
 
   @override
   List<Object> get props => [];
-
 }

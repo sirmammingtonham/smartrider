@@ -1,0 +1,13 @@
+{
+    "agencies": [
+        {
+            "agency_key": "cdta",
+            "url": "https://www.cdta.org/schedules/google_transit.zip",
+            "exclude": []
+        }
+    ],
+    "csvOptions": {
+        "skip_lines_with_error": true
+    },
+    "sqlitePath": "/tmp/gtfs.db"
+}
