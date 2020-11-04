@@ -212,7 +212,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     await fltrNotification.schedule(
         0,
         'Test',
-        'Vincent Big Dumb',
+        'Pedo Chris',
         scheduledNotificationDateTime,
         platformChannelSpecifics);
   }
