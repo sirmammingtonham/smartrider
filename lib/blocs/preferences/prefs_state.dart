@@ -26,7 +26,7 @@ class PrefsLoadedState extends PrefsState {
   const PrefsLoadedState(this.prefs, this.shuttles, this.buses,
       {this.modifyActiveRoutes: false});
 
-  ThemeData get getTheme => prefs.getBool('darkMode') ? darkTheme : lightTheme;
+  ThemeData get theme => prefs.getBool('darkMode') ? darkTheme : lightTheme;
 
   @override
   List<Object> get props => [
@@ -39,8 +39,8 @@ class PrefsLoadedState extends PrefsState {
 }
 
 // used only to notify global theme update on change
-class PrefsThemeChangedState extends PrefsState {
-  const PrefsThemeChangedState();
+class PrefsChangedState extends PrefsState {
+  const PrefsChangedState();
 }
 
 /// This class represents what user will see when fetching data

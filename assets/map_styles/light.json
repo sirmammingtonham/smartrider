@@ -15,5 +15,14 @@
           "visibility": "off"
         }
       ]
+    },
+    {
+      "featureType": "poi.business",
+      "elementType": "labels.text",
+      "stylers": [
+        {
+          "visibility": "off"
+        }
+      ]
     }
   ]  

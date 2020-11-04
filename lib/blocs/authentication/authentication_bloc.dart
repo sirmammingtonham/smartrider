@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';
 import 'package:smartrider/data/repository/authentication_repository.dart';
-import 'package:smartrider/backend/database.dart';
+import 'package:smartrider/data/providers/database.dart';
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 

@@ -16,6 +16,7 @@ part 'prefs_state.dart';
 class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   /// ShuttleBloc named constructor
   SharedPreferences _sharedPrefs;
+  bool hideInactiveRoutes;
   Map<String, bool> _shuttles;
   Map<String, bool> _buses;
 
@@ -24,14 +25,14 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   @override
   Stream<PrefsState> mapEventToState(PrefsEvent event) async* {
     if (event is LoadPrefsEvent) {
-      // hideInactiveRoutes = true;
+      hideInactiveRoutes = true;
       _shuttles = new Map();
 
       // placeholders for now
       _buses = {
-        '87 Route': true,
-        '286 Route': true,
-        '289 Route': true,
+        '87-184': true,
+        '286-184': true,
+        '289-184': true,
       };
       _sharedPrefs = await SharedPreferences.getInstance();
 
@@ -42,20 +43,25 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
         _sharedPrefs.setBool('pushNotifications', true);
       }
       // modify active routes on app launch
-      yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses,
-          modifyActiveRoutes: true);
+      yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
     } else if (event is SavePrefsEvent) {
       yield PrefsSavingState();
       _sharedPrefs.setBool(event.name, event.val);
       yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
+    } else if (event is PrefsUpdateEvent) {
+      yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
     } else if (event is InitActiveRoutesEvent) {
-      event.routes.forEach((route) {
-        _shuttles[route.name] = route.active;
-      });
-      // hideInactiveRoutes = false;
+      // hide all inactive routes if first time launching app today
+      if (hideInactiveRoutes) {
+        hideInactiveRoutes = false;
+        event.routes.forEach((route) {
+          _shuttles[route.name] = route.active;
+        });
+      }
+      yield PrefsChangedState();
       yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
     } else if (event is ThemeChangedEvent) {
-      yield PrefsThemeChangedState();
+      yield PrefsChangedState();
       yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
     } else {
       yield PrefsErrorState(message: "something wrong with prefs_bloc");

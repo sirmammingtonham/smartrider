@@ -20,22 +20,22 @@ import 'dart:io';
 String computeUsername(String name) {
   //compute initials to be displayed on search bar
   var counter = 1;
-  while ( double.tryParse( name[name.indexOf('@') - counter] ) != null )
+  while (double.tryParse(name[name.indexOf('@') - counter]) != null)
     counter += 1;
 
   return (name[name.indexOf('@') - counter] + name[0]).toUpperCase();
 }
 
 class SearchBar extends StatefulWidget {
-  String name = 'A';
-  String role = 'A';
-
   SearchBar();
   @override
   State<StatefulWidget> createState() => SearchBarState();
 }
 
 class SearchBarState extends State<SearchBar> {
+  String name;
+  String role;
+
   SearchBarState();
 
   @override
@@ -49,8 +49,8 @@ class SearchBarState extends State<SearchBar> {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
         if (state is AuthenticationSuccess) {
-          widget.name = state.displayName;
-          widget.role = state.role;
+          name = state.displayName;
+          role = state.role;
           return Positioned(
             top: topBarDist,
             right: 15,
@@ -93,16 +93,18 @@ class SearchBarState extends State<SearchBar> {
                       child: CircleAvatar(
                         backgroundColor: Theme.of(context).buttonColor,
                         child: IconButton(
-                          icon: Text(computeUsername(widget.name),
-                              style: TextStyle(fontSize: 15, color: Colors.white70)),
+                          icon: Text(computeUsername(name),
+                              style: TextStyle(
+                                  fontSize: 15, color: Colors.white70)),
                           onPressed: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ProfilePage(
-                                          title: computeUsername(widget.name),
-                                          role: widget.role,
-                                          email: widget.name,
+                                          title: computeUsername(name),
+                                          name: null,
+                                          role: role,
+                                          email: name,
                                         )));
                           },
                         ),
@@ -116,6 +118,8 @@ class SearchBarState extends State<SearchBar> {
           );
         } else {
           print("something's wrong with auth bloc");
+          return Positioned(
+              child: Container(child: CircularProgressIndicator()));
         }
       },
     );
