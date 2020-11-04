@@ -68,6 +68,7 @@
         <li class="section-title"><a href="../../data_providers_bus_provider/BusProvider-class.html#instance-methods">Methods</a></li>
         <li><a href="../../data_providers_bus_provider/BusProvider/createJSONFile.html">createJSONFile</a></li>
         <li><a href="../../data_providers_bus_provider/BusProvider/fetch.html">fetch</a></li>
+        <li><a href="../../data_providers_bus_provider/BusProvider/getBusTimeTable.html">getBusTimeTable</a></li>
         <li><a href="../../data_providers_bus_provider/BusProvider/getRoutes.html">getRoutes</a></li>
         <li><a href="../../data_providers_bus_provider/BusProvider/getShapes.html">getShapes</a></li>
         <li><a href="../../data_providers_bus_provider/BusProvider/getStops.html">getStops</a></li>
@@ -91,7 +92,7 @@
       <div><h1><span class="kind-method">getShapes</span> method </h1></div>
 
     <section class="multi-line-signature">
-      <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../data_models_bus_bus_shape/BusShape-class.html">BusShape</a></span>&gt;</span></span>&gt;</span></span>
+      <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="../../data_models_bus_bus_shape/BusShape-class.html">BusShape</a></span>&gt;</span></span>&gt;</span></span>
             <span class="name ">getShapes</span>
 (<wbr>)
       
@@ -102,16 +103,16 @@
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">Future&lt;List&lt;BusShape&gt;&gt; getShapes() async {
-  var response = await fetch(&#39;busShapes&#39;);
+      <pre class="language-dart"><code class="language-dart">Future&lt;Map&lt;String, BusShape&gt;&gt; getShapes() async {
+  var response = await fetch(&#39;busShapes&#39;,
+      query: {&#39;query&#39;: &#39;{&quot;route_id&quot;: [&quot;87-184&quot;,&quot;286-184&quot;,&quot;289-184&quot;]}&#39;});
 
-  List&lt;BusShape&gt; shapesList = response != null
-      ? json
-          .decode(response.body)
-          .map&lt;BusShape&gt;((json) =&gt; BusShape.fromJson(json))
-          .toList()
-      : [];
-  return shapesList;
+  Map&lt;String, BusShape&gt; shapesMap = response != null
+      ? Map.fromIterable(json.decode(response.body),
+          key: (json) =&gt; json[&#39;properties&#39;][&#39;route_id&#39;],
+          value: (json) =&gt; BusShape.fromJson(json))
+      : {};
+  return shapesMap;
 }</code></pre>
     </section>
 

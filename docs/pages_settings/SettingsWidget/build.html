@@ -188,7 +188,7 @@ Widget build(BuildContext context) {
                       onChanged: (bool value) {
                         state.shuttles[key] = value;
                         BlocProvider.of&lt;PrefsBloc&gt;(context)
-                              .add(SavePrefsEvent(key, value));
+                            .add(SavePrefsEvent(key, value));
                         setState();
                       },
                       secondary: const Icon(Icons.directions_bus),
@@ -212,7 +212,7 @@ Widget build(BuildContext context) {
                       onChanged: (bool value) {
                         state.buses[key] = value;
                         BlocProvider.of&lt;PrefsBloc&gt;(context)
-                              .add(SavePrefsEvent(key, value));
+                            .add(SavePrefsEvent(key, value));
                         setState();
                       },
                       secondary: const Icon(Icons.directions_bus),

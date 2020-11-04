@@ -57,6 +57,8 @@
     
     
     
+      <li class="section-title"><a href="../main/main-library.html#properties">Properties</a></li>
+      <li><a href="../main/flutterLocalNotificationsPlugin.html">flutterLocalNotificationsPlugin</a></li>
     
       <li class="section-title"><a href="../main/main-library.html#functions">Functions</a></li>
       <li><a href="../main/main.html">main</a></li>
@@ -77,7 +79,27 @@
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">void main() =&gt; runApp(SmartRider());</code></pre>
+      <pre class="language-dart"><code class="language-dart">void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  var initializationSettingsAndroid =
+      AndroidInitializationSettings(&#39;app_notf_icon&#39;);
+  var initializationSettingsIOS = IOSInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      onDidReceiveLocalNotification:
+          (int id, String title, String body, String payload) async {});
+  var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    if (payload != null) {
+      debugPrint(&#39;notification payload: &#39; + payload);
+    }
+  });
+  runApp(SmartRider());
+}</code></pre>
     </section>
 
   </div> <!-- /.main-content -->

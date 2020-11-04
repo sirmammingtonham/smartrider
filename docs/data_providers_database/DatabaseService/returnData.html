@@ -93,18 +93,16 @@
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">Future&lt;Map&lt;String, dynamic&gt;&gt; returnData() async{
+      <pre class="language-dart"><code class="language-dart">Future&lt;Map&lt;String, dynamic&gt;&gt; returnData() async {
   &#47;&#47;return the data associated with the user
   Map&lt;String, dynamic&gt; data;
   data = null;
   Future&lt;DocumentSnapshot&gt; userRef = _userCollection.document(usid).get();
-  await userRef.then((DocumentSnapshot ds){
+  await userRef.then((DocumentSnapshot ds) {
     &#47;&#47;print(ds.data);
     data = ds.data;
-
-  })
-      .catchError((e){
-    print(&quot;Error Found: $e&quot;);&#47;&#47;Prints the error
+  }).catchError((e) {
+    print(&quot;Error Found: $e&quot;); &#47;&#47;Prints the error
     return null;
   });
 
