@@ -6,14 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/data/repository/authentication_repository.dart';
-import 'package:smartrider/data/models/time/time.dart';
 // page imports
 import 'package:smartrider/pages/welcome.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/pages/onboarding.dart';
-
-import 'package:smartrider/data/providers/bus_provider.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 void main() => runApp(SmartRider());
 

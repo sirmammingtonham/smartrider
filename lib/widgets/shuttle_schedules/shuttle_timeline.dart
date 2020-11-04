@@ -4,7 +4,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
-import 'package:smartrider/main.dart';
 
 //import 'package:flutter/rendering.dart';
 
@@ -38,19 +37,19 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
   ];
 
   TabController _tabController;
-  var isExpandedList = new List<bool>.filled(100, false);
+  var isExpandedList = List<bool>.filled(100, false);
   @override
 
   /// Affects the expansion of each shuttles list of stops
   void initState() {
     super.initState();
-    var androidInitilize = new AndroidInitializationSettings('app_icon');
-    var iOSinitilize = new IOSInitializationSettings();
+    var androidInitilize = AndroidInitializationSettings('app_icon');
+    var iOSinitilize = IOSInitializationSettings();
     var initilizationsSettings =
     new InitializationSettings(androidInitilize, iOSinitilize);
     fltrNotification.initialize(initilizationsSettings,
         onSelectNotification: notificationSelected);
-    _tabController = new TabController(vsync: this, length: shuttleTabs.length);
+    _tabController = TabController(vsync: this, length: shuttleTabs.length);
     _tabController.addListener(() {
       isExpandedList.fillRange(0, 100, false);
     });
@@ -99,7 +98,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
 
   /// Builds the shuttlelist widget which contains all the stops and
   /// useful user information like the next arrival.
-  @override
   Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
     return ScrollablePositionedList.builder(
       itemCount: shuttleStopLists[idx].length,
@@ -212,7 +210,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     await fltrNotification.schedule(
         0,
         'Test',
-        'Vincent Big Dumb',
+        'bruh',
         scheduledNotificationDateTime,
         platformChannelSpecifics);
   }
