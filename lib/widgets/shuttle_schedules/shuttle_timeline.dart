@@ -4,7 +4,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
-import 'package:smartrider/main.dart';
 
 //import 'package:flutter/rendering.dart';
 
@@ -12,7 +11,10 @@ import 'package:smartrider/main.dart';
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
 
-List<String> choices = ['See on map', 'View on timetable', 'Add Reminder'];
+List<String> choices = ['See on map', 'View on timetable', 'Set Reminder'];
+
+final FlutterLocalNotificationsPlugin fltrNotification =
+FlutterLocalNotificationsPlugin();
 
 /// Creates an object that contains all the shuttles and their respective stops.
 class ShuttleTimeline extends StatefulWidget {
@@ -35,23 +37,32 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
   ];
 
   TabController _tabController;
-  var isExpandedList = new List<bool>.filled(100, false);
+  var isExpandedList = List<bool>.filled(100, false);
   @override
 
   /// Affects the expansion of each shuttles list of stops
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, length: shuttleTabs.length);
+    var androidInitilize = AndroidInitializationSettings('app_icon');
+    var iOSinitilize = IOSInitializationSettings();
+    var initilizationsSettings =
+    new InitializationSettings(androidInitilize, iOSinitilize);
+    fltrNotification.initialize(initilizationsSettings,
+        onSelectNotification: notificationSelected);
+    _tabController = TabController(vsync: this, length: shuttleTabs.length);
     _tabController.addListener(() {
       isExpandedList.fillRange(0, 100, false);
     });
     isExpandedList.fillRange(0, 100, false);
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+  Future notificationSelected(String payload) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text("Notification : $payload"),
+      ),
+    );
   }
 
   /// Builds each tab for each shuttle and also accounts for the users
@@ -87,7 +98,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
 
   /// Builds the shuttlelist widget which contains all the stops and
   /// useful user information like the next arrival.
-  @override
   Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
     return ScrollablePositionedList.builder(
       itemCount: shuttleStopLists[idx].length,
@@ -179,32 +189,28 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     );
   }
 
-  void scheduleAlarm() async {
+  Future<void> scheduleAlarm() async {
     var scheduledNotificationDateTime =
         DateTime.now().add(Duration(seconds: 10));
-
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'alarm_notif',
       'alarm_notif',
       'Channel for Alarm notification',
-      icon: 'app_notf_icon',
-
+      icon: 'app_icon',
       ///sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
-      largeIcon: DrawableResourceAndroidBitmap('app_notf_icon'),
+      largeIcon: DrawableResourceAndroidBitmap('app_icon'),
     );
-
     var iOSPlatformChannelSpecifics = IOSNotificationDetails(
-
         ///sound: 'a_long_cold_sting.wav',
         presentAlert: true,
         presentBadge: true,
         presentSound: true);
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.schedule(
+    await fltrNotification.schedule(
         0,
         'Test',
-        'Vincent Big Dumb',
+        'bruh',
         scheduledNotificationDateTime,
         platformChannelSpecifics);
   }
