@@ -60,11 +60,13 @@ class _SignupUIState extends State<SignupUI> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _rinController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
-  String role = 'Student';    // default role is student (implement role chooser in the future)
+  String role =
+      'Student'; // default role is student (implement role chooser in the future)
   PersistentBottomSheetController _sheetController;
   bool _obscurePass = true;
-  
+
   Color primary;
 
   final _formKey = GlobalKey<FormState>();
@@ -73,6 +75,39 @@ class _SignupUIState extends State<SignupUI> {
   void initState() {
     super.initState();
   }
+
+  //Image(image: AssetImage('assets/app_icons/App\ Logo\ v1.png'))
+
+  Widget logo() {
+    return Padding(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
+      child: Align(
+        child: Container(
+          height: 250.0,
+          width: 250.0,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/app_icons/logo_v1.png")),
+          ),
+        ),
+        alignment: Alignment.center,
+      ),
+    );
+    Padding(padding: EdgeInsets.only(top: 15),
+    child: Align(
+      child: Text( // THIS TEXT IS NOT APPEARING FOR SOME REASON
+        "SMARTRIDER",
+        style: TextStyle(
+          fontSize: 100,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).unselectedWidgetColor,
+        ),
+      ),
+      alignment: Alignment.center,
+    ));
+  }
+
+  /*
 
   Widget logo() {
     return Padding(
@@ -96,19 +131,21 @@ class _SignupUIState extends State<SignupUI> {
             )),
             Positioned(
               child: Container(
-                  padding: EdgeInsets.only(right: 35),
-                  height: 130,
+                  //padding: EdgeInsets.only(right: 35),
+                  height: 10,
                   child: Align(
                     child: Text(
-                      "smart",
+                      "SMARTRIDER",
                       style: TextStyle(
-                        fontSize: 48,
+                        fontSize: 21,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColor,
                       ),
                     ),
+                    alignment: Alignment.center,
                   )),
             ),
+            /*
             Positioned(
               child: Container(
                   padding: EdgeInsets.only(left: 40),
@@ -124,6 +161,7 @@ class _SignupUIState extends State<SignupUI> {
                     ),
                   )),
             ),
+            */
             Positioned(
               width: MediaQuery.of(context).size.width * 0.15,
               height: MediaQuery.of(context).size.width * 0.15,
@@ -149,6 +187,7 @@ class _SignupUIState extends State<SignupUI> {
       ),
     );
   }
+  */
 
   //input widget
   Widget _input(Icon icon, String hint, TextEditingController controller,
@@ -247,7 +286,8 @@ class _SignupUIState extends State<SignupUI> {
   void _loginUser() {
     if (_formKey.currentState.validate()) {
       BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationLoggedIn(_emailController.text, _passwordController.text,role),
+        AuthenticationLoggedIn(
+            _emailController.text, _passwordController.text, role),
       );
 
       // _email = _emailController.text;
@@ -260,18 +300,20 @@ class _SignupUIState extends State<SignupUI> {
   void _registerUser() {
     if (_formKey.currentState.validate()) {
       BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationSignUp(_emailController.text, _passwordController.text, _nameController.text,role),
+        AuthenticationSignUp(_emailController.text, _nameController.text,
+            _passwordController.text, _rinController.text, role),
       );
       BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationLoggedIn(_emailController.text, _passwordController.text,role),
+        AuthenticationLoggedIn(
+            _emailController.text, _passwordController.text, role),
       );
 
       // _email = _emailController.text;
       // _password = _passwordController.text;
-      // _rin = _nameController.text;
+      // _rin = _rinController.text;
       // _emailController.clear();
       // _passwordController.clear();
-      // _nameController.clear();
+      // _rinController.clear();
     }
   }
 
@@ -298,6 +340,13 @@ class _SignupUIState extends State<SignupUI> {
   String _rinValidation(String val) {
     if (val.trim().length != 9 || !val.startsWith("66")) {
       return 'Please enter a valid RIN';
+    }
+    return null;
+  }
+
+  String _nameValidation(String val) {
+    if (val.trim().length == 0) {
+      return "Please don't leave the name field blank";
     }
     return null;
   }
@@ -361,9 +410,9 @@ class _SignupUIState extends State<SignupUI> {
                               Positioned(
                                 child: Container(
                                   child: Text(
-                                    "login",
+                                    "LOGIN",
                                     style: TextStyle(
-                                      fontSize: 60,
+                                      fontSize: 37,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ),
@@ -439,7 +488,7 @@ class _SignupUIState extends State<SignupUI> {
                             Navigator.of(context).pop();
                             _emailController.clear();
                             _passwordController.clear();
-                            _nameController.clear();
+                            _rinController.clear();
                           },
                           icon: Icon(
                             Icons.highlight_off,
@@ -476,11 +525,11 @@ class _SignupUIState extends State<SignupUI> {
                             ),
                             Positioned(
                               child: Container(
-                                padding: EdgeInsets.only(bottom: 30, right: 44),
+                                //padding: EdgeInsets.only(bottom: 30, right: 44),
                                 child: Text(
-                                  "regi",
+                                  "REGISTER",
                                   style: TextStyle(
-                                    fontSize: 54,
+                                    fontSize: 23,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -488,6 +537,7 @@ class _SignupUIState extends State<SignupUI> {
                                 alignment: Alignment.center,
                               ),
                             ),
+                            /*
                             Positioned(
                               child: Align(
                                 child: Container(
@@ -505,6 +555,7 @@ class _SignupUIState extends State<SignupUI> {
                                 alignment: Alignment.center,
                               ),
                             ),
+                            */
                           ],
                         ),
                       ),
@@ -513,8 +564,15 @@ class _SignupUIState extends State<SignupUI> {
                           bottom: 20,
                           top: 60,
                         ),
-                        child: _input(Icon(Icons.account_circle), "RIN",
-                            _nameController, false, _rinValidation),
+                        child: _input(Icon(Icons.contacts), "RIN",
+                            _rinController, false, _rinValidation),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: 20,
+                        ),
+                        child: _input(Icon(Icons.account_circle), "FIRST NAME",
+                            _nameController, false, _nameValidation),
                       ),
                       Padding(
                         padding: EdgeInsets.only(
@@ -559,6 +617,18 @@ class _SignupUIState extends State<SignupUI> {
 
   @override
   Widget build(BuildContext context) {
+    /*
+      Area to implement bypass if auto signed in
+
+      return Scaffold(
+        body: BlocListener<AuthenticationBloc, AuthenticationState>(
+            listener: (context, state) {
+      if (state is AuthenticationSuccess) {
+        return homePage;
+      }})
+
+    */
+
     primary = Theme.of(context).primaryColor;
     return Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -571,9 +641,9 @@ class _SignupUIState extends State<SignupUI> {
               child: Container(
                 child: _button("LOGIN", primary, Colors.white, Colors.white,
                     primary, _showLoginSheet),
-                height: 50,
+                height: 65,
               ),
-              padding: EdgeInsets.only(top: 80, left: 20, right: 20),
+              padding: EdgeInsets.only(top: 200, left: 20, right: 20),
             ),
             Padding(
               child: Container(
@@ -598,7 +668,7 @@ class _SignupUIState extends State<SignupUI> {
                     _showRegisterSheet();
                   },
                 ),
-                height: 50,
+                height: 65,
               ),
               padding: EdgeInsets.only(top: 10, left: 20, right: 20),
             ),
@@ -607,7 +677,7 @@ class _SignupUIState extends State<SignupUI> {
                 child: ClipPath(
                   child: Container(
                     color: Colors.white,
-                    height: 300,
+                    height: 450,
                   ),
                   clipper: BottomWaveClipper(),
                 ),
