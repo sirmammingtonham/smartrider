@@ -48,7 +48,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     var iOSinitilize = new IOSInitializationSettings();
     var initilizationsSettings =
     new InitializationSettings(androidInitilize, iOSinitilize);
-    //var fltrNotification = new FlutterLocalNotificationsPlugin();
     fltrNotification.initialize(initilizationsSettings,
         onSelectNotification: notificationSelected);
     _tabController = new TabController(vsync: this, length: shuttleTabs.length);
@@ -163,7 +162,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                               style: TextStyle(fontSize: 15),
                             ),
                             subtitle: Text('In 11 minutes'),
-<<<<<<< Updated upstream
                             trailing: PopupMenuButton<String>(
                                 onSelected: (String selected) {
                                   if (selected == choices[0]) {
@@ -181,16 +179,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                                     .map((choice) => PopupMenuItem<String>(
                                         value: choice, child: Text(choice)))
                                     .toList()),
-=======
-                            trailing: RaisedButton(
-                              onPressed: scheduleAlarm,
-                              child: new Text('set task with noti'),
-                            )
-                                //itemBuilder: (BuildContext context) => choices
-                                    //.map((choice) => PopupMenuItem<String>(
-                                        //value: choice, child: Text(choice)))
-                                    //.toList()),
->>>>>>> Stashed changes
                           );
                         },
                       ),
@@ -206,26 +194,15 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
   Future<void> scheduleAlarm() async {
     var scheduledNotificationDateTime =
         DateTime.now().add(Duration(seconds: 10));
-
-    print(scheduledNotificationDateTime);
-    print(DateTime.now());
-
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'alarm_notif',
       'alarm_notif',
       'Channel for Alarm notification',
-<<<<<<< Updated upstream
-      icon: 'app_notf_icon',
-
-=======
       icon: 'app_icon',
->>>>>>> Stashed changes
       ///sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
       largeIcon: DrawableResourceAndroidBitmap('app_icon'),
     );
-
     var iOSPlatformChannelSpecifics = IOSNotificationDetails(
-
         ///sound: 'a_long_cold_sting.wav',
         presentAlert: true,
         presentBadge: true,
