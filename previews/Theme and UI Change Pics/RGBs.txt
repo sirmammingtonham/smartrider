@@ -1,0 +1,27 @@
+For each color scheme:
+
+RGB for "deep red":
+    R : 150
+    G : 0
+    B : 0
+
+RGB for "Scarlet":
+    R : 175
+    G : 43
+    B : 43
+
+RGB for "Royal":
+    R : 43
+    G : 43
+    B : 192
+
+RGB for "Baby":
+    R : 106
+    G : 209
+    B : 255
+
+RGB for "Navy":
+    R : 24
+    G : 28
+    B : 90
+

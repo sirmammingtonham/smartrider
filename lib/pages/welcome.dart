@@ -93,18 +93,6 @@ class _SignupUIState extends State<SignupUI> {
         alignment: Alignment.center,
       ),
     );
-    Padding(padding: EdgeInsets.only(top: 15),
-    child: Align(
-      child: Text( // THIS TEXT IS NOT APPEARING FOR SOME REASON
-        "SMARTRIDER",
-        style: TextStyle(
-          fontSize: 100,
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).unselectedWidgetColor,
-        ),
-      ),
-      alignment: Alignment.center,
-    ));
   }
 
   /*
@@ -638,20 +626,34 @@ class _SignupUIState extends State<SignupUI> {
           children: <Widget>[
             logo(),
             Padding(
+                padding: EdgeInsets.only(top: 15),
+                child: Align(
+                  child: Text(
+                    "SMARTRIDER",
+                    style: TextStyle(
+                      fontSize: 45,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).accentColor,
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                )),
+            Padding(
               child: Container(
-                child: _button("LOGIN", primary, Colors.white, Colors.white,
-                    primary, _showLoginSheet),
+                child: _button("LOGIN", primary, Theme.of(context).accentColor,
+                    Theme.of(context).accentColor, primary, _showLoginSheet),
                 height: 65,
               ),
-              padding: EdgeInsets.only(top: 200, left: 20, right: 20),
+              padding: EdgeInsets.only(top: 100, left: 20, right: 20),
             ),
             Padding(
               child: Container(
                 child: OutlineButton(
-                  highlightedBorderColor: Colors.white,
-                  borderSide: BorderSide(color: Colors.white, width: 2.0),
+                  highlightedBorderColor: Theme.of(context).accentColor,
+                  borderSide: BorderSide(
+                      color: Theme.of(context).accentColor, width: 2.0),
                   highlightElevation: 0.0,
-                  splashColor: Colors.white,
+                  splashColor: Theme.of(context).accentColor,
                   highlightColor: Theme.of(context).primaryColor,
                   color: Theme.of(context).primaryColor,
                   shape: RoundedRectangleBorder(
