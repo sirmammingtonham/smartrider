@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/custom_sticky_table.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 
 class BusTable extends StatefulWidget {
   final Function containsFilter;
@@ -108,28 +109,61 @@ Widget busList(int idx, Function _containsFilter, Function _jumpMap) {
 
       Scaffold(
           body: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                      columnSpacing: 10,
-                      columns: List<DataColumn>.generate(
-                          busStopLists[idx].length,
-                          (index) => DataColumn(
-                                label: Flexible(
-                                    child: Text(
-                                  curStopList[index % curStopList.length][0],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )),
-                              )),
-                      rows: List<DataRow>.generate(
-                          (busTimeLists[idx].length / busStopLists[idx].length +
-                                  1)
-                              .truncate(),
-                          (index) => DataRow(
-                              cells: List<DataCell>.generate(
-                                  busStopLists[idx].length,
-                                  (datIdx) => DataCell(Text('6:30pm')))))))));
+              scrollDirection: Axis.horizontal,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: List.generate(
+                        busStopLists[idx].length,
+                        (index) => Container(
+                            alignment: Alignment.center,
+                            width: 100,
+                            height: 50,
+                            child: SizedBox(
+                              child: Text(
+                                  curStopList[index % curStopList.length][0]),
+                            )),
+                      ),
+                    ),
+                    // DataTable(
+                    //     columnSpacing: 50,
+                    //     columns: List<DataColumn>.generate(
+                    //         busStopLists[idx].length,
+                    //         (index) => DataColumn(
+                    //               label: Flexible(
+                    //                   child: Text(curStopList[
+                    //                       index % curStopList.length][0])),
+                    //             )),
+                    //     rows: <DataRow>[
+                    //       DataRow(
+                    //           cells: List<DataCell>.generate(
+                    //               busStopLists[idx].length,
+                    //               (datIdx) => DataCell(Text('6:30pm'))))
+                    //     ]),
+                    Flexible(
+                        child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: DataTable(
+                                columnSpacing: 50,
+                                columns: List<DataColumn>.generate(
+                                    busStopLists[idx].length,
+                                    (index) => DataColumn(
+                                          label:
+                                              Flexible(child: Text("6:30pm")),
+                                        )),
+                                rows: List<DataRow>.generate(
+                                    (busTimeLists[idx].length /
+                                                busStopLists[idx].length +
+                                            1)
+                                        .truncate(),
+                                    (index) => DataRow(
+                                        cells: List<DataCell>.generate(
+                                            busStopLists[idx].length,
+                                            (datIdx) =>
+                                                DataCell(Text('6:30pm')))))))),
+                  ])));
 
   //Text(curTimeList[(index * busTimeLists[idx].length) + datIdx]))
   // return ScrollablePositionedList.builder(

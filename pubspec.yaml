@@ -50,6 +50,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   day_night_switch: ^0.0.2+1
   intl: ^0.16.1
+  sticky_headers: ^0.1.8
   day_night_switcher: ^0.1.1
   flutter_svg: ^0.19.1
   # table_sticky_headers: ^1.1.2
