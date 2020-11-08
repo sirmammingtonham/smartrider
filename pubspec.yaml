@@ -87,6 +87,9 @@ flutter:
 #notification
     - assets/Notification_Icons/app_logo.png
 
+#onboarding 
+    - assets/onboarding_images/rpi_stock_photo.jpg
+
   fonts:
     - family: SR_Icons
       fonts:

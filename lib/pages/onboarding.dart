@@ -6,15 +6,15 @@ import 'package:smartrider/pages/home.dart';
 
 final kTitleStyle = TextStyle(
   color: Colors.white,
-  fontFamily: 'CM Sans Serif',
-  fontSize: 36.0,
+  fontFamily: 'Helvetica',
+  fontSize: 30.0,
   height: 1.5,
 );
 
 final kSubtitleStyle = TextStyle(
   color: Colors.white,
-  fontSize: 28.0,
-  height: 1.2,
+  fontSize: 22.0,
+  height: 1.3,
 );
 
 class OnboardingScreen extends StatefulWidget {
@@ -61,9 +61,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               stops: [0.1, 0.4, 0.7, 0.9],
               colors: [
                 Color(0xFF3594DD),
-                Color(0xFF4563DB),
-                Color(0xFF5036D5),
-                Color(0xFF5B16D0),
+                Color(0xFF165DC0),
+                Color(0xFF07489C),
+                Color(0xFF083663),
               ],
             ),
           ),
@@ -117,6 +117,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             Text(
                               'The transportation tool that will allow you to travel around campus in an efficient and safe manner',
                               style: kSubtitleStyle,
+                            ),
+                             Image(
+                               image: AssetImage('assets/onboarding_images/rpi_stock_photo.jpg'),
                             ),
                           ],
                         ),
