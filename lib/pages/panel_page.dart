@@ -12,6 +12,7 @@ import 'package:smartrider/widgets/shuttle_schedules/shuttle_table.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_timeline.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
 
+///
 class PanelPage extends StatefulWidget {
   final PanelController panelController;
   final VoidCallback scheduleChanged;
@@ -29,7 +30,6 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
 
   TabController _tabController;
   String filter;
-
 
   @override
   void initState() {
@@ -49,7 +49,8 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
   _handleTabSelection() {
     if (_tabController.indexIsChanging) {
       ScheduleState s = BlocProvider.of<ScheduleBloc>(context).state;
-      BlocProvider.of<ScheduleBloc>(context).add(ScheduleTransitionEvent(currentstate: s));
+      BlocProvider.of<ScheduleBloc>(context)
+          .add(ScheduleTransitionEvent(currentstate: s));
     }
   }
 
@@ -63,8 +64,8 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
           builder: (context, state) {
             if (state is ScheduleTimelineState) {
               return Scaffold(
-                appBar: panelAppBar(state.isShuttle, this.widget.panelController,
-                    _tabController, _tabs),
+                appBar: panelAppBar(state.isShuttle,
+                    this.widget.panelController, _tabController, _tabs),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
@@ -84,8 +85,8 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
               );
             } else if (state is ScheduleTableState) {
               return Scaffold(
-                appBar: panelAppBar(state.isShuttle, this.widget.panelController,
-                    _tabController, _tabs),
+                appBar: panelAppBar(state.isShuttle,
+                    this.widget.panelController, _tabController, _tabs),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
@@ -103,21 +104,27 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                   },
                 ),
               );
-            } else if (state is ScheduleTransitionState){
+            } else if (state is ScheduleTransitionState) {
               BlocProvider.of<ScheduleBloc>(context).add(ScheduleChangeEvent());
               return Scaffold(
-                appBar: panelAppBar(state.isShuttle, this.widget.panelController,
-                    _tabController, _tabs),
+                appBar: panelAppBar(state.isShuttle,
+                    this.widget.panelController, _tabController, _tabs),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
-                    state.currentState is ScheduleTableState ? ShuttleTable() : ShuttleTimeline(),
-                    state.currentState is ScheduleTableState ? BusTable() : BusTimeline(),
+                    state.currentState is ScheduleTableState
+                        ? ShuttleTable()
+                        : ShuttleTimeline(),
+                    state.currentState is ScheduleTableState
+                        ? BusTable()
+                        : BusTimeline(),
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(
                   heroTag: "Filter",
-                  child: state.currentState is ScheduleTableState ? Icon(Icons.timeline) : Icon(Icons.toc),
+                  child: state.currentState is ScheduleTableState
+                      ? Icon(Icons.timeline)
+                      : Icon(Icons.toc),
                   elevation: 5.0,
                   onPressed: () {
                     BlocProvider.of<ScheduleBloc>(context)
@@ -125,8 +132,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                   },
                 ),
               );
-            }
-            else{
+            } else {
               return Center(child: CircularProgressIndicator());
             }
           },
@@ -166,48 +172,3 @@ Widget panelAppBar(bool isShuttle, PanelController panelController,
     ),
   );
 }
-
-// _handleSearchQuery() {
-//   setState(() {
-//     filter = _textController.text;
-//   });
-// }
-
-// _displayFilterDialog() async {
-//   final builder = (BuildContext ctx) => FilterDialog(
-//         stops: _isShuttle
-//             ? shuttleStopLists[_tabController.index]
-//             : busStopLists[_tabController.index],
-//         controller: _textController,
-//       );
-//   await showDialog(context: context, builder: builder);
-// }
-
-// bool _containsFilter(var curStopList, var curTimeList, var index) {
-//   if (this.filter == null) {
-//     return true;
-//   }
-//   if (double.tryParse(this.filter) != null) {
-//     return curTimeList[index].contains(this.filter);
-//   }
-//   if (this.filter.contains('am') ||
-//       this.filter.contains('pm') ||
-//       this.filter.contains(':')) {
-//     return curTimeList[index].contains(this.filter);
-//   }
-//   if (this.filter.contains('@')) {
-//     var filterSplit = this.filter.split('@');
-//     return (curStopList[index % curStopList.length][0]
-//             .toLowerCase()
-//             .contains(filterSplit[0].toLowerCase()) &&
-//         curTimeList[index].contains(filterSplit[1]));
-//   }
-//   return curStopList[index % curStopList.length][0]
-//       .toLowerCase()
-//       .contains(this.filter.toLowerCase().trim());
-// }
-
-// _jumpMap(double lat, double long) {
-//   this.widget.panelController.animatePanelToPosition(0);
-//   BlocProvider.of<MapBloc>(context).scrollToLocation(LatLng(lat, long));
-// }
