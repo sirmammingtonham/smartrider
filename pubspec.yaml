@@ -85,7 +85,11 @@ flutter:
     - assets/Notification_Icons/app_logo.png
 
 #onboarding 
-    - assets/onboarding_images/rpi_stock_photo.jpg
+    - assets/onboarding_images/rpi_stock_photo.png
+    - assets/onboarding_images/onboarding_page2_1.png
+    - assets/onboarding_images/onboarding_page2_2.png
+    - assets/onboarding_images/onboarding_page3_1.png
+    - assets/onboarding_images/onboarding_page3_2.png
 
   fonts:
     - family: SR_Icons
