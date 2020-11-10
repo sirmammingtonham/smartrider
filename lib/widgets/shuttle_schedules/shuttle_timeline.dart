@@ -14,7 +14,7 @@ import 'package:smartrider/widgets/custom_expansion_tile.dart';
 List<String> choices = ['See on map', 'View on timetable', 'Set Reminder'];
 
 final FlutterLocalNotificationsPlugin fltrNotification =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 /// Creates an object that contains all the shuttles and their respective stops.
 class ShuttleTimeline extends StatefulWidget {
@@ -46,7 +46,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     var androidInitilize = AndroidInitializationSettings('app_icon');
     var iOSinitilize = IOSInitializationSettings();
     var initilizationsSettings =
-    new InitializationSettings(androidInitilize, iOSinitilize);
+        new InitializationSettings(androidInitilize, iOSinitilize);
     fltrNotification.initialize(initilizationsSettings,
         onSelectNotification: notificationSelected);
     _tabController = TabController(vsync: this, length: shuttleTabs.length);
@@ -197,22 +197,20 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
       'alarm_notif',
       'Channel for Alarm notification',
       icon: 'app_icon',
+
       ///sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
       largeIcon: DrawableResourceAndroidBitmap('app_icon'),
     );
     var iOSPlatformChannelSpecifics = IOSNotificationDetails(
+
         ///sound: 'a_long_cold_sting.wav',
         presentAlert: true,
         presentBadge: true,
         presentSound: true);
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await fltrNotification.schedule(
-        0,
-        'Test',
-        'bruh',
-        scheduledNotificationDateTime,
-        platformChannelSpecifics);
+    await fltrNotification.schedule(0, 'Test', 'bruh',
+        scheduledNotificationDateTime, platformChannelSpecifics);
   }
 }
 

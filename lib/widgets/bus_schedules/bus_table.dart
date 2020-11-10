@@ -1,4 +1,6 @@
 // ui dependencies
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -113,17 +115,23 @@ Widget busList(int idx, Function _containsFilter, Function _jumpMap) {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(
+                      height: 5,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: List.generate(
                         busStopLists[idx].length,
                         (index) => Container(
                             alignment: Alignment.center,
-                            width: 100,
+                            width: 97,
                             height: 50,
                             child: SizedBox(
                               child: Text(
-                                  curStopList[index % curStopList.length][0]),
+                                  curStopList[index % curStopList.length][0],
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                             )),
                       ),
                     ),
