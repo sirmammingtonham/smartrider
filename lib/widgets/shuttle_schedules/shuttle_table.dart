@@ -31,8 +31,24 @@ class ShuttleTableState extends State<ShuttleTable>
     super.initState();
     _tabController = new TabController(vsync: this, length: shuttleTabs.length);
     _tabController.addListener(() {
-      print(_tabController.indexIsChanging);
+      _handleTabSelection();
     });
+  }
+
+  _handleTabSelection() {
+    setState(() {});
+  }
+
+  _getTabColor(TabController tc) {
+    if (tc.index == 0) {
+      return Colors.green;
+    } else if (tc.index == 1) {
+      return Colors.red;
+    } else if (tc.index == 2) {
+      return Colors.blue;
+    } else {
+      return Colors.orange;
+    }
   }
 
   @override
@@ -46,6 +62,7 @@ class ShuttleTableState extends State<ShuttleTable>
     return Material(
       child: Column(children: <Widget>[
         TabBar(
+          indicatorColor: _getTabColor(_tabController),
           isScrollable: true,
           tabs: shuttleTabs,
           // unselectedLabelColor: Colors.white.withOpacity(0.3),

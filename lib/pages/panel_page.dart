@@ -30,7 +30,6 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
   TabController _tabController;
   String filter;
 
-
   @override
   void initState() {
     super.initState();
@@ -49,7 +48,8 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
   _handleTabSelection() {
     if (_tabController.indexIsChanging) {
       ScheduleState s = BlocProvider.of<ScheduleBloc>(context).state;
-      BlocProvider.of<ScheduleBloc>(context).add(ScheduleTransitionEvent(currentstate: s));
+      BlocProvider.of<ScheduleBloc>(context)
+          .add(ScheduleTransitionEvent(currentstate: s));
     }
   }
 
@@ -63,8 +63,8 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
           builder: (context, state) {
             if (state is ScheduleTimelineState) {
               return Scaffold(
-                appBar: panelAppBar(state.isShuttle, this.widget.panelController,
-                    _tabController, _tabs),
+                appBar: panelAppBar(state.isShuttle,
+                    this.widget.panelController, _tabController, _tabs),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
@@ -84,8 +84,8 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
               );
             } else if (state is ScheduleTableState) {
               return Scaffold(
-                appBar: panelAppBar(state.isShuttle, this.widget.panelController,
-                    _tabController, _tabs),
+                appBar: panelAppBar(state.isShuttle,
+                    this.widget.panelController, _tabController, _tabs),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
@@ -103,21 +103,27 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                   },
                 ),
               );
-            } else if (state is ScheduleTransitionState){
+            } else if (state is ScheduleTransitionState) {
               BlocProvider.of<ScheduleBloc>(context).add(ScheduleChangeEvent());
               return Scaffold(
-                appBar: panelAppBar(state.isShuttle, this.widget.panelController,
-                    _tabController, _tabs),
+                appBar: panelAppBar(state.isShuttle,
+                    this.widget.panelController, _tabController, _tabs),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
-                    state.currentState is ScheduleTableState ? ShuttleTable() : ShuttleTimeline(),
-                    state.currentState is ScheduleTableState ? BusTable() : BusTimeline(),
+                    state.currentState is ScheduleTableState
+                        ? ShuttleTable()
+                        : ShuttleTimeline(),
+                    state.currentState is ScheduleTableState
+                        ? BusTable()
+                        : BusTimeline(),
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(
                   heroTag: "Filter",
-                  child: state.currentState is ScheduleTableState ? Icon(Icons.timeline) : Icon(Icons.toc),
+                  child: state.currentState is ScheduleTableState
+                      ? Icon(Icons.timeline)
+                      : Icon(Icons.toc),
                   elevation: 5.0,
                   onPressed: () {
                     BlocProvider.of<ScheduleBloc>(context)
@@ -125,8 +131,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                   },
                 ),
               );
-            }
-            else{
+            } else {
               return Center(child: CircularProgressIndicator());
             }
           },

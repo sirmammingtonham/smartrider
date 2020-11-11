@@ -52,8 +52,25 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     _tabController = TabController(vsync: this, length: shuttleTabs.length);
     _tabController.addListener(() {
       isExpandedList.fillRange(0, 100, false);
+      _handleTabSelection();
     });
     isExpandedList.fillRange(0, 100, false);
+  }
+
+  _handleTabSelection() {
+    setState(() {});
+  }
+
+  _getTabColor(TabController tc) {
+    if (tc.index == 0) {
+      return Colors.green;
+    } else if (tc.index == 1) {
+      return Colors.red;
+    } else if (tc.index == 2) {
+      return Colors.blue;
+    } else {
+      return Colors.orange;
+    }
   }
 
   Future notificationSelected(String payload) async {
@@ -71,6 +88,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       TabBar(
+        indicatorColor: _getTabColor(_tabController),
         isScrollable: true,
         tabs: shuttleTabs,
         labelColor: Theme.of(context).brightness == Brightness.light
@@ -109,7 +127,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
               shuttleTimeLists[idx][_getTimeIndex(shuttleTimeLists[idx])]),
           leading: CustomPaint(
               painter: FillPainter(
-                  circleColor: Theme.of(context).buttonColor,
+                  circleColor: _getTabColor(_tabController),
                   lineColor: Theme.of(context).primaryColorLight,
                   first: index == 0,
                   last: index == curStopList.length - 1),

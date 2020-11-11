@@ -42,6 +42,9 @@ class BusTableState extends State<BusTable>
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       TabBar(
+        indicatorColor: Theme.of(context).buttonColor,
+
+        //_getTabColor(_tabController),
         tabs: busTabs,
         // unselectedLabelColor: Colors.white.withOpacity(0.3),
         labelColor: Theme.of(context).brightness == Brightness.light
