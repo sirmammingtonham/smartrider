@@ -458,7 +458,7 @@ class _SignupUIState extends State<SignupUI> {
     _sheetController =
         _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
       return Container(
-        color: Colors.transparent,
+        color: Theme.of(context).primaryColor,
         child: ClipRRect(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(40.0), topRight: Radius.circular(40.0)),
@@ -519,7 +519,7 @@ class _SignupUIState extends State<SignupUI> {
                                   style: TextStyle(
                                     fontSize: 23,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: Theme.of(context).accentColor,
                                   ),
                                 ),
                                 alignment: Alignment.center,
@@ -663,7 +663,7 @@ class _SignupUIState extends State<SignupUI> {
                     "REGISTER",
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Theme.of(context).accentColor,
                         fontSize: 20),
                   ),
                   onPressed: () {
@@ -678,7 +678,7 @@ class _SignupUIState extends State<SignupUI> {
               child: Align(
                 child: ClipPath(
                   child: Container(
-                    color: Colors.white,
+                    color: Theme.of(context).accentColor,
                     height: 450,
                   ),
                   clipper: BottomWaveClipper(),
