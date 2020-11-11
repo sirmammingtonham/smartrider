@@ -13,3 +13,7 @@ node_modules/
 
 # secrets
 **/keys.json
+
+# test shid
+gtfs/
+*.log
