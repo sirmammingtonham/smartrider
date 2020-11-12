@@ -1,8 +1,9 @@
+import { GeoJSONObject } from "@turf/turf";
 /// firestore types
 // think about grouping tables with the same id together
 // merge calendar and calendar dates? other stuff with same id column?
 export type Agency = {
-//   agency_id: string;
+  agency_id: string;
   agency_name: string;
   agency_url: string;
   agency_timezone: string;
@@ -20,16 +21,13 @@ export type Calendar = {
   };
   start_date: number;
   end_date: number;
-};
-
-export type CalendarDate = {
-  service_id: string;
-  date: number;
-  exception_type: number;
+  exceptions: {
+    [date: number]: number;
+  }
 };
 
 export type Route = {
-  // route_id: string,
+  route_id: string;
   agency_id: string;
   route_short_name: string;
   route_long_name: string;
@@ -38,7 +36,14 @@ export type Route = {
   route_url: string;
   route_color: string;
   route_text_color: string;
-  route_sort_order: string;
+  route_sort_order: number;
+  continuous_pickup: number;
+  continuous_drop_off: number;
+
+  // nonstandard, for convenience
+  trip_ids: string[];
+  shape_ids: string[];
+  stop_ids: string[];
 };
 
 export type Shape = {
@@ -46,45 +51,35 @@ export type Shape = {
   shape_pt_lat: number;
   shape_pt_lon: number;
   shape_pt_sequence: number;
-//   shape_dist_traveled: number;
+  shape_dist_traveled: number;
 };
 
 export type Stop = {
-//   stop_id: string;
-  stop_code: string;
-  stop_name: string;
-  stop_desc: string;
-  stop_lat: number;
-  stop_lon: number;
-  zone_id: string;
-  stop_url: string;
-  location_type: number;
-//   parent_station: string;
-  stop_timezone: string;
-  wheelchair_boarding: number;
+  stop_id: string,
+  stop_code: number,
+  stop_name: string,
+  stop_desc: string,
+  stop_lat: number,
+  stop_lon: number,
+  zone_id: string,
+  stop_url: string,
+  location_type: number,
+  parent_station: number,
+  stop_timezone: string,
+  wheelchair_boarding: number,
+  leved_id: number,
+  platform_code: string,
 
-  // fields not part of the specs, added to make life easier
-  loc: number[]; // [<longitude>, <latitude>]
-  routes: string[];
-};
-
-export type StopTime = {
-  trip_id: string;
-  arrival_time: string;
-  departure_time: string;
-  stop_id: string;
-  stop_sequence: number;
-//   stop_headsign: string;
-  pickup_type: number;
-  drop_off_type: number;
-//   shape_dist_traveled: number;
-  timepoint: number;
+  // nonstandard, for convenience
+  stop_sequence: number[],
+  arrival_times: number[], // in seconds since midnight
+  departure_times: number[],  // in seconds since midnight
 };
 
 export type Trip = {
+  trip_id: string;
   route_id: string;
   service_id: string;
-//   trip_id: string;
   trip_headsign: string;
   trip_short_name: string;
   direction_id: number;
@@ -94,20 +89,22 @@ export type Trip = {
   bikes_allowed: number;
 };
 
-type timetable_stop = {
-  stop_id: string;
-  stop_name: string;
-  service_id: string;
-  stop_desc: string;
-  stop_lat: number;
-  stop_lon: number;
-  stop_sequence: number;
-  stop_times: string[];
-};
+export type Polyline = {
+  route_id: string,
+  type: string,
+  geoJSON: string; // convert to string so we can just pass it to request
+}
+
 
 export type Timetable = {
-  route_id: string;
-  stops: timetable_stop[];
+  stop_id: string,
+  stop_name: string,
+  service_id: string,
+  stop_lat: number,
+  stop_lon: number,
+  stop_sequence: number,
+  stop_times: number[],
+  
 };
 
 // export type Polyline = {}
