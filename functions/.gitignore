@@ -13,7 +13,9 @@ node_modules/
 
 # secrets
 **/keys.json
+**/smartrider-4e9e8-service.json
 
 # test shid
 gtfs/
+gtfs.db
 *.log

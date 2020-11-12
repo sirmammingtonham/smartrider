@@ -2,25 +2,17 @@ import * as admin from "firebase-admin";
 import * as gtfs from "gtfs";
 import * as models from "./fs_types";
 import * as Promise from "../helpers/async_util";
+import * as config from "../setup/gtfs_config.json";
+import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
 import { collection, subcollection, set, all, remove } from "typesaurus";
 import { genShapeGeoJSON } from "../helpers/bus_util";
 import { zipObject } from "lodash";
 
-admin.initializeApp({ projectId: "smartrider-4e9e8" });
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+});
 
-const config = {
-  agencies: [
-    {
-      agency_key: "cdta",
-      url: "https://www.cdta.org/schedules/google_transit.zip",
-      exclude: [],
-    },
-  ],
-  csvOptions: {
-    skip_lines_with_error: true,
-  },
-  sqlitePath: "./gtfs.db",
-};
+console.log('initialized');
 
 const parseAgency = async (db: any) => {
   console.log("started parsing Agency");
