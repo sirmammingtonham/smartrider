@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';
 import 'package:smartrider/data/repository/authentication_repository.dart';
 import 'package:smartrider/data/providers/database.dart';
@@ -36,9 +35,9 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _mapAuthenticationStartedToState() async* {
-    final isSignedIn = await _authRepository.isSignedIn();
+    final isSignedIn = _authRepository.isSignedIn();
     if (isSignedIn) {
-      final name = await _authRepository.getUser();
+      final name = _authRepository.getUser();
       yield AuthenticationSuccess(name, 'Student');
     } else {
       yield AuthenticationInit();
@@ -47,13 +46,13 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> _mapAuthenticationLoggedInToState(
       e, p, role) async* {
-    AuthResult result = await _authRepository.signInWithCredentials(
+    UserCredential result = await _authRepository.signInWithCredentials(
         e, p); //attempt to signin user
 
-    if (result is AuthResult) {
+    if (result is UserCredential) {
       //if signing in user is successful
-      FirebaseUser user = await _authRepository.getActualUser();
-      if (user.isEmailVerified) {
+      User user = _authRepository.getActualUser();
+      if (user.emailVerified) {
         yield AuthenticationSuccess(e, role);
       } else {
         user.sendEmailVerification();
@@ -73,8 +72,8 @@ class AuthenticationBloc
   Stream<AuthenticationState> _mapAuthenticationSignUpToState(
       e, n, p, r, role) async* {
     var result = await _authRepository.signUp(e, p);
-    if (result is AuthResult) {
-      FirebaseUser user = result.user;
+    if (result is UserCredential) {
+      User user = result.user;
       await DatabaseService(usid: user.uid).updateUserData(user.email, role,
           rin: r, name: n); // usertype will be student for now, modify later
       user.sendEmailVerification();

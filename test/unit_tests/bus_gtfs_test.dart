@@ -8,7 +8,7 @@
 //   print("Finished running");
 // }
 import 'package:flutter/material.dart';
-import 'package:smartrider/data/providers/bus_provider.dart';
+import 'package:smartrider/data/providers/bus_provider_deprecated.dart';
 void main() {
   runApp(new MyApp());
 }

@@ -5,7 +5,7 @@ import '../models/bus/bus_stop.dart';
 import '../models/bus/bus_trip_update.dart';
 import '../models/bus/bus_vehicle_update.dart';
 
-import '../providers/bus_provider.dart';
+import '../providers/bus_provider_deprecated.dart';
 
 /// Repo class that retrieves data from provider class methods and
 /// distributes the data to BLoC pattern

@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:smartrider/data/models/bus/pb/gtfs-realtime.pb.dart';
@@ -22,77 +23,66 @@ import '../models/bus/bus_timetable.dart';
 /// Each member function decodes a json file and returns
 /// a dart iterable containing the relevent bus data object.
 class BusProvider {
-  /// The connection status of BusProvider.
-  bool isConnected;
+  final defaultRoutes = ['87-185', '286-185', '289-185'];
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   /// Fetchs data from the JSON API and returns a decoded JSON.
-  Future<http.Response> fetch(String type, {Map<String, String> query}) async {
-    var client = http.Client();
-    http.Response response;
-    try {
-      response = await client.get(
-          'https://us-central1-smartrider-4e9e8.cloudfunctions.net/$type',
-          headers: query);
-      //await createJSONFile('$type', response);
-
-      if (response.statusCode == 200) {
-        isConnected = true;
-      }
-    } catch (error) {
-      isConnected = false;
-    }
-    //print("App has polled $type API: $isConnected");
-    return response;
+  Future<QuerySnapshot> fetch(String collection,
+      {String idField, List routes}) async {
+    return firestore
+        .collection(collection)
+        .where(idField, arrayContainsAny: routes)
+        .get();
   }
 
-  /// The status of the most recent [fetch] call.
-  bool get getIsConnected => isConnected;
+  // /// The status of the most recent [fetch] call.
+  // bool get getIsConnected => isConnected;
 
   /// Returns a [Map] of <[BusRoute.routeShortName], [BusRoute]>  pairs.
   Future<Map<String, BusRoute>> getRoutes() async {
-    var response = await fetch('busRoutes',
-        query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
+    var response =
+        await fetch('routes', idField: 'route_id', routes: defaultRoutes);
 
     Map<String, BusRoute> routeMap = response != null
-        ? Map.fromIterable(json.decode(response.body),
-            key: (json) => json['route_short_name'],
-            value: (json) => BusRoute.fromJson(json))
+        ? Map.fromIterable(response.docs,
+            key: (doc) => doc['route_short_name'],
+            value: (doc) => BusRoute.fromJson(doc))
         : {};
     return routeMap;
   }
 
-  /// Returns a [List] of [BusShape] objects.
-  Future<Map<String, BusShape>> getShapes() async {
-    var response = await fetch('busShapes',
-        query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
+  /// Returns a [Map] of [BusShape] objects.
+  Future<Map<String, BusShape>> getPolylines() async {
+    var response =
+        await fetch('polylines', idField: 'route_id', routes: defaultRoutes);
 
     Map<String, BusShape> shapesMap = response != null
-        ? Map.fromIterable(json.decode(response.body),
-            key: (json) => json['properties']['route_id'],
-            value: (json) => BusShape.fromJson(json))
+        ? Map.fromIterable(response.docs,
+            key: (doc) => doc['route_id'],
+            value: (doc) => BusShape.fromJson(json.decode(doc['geoJSON'])))
         : {};
     return shapesMap;
   }
 
   /// Returns a [List] of [BusStop] objects.
-  Future<List<BusStop>> getStops() async {
-    var response = await fetch('busStops',
-        query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
+  // Future<List<BusStop>> getStops() async {
+  //   var response = await fetch('busStops',
+  //       query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
 
-    List<BusStop> stopsList = response != null
-        ? json
-            .decode(response.body)
-            .map<BusStop>((json) => BusStop.fromJson(json))
-            .toList()
-        : [];
-    return stopsList;
-  }
+  //   List<BusStop> stopsList = response != null
+  //       ? json
+  //           .decode(response.body)
+  //           .map<BusStop>((json) => BusStop.fromJson(json))
+  //           .toList()
+  //       : [];
+  //   return stopsList;
+  // }
 
   /// Returns a [List] of [BusTripUpdate] objects.
   Future<List<BusTripUpdate>> getTripUpdates() async {
-    var response = await http
-        .get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
-        
+    var response =
+        await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
+
     Set<String> routeIds = {'87', '286', '289'};
 
     List<BusTripUpdate> tripUpdatesList = response != null
@@ -105,21 +95,21 @@ class BusProvider {
     return tripUpdatesList;
   }
 
-  /// Returns a [List] of [BusTrip] objects.
-  Future<List<BusTrip>> getTrip() async {
-    var response = await fetch('busTrips', query: {
-      'query': '{"route_id": ["87-184","286-184","289-184"]}'
-    }); //trips for 87,286 and 289
+  // /// Returns a [List] of [BusTrip] objects.
+  // Future<List<BusTrip>> getTrip() async {
+  //   var response = await fetch('busTrips', query: {
+  //     'query': '{"route_id": ["87-184","286-184","289-184"]}'
+  //   }); //trips for 87,286 and 289
 
-    List<BusTrip> tripList = response != null
-        ? json
-            .decode(response.body)
-            .map<BusTrip>((json) => BusTrip.fromJson(json))
-            .toList()
-        : [];
+  //   List<BusTrip> tripList = response != null
+  //       ? json
+  //           .decode(response.body)
+  //           .map<BusTrip>((json) => BusTrip.fromJson(json))
+  //           .toList()
+  //       : [];
 
-    return tripList;
-  }
+  //   return tripList;
+  // }
 
   /// Returns a [List] of [BusVehicleUpdate] objects.
   Future<List<BusVehicleUpdate>> getVehicleUpdates() async {
@@ -138,21 +128,21 @@ class BusProvider {
     return vehicleUpdatesList;
   }
 
-  ///Returns a [Map] of <[BusStop],[BusTimeTable]>
-  Future<Map<String, List<BusTimeTable>>> getBusTimeTable() async {
-    var response = await fetch("busTimetable");
-    Map<String, List<BusTimeTable>> retmap = {};
-    Map<String, dynamic> tablemap = response != null
-        ? (json.decode(response.body) as Map<String, dynamic>)
-        : [];
-    tablemap.forEach((key, value) {
-      List<dynamic> b = value["stops"];
-      List<BusTimeTable> bl =
-          b.map((element) => BusTimeTable.fromJson(element)).toList();
-      retmap[key] = bl;
-    });
-    return retmap;
-  }
+  // ///Returns a [Map] of <[BusStop],[BusTimeTable]>
+  // Future<Map<String, List<BusTimeTable>>> getBusTimeTable() async {
+  //   var response = await fetch("busTimetable");
+  //   Map<String, List<BusTimeTable>> retmap = {};
+  //   Map<String, dynamic> tablemap = response != null
+  //       ? (json.decode(response.body) as Map<String, dynamic>)
+  //       : [];
+  //   tablemap.forEach((key, value) {
+  //     List<dynamic> b = value["stops"];
+  //     List<BusTimeTable> bl =
+  //         b.map((element) => BusTimeTable.fromJson(element)).toList();
+  //     retmap[key] = bl;
+  //   });
+  //   return retmap;
+  // }
 
   /// Creates a JSON file [fileName] and stores it in a local directory.
   ///
