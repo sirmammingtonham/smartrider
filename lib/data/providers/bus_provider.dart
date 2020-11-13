@@ -23,7 +23,7 @@ import '../models/bus/bus_timetable.dart';
 /// Each member function decodes a json file and returns
 /// a dart iterable containing the relevent bus data object.
 class BusProvider {
-  final defaultRoutes = ['87-185', '286-185', '289-185'];
+  final defaultRoutes = ['87-185', '286-185', '289-185', '286-184',];
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   /// Fetchs data from the JSON API and returns a decoded JSON.
@@ -31,7 +31,7 @@ class BusProvider {
       {String idField, List routes}) async {
     return firestore
         .collection(collection)
-        .where(idField, arrayContainsAny: routes)
+        .where(idField, whereIn: routes)
         .get();
   }
 
@@ -128,21 +128,28 @@ class BusProvider {
     return vehicleUpdatesList;
   }
 
-  // ///Returns a [Map] of <[BusStop],[BusTimeTable]>
-  // Future<Map<String, List<BusTimeTable>>> getBusTimeTable() async {
-  //   var response = await fetch("busTimetable");
-  //   Map<String, List<BusTimeTable>> retmap = {};
-  //   Map<String, dynamic> tablemap = response != null
-  //       ? (json.decode(response.body) as Map<String, dynamic>)
-  //       : [];
-  //   tablemap.forEach((key, value) {
-  //     List<dynamic> b = value["stops"];
-  //     List<BusTimeTable> bl =
-  //         b.map((element) => BusTimeTable.fromJson(element)).toList();
-  //     retmap[key] = bl;
-  //   });
-  //   return retmap;
-  // }
+  ///Returns a [Map] of <[BusStop],[BusTimeTable]>
+  Future<Map<String, List<BusTimeTable>>> getBusTimeTable() async {
+    var test = await firestore
+        .collection('timetables')
+        .where('route_id', whereIn: defaultRoutes)
+        .get();
+    test.docs.forEach((element) {
+      print(element['route_id']);
+    });
+    // var response = await fetch("busTimetable");
+    Map<String, List<BusTimeTable>> retmap = {};
+    // Map<String, dynamic> tablemap = response != null
+    //     ? (json.decode(response.body) as Map<String, dynamic>)
+    //     : [];
+    // tablemap.forEach((key, value) {
+    //   List<dynamic> b = value["stops"];
+    //   List<BusTimeTable> bl =
+    //       b.map((element) => BusTimeTable.fromJson(element)).toList();
+    //   retmap[key] = bl;
+    // });
+    return retmap;
+  }
 
   /// Creates a JSON file [fileName] and stores it in a local directory.
   ///
