@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smartrider/data/models/bus/pb/gtfs-realtime.pb.dart';
 
@@ -23,7 +24,12 @@ import '../models/bus/bus_timetable.dart';
 /// Each member function decodes a json file and returns
 /// a dart iterable containing the relevent bus data object.
 class BusProvider {
-  final defaultRoutes = ['87-185', '286-185', '289-185', '286-184',];
+  final defaultRoutes = [
+    '87-185',
+    '286-185',
+    '289-185',
+    '286-184',
+  ];
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   /// Fetchs data from the JSON API and returns a decoded JSON.
@@ -130,24 +136,22 @@ class BusProvider {
 
   ///Returns a [Map] of <[BusStop],[BusTimeTable]>
   Future<Map<String, List<BusTimeTable>>> getBusTimeTable() async {
-    var test = await firestore
+    var day = DateFormat('EEEE').format(DateTime.now());
+    var response = await firestore
         .collection('timetables')
         .where('route_id', whereIn: defaultRoutes)
         .get();
-    test.docs.forEach((element) {
-      print(element['route_id']);
-    });
-    // var response = await fetch("busTimetable");
+
     Map<String, List<BusTimeTable>> retmap = {};
-    // Map<String, dynamic> tablemap = response != null
-    //     ? (json.decode(response.body) as Map<String, dynamic>)
-    //     : [];
-    // tablemap.forEach((key, value) {
-    //   List<dynamic> b = value["stops"];
-    //   List<BusTimeTable> bl =
-    //       b.map((element) => BusTimeTable.fromJson(element)).toList();
-    //   retmap[key] = bl;
-    // });
+    for (QueryDocumentSnapshot route in response.docs) {
+      List<BusTimeTable> currentTable = [];
+      var table = await route.reference.collection(day.toLowerCase()).orderBy('stop_sequence').get();
+      for (var stop in table.docs) {
+        currentTable.add(BusTimeTable.fromJson(stop.data()));
+      }
+      retmap[route['route_id']] = currentTable;
+    }
+
     return retmap;
   }
 

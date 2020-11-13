@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/data/repository/authentication_repository.dart';
@@ -27,9 +28,8 @@ class TestApp extends StatelessWidget {
 
   test() {
     provider.getBusTimeTable().then((res) {
-      print("bruh");
+      print(res);
     });
-    return;
   }
 
   @override
