@@ -170,7 +170,15 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                                             shuttleStopLists[idx][index][2]));
                                   }
                                   if (selected == choices[2]) {
-                                    scheduleAlarm();
+                                    DateTime scheduleAlarmDateTime;
+                                    /*
+                                    * scheduleAlarmDateTime should be set to the amount of
+                                    * time till the stop... This time will probably be taken from
+                                    * the 'In 11 minutes' where this part will just take the '11'
+                                    * variable and the seconds/minutes
+                                    */
+                                    scheduleAlarmDateTime = DateTime.now().add(Duration(seconds: 1));
+                                    scheduleAlarm(scheduleAlarmDateTime);
                                   }
                                 },
                                 itemBuilder: (BuildContext context) => choices
@@ -189,9 +197,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     );
   }
 
-  Future<void> scheduleAlarm() async {
-    var scheduledNotificationDateTime =
-        DateTime.now().add(Duration(seconds: 10));
+  Future<void> scheduleAlarm(DateTime scheduledNotificationDateTime) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'alarm_notif',
       'alarm_notif',
@@ -209,8 +215,8 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await fltrNotification.schedule(
         0,
-        'Test',
-        'bruh',
+        'Shuttle Reminder', //
+        'Shuttle x is arriving in x minutes', //"Shuttle x is arriving in x minutes"
         scheduledNotificationDateTime,
         platformChannelSpecifics);
   }
