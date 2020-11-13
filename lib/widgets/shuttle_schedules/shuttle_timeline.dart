@@ -159,6 +159,18 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                               '${shuttleTimeLists[idx][timeIndex]}',
                               style: TextStyle(fontSize: 15),
                             ),
+                            /*
+                            * Here we should add the use of DateTime.now()
+                            * When the backend team is complete of full implementing
+                            * time.dart file we can use each objects values to find the
+                            * difference to the current time.
+                            * EX:
+                            * var current_time = new DateTime.now();
+                            * var shuttle_time = new DateTime.parse(2002-02-27T19:00:00Z);
+                            * Duration difference = shuttle_time.difference(current_time);
+                            * "difference.inMinutes" should print out a int that can be given
+                            * to the user
+                            */
                             subtitle: Text('In 11 minutes'),
                             trailing: PopupMenuButton<String>(
                                 onSelected: (String selected) {
@@ -172,12 +184,17 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                                   if (selected == choices[2]) {
                                     DateTime scheduleAlarmDateTime;
                                     /*
-                                    * scheduleAlarmDateTime should be set to the amount of
-                                    * time till the stop... This time will probably be taken from
-                                    * the 'In 11 minutes' where this part will just take the '11'
-                                    * variable and the seconds/minutes
+                                    * DateTime.parse() should be used directly from the bus/shuttle
+                                    * api which generates the time and date of each stop.
+                                    * We parse it into scheduleAlarmDateTime to be used as a
+                                    * alarm.
+                                    * Currently backend will be working on this so this is a work
+                                    * in progress.
+                                    * EX:
+                                    * scheduleAlarmDateTime = DateTime.parse(*shuttle_timeline object string*);
+                                    * *2020-11-13T18:04:00*
                                     */
-                                    scheduleAlarmDateTime = DateTime.now().add(Duration(seconds: 1));
+                                    scheduleAlarmDateTime = DateTime.now().add(Duration(minutes: 1));
                                     scheduleAlarm(scheduleAlarmDateTime);
                                   }
                                 },
