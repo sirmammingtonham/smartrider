@@ -26,10 +26,16 @@ void main() async {
 class TestApp extends StatelessWidget {
   final provider = BusProvider();
 
-  test() {
-    provider.getBusTimeTable().then((res) {
-      print(res);
-    });
+  Future<void> test() async {
+    print(await provider.getRoutes());
+    print(await provider.getPolylines());
+    print(await provider.getStops());
+    print(await provider.getTrips());
+    // print(await provider.getBusTimetable());
+
+    // print(await provider.getTripUpdates());
+    // print(await provider.getVehicleUpdates());
+    return;
   }
 
   @override
@@ -45,7 +51,10 @@ class TestApp extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            test();
+            Stopwatch stopwatch = new Stopwatch()..start();
+            test().then((_) {
+              print('executed in ${stopwatch.elapsed}');
+            });
           },
           child: Icon(Icons.ac_unit),
         ),

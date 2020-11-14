@@ -1,4 +1,3 @@
-import { GeoJSONObject } from "@turf/turf";
 /// firestore types
 // think about grouping tables with the same id together
 // merge calendar and calendar dates? other stuff with same id column?
@@ -23,7 +22,7 @@ export type Calendar = {
   end_date: number;
   exceptions: {
     [date: number]: number;
-  }
+  };
 };
 
 export type Route = {
@@ -55,25 +54,29 @@ export type Shape = {
 };
 
 export type Stop = {
-  stop_id: string,
-  stop_code: number,
-  stop_name: string,
-  stop_desc: string,
-  stop_lat: number,
-  stop_lon: number,
-  zone_id: string,
-  stop_url: string,
-  location_type: number,
-  parent_station: number,
-  stop_timezone: string,
-  wheelchair_boarding: number,
-  leved_id: number,
-  platform_code: string,
+  stop_id: string;
+  stop_code: number;
+  stop_name: string;
+  stop_desc: string;
+  stop_lat: number;
+  stop_lon: number;
+  zone_id: string;
+  stop_url: string;
+  location_type: number;
+  parent_station: number;
+  stop_timezone: string;
+  wheelchair_boarding: number;
+  leved_id: number;
+  platform_code: string;
 
   // nonstandard, for convenience
-  stop_sequence: number[],
-  arrival_times: number[], // in seconds since midnight
-  departure_times: number[],  // in seconds since midnight
+  stop_sequence: number[];
+  arrival_times: number[]; // in seconds since midnight
+  departure_times: number[]; // in seconds since midnight
+
+  route_ids: string[];
+  shape_ids: string[];
+  trip_ids: string[];
 };
 
 export type Trip = {
@@ -90,22 +93,17 @@ export type Trip = {
 };
 
 export type Polyline = {
-  route_id: string,
-  type: string,
+  route_id: string;
+  type: string;
   geoJSON: string; // convert to string so we can just pass it to request
-}
-
-
-export type Timetable = {
-  stop_id: string,
-  stop_name: string,
-  service_id: string,
-  stop_lat: number,
-  stop_lon: number,
-  stop_sequence: number,
-  stop_times: number[],
-  
 };
 
-// export type Polyline = {}
-// just geojson
+export type Timetable = {
+  stop_id: string;
+  stop_name: string;
+  service_id: string;
+  stop_lat: number;
+  stop_lon: number;
+  stop_sequence: number;
+  stop_times: number[];
+};

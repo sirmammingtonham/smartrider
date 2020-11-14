@@ -1,40 +1,41 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:smartrider/data/models/bus/pb/gtfs-realtime.pb.dart';
 
+/// static gtfs models
 import '../models/bus/bus_route.dart';
 import '../models/bus/bus_shape.dart';
-//import '../models/bus/bus_stop_time.dart';
 import '../models/bus/bus_stop.dart';
-import '../models/bus/bus_trip_update.dart';
-import '../models/bus/bus_vehicle_update.dart';
 import '../models/bus/bus_trip.dart';
 import '../models/bus/bus_timetable.dart';
 
+/// realtime gtfs models
+import '../models/bus/bus_trip_update.dart';
+import '../models/bus/bus_vehicle_update.dart';
+
 /// A provider for Bus data.
 ///
-/// Implemented as a collection of functions that utilizes
-/// a REST API to retrieve json files of bus data.
-/// Each member function decodes a json file and returns
-/// a dart iterable containing the relevent bus data object.
+/// Implemented as a collection of functions that utilizes the cloud
+/// firestore to retrieve bus gtfs data.
+/// Each member function queries the firestore and returns
+/// a map containing route names and their relevent bus data object.
 class BusProvider {
-  final defaultRoutes = [
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  static const defaultRoutes = [
     '87-185',
     '286-185',
     '289-185',
     '286-184',
   ];
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   /// Fetchs data from the JSON API and returns a decoded JSON.
   Future<QuerySnapshot> fetch(String collection,
-      {String idField, List routes}) async {
+      {String idField = 'route_id', List routes = defaultRoutes}) async {
     return firestore
         .collection(collection)
         .where(idField, whereIn: routes)
@@ -46,108 +47,120 @@ class BusProvider {
 
   /// Returns a [Map] of <[BusRoute.routeShortName], [BusRoute]>  pairs.
   Future<Map<String, BusRoute>> getRoutes() async {
-    var response =
+    QuerySnapshot response =
         await fetch('routes', idField: 'route_id', routes: defaultRoutes);
 
-    Map<String, BusRoute> routeMap = response != null
-        ? Map.fromIterable(response.docs,
-            key: (doc) => doc['route_short_name'],
-            value: (doc) => BusRoute.fromJson(doc))
-        : {};
+    Map<String, BusRoute> routeMap = Map.fromIterable(response.docs,
+        key: (doc) => doc['route_short_name'],
+        value: (doc) => BusRoute.fromJson(doc.data()));
     return routeMap;
   }
 
   /// Returns a [Map] of [BusShape] objects.
   Future<Map<String, BusShape>> getPolylines() async {
-    var response =
+    QuerySnapshot response =
         await fetch('polylines', idField: 'route_id', routes: defaultRoutes);
 
-    Map<String, BusShape> shapesMap = response != null
-        ? Map.fromIterable(response.docs,
-            key: (doc) => doc['route_id'],
-            value: (doc) => BusShape.fromJson(json.decode(doc['geoJSON'])))
-        : {};
+    Map<String, BusShape> shapesMap = Map.fromIterable(response.docs,
+        key: (doc) => doc['route_id'],
+        value: (doc) => BusShape.fromJson(json.decode(doc['geoJSON'])));
     return shapesMap;
   }
 
-  /// Returns a [List] of [BusStop] objects.
-  // Future<List<BusStop>> getStops() async {
-  //   var response = await fetch('busStops',
-  //       query: {'query': '{"route_id": ["87-184","286-184","289-184"]}'});
+  /// Returns a [Map] of [BusStop] objects.
+  Future<List<BusStop>> getStops() async {
+    QuerySnapshot response = await firestore
+        .collection('stops')
+        .where('route_ids', arrayContainsAny: defaultRoutes)
+        .get();
 
-  //   List<BusStop> stopsList = response != null
-  //       ? json
-  //           .decode(response.body)
-  //           .map<BusStop>((json) => BusStop.fromJson(json))
-  //           .toList()
-  //       : [];
-  //   return stopsList;
+    List<BusStop> stopsList = response.docs
+        .map<BusStop>((doc) => BusStop.fromJson(doc.data()))
+        .toList();
+
+    return stopsList;
+  }
+
+  // /// Returns a [Map] of [BusStop] objects.
+  // Future<Map<String, List<BusStop>>> getStops() async {
+  //   QuerySnapshot response = await firestore
+  //       .collection('stops')
+  //       .where('route_ids', arrayContainsAny: defaultRoutes)
+  //       .get();
+
+  //   Map<String, List<BusStop>> stopsMap = {};
+  //   for (QueryDocumentSnapshot doc in response.docs) {
+  //     for (String routeId in doc['route_ids']) {
+  //       if (!stopsMap.containsKey(routeId)) {
+  //         stopsMap[routeId] = [BusStop.fromJson(doc.data())];
+  //       } else {
+  //         stopsMap[routeId].add(BusStop.fromJson(doc.data()));
+  //       }
+  //     }
+  //   }
+  //   return stopsMap;
   // }
+
+  /// Returns a [List] of [BusTrip] objects.
+  Future<Map<String, BusTrip>> getTrips() async {
+    QuerySnapshot response =
+        await fetch('trips', idField: 'route_id', routes: defaultRoutes);
+
+    Map<String, BusTrip> tripList = Map.fromIterable(response.docs,
+        key: (doc) => doc['route_id'],
+        value: (doc) => BusTrip.fromJson(doc.data()));
+
+    return tripList;
+  }
 
   /// Returns a [List] of [BusTripUpdate] objects.
   Future<List<BusTripUpdate>> getTripUpdates() async {
-    var response =
+    http.Response response =
         await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
-
-    Set<String> routeIds = {'87', '286', '289'};
 
     List<BusTripUpdate> tripUpdatesList = response != null
         ? FeedMessage.fromBuffer(response.bodyBytes)
             .entity
             .map((entity) => BusTripUpdate.fromPBEntity(entity))
-            .where((update) => routeIds.contains(update.routeId))
+            .where((update) => defaultRoutes.contains(update.routeId))
             .toList()
         : [];
     return tripUpdatesList;
   }
 
-  // /// Returns a [List] of [BusTrip] objects.
-  // Future<List<BusTrip>> getTrip() async {
-  //   var response = await fetch('busTrips', query: {
-  //     'query': '{"route_id": ["87-184","286-184","289-184"]}'
-  //   }); //trips for 87,286 and 289
-
-  //   List<BusTrip> tripList = response != null
-  //       ? json
-  //           .decode(response.body)
-  //           .map<BusTrip>((json) => BusTrip.fromJson(json))
-  //           .toList()
-  //       : [];
-
-  //   return tripList;
-  // }
-
   /// Returns a [List] of [BusVehicleUpdate] objects.
   Future<List<BusVehicleUpdate>> getVehicleUpdates() async {
-    var response = await http
+    http.Response response = await http
         .get('http://64.128.172.149:8080/gtfsrealtime/VehiclePositions');
-
-    Set<String> routeIds = {'87', '286', '289'};
 
     List<BusVehicleUpdate> vehicleUpdatesList = response != null
         ? FeedMessage.fromBuffer(response.bodyBytes)
             .entity
             .map((entity) => BusVehicleUpdate.fromPBEntity(entity))
-            .where((update) => routeIds.contains(update.routeId))
+            .where((update) => defaultRoutes.contains(update.routeId))
             .toList()
         : [];
     return vehicleUpdatesList;
   }
 
-  ///Returns a [Map] of <[BusStop],[BusTimeTable]>
-  Future<Map<String, List<BusTimeTable>>> getBusTimeTable() async {
-    var day = DateFormat('EEEE').format(DateTime.now());
-    var response = await firestore
+  /// Returns a [Map] of <route_name,[BusTimetable]>
+  Future<Map<String, List<BusTimetable>>> getBusTimetable() async {
+    String day = DateFormat('EEEE').format(DateTime.now());
+    QuerySnapshot response = await firestore
         .collection('timetables')
         .where('route_id', whereIn: defaultRoutes)
         .get();
 
-    Map<String, List<BusTimeTable>> retmap = {};
+    Map<String, List<BusTimetable>> retmap = {};
+    // since timetables are nested in subcollection we have to retrieve those
     for (QueryDocumentSnapshot route in response.docs) {
-      List<BusTimeTable> currentTable = [];
-      var table = await route.reference.collection(day.toLowerCase()).orderBy('stop_sequence').get();
+      List<BusTimetable> currentTable = [];
+      var table = await route.reference
+          .collection(day.toLowerCase())
+          .orderBy('stop_sequence') // order them by the stop sequence
+          .get();
       for (var stop in table.docs) {
-        currentTable.add(BusTimeTable.fromJson(stop.data()));
+        currentTable.add(BusTimetable.fromJson(stop.data()));
       }
       retmap[route['route_id']] = currentTable;
     }
@@ -155,14 +168,12 @@ class BusProvider {
     return retmap;
   }
 
-  /// Creates a JSON file [fileName] and stores it in a local directory.
-  ///
-  /// Does nothing if [fetch] cannot establish a connection
-  Future createJSONFile(String fileName, http.Response response) async {
-    if (response.statusCode == 200) {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/$fileName.json');
-      await file.writeAsString(response.body);
-    }
-  }
+  // Future<Map<String, List<List<String>>>> getBusTimetableFlat() async {
+  //   var timetable = await getBusTimetable();
+  //   Map<String, List<List<String>>> retmap = {};
+
+  //   timetable.forEach((route, table) {
+
+  //   });
+  // }
 }

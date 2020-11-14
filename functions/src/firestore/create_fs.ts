@@ -76,9 +76,9 @@ const parseRoutes = async (db: any) => {
   const routes = collection<models.Route>("routes");
   const query_res = await db.all(`
   SELECT r.*, 
-  Group_concat(t.trip_id)  AS trip_id, 
-  Group_concat(t.shape_id) AS shape_id, 
-  Group_concat(s.stop_id)  AS stop_id 
+  Group_concat(t.trip_id)  AS trip_ids, 
+  Group_concat(t.shape_id) AS shape_ids, 
+  Group_concat(s.stop_id)  AS stop_ids 
   FROM   routes r 
     INNER JOIN trips t 
             ON r.route_id = t.route_id 
@@ -102,9 +102,9 @@ const parseRoutes = async (db: any) => {
       route_sort_order: +query.route_sort_order,
       continuous_pickup: query.continuous_pickup,
       continuous_drop_off: query.continuous_drop_off,
-      trip_ids: [...new Set<string>(query.trip_id.split(","))],
-      shape_ids: [...new Set<string>(query.shape_id.split(","))],
-      stop_ids: [...new Set<string>(query.stop_id.split(","))],
+      trip_ids: [...new Set<string>(query.trip_ids.split(","))],
+      shape_ids: [...new Set<string>(query.shape_ids.split(","))],
+      stop_ids: [...new Set<string>(query.stop_ids.split(","))],
     });
   }).then(() => console.timeEnd("parseRoutes"));
 };
@@ -141,13 +141,20 @@ const parseStops = async (db: any) => {
   const stops = collection<models.Stop>("stops");
   const query_res = await db.all(`
   SELECT s.*, 
-  Group_concat(st.stop_sequence)       AS stop_sequence, 
-  Group_concat(st.arrival_timestamp)   AS arrival_times, 
-  Group_concat(st.departure_timestamp) AS departure_times 
-  FROM   stop_times st 
-    INNER JOIN stops s 
-            ON st.stop_id = s.stop_id 
-  GROUP  BY s.stop_id;
+       Group_concat(st.stop_sequence)       AS stop_sequence, 
+       Group_concat(st.arrival_timestamp)   AS arrival_times, 
+       Group_concat(st.departure_timestamp) AS departure_times, 
+       Group_concat(r.route_id)             AS route_ids, 
+       Group_concat(t.shape_id)             AS shape_ids, 
+       Group_concat(t.trip_id)              AS trip_ids 
+  FROM   routes r 
+        INNER JOIN trips t 
+                ON r.route_id = t.route_id 
+        INNER JOIN stop_times st 
+                ON t.trip_id = st.trip_id 
+        INNER JOIN stops s 
+                ON st.stop_id = s.stop_id 
+  GROUP  BY s.stop_id; 
   `);
 
   return Promise.map(query_res, (query: any) => {
@@ -169,6 +176,9 @@ const parseStops = async (db: any) => {
       stop_sequence: query.stop_sequence.split(",").map((x: string) => +x),
       arrival_times: query.arrival_times.split(",").map((x: string) => +x),
       departure_times: query.departure_times.split(",").map((x: string) => +x),
+      route_ids: [...new Set<string>(query.route_ids.split(","))],
+      shape_ids: [...new Set<string>(query.shape_ids.split(","))],
+      trip_ids: [...new Set<string>(query.trip_ids.split(","))],
     });
   }).then(() => console.timeEnd("parseStops"));
 };
@@ -371,19 +381,19 @@ const generateDB = async () => {
   await gtfs.import(config);
   await gtfs.openDb(config);
   const db = await gtfs.getDb();
-  await createIndexes(db);
+  // await createIndexes(db);
 
   // do the firestore stuff
   // await clearFirestore();
   return Promise.all([
-    parseAgency(db),
-    parseCalendar(db),
-    parseRoutes(db),
+    // parseAgency(db),
+    // parseCalendar(db),
+    // parseRoutes(db),
     parseStops(db),
-    parsePolylines(),
-    parseShapes(db),
-    parseTrips(db),
-    parseTimetables(db),
+    // parsePolylines(),
+    // parseShapes(db),
+    // parseTrips(db),
+    // parseTimetables(db),
   ]);
 };
 

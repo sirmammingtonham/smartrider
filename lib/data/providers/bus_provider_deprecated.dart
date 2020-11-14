@@ -138,17 +138,17 @@ class BusProvider {
     return vehicleUpdatesList;
   }
 
-  ///Returns a [Map] of <[BusStop],[BusTimeTable]>
-  Future<Map<String, List<BusTimeTable>>> getBusTimeTable() async {
+  ///Returns a [Map] of <[BusStop],[BusTimetable]>
+  Future<Map<String, List<BusTimetable>>> getBusTimeTable() async {
     var response = await fetch("busTimetable");
-    Map<String, List<BusTimeTable>> retmap = {};
+    Map<String, List<BusTimetable>> retmap = {};
     Map<String, dynamic> tablemap = response != null
         ? (json.decode(response.body) as Map<String, dynamic>)
         : [];
     tablemap.forEach((key, value) {
       List<dynamic> b = value["stops"];
-      List<BusTimeTable> bl =
-          b.map((element) => BusTimeTable.fromJson(element)).toList();
+      List<BusTimetable> bl =
+          b.map((element) => BusTimetable.fromJson(element)).toList();
       retmap[key] = bl;
     });
     return retmap;

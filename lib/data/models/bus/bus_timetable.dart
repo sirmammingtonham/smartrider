@@ -1,13 +1,13 @@
-class BusTimeTable {
+class BusTimetable {
   String routeId;
   String stopName;
   String serviceId;
   double stopLat;
   double stopLon;
   int stopSequence;
-  List<String> stopTimes;
+  List<int> stopTimes;
 
-  BusTimeTable(
+  BusTimetable(
       {this.routeId,
       this.stopName,
       this.serviceId,
@@ -16,14 +16,16 @@ class BusTimeTable {
       this.stopSequence,
       this.stopTimes});
 
-  BusTimeTable.fromJson(Map<String, dynamic> json) {
+  
+
+  BusTimetable.fromJson(Map<String, dynamic> json) {
     routeId = json['route_id'];
     stopName = json['stop_name'];
     serviceId = json['service_id'];
     stopLat = json['stop_lat'];
     stopLon = json['stop_lon'];
     stopSequence = json['stop_sequence'];
-    stopTimes = json['stop_times'].cast<String>();
+    stopTimes = json['stop_times'];
   }
 
   Map<String, dynamic> toJson() {

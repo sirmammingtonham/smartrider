@@ -52,6 +52,8 @@ class BusTripUpdate {
     startDate = entity.tripUpdate.trip.startDate;
     routeId = entity.tripUpdate.trip.routeId;
 
+    stopTimeUpdate = [];
+
     entity.tripUpdate.stopTimeUpdate.forEach((entity) {
       stopTimeUpdate.add(StopTimeUpdate.fromPBEntity(entity));
     });
