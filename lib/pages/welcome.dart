@@ -80,14 +80,14 @@ class _SignupUIState extends State<SignupUI> {
 
   Widget logo() {
     return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
+      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
       child: Align(
         child: Container(
-          height: 250.0,
-          width: 250.0,
+          height: 400.0,
+          width: 400.0,
           decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("assets/app_icons/logo_v1.png")),
+                image: AssetImage("assets/app_icons/app_icon_word.png")),
           ),
         ),
         alignment: Alignment.center,
@@ -625,6 +625,7 @@ class _SignupUIState extends State<SignupUI> {
         body: Column(
           children: <Widget>[
             logo(),
+            /*
             Padding(
                 padding: EdgeInsets.only(top: 15),
                 child: Align(
@@ -638,13 +639,14 @@ class _SignupUIState extends State<SignupUI> {
                   ),
                   alignment: Alignment.center,
                 )),
+                */
             Padding(
               child: Container(
-                child: _button("LOGIN", primary, Theme.of(context).accentColor,
+                child: _button("LOGIN", primary, Theme.of(context).primaryColor,
                     Theme.of(context).accentColor, primary, _showLoginSheet),
                 height: 65,
               ),
-              padding: EdgeInsets.only(top: 100, left: 20, right: 20),
+              padding: EdgeInsets.only(top: 80, left: 20, right: 20),
             ),
             Padding(
               child: Container(
