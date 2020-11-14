@@ -101,21 +101,17 @@ class BusProvider {
     return tripUpdatesList;
   }
 
-  // /// Returns a [List] of [BusTrip] objects.
-  // Future<List<BusTrip>> getTrip() async {
-  //   var response = await fetch('busTrips', query: {
-  //     'query': '{"route_id": ["87-184","286-184","289-184"]}'
-  //   }); //trips for 87,286 and 289
+   /// Returns a [Map] of <[trip_id],[BusTrip]> objects.
+  Future<Map<String,BusTrip>> getTrip() async {
+    var response = await fetch('trips',idField: 'route_id',routes: defaultRoutes);
+    Map<String, BusTrip> tripMap = response != null
+        ? Map.fromIterable(response.docs,
+            key: (doc) => doc['trip_id'],
+            value: (doc) => BusTrip.fromJson(doc))
+        : {};
 
-  //   List<BusTrip> tripList = response != null
-  //       ? json
-  //           .decode(response.body)
-  //           .map<BusTrip>((json) => BusTrip.fromJson(json))
-  //           .toList()
-  //       : [];
-
-  //   return tripList;
-  // }
+    return tripMap;
+  }
 
   /// Returns a [List] of [BusVehicleUpdate] objects.
   Future<List<BusVehicleUpdate>> getVehicleUpdates() async {
