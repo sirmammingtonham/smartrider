@@ -25,7 +25,7 @@ import '../models/bus/bus_vehicle_update.dart';
 /// a map containing route names and their relevent bus data object.
 class BusProvider {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
+  
   static const defaultRoutes = [
     '87-185',
     '286-185',
@@ -68,7 +68,7 @@ class BusProvider {
   }
 
   /// Returns a [Map] of [BusStop] objects.
-  Future<List<BusStop>> getStops() async {
+  Future<Map<String, List<BusStop>>> getStops() async {
     QuerySnapshot response = await firestore
         .collection('stops')
         .where('route_ids', arrayContainsAny: defaultRoutes)
@@ -78,7 +78,14 @@ class BusProvider {
         .map<BusStop>((doc) => BusStop.fromJson(doc.data()))
         .toList();
 
-    return stopsList;
+    Map<String, List<BusStop>> stopsMap = {};
+
+    for (String route in defaultRoutes) {
+      stopsMap[route] =
+          stopsList.where((stop) => stop.routeIds.contains(route)).toList();
+    }
+
+    return stopsMap;
   }
 
   // /// Returns a [Map] of [BusStop] objects.

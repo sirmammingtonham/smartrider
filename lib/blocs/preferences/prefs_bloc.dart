@@ -30,9 +30,9 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
 
       // placeholders for now
       _buses = {
-        '87-184': true,
-        '286-184': true,
-        '289-184': true,
+        '87-185': true,
+        '286-185': true,
+        '289-185': true,
       };
       _sharedPrefs = await SharedPreferences.getInstance();
 
