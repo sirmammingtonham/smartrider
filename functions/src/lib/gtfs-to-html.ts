@@ -1,16 +1,23 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
 
 const {
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'clone'.
   clone,
   each,
   map,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'omit'.
   omit
 } = require('lodash');
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs-extra');
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'gtfs'.
 const gtfs = require('gtfs');
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'sanitize'.
 const sanitize = require('sanitize-filename');
 const Timer = require('timer-machine');
 
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fileUtils'... Remove this comment to see the full error message
 const fileUtils = require('./file-utils');
 const logUtils = require('./log-utils');
 const utils = require('./utils');
@@ -18,7 +25,7 @@ const utils = require('./utils');
 /*
  * Generate HTML timetables from GTFS.
  */
-module.exports = async initialConfig => {
+module.exports = async (initialConfig: any) => {
   const config = utils.setDefaultConfig(initialConfig);
   config.log = logUtils.log(config);
   config.logWarning = logUtils.logWarning(config);
@@ -29,7 +36,7 @@ module.exports = async initialConfig => {
     throw new Error('No agencies defined in `config.json`');
   }
 
-  return Promise.all(config.agencies.map(async agency => {
+  return Promise.all(config.agencies.map(async (agency: any) => {
     const timer = new Timer();
     const agencyKey = agency.agency_key;
     const exportPath = path.join(process.cwd(), 'html', sanitize(agencyKey));
@@ -65,6 +72,7 @@ module.exports = async initialConfig => {
 
       if (timetablePage.consolidatedTimetables.length === 0) {
         const warning = `No timetables found for timetable_page_id=${timetablePage.timetable_page_id}`;
+        // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
         outputStats.warnings.push(warning);
         bar.interrupt(logUtils.formatWarning(`${agencyKey}: ${warning}`));
         bar.tick();
@@ -73,6 +81,7 @@ module.exports = async initialConfig => {
 
       for (const timetable of timetablePage.timetables) {
         for (const warning of timetable.warnings) {
+          // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
           outputStats.warnings.push(warning);
           bar.interrupt(logUtils.formatWarning(`${agencyKey}: ${warning}`));
         }
@@ -91,8 +100,9 @@ module.exports = async initialConfig => {
 
       const results = await utils.generateHTML(timetablePage, config);
 
-      each(outputStats, (stat, key) => {
+      each(outputStats, (stat: any, key: any) => {
         if (results.stats[key]) {
+          // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           outputStats[key] += results.stats[key];
         }
       });

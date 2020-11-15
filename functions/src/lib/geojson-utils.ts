@@ -1,4 +1,6 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'gtfs'.
 const gtfs = require('gtfs');
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'flatMap'.
 const { flatMap } = require('lodash');
 const simplify = require('@turf/simplify');
 const { featureCollection } = require('@turf/helpers');
@@ -6,12 +8,13 @@ const { featureCollection } = require('@turf/helpers');
 /*
  * Merge any number of geojson objects into one. Only works for `FeatureCollection`.
  */
-const mergeGeojson = (...geojsons) => featureCollection(flatMap(geojsons, geojson => geojson.features));
+// @ts-expect-error ts-migrate(7019) FIXME: Rest parameter 'geojsons' implicitly has an 'any[]... Remove this comment to see the full error message
+const mergeGeojson = (...geojsons) => featureCollection(flatMap(geojsons, (geojson: any) => geojson.features));
 
 /*
  * Truncate a coordinate to a specific number of decimal places.
  */
-const truncateCoordinate = (coordinate, precision) => {
+const truncateCoordinate = (coordinate: any, precision: any) => {
   return [
     Math.round(coordinate[0] * (10 ** precision)) / (10 ** precision),
     Math.round(coordinate[1] * (10 ** precision)) / (10 ** precision)
@@ -21,13 +24,13 @@ const truncateCoordinate = (coordinate, precision) => {
 /*
  * Truncate a geojson coordinates to a specific number of decimal places.
  */
-const truncateGeoJSONDecimals = (geojson, config) => {
+const truncateGeoJSONDecimals = (geojson: any, config: any) => {
   for (const feature of geojson.features) {
     if (feature.geometry.coordinates) {
       if (feature.geometry.type.toLowerCase() === 'point') {
         feature.geometry.coordinates = truncateCoordinate(feature.geometry.coordinates, config.coordinatePrecision);
       } else if (feature.geometry.type.toLowerCase() === 'linestring') {
-        feature.geometry.coordinates = feature.geometry.coordinates.map(coordinate => truncateCoordinate(coordinate, config.coordinatePrecision));
+        feature.geometry.coordinates = feature.geometry.coordinates.map((coordinate: any) => truncateCoordinate(coordinate, config.coordinatePrecision));
       }
     }
   }
@@ -38,7 +41,7 @@ const truncateGeoJSONDecimals = (geojson, config) => {
 /*
  * Simplify geojson to a specific tolerance
  */
-const simplifyGeoJSON = (geojson, config) => {
+const simplifyGeoJSON = (geojson: any, config: any) => {
   try {
     const simplifiedGeojson = simplify(geojson, {
       tolerance: 1 / (10 ** config.coordinatePrecision),
@@ -56,15 +59,15 @@ const simplifyGeoJSON = (geojson, config) => {
 /*
  * Get the geoJSON for a timetable.
  */
-exports.getTimetableGeoJSON = async (timetable, config) => {
+exports.getTimetableGeoJSON = async (timetable: any, config: any) => {
   const [shapesGeojsons, stopsGeojsons] = await Promise.all([
-    await Promise.all(timetable.route_ids.map(routeId => {
+    await Promise.all(timetable.route_ids.map((routeId: any) => {
       return gtfs.getShapesAsGeoJSON({
         route_id: routeId,
         direction_id: timetable.direction_id
       });
     })),
-    await Promise.all(timetable.route_ids.map(routeId => {
+    await Promise.all(timetable.route_ids.map((routeId: any) => {
       return gtfs.getStopsAsGeoJSON({
         route_id: routeId,
         direction_id: timetable.direction_id
@@ -79,7 +82,7 @@ exports.getTimetableGeoJSON = async (timetable, config) => {
 /*
  * Get the geoJSON for an agency (all routes and stops).
  */
-exports.getAgencyGeoJSON = async config => {
+exports.getAgencyGeoJSON = async (config: any) => {
   const geojson = await gtfs.getShapesAsGeoJSON();
   return simplifyGeoJSON(geojson, config);
 };

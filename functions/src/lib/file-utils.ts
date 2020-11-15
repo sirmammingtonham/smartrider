@@ -1,11 +1,14 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
 
 const _ = require('lodash');
 const archiver = require('archiver');
 const beautify = require('js-beautify').html_beautify;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs-extra');
 const pug = require('pug');
 const puppeteer = require('puppeteer');
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'sanitize'.
 const sanitize = require('sanitize-filename');
 const untildify = require('untildify');
 
@@ -15,9 +18,9 @@ const templateFunctions = require('./template-functions');
 /*
  * Attempt to parse the specified config JSON file.
  */
-exports.getConfig = async argv => {
+exports.getConfig = async (argv: any) => {
   try {
-    const data = await fs.readFile(path.resolve(untildify(argv.configPath)), 'utf8').catch(error => {
+    const data = await fs.readFile(path.resolve(untildify(argv.configPath)), 'utf8').catch((error: any) => {
       console.error(new Error(`Cannot find configuration file at \`${argv.configPath}\`. Use config-sample.json as a starting point, pass --configPath option`));
       throw error;
     });
@@ -42,7 +45,7 @@ exports.getConfig = async argv => {
  * Get the full path of the template file for generating timetables based on
  * config.
  */
-function getTemplatePath(templateFileName, config) {
+function getTemplatePath(templateFileName: any, config: any) {
   const folderPath = config.templatePath === undefined ? path.join(__dirname, '..', 'views/timetable/') : path.join(untildify(config.templatePath));
   const filename = `${templateFileName}${(config.noHead === true) ? '' : '_full'}.pug`;
 
@@ -53,7 +56,7 @@ function getTemplatePath(templateFileName, config) {
  * Prepare the specified directory for saving HTML timetables by deleting
  * everything and creating the expected folders.
  */
-exports.prepDirectory = async exportPath => {
+exports.prepDirectory = async (exportPath: any) => {
   const staticAssetPath = path.join(__dirname, '..', 'public');
   await fs.remove(exportPath);
   await fs.ensureDir(exportPath);
@@ -64,7 +67,7 @@ exports.prepDirectory = async exportPath => {
 /*
  * Zips the content of the specified folder.
  */
-exports.zipFolder = exportPath => {
+exports.zipFolder = (exportPath: any) => {
   const output = fs.createWriteStream(path.join(exportPath, 'timetables.zip'));
   const archive = archiver('zip');
 
@@ -80,7 +83,7 @@ exports.zipFolder = exportPath => {
 /*
  * Generate the filename for a given timetable.
  */
-exports.generateFileName = (timetable, config) => {
+exports.generateFileName = (timetable: any, config: any) => {
   let filename = timetable.timetable_id;
 
   for (const route of timetable.routes) {
@@ -99,7 +102,7 @@ exports.generateFileName = (timetable, config) => {
 /*
  * Generates the folder name for a timetable page based on the date.
  */
-exports.generateFolderName = timetablePage => {
+exports.generateFolderName = (timetablePage: any) => {
   // Use first timetable in timetable page for start date and end date
   const timetable = timetablePage.consolidatedTimetables[0];
   if (!timetable.start_date || !timetable.end_date) {
@@ -112,7 +115,7 @@ exports.generateFolderName = timetablePage => {
 /*
  * Render the HTML for a timetable based on the config.
  */
-exports.renderFile = async (templateFileName, templateVars, config) => {
+exports.renderFile = async (templateFileName: any, templateVars: any, config: any) => {
   const templatePath = getTemplatePath(templateFileName, config);
 
   // Make template functions and lodash available inside pug templates.
@@ -133,7 +136,7 @@ exports.renderFile = async (templateFileName, templateVars, config) => {
 /*
  * Render the PDF for a timetable based on the config.
  */
-exports.renderPdf = async htmlPath => {
+exports.renderPdf = async (htmlPath: any) => {
   const pdfPath = htmlPath.replace(/html$/, 'pdf');
   const browser = await puppeteer.launch();
   const page = await browser.newPage();

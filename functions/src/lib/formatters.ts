@@ -1,34 +1,41 @@
 const {
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'clone'.
   clone,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'find'.
   find,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'first'.
   first,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'last'.
   last,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'sortBy'.
   sortBy,
   zipObject
 } = require('lodash');
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'moment'.
 const moment = require('moment');
 
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'timeUtils'... Remove this comment to see the full error message
 const timeUtils = require('./time-utils');
 
 /*
  * Replace all instances in a string with items from an object.
  */
-function replaceAll(string, mapObject) {
+function replaceAll(string: any, mapObject: any) {
   const re = new RegExp(Object.keys(mapObject).join('|'), 'gi');
-  return string.replace(re, matched => mapObject[matched]);
+  return string.replace(re, (matched: any) => mapObject[matched]);
 }
 
 /*
  * Determine if value is null or empty string
  */
-exports.isNullOrEmpty = value => {
+exports.isNullOrEmpty = (value: any) => {
   return value === null || value === '';
 };
 
 /*
  * Format a date for display.
  */
-exports.formatDate = (date, dateFormat) => {
+exports.formatDate = (date: any, dateFormat: any) => {
   if (date.holiday_name) {
     return date.holiday_name;
   }
@@ -39,13 +46,13 @@ exports.formatDate = (date, dateFormat) => {
 /*
  * Time to seconds
  */
-exports.timeToSeconds = time => moment.duration(time).asSeconds();
+exports.timeToSeconds = (time: any) => moment.duration(time).asSeconds();
 
 /*
  * Format a single stoptime
  */
 /* eslint-disable complexity */
-function formatStopTime(stoptime, timetable, config) {
+function formatStopTime(stoptime: any, timetable: any, config: any) {
   stoptime.classes = [];
 
   if (stoptime.type === 'arrival' && stoptime.arrival_time) {
@@ -109,7 +116,7 @@ function formatStopTime(stoptime, timetable, config) {
 /*
  * Find hourly times for each stop for hourly schedules.
  */
-function filterHourlyTimes(stops) {
+function filterHourlyTimes(stops: any) {
   // Find all stoptimes within the first 60 minutes
   const firstStopTimes = [];
   const firstTripMinutes = timeUtils.minutesAfterMidnight(stops[0].trips[0].arrival_time);
@@ -124,13 +131,13 @@ function filterHourlyTimes(stops) {
 
   // Sort stoptimes by minutes for first stop
   const firstStopTimesAndIndex = firstStopTimes.map((time, idx) => ({ idx, time }));
-  const sortedFirstStopTimesAndIndex = sortBy(firstStopTimesAndIndex, item => {
+  const sortedFirstStopTimesAndIndex = sortBy(firstStopTimesAndIndex, (item: any) => {
     return Number.parseInt(item.time.format('m'), 10);
   });
 
   // Filter and arrange stoptimes for all stops based on sort
-  return stops.map(stop => {
-    stop.hourlyTimes = sortedFirstStopTimesAndIndex.map(item => {
+  return stops.map((stop: any) => {
+    stop.hourlyTimes = sortedFirstStopTimesAndIndex.map((item: any) => {
       return timeUtils.fromGTFSTime(stop.trips[item.idx].arrival_time).format(':mm');
     });
 
@@ -142,7 +149,7 @@ function filterHourlyTimes(stops) {
  * Format a calendar's list of days for display using abbreviated day names.
  */
 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-exports.formatDays = (calendar, config) => {
+exports.formatDays = (calendar: any, config: any) => {
   const daysShort = config.daysShortStrings;
   let daysInARow = 0;
   let dayString = '';
@@ -185,7 +192,7 @@ exports.formatDays = (calendar, config) => {
 /*
  * Format a list of days for display using full names of days.
  */
-exports.formatDaysLong = (dayList, config) => {
+exports.formatDaysLong = (dayList: any, config: any) => {
   const mapObject = zipObject(config.daysShortStrings, config.daysStrings);
 
   return replaceAll(dayList, mapObject);
@@ -194,7 +201,7 @@ exports.formatDaysLong = (dayList, config) => {
 /*
  * Format a trip.
  */
-exports.formatTrip = (trip, timetable, calendars, config) => {
+exports.formatTrip = (trip: any, timetable: any, calendars: any, config: any) => {
   trip.calendar = find(calendars, { service_id: trip.service_id });
   trip.dayList = exports.formatDays(trip.calendar, config);
   trip.dayListLong = exports.formatDaysLong(trip.dayList, config);
@@ -202,7 +209,7 @@ exports.formatTrip = (trip, timetable, calendars, config) => {
   if (timetable.routes.length === 1) {
     trip.route_short_name = timetable.routes[0].route_short_name;
   } else {
-    const route = timetable.routes.find(route => route.route_id === trip.route_id);
+    const route = timetable.routes.find((route: any) => route.route_id === trip.route_id);
     trip.route_short_name = route.route_short_name;
   }
 
@@ -212,7 +219,7 @@ exports.formatTrip = (trip, timetable, calendars, config) => {
 /*
  * Format a frequency.
  */
-exports.formatFrequency = (frequency, config) => {
+exports.formatFrequency = (frequency: any, config: any) => {
   const startTime = timeUtils.fromGTFSTime(frequency.start_time);
   const endTime = timeUtils.fromGTFSTime(frequency.end_time);
   const headway = moment.duration(frequency.headway_secs, 'seconds');
@@ -225,7 +232,7 @@ exports.formatFrequency = (frequency, config) => {
 /*
  * Generate a timetable id.
  */
-exports.formatTimetableId = timetable => {
+exports.formatTimetableId = (timetable: any) => {
   let timetableId = `${timetable.route_ids.join('_')}|${timeUtils.calendarToCalendarCode(timetable)}`;
   if (!exports.isNullOrEmpty(timetable.direction_id)) {
     timetableId += `|${timetable.direction_id}`;
@@ -234,7 +241,7 @@ exports.formatTimetableId = timetable => {
   return timetableId;
 };
 
-function createEmptyStoptime(stopId, tripId) {
+function createEmptyStoptime(stopId: any, tripId: any) {
   return {
     id: null,
     trip_id: tripId,
@@ -255,12 +262,12 @@ function createEmptyStoptime(stopId, tripId) {
 /*
  * Format stops.
  */
-exports.formatStops = (stops, timetable, config) => {
+exports.formatStops = (stops: any, timetable: any, config: any) => {
   for (const trip of timetable.orderedTrips) {
     let stopIndex = 0;
     for (const [idx, stoptime] of trip.stoptimes.entries()) {
       // Find a stop for the matching stop_id greater than the last stopIndex
-      const stop = find(stops, (st, idx) => {
+      const stop = find(stops, (st: any, idx: any) => {
         if (st.stop_id === stoptime.stop_id && idx >= stopIndex) {
           stopIndex = idx;
           return true;
@@ -309,7 +316,7 @@ exports.formatStops = (stops, timetable, config) => {
  * Change all stoptimes of a trip so the first trip starts at midnight. Useful
  * for hourly schedules.
  */
-exports.resetStoptimesToMidnight = trip => {
+exports.resetStoptimesToMidnight = (trip: any) => {
   const offsetSeconds = timeUtils.secondsAfterMidnight(first(trip.stoptimes).departure_time);
   if (offsetSeconds > 0) {
     for (const stoptime of trip.stoptimes) {
@@ -325,8 +332,8 @@ exports.resetStoptimesToMidnight = trip => {
  * Change all stoptimes of a trip by a specified numger of seconds. Useful for
  * hourly schedules.
  */
-exports.updateStoptimesByOffset = (trip, offsetSeconds) => {
-  return trip.stoptimes.map(stoptime => {
+exports.updateStoptimesByOffset = (trip: any, offsetSeconds: any) => {
+  return trip.stoptimes.map((stoptime: any) => {
     delete stoptime._id;
     stoptime.departure_time = timeUtils.updateTimeByOffset(stoptime.departure_time, offsetSeconds);
     stoptime.arrival_time = timeUtils.updateTimeByOffset(stoptime.arrival_time, offsetSeconds);
@@ -338,7 +345,7 @@ exports.updateStoptimesByOffset = (trip, offsetSeconds) => {
 /*
  * Format a label for a timetable.
  */
-exports.formatTimetableLabel = timetable => {
+exports.formatTimetableLabel = (timetable: any) => {
   if (!exports.isNullOrEmpty(timetable.timetable_label)) {
     return timetable.timetable_label;
   }
@@ -372,7 +379,7 @@ exports.formatTimetableLabel = timetable => {
 /*
  * Format a label for a timetable page.
  */
-exports.formatTimetablePageLabel = timetablePage => {
+exports.formatTimetablePageLabel = (timetablePage: any) => {
   if (!exports.isNullOrEmpty(timetablePage.timetable_page_label)) {
     return timetablePage.timetable_page_label;
   }

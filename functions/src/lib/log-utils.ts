@@ -3,6 +3,7 @@ const readline = require('readline');
 const PrettyError = require('pretty-error').start();
 const { noop } = require('lodash');
 const chalk = require('chalk');
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'gtfs'.
 const gtfs = require('gtfs');
 const ProgressBar = require('progress');
 const Table = require('cli-table');
@@ -10,7 +11,7 @@ const Table = require('cli-table');
 /*
  * Creates text for a log of output details.
  */
-exports.generateLogText = async (agency, outputStats, config) => {
+exports.generateLogText = async (agency: any, outputStats: any, config: any) => {
   const feedInfo = await gtfs.getFeedInfo();
   const feedVersion = (feedInfo.length > 0 && feedInfo[0].feed_version) ? feedInfo[0].feed_version : 'Unknown';
 
@@ -42,7 +43,7 @@ exports.generateLogText = async (agency, outputStats, config) => {
 /*
  * Returns a log function based on config settings
  */
-exports.log = config => {
+exports.log = (config: any) => {
   if (config.verbose === false) {
     return noop;
   }
@@ -51,7 +52,7 @@ exports.log = config => {
     return config.logFunction;
   }
 
-  return (text, overwrite) => {
+  return (text: any, overwrite: any) => {
     if (overwrite === true) {
       readline.clearLine(process.stdout, 0);
       readline.cursorTo(process.stdout, 0);
@@ -66,12 +67,12 @@ exports.log = config => {
 /*
  * Returns an warning log function based on config settings
  */
-exports.logWarning = config => {
+exports.logWarning = (config: any) => {
   if (config.logFunction) {
     return config.logFunction;
   }
 
-  return text => {
+  return (text: any) => {
     process.stdout.write(`\n${exports.formatWarning(text)}\n`);
   };
 };
@@ -79,12 +80,12 @@ exports.logWarning = config => {
 /*
  * Returns an error log function based on config settings
  */
-exports.logError = config => {
+exports.logError = (config: any) => {
   if (config.logFunction) {
     return config.logFunction;
   }
 
-  return text => {
+  return (text: any) => {
     process.stdout.write(`\n${exports.formatError(text)}\n`);
   };
 };
@@ -92,21 +93,21 @@ exports.logError = config => {
 /*
  * Format console warning text
  */
-exports.formatWarning = text => {
+exports.formatWarning = (text: any) => {
   return `${chalk.yellow.underline('Warning')}${chalk.yellow(':')} ${chalk.yellow(text)}`;
 };
 
 /*
  * Format console error text
  */
-exports.formatError = error => {
+exports.formatError = (error: any) => {
   return `${chalk.red.underline('Error')}${chalk.red(':')} ${chalk.red(error.message.replace('Error: ', ''))}`;
 };
 
 /*
  * Print a table of stats to the console.
  */
-exports.logStats = (stats, config) => {
+exports.logStats = (stats: any, config: any) => {
   // Hide stats table from custom log functions
   if (config.logFunction) {
     return;
@@ -132,7 +133,7 @@ exports.logStats = (stats, config) => {
 /*
  * Print a progress bar to the console.
  */
-exports.progressBar = (formatString, barOptions, config) => {
+exports.progressBar = (formatString: any, barOptions: any, config: any) => {
   if (barOptions.total === 0) {
     return null;
   }
@@ -149,7 +150,7 @@ exports.progressBar = (formatString, barOptions, config) => {
     config.log(renderProgressString());
 
     return {
-      interrupt: text => {
+      interrupt: (text: any) => {
         config.logWarning(text);
       },
       tick: () => {

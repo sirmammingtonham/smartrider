@@ -1,16 +1,17 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'every'.
 const { every } = require('lodash');
 
 /*
  * Format an id to be used as an HTML attribute.
  */
-exports.formatHtmlId = id => id.replace(/([^\w[\]{}.:-])\s?/g, '');
+exports.formatHtmlId = (id: any) => id.replace(/([^\w[\]{}.:-])\s?/g, '');
 
 /*
  * Discern if a day list should be shown for a specific timetable (if some
  * trips happen on different days).
  */
-exports.timetableHasDifferentDays = timetable => {
-  return !every(timetable.orderedTrips, (trip, idx) => {
+exports.timetableHasDifferentDays = (timetable: any) => {
+  return !every(timetable.orderedTrips, (trip: any, idx: any) => {
     if (idx === 0) {
       return true;
     }
@@ -23,8 +24,8 @@ exports.timetableHasDifferentDays = timetable => {
  * Discern if a day list should be shown for a specific timetable page's menu (if some
  * timetables are for different days).
  */
-exports.timetablePageHasDifferentDays = timetablePage => {
-  return !every(timetablePage.consolidatedTimetables, (timetable, idx) => {
+exports.timetablePageHasDifferentDays = (timetablePage: any) => {
+  return !every(timetablePage.consolidatedTimetables, (timetable: any, idx: any) => {
     if (idx === 0) {
       return true;
     }
@@ -37,8 +38,8 @@ exports.timetablePageHasDifferentDays = timetablePage => {
  * Discern if individual timetable labels should be shown (if some
  * timetables have different labels).
  */
-exports.timetablePageHasDifferentLabels = timetablePage => {
-  return !every(timetablePage.consolidatedTimetables, (timetable, idx) => {
+exports.timetablePageHasDifferentLabels = (timetablePage: any) => {
+  return !every(timetablePage.consolidatedTimetables, (timetable: any, idx: any) => {
     if (idx === 0) {
       return true;
     }
@@ -50,7 +51,7 @@ exports.timetablePageHasDifferentLabels = timetablePage => {
 /*
  * Discern if a timetable has any notes or notices to display.
  */
-exports.hasNotesOrNotices = timetable => {
+exports.hasNotesOrNotices = (timetable: any) => {
   return timetable.requestPickupSymbolUsed ||
     timetable.noPickupSymbolUsed ||
     timetable.requestDropoffSymbolUsed ||
@@ -63,8 +64,8 @@ exports.hasNotesOrNotices = timetable => {
 /*
  * Return an array of all timetable notes that relate to the entire timetable or route.
  */
-exports.getNotesForTimetableLabel = notes => {
-  return notes.filter(note => {
+exports.getNotesForTimetableLabel = (notes: any) => {
+  return notes.filter((note: any) => {
     return !note.stop_id && !note.trip_id;
   });
 };
@@ -72,15 +73,15 @@ exports.getNotesForTimetableLabel = notes => {
 /*
  * Return an array of all timetable notes for a specific stop and stop_sequence.
  */
-exports.getNotesForStop = (notes, stop) => {
-  return notes.filter(note => {
+exports.getNotesForStop = (notes: any, stop: any) => {
+  return notes.filter((note: any) => {
     // Don't show if note applies only to a specific trip.
     if (note.trip_id) {
       return false;
     }
 
     // Don't show if note applies only to a specific stop_sequence that is not found.
-    if (note.stop_sequence && !stop.trips.find(trip => trip.stop_sequence === note.stop_sequence)) {
+    if (note.stop_sequence && !stop.trips.find((trip: any) => trip.stop_sequence === note.stop_sequence)) {
       return false;
     }
 
@@ -91,8 +92,8 @@ exports.getNotesForStop = (notes, stop) => {
 /*
  * Return an array of all timetable notes for a specific trip.
  */
-exports.getNotesForTrip = (notes, trip) => {
-  return notes.filter(note => {
+exports.getNotesForTrip = (notes: any, trip: any) => {
+  return notes.filter((note: any) => {
     // Don't show if note applies only to a specific stop.
     if (note.stop_id) {
       return false;
@@ -105,8 +106,8 @@ exports.getNotesForTrip = (notes, trip) => {
 /*
  * Return an array of all timetable notes for a specific stoptime.
  */
-exports.getNotesForStoptime = (notes, stoptime) => {
-  return notes.filter(note => {
+exports.getNotesForStoptime = (notes: any, stoptime: any) => {
+  return notes.filter((note: any) => {
     // Show notes that apply to all trips at this stop if `show_on_stoptime` is true.
     if (!note.trip_id && note.stop_id === stoptime.stop_id && note.show_on_stoptime === 1) {
       return true;

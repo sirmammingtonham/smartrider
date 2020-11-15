@@ -1,40 +1,51 @@
 const {
   cloneDeep,
   compact,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'every'.
   every,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'find'.
   find,
   findLast,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'first'.
   first,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'flatMap'.
   flatMap,
   flattenDeep,
   isEqual,
   groupBy,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'last'.
   last,
   maxBy,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'omit'.
   omit,
   orderBy,
   reduce,
   size,
   some,
+  // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'sortBy'.
   sortBy,
   uniq,
   uniqBy
 } = require('lodash');
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'gtfs'.
 const gtfs = require('gtfs');
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'moment'.
 const moment = require('moment');
 const sqlString = require('sqlstring');
 const toposort = require('toposort');
 
 const { version } = require('../package.json');
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fileUtils'... Remove this comment to see the full error message
 const fileUtils = require('./file-utils');
 const formatters = require('./formatters');
 const geoJSONUtils = require('./geojson-utils');
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'timeUtils'... Remove this comment to see the full error message
 const timeUtils = require('./time-utils');
 
 /*
  * Determine if a stoptime is a timepoint.
  */
-const isTimepoint = stoptime => {
+const isTimepoint = (stoptime: any) => {
   if (stoptime.timepoint === null) {
     return stoptime.arrival_time !== '' && stoptime.departure_time !== '';
   }
@@ -45,25 +56,25 @@ const isTimepoint = stoptime => {
 /*
  * Find the longest trip (most stops) in a group of trips and return stoptimes.
  */
-const getLongestTripStoptimes = (trips, config) => {
+const getLongestTripStoptimes = (trips: any, config: any) => {
   // If `showOnlyTimepoint` is true, then filter out all non-timepoints
-  const filteredTripStoptimes = config.showOnlyTimepoint === true ? trips.map(trip => trip.stoptimes.filter(stoptime => isTimepoint(stoptime))) : trips.map(trip => trip.stoptimes);
+  const filteredTripStoptimes = config.showOnlyTimepoint === true ? trips.map((trip: any) => trip.stoptimes.filter((stoptime: any) => isTimepoint(stoptime))) : trips.map((trip: any) => trip.stoptimes);
 
-  return maxBy(filteredTripStoptimes, stoptimes => size(stoptimes));
+  return maxBy(filteredTripStoptimes, (stoptimes: any) => size(stoptimes));
 };
 
 /*
  * Find the first stop_id that all trips have in common, otherwise use the first
  * stoptime.
  */
-const findCommonStopId = (trips, config) => {
+const findCommonStopId = (trips: any, config: any) => {
   const longestTripStoptimes = getLongestTripStoptimes(trips, config);
 
   if (!longestTripStoptimes) {
     return null;
   }
 
-  const commonStoptime = longestTripStoptimes.find((stoptime, idx) => {
+  const commonStoptime = longestTripStoptimes.find((stoptime: any, idx: any) => {
     // If longest trip is a loop (first and last stops the same), then skip first stoptime
     if (idx === 0 && stoptime.stop_id === last(longestTripStoptimes).stop_id) {
       return false;
@@ -75,8 +86,8 @@ const findCommonStopId = (trips, config) => {
     }
 
     // Check if all trips have this stoptime and that they have a time
-    return every(trips, trip => {
-      return trip.stoptimes.find(tripStoptime => tripStoptime.stop_id === stoptime.stop_id && tripStoptime.arrival_time !== null);
+    return every(trips, (trip: any) => {
+      return trip.stoptimes.find((tripStoptime: any) => tripStoptime.stop_id === stoptime.stop_id && tripStoptime.arrival_time !== null);
     });
   });
 
@@ -87,7 +98,7 @@ const findCommonStopId = (trips, config) => {
  * Return a set of unique trips (with at least one unique stop time) from an
  * array of trips.
  */
-const deduplicateTrips = (trips, commonStopId) => {
+const deduplicateTrips = (trips: any, commonStopId: any) => {
   // Remove duplicate trips (from overlapping service_ids)
   const deduplicatedTrips = [];
 
@@ -97,7 +108,7 @@ const deduplicateTrips = (trips, commonStopId) => {
       continue;
     }
 
-    const stoptimes = trip.stoptimes.map(stoptime => stoptime.departure_time);
+    const stoptimes = trip.stoptimes.map((stoptime: any) => stoptime.departure_time);
     const selectedStoptime = commonStopId ? find(trip.stoptimes, { stop_id: commonStopId }) : trip.stoptimes[0];
 
     // Find all other trips where the common stop has the same departure time
@@ -111,8 +122,8 @@ const deduplicateTrips = (trips, commonStopId) => {
     });
 
     // Only add trip if no existing trip with the same set of timepoints has already been added
-    const tripIsUnique = every(similarTrips, similarTrip => {
-      const similarTripStoptimes = similarTrip.stoptimes.map(stoptime => stoptime.departure_time);
+    const tripIsUnique = every(similarTrips, (similarTrip: any) => {
+      const similarTripStoptimes = similarTrip.stoptimes.map((stoptime: any) => stoptime.departure_time);
       return !isEqual(stoptimes, similarTripStoptimes);
     });
 
@@ -127,9 +138,9 @@ const deduplicateTrips = (trips, commonStopId) => {
 /*
  * Sort trips chronologically, using a common stop id if available, otherwise use the first stoptime.
  */
-const sortTrips = (trips, config) => {
+const sortTrips = (trips: any, config: any) => {
   let sortedTrips;
-  let commonStopId;
+  let commonStopId: any;
 
   if (['beginning', 'end'].includes(config.sortingAlgorithm)) {
     sortedTrips = sortTripsByStartOrEnd(trips, config);
@@ -138,7 +149,7 @@ const sortTrips = (trips, config) => {
       commonStopId = findCommonStopId(trips, config);
     }
 
-    sortedTrips = sortBy(trips, trip => {
+    sortedTrips = sortBy(trips, (trip: any) => {
       if (trip.stoptimes.length === 0) {
         return;
       }
@@ -165,7 +176,7 @@ const sortTrips = (trips, config) => {
 /*
  * Sort trips chronologically, using a common stop id if available, otherwise use the first stoptime.
  */
-const sortTripsByStartOrEnd = (trips, config) => {
+const sortTripsByStartOrEnd = (trips: any, config: any) => {
   let referenceStoptimes;
   let sortingDirection;
   let sortingOrder;
@@ -220,7 +231,7 @@ const sortTripsByStartOrEnd = (trips, config) => {
 /*
  * Get all calendar dates for a specific timetable.
  */
-const getCalendarDates = async (timetable, config) => {
+const getCalendarDates = async (timetable: any, config: any) => {
   const calendarDates = await gtfs.getCalendarDates({ service_id: timetable.service_ids }, [], [['date', 'ASC']]);
   const start = timeUtils.fromGTFSDate(timetable.start_date);
   const end = timeUtils.fromGTFSDate(timetable.end_date);
@@ -232,8 +243,10 @@ const getCalendarDates = async (timetable, config) => {
   for (const calendarDate of calendarDates) {
     if (moment(calendarDate.date, 'YYYYMMDD').isBetween(start, end)) {
       if (calendarDate.exception_type === 1) {
+        // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
         filteredCalendarDates.includedDates.push(formatters.formatDate(calendarDate, config.dateFormat));
       } else if (calendarDate.exception_type === 2) {
+        // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
         filteredCalendarDates.excludedDates.push(formatters.formatDate(calendarDate, config.dateFormat));
       }
     }
@@ -245,7 +258,7 @@ const getCalendarDates = async (timetable, config) => {
 /*
  * Get days of the week from calendars
  */
-const getDaysFromCalendars = calendars => {
+const getDaysFromCalendars = (calendars: any) => {
   const days = {
     monday: 0,
     tuesday: 0,
@@ -258,6 +271,7 @@ const getDaysFromCalendars = calendars => {
 
   for (const calendar of calendars) {
     Object.entries(days).forEach(([day, value]) => {
+      // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       days[day] = value | calendar[day];
     });
   }
@@ -268,7 +282,7 @@ const getDaysFromCalendars = calendars => {
 /*
  * Get the trip_headsign for a specific timetable.
  */
-const getDirectionHeadsignFromTimetable = async timetable => {
+const getDirectionHeadsignFromTimetable = async (timetable: any) => {
   const trips = await gtfs.getTrips({
     direction_id: timetable.direction_id,
     route_id: timetable.route_ids
@@ -286,25 +300,25 @@ const getDirectionHeadsignFromTimetable = async timetable => {
 /*
  * Get the notes for a specific timetable.
  */
-const getTimetableNotes = async (timetable, config) => {
+const getTimetableNotes = async (timetable: any, config: any) => {
   const noteReferences = [
     // Get all notes for this timetable
     ...await gtfs.getTimetableNotesReferences({ timetable_id: timetable.timetable_id }),
 
     // Get all notes for this route
     ...await gtfs.getTimetableNotesReferences({
-      route_id: timetable.routes.map(route => route.route_id),
+      route_id: timetable.routes.map((route: any) => route.route_id),
       timetable_id: null
     }),
 
     // Get all notes for all trips in this timetable
     ...await gtfs.getTimetableNotesReferences({
-      trip_id: timetable.orderedTrips.map(trip => trip.trip_id)
+      trip_id: timetable.orderedTrips.map((trip: any) => trip.trip_id)
     }),
 
     // Get all notes for all stops in this timetable
     ...await gtfs.getTimetableNotesReferences({
-      stop_id: timetable.stops.map(stop => stop.stop_id),
+      stop_id: timetable.stops.map((stop: any) => stop.stop_id),
       trip_id: null,
       route_id: null,
       timetable_id: null
@@ -325,13 +339,13 @@ const getTimetableNotes = async (timetable, config) => {
       continue;
     }
 
-    const stop = timetable.stops.find(stop => stop.stop_id === noteReference.stop_id);
+    const stop = timetable.stops.find((stop: any) => stop.stop_id === noteReference.stop_id);
 
     if (!stop) {
       continue;
     }
 
-    const tripWithMatchingStopSequence = stop.trips.find(trip => trip.stop_sequence === noteReference.stop_sequence);
+    const tripWithMatchingStopSequence = stop.trips.find((trip: any) => trip.stop_sequence === noteReference.stop_sequence);
 
     if (tripWithMatchingStopSequence) {
       usedNoteReferences.push(noteReference);
@@ -353,7 +367,7 @@ const getTimetableNotes = async (timetable, config) => {
   const formattedNotes = usedNoteReferences.map(noteReference => {
     return {
       ...noteReference,
-      ...notes.find(note => note.note_id === noteReference.note_id)
+      ...notes.find((note: any) => note.note_id === noteReference.note_id)
     };
   });
 
@@ -364,7 +378,7 @@ const getTimetableNotes = async (timetable, config) => {
  * Create a timetable page from a single timetable. Used if no
  * `timetable_pages.txt` is present.
  */
-const convertTimetableToTimetablePage = async (timetable, config) => {
+const convertTimetableToTimetablePage = async (timetable: any, config: any) => {
   if (!timetable.routes) {
     timetable.routes = await gtfs.getRoutes({ route_id: timetable.route_ids });
   }
@@ -384,7 +398,7 @@ const convertTimetableToTimetablePage = async (timetable, config) => {
  * is present.
  */
 /* eslint-disable max-params */
-const convertRouteToTimetablePage = (route, direction, calendars, calendarDates, config) => {
+const convertRouteToTimetablePage = (route: any, direction: any, calendars: any, calendarDates: any, config: any) => {
   const timetable = {
     route_ids: [route.route_id],
     direction_id: direction ? direction.direction_id : undefined,
@@ -408,10 +422,11 @@ const convertRouteToTimetablePage = (route, direction, calendars, calendarDates,
     // Get days of week from calendars and assign to timetable
     Object.assign(timetable, getDaysFromCalendars(calendars));
 
-    timetable.start_date = timeUtils.toGTFSDate(moment.min(calendars.map(calendar => timeUtils.fromGTFSDate(calendar.start_date))));
-    timetable.end_date = timeUtils.toGTFSDate(moment.max(calendars.map(calendar => timeUtils.fromGTFSDate(calendar.end_date))));
+    timetable.start_date = timeUtils.toGTFSDate(moment.min(calendars.map((calendar: any) => timeUtils.fromGTFSDate(calendar.start_date))));
+    timetable.end_date = timeUtils.toGTFSDate(moment.max(calendars.map((calendar: any) => timeUtils.fromGTFSDate(calendar.end_date))));
   }
 
+  // @ts-expect-error ts-migrate(2339) FIXME: Property 'timetable_id' does not exist on type '{ ... Remove this comment to see the full error message
   timetable.timetable_id = formatters.formatTimetableId(timetable);
 
   return convertTimetableToTimetablePage(timetable, config);
@@ -421,28 +436,28 @@ const convertRouteToTimetablePage = (route, direction, calendars, calendarDates,
  * Create timetable pages for all routes in an agency. Used if no
  * `timetables.txt` is present.
  */
-const convertRoutesToTimetablePages = async config => {
+const convertRoutesToTimetablePages = async (config: any) => {
   const db = gtfs.getDb();
   const routes = await gtfs.getRoutes();
-  const timetablePages = await Promise.all(routes.map(async route => {
+  const timetablePages = await Promise.all(routes.map(async (route: any) => {
     const trips = await gtfs.getTrips({
       route_id: route.route_id
     }, [
       'trip_headsign',
       'direction_id'
     ]);
-    const directions = uniqBy(trips, trip => trip.direction_id);
+    const directions = uniqBy(trips, (trip: any) => trip.direction_id);
 
     const calendars = await gtfs.getCalendars();
 
     // Find all calendar dates with service_ids not present in calendar.txt
-    const serviceIds = calendars.map(calendar => calendar.service_id);
+    const serviceIds = calendars.map((calendar: any) => calendar.service_id);
     const calendarDates = await db.all(`SELECT * FROM calendar_dates WHERE exception_type = 1 AND service_id NOT IN (${serviceIds.map(() => '?').join(', ')})`, serviceIds);
 
     const dayGroups = groupBy(calendars, timeUtils.calendarToCalendarCode);
     const calendarDateGroups = groupBy(calendarDates, 'service_id');
 
-    return Promise.all(directions.map(direction => {
+    return Promise.all(directions.map((direction: any) => {
       return Promise.all([
         Promise.all(Object.values(dayGroups).map(calendars => {
           return convertRouteToTimetablePage(route, direction, calendars, null, config);
@@ -460,7 +475,7 @@ const convertRoutesToTimetablePages = async config => {
 /*
  * Generate all trips based on a start trip and an array of frequencies.
  */
-const generateTripsByFrequencies = (trip, frequencies) => {
+const generateTripsByFrequencies = (trip: any, frequencies: any) => {
   const resetTrip = formatters.resetStoptimesToMidnight(trip);
   const trips = [];
 
@@ -485,7 +500,7 @@ const generateTripsByFrequencies = (trip, frequencies) => {
   * Check if any stoptimes have different arrival and departure times and
   * if they do, duplicate the stop id unless it is the first or last stop.
 */
-const duplicateStopsForDifferentArrivalDeparture = (stopIds, timetable, config) => {
+const duplicateStopsForDifferentArrivalDeparture = (stopIds: any, timetable: any, config: any) => {
   for (const trip of timetable.orderedTrips) {
     for (const stoptime of trip.stoptimes) {
       const timepointDifference = timeUtils.fromGTFSTime(stoptime.departure_time).diff(timeUtils.fromGTFSTime(stoptime.arrival_time), 'minutes');
@@ -513,7 +528,7 @@ const duplicateStopsForDifferentArrivalDeparture = (stopIds, timetable, config) 
 /*
  * Get a sorted array of stop_ids for a specific timetable.
  */
-const getStopOrder = async (timetable, config) => {
+const getStopOrder = async (timetable: any, config: any) => {
   // First, check if `timetable_stop_order.txt` for route exists
   const timetableStopOrders = await gtfs.getTimetableStopOrders({
     timetable_id: timetable.timetable_id
@@ -526,7 +541,7 @@ const getStopOrder = async (timetable, config) => {
   ]);
 
   if (timetableStopOrders.length > 0) {
-    return timetableStopOrders.map(timetableStopOrder => timetableStopOrder.stop_id);
+    return timetableStopOrders.map((timetableStopOrder: any) => timetableStopOrder.stop_id);
   }
 
   // Next, try using a directed graph to determine stop order
@@ -535,7 +550,7 @@ const getStopOrder = async (timetable, config) => {
 
     for (const trip of timetable.orderedTrips) {
       // If `showOnlyTimepoint` is true, then filter out all non-timepoints
-      const sortedStopIds = config.showOnlyTimepoint === true ? trip.stoptimes.filter(stoptime => isTimepoint(stoptime)).map(stoptime => stoptime.stop_id) : trip.stoptimes.map(stoptime => stoptime.stop_id);
+      const sortedStopIds = config.showOnlyTimepoint === true ? trip.stoptimes.filter((stoptime: any) => isTimepoint(stoptime)).map((stoptime: any) => stoptime.stop_id) : trip.stoptimes.map((stoptime: any) => stoptime.stop_id);
 
       for (const [index, stopId] of sortedStopIds.entries()) {
         if (index === sortedStopIds.length - 1) {
@@ -555,7 +570,7 @@ const getStopOrder = async (timetable, config) => {
 
   // Finally, fall back to using the stop order from the trip with the most stoptimes
   const longestTripStoptimes = getLongestTripStoptimes(timetable.orderedTrips, config);
-  const stopIds = longestTripStoptimes.map(stoptime => stoptime.stop_id);
+  const stopIds = longestTripStoptimes.map((stoptime: any) => stoptime.stop_id);
 
   return duplicateStopsForDifferentArrivalDeparture(stopIds, timetable, config);
 };
@@ -563,7 +578,7 @@ const getStopOrder = async (timetable, config) => {
 /*
  * Get an array of stops for a specific timetable.
  */
-const getStops = async (timetable, config) => {
+const getStops = async (timetable: any, config: any) => {
   if (timetable.orderedTrips.length === 0) {
     return [];
   }
@@ -571,9 +586,9 @@ const getStops = async (timetable, config) => {
   const stopOrder = await getStopOrder(timetable, config);
   const stops = await gtfs.getStops({ stop_id: stopOrder });
 
-  const orderedStops = stopOrder.map((stopId, index) => {
+  const orderedStops = stopOrder.map((stopId: any, index: any) => {
     // Clone stop to support using the same stop more than once in a timetable
-    const stop = cloneDeep(stops.find(stop => stop.stop_id === stopId));
+    const stop = cloneDeep(stops.find((stop: any) => stop.stop_id === stopId));
 
     if (!stop) {
       throw new Error(`No stop found found for stop_id=${stopId} in timetable_id=${timetable.timetable_id}`);
@@ -596,7 +611,7 @@ const getStops = async (timetable, config) => {
 
     if (stopAttributes.length > 0) {
       for (const stopAttribute of stopAttributes) {
-        const stop = orderedStops.find(stop => stop.stop_id === stopAttribute.stop_id);
+        const stop = orderedStops.find((stop: any) => stop.stop_id === stopAttribute.stop_id);
 
         if (stop) {
           stop.stop_city = stopAttribute.stop_city;
@@ -613,7 +628,7 @@ const getStops = async (timetable, config) => {
 /*
  * Get all calendars from a specific timetable.
  */
-const getCalendarsFromTimetable = async timetable => {
+const getCalendarsFromTimetable = async (timetable: any) => {
   const db = gtfs.getDb();
   let whereClause = '';
   const whereClauses = [];
@@ -628,7 +643,7 @@ const getCalendarsFromTimetable = async timetable => {
 
   const days = getDaysFromCalendars([timetable]);
   // Create an $or query array of days based on calendars
-  const dayQueries = reduce(days, (memo, value, key) => {
+  const dayQueries = reduce(days, (memo: any, value: any, key: any) => {
     if (value === 1) {
       memo.push(`${key} = 1`);
     }
@@ -650,7 +665,7 @@ const getCalendarsFromTimetable = async timetable => {
 /*
  * Get all calendar date service ids for an agency between two dates.
  */
-const getCalendarDatesServiceIds = async (startDate, endDate) => {
+const getCalendarDatesServiceIds = async (startDate: any, endDate: any) => {
   const db = gtfs.getDb();
   const whereClauses = ['exception_type = 1'];
 
@@ -663,23 +678,23 @@ const getCalendarDatesServiceIds = async (startDate, endDate) => {
   }
 
   const calendarDates = await db.all(`SELECT DISTINCT service_id FROM calendar_dates WHERE ${whereClauses.join(' AND ')}`);
-  return calendarDates.map(calendarDate => calendarDate.service_id);
+  return calendarDates.map((calendarDate: any) => calendarDate.service_id);
 };
 
 /*
  * Get formatted frequencies for a specific trip.
  */
-const getFrequenciesByTrip = async (trip, config) => {
+const getFrequenciesByTrip = async (trip: any, config: any) => {
   const frequencies = await gtfs.getFrequencies({
     trip_id: trip.trip_id
   });
-  return frequencies.map(frequency => formatters.formatFrequency(frequency, config));
+  return frequencies.map((frequency: any) => formatters.formatFrequency(frequency, config));
 };
 
 /*
  * Get all stoptimes for a trip.
  */
-const getStoptimesByTrip = async trip => {
+const getStoptimesByTrip = async (trip: any) => {
   return gtfs.getStoptimes({
     trip_id: trip.trip_id
   },
@@ -694,7 +709,7 @@ const getStoptimesByTrip = async trip => {
  * and the stop_id of parent station itself. If no parent station, it returns the
  * stop_id.
  */
-const getAllStationStopIds = async stopId => {
+const getAllStationStopIds = async (stopId: any) => {
   const stops = await gtfs.getStops({
     stop_id: stopId
   });
@@ -709,13 +724,13 @@ const getAllStationStopIds = async stopId => {
     parent_station: stop.parent_station
   }, ['stop_id']);
 
-  return [stop.parent_station, ...stopsInParentStation.map(stop => stop.stop_id)];
+  return [stop.parent_station, ...stopsInParentStation.map((stop: any) => stop.stop_id)];
 };
 
 /*
  * Get trips with the same blockId
  */
-const getTripsWithSameBlock = async (trip, timetable) => {
+const getTripsWithSameBlock = async (trip: any, timetable: any) => {
   const trips = await gtfs.getTrips({
     block_id: trip.block_id,
     service_id: timetable.service_ids
@@ -724,7 +739,7 @@ const getTripsWithSameBlock = async (trip, timetable) => {
     'route_id'
   ]);
 
-  await Promise.all(trips.map(async blockTrip => {
+  await Promise.all(trips.map(async (blockTrip: any) => {
     const stopTimes = await gtfs.getStoptimes(
       {
         trip_id: blockTrip.trip_id
@@ -743,14 +758,14 @@ const getTripsWithSameBlock = async (trip, timetable) => {
     blockTrip.lastStoptime = last(stopTimes);
   }));
 
-  return sortBy(trips, trip => trip.firstStoptime.departure_timestamp);
+  return sortBy(trips, (trip: any) => trip.firstStoptime.departure_timestamp);
 };
 
 /*
  * Get next trip and previous trip with the same block_id if it arrives/departs
  * from the same stop and is a different route.
  */
-const addTripContinuation = async (trip, timetable) => {
+const addTripContinuation = async (trip: any, timetable: any) => {
   if (!trip.block_id) {
     return;
   }
@@ -764,7 +779,7 @@ const addTripContinuation = async (trip, timetable) => {
   const blockTrips = await getTripsWithSameBlock(trip, timetable);
 
   // "Continues From" trips must be the previous trip chronologically.
-  const previousTrip = findLast(blockTrips, blockTrip => {
+  const previousTrip = findLast(blockTrips, (blockTrip: any) => {
     return blockTrip.lastStoptime.arrival_timestamp <= firstStoptime.departure_timestamp;
   });
 
@@ -786,7 +801,7 @@ const addTripContinuation = async (trip, timetable) => {
   }
 
   // "Continues As" trips must be the next trip chronologically.
-  const nextTrip = find(blockTrips, blockTrip => {
+  const nextTrip = find(blockTrips, (blockTrip: any) => {
     return blockTrip.firstStoptime.departure_timestamp >= lastStoptime.arrival_timestamp;
   });
 
@@ -810,16 +825,16 @@ const addTripContinuation = async (trip, timetable) => {
 /*
  * Apply time range filters to trips
  */
-const filterTrips = (trips, timetable) => {
+const filterTrips = (trips: any, timetable: any) => {
   let filteredTrips = trips;
   if (timetable.start_timestamp !== '' && timetable.start_timestamp !== null && timetable.start_timestamp !== undefined) {
-    filteredTrips = filteredTrips.filter(trip => {
+    filteredTrips = filteredTrips.filter((trip: any) => {
       return trip.stoptimes[0].arrival_timestamp >= timetable.start_timestamp;
     });
   }
 
   if (timetable.end_timestamp !== '' && timetable.end_timestamp !== null && timetable.end_timestamp !== undefined) {
-    filteredTrips = filteredTrips.filter(trip => {
+    filteredTrips = filteredTrips.filter((trip: any) => {
       return trip.stoptimes[0].arrival_timestamp < timetable.end_timestamp;
     });
   }
@@ -830,13 +845,14 @@ const filterTrips = (trips, timetable) => {
 /*
  * Get all trips from a timetable.
  */
-const getTripsFromTimetable = async (timetable, calendars, config) => {
+const getTripsFromTimetable = async (timetable: any, calendars: any, config: any) => {
   const tripQuery = {
     route_id: timetable.route_ids,
     service_id: timetable.service_ids
   };
 
   if (!formatters.isNullOrEmpty(timetable.direction_id)) {
+    // @ts-expect-error ts-migrate(2339) FIXME: Property 'direction_id' does not exist on type '{ ... Remove this comment to see the full error message
     tripQuery.direction_id = timetable.direction_id;
   }
 
@@ -847,17 +863,18 @@ const getTripsFromTimetable = async (timetable, calendars, config) => {
   }
 
   // Updated timetable.serviceIds with only the service IDs actually used in one or more trip
-  timetable.service_ids = uniq(trips.map(trip => trip.service_id));
+  timetable.service_ids = uniq(trips.map((trip: any) => trip.service_id));
 
-  const formattedTrips = [];
+  const formattedTrips: any = [];
   const parentStations = {};
-  await Promise.all(trips.map(async trip => {
+  await Promise.all(trips.map(async (trip: any) => {
     const formattedTrip = formatters.formatTrip(trip, timetable, calendars, config);
     const stopTimes = await getStoptimesByTrip(formattedTrip);
 
     if (config.useParentStation) {
       // Lookup parent station and cache it
-      await Promise.all(stopTimes.map(async stopTime => {
+      await Promise.all(stopTimes.map(async (stopTime: any) => {
+        // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         if (parentStations[stopTime.stop_id] === undefined) {
           const stops = await gtfs.getStops({
             stop_id: stopTime.stop_id
@@ -871,9 +888,11 @@ const getTripsFromTimetable = async (timetable, calendars, config) => {
             return;
           }
 
+          // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           parentStations[stopTime.stop_id] = stops[0].parent_station || stops[0].stop_id;
         }
 
+        // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
         stopTime.stop_id = parentStations[stopTime.stop_id];
       }));
     }
@@ -916,12 +935,12 @@ const getTripsFromTimetable = async (timetable, calendars, config) => {
 /*
  * Format timetables for display.
  */
-const formatTimetables = async (timetables, config) => {
-  const formattedTimetables = await Promise.all(timetables.map(async timetable => {
+const formatTimetables = async (timetables: any, config: any) => {
+  const formattedTimetables = await Promise.all(timetables.map(async (timetable: any) => {
     timetable.warnings = [];
     const dayList = formatters.formatDays(timetable, config);
     const calendars = await getCalendarsFromTimetable(timetable);
-    let serviceIds = calendars.map(calendar => calendar.service_id);
+    let serviceIds = calendars.map((calendar: any) => calendar.service_id);
 
     if (timetable.include_exceptions === 1) {
       const calendarDatesServiceIds = await getCalendarDatesServiceIds(timetable.start_date, timetable.end_date);
@@ -966,13 +985,14 @@ const formatTimetables = async (timetables, config) => {
     return formattedTimetables;
   }
 
+  // @ts-expect-error ts-migrate(2571) FIXME: Object is of type 'unknown'.
   return formattedTimetables.filter(timetable => timetable.orderedTrips.length > 0);
 };
 
 /*
  * Merge timetables with same timetable_id
  */
-const mergeTimetablesWithSameId = timetables => {
+const mergeTimetablesWithSameId = (timetables: any) => {
   if (timetables.length === 0) {
     return [];
   }
@@ -980,9 +1000,11 @@ const mergeTimetablesWithSameId = timetables => {
   const mergedTimetables = groupBy(timetables, 'timetable_id');
 
   return Object.values(mergedTimetables).map(timetableGroup => {
+    // @ts-expect-error ts-migrate(2571) FIXME: Object is of type 'unknown'.
     const mergedTimetable = omit(timetableGroup[0], 'route_id');
 
-    mergedTimetable.route_ids = timetableGroup.map(timetable => timetable.route_id);
+    // @ts-expect-error ts-migrate(2571) FIXME: Object is of type 'unknown'.
+    mergedTimetable.route_ids = timetableGroup.map((timetable: any) => timetable.route_id);
 
     return mergedTimetable;
   });
@@ -991,7 +1013,7 @@ const mergeTimetablesWithSameId = timetables => {
 /*
  * Get all timetable pages for an agency.
  */
-exports.getTimetablePages = async config => {
+exports.getTimetablePages = async (config: any) => {
   const timetables = mergeTimetablesWithSameId(await gtfs.getTimetables());
 
   // If no timetables, build each route and direction into a timetable
@@ -1008,11 +1030,11 @@ exports.getTimetablePages = async config => {
   }
 
   // Otherwise, use timetable pages defined in timetable_pages.txt
-  return Promise.all(timetablePages.map(async timetablePage => {
+  return Promise.all(timetablePages.map(async (timetablePage: any) => {
     timetablePage.timetables = sortBy(timetables.filter(timetable => timetable.timetable_page_id === timetablePage.timetable_page_id), 'timetable_sequence');
 
     // Add route for each Timetable
-    await Promise.all(timetablePage.timetables.map(async timetable => {
+    await Promise.all(timetablePage.timetables.map(async (timetable: any) => {
       timetable.routes = await gtfs.getRoutes({ route_id: timetable.route_ids });
     }));
 
@@ -1023,7 +1045,7 @@ exports.getTimetablePages = async config => {
 /*
  * Get a timetable page by id
  */
-const getTimetablePageById = async (timetablePageId, config) => {
+const getTimetablePageById = async (timetablePageId: any, config: any) => {
   // Check if there are any timetable pages defined in timetable_pages.txt
   const timetablePages = await gtfs.getTimetablePages({
     timetable_page_id: timetablePageId
@@ -1041,7 +1063,7 @@ const getTimetablePageById = async (timetablePageId, config) => {
     timetablePage.timetables = sortBy(timetables.filter(timetable => timetable.timetable_page_id === timetablePageId), 'timetable_sequence');
 
     // Add route for each Timetable
-    await Promise.all(timetablePage.timetables.map(async timetable => {
+    await Promise.all(timetablePage.timetables.map(async (timetable: any) => {
       timetable.routes = await gtfs.getRoutes({ route_id: timetable.route_ids });
     }));
 
@@ -1067,9 +1089,11 @@ const getTimetablePageById = async (timetablePageId, config) => {
   let directionId = '';
   const parts = timetablePageId.split('|');
   if (parts.length > 2) {
+    // @ts-expect-error ts-migrate(2322) FIXME: Type 'number' is not assignable to type 'string'.
     directionId = Number.parseInt(parts.pop(), 10);
     calendarCode = parts.pop();
   } else if (parts.length > 1) {
+    // @ts-expect-error ts-migrate(2322) FIXME: Type 'null' is not assignable to type 'string'.
     directionId = null;
     calendarCode = parts.pop();
   }
@@ -1087,7 +1111,7 @@ const getTimetablePageById = async (timetablePageId, config) => {
     'trip_headsign',
     'direction_id'
   ]);
-  const directions = uniqBy(trips, trip => trip.direction_id);
+  const directions = uniqBy(trips, (trip: any) => trip.direction_id);
 
   if (directions.length === 0) {
     throw new Error(`No trips found for timetable_page_id=${timetablePageId} route_id=${routeId} direction_id=${directionId}`);
@@ -1111,7 +1135,7 @@ const getTimetablePageById = async (timetablePageId, config) => {
 /*
  * Initialize configuration with defaults.
  */
-exports.setDefaultConfig = initialConfig => {
+exports.setDefaultConfig = (initialConfig: any) => {
   const defaults = {
     allowEmptyTimetables: false,
     beautify: false,
@@ -1165,13 +1189,13 @@ exports.setDefaultConfig = initialConfig => {
 /*
  * Get a timetable page by id.
  */
-exports.getFormattedTimetablePage = async (timetablePageId, config) => {
+exports.getFormattedTimetablePage = async (timetablePageId: any, config: any) => {
   const timetablePage = await getTimetablePageById(timetablePageId, config);
 
   timetablePage.consolidatedTimetables = await formatTimetables(timetablePage.timetables, config);
   timetablePage.timetable_page_label = formatters.formatTimetablePageLabel(timetablePage);
   timetablePage.dayList = formatters.formatDays(getDaysFromCalendars(timetablePage.consolidatedTimetables), config);
-  timetablePage.dayLists = uniq(timetablePage.consolidatedTimetables.map(timetable => timetable.dayList));
+  timetablePage.dayLists = uniq(timetablePage.consolidatedTimetables.map((timetable: any) => timetable.dayList));
   timetablePage.route_ids = uniq(flatMap(timetablePage.consolidatedTimetables, 'route_ids'));
 
   const timetableRoutes = await gtfs.getRoutes({
@@ -1181,8 +1205,8 @@ exports.getFormattedTimetablePage = async (timetablePageId, config) => {
     'route_text_color'
   ]);
 
-  timetablePage.routeColors = timetableRoutes.map(route => route.route_color);
-  timetablePage.routeTextColors = timetableRoutes.map(route => route.route_text_color);
+  timetablePage.routeColors = timetableRoutes.map((route: any) => route.route_color);
+  timetablePage.routeTextColors = timetableRoutes.map((route: any) => route.route_text_color);
 
   // Set default filename
   if (!timetablePage.filename) {
@@ -1190,7 +1214,7 @@ exports.getFormattedTimetablePage = async (timetablePageId, config) => {
   }
 
   // Get direction_name for each timetable
-  await Promise.all(timetablePage.consolidatedTimetables.map(async timetable => {
+  await Promise.all(timetablePage.consolidatedTimetables.map(async (timetable: any) => {
     if (formatters.isNullOrEmpty(timetable.direction_name)) {
       timetable.direction_name = await getDirectionHeadsignFromTimetable(timetable);
     }
@@ -1200,7 +1224,7 @@ exports.getFormattedTimetablePage = async (timetablePageId, config) => {
     }
   }));
 
-  timetablePage.directionNames = uniq(timetablePage.consolidatedTimetables.map(timetable => timetable.direction_name));
+  timetablePage.directionNames = uniq(timetablePage.consolidatedTimetables.map((timetable: any) => timetable.direction_name));
 
   return timetablePage;
 };
@@ -1208,7 +1232,7 @@ exports.getFormattedTimetablePage = async (timetablePageId, config) => {
 /*
  * Generate stats about timetable
  */
-const generateStats = timetablePage => {
+const generateStats = (timetablePage: any) => {
   const stats = {
     stops: 0,
     trips: 0,
@@ -1220,15 +1244,19 @@ const generateStats = timetablePage => {
     stats.stops += timetable.stops.length;
     stats.trips += timetable.orderedTrips.length;
     for (const serviceId of timetable.service_ids) {
+      // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       stats.service_ids[serviceId] = true;
     }
 
     for (const routeId of timetable.route_ids) {
+      // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
       stats.route_ids[routeId] = true;
     }
   }
 
+  // @ts-expect-error ts-migrate(2339) FIXME: Property 'routes' does not exist on type '{ stops:... Remove this comment to see the full error message
   stats.routes = size(stats.route_ids);
+  // @ts-expect-error ts-migrate(2339) FIXME: Property 'calendars' does not exist on type '{ sto... Remove this comment to see the full error message
   stats.calendars = size(stats.service_ids);
 
   return stats;
@@ -1237,7 +1265,7 @@ const generateStats = timetablePage => {
 /*
  * Generate the HTML timetable for a timetable page.
  */
-exports.generateHTML = async (timetablePage, config) => {
+exports.generateHTML = async (timetablePage: any, config: any) => {
   const templateVars = {
     timetablePage,
     config
@@ -1250,7 +1278,7 @@ exports.generateHTML = async (timetablePage, config) => {
 /*
  * Generate the HTML for the agency overview page.
  */
-exports.generateOverviewHTML = async (timetablePages, config) => {
+exports.generateOverviewHTML = async (timetablePages: any, config: any) => {
   const agencies = await gtfs.getAgencies();
   if (agencies.length === 0) {
     throw new Error('No agencies found');
