@@ -52,6 +52,7 @@ dependencies:
   intl: ^0.16.1
   day_night_switcher: ^0.1.1
   flutter_svg: ^0.19.1
+  circular_profile_avatar: ^1.0.8
   # table_sticky_headers: ^1.1.2
 
   dio: ^3.0.9
