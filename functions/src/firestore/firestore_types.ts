@@ -1,7 +1,7 @@
 /// firestore types
 // think about grouping tables with the same id together
 // merge calendar and calendar dates? other stuff with same id column?
-export type Agency = {
+export interface Agency {
   agency_id: string;
   agency_name: string;
   agency_url: string;
@@ -12,7 +12,7 @@ export type Agency = {
   agency_email: string;
 };
 
-export type Calendar = {
+export interface Calendar {
   service_id: string;
   // making it so we can just check the map instead of each row
   active_days: {
@@ -25,7 +25,7 @@ export type Calendar = {
   };
 };
 
-export type Route = {
+export interface Route {
   route_id: string;
   agency_id: string;
   route_short_name: string;
@@ -45,7 +45,7 @@ export type Route = {
   stop_ids: string[];
 };
 
-export type Shape = {
+export interface Shape {
   shape_id: string;
   shape_pt_lat: number;
   shape_pt_lon: number;
@@ -53,7 +53,7 @@ export type Shape = {
   shape_dist_traveled: number;
 };
 
-export type Stop = {
+export interface Stop {
   stop_id: string;
   stop_code: number;
   stop_name: string;
@@ -79,7 +79,7 @@ export type Stop = {
   trip_ids: string[];
 };
 
-export type Trip = {
+export interface Trip {
   trip_id: string;
   route_id: string;
   service_id: string;
@@ -92,18 +92,44 @@ export type Trip = {
   bikes_allowed: number;
 };
 
-export type Polyline = {
+export interface Polyline {
   route_id: string;
   type: string;
   geoJSON: string; // convert to string so we can just pass it to request
 };
 
-export type Timetable = {
+export interface TimetableStop {
+  // order: number;
+  // trip_id: string;
+  arrival_time: number;
+  // departure_time: number;
   stop_id: string;
-  stop_name: string;
-  service_id: string;
-  stop_lat: number;
-  stop_lon: number;
+  formatted_time: string;
+
   stop_sequence: number;
-  stop_times: number[];
-};
+  // stop_headsign: string;
+  // pickup_type: number;
+  // drop_off_type: number;
+  // continuous_pickup: number;
+  // continuous_drop_off: number;
+  // timepoint: number;
+  // type: string;
+  interpolated: boolean;
+  skipped: boolean;
+}
+
+export interface Timetable {
+  route_id: string;
+  direction_id: number;
+  direction_name: string;
+  label: string;
+  start_date: string;
+  end_date: string;
+  // active_days: {
+  //   [day: string]: boolean;
+  // };
+  service_id: string;
+  include_dates: string[];
+  exclude_dates: string[];
+  timetable: TimetableStop[];
+}

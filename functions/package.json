@@ -15,18 +15,15 @@
   "main": "lib/index.js",
   "dependencies": {
     "@turf/turf": "^5.1.6",
-    "@types/jsts": "^0.17.3",
     "axios": "^0.21.0",
-    "csv-parse": "^4.14.0",
     "firebase-admin": "^9.3.0",
     "firebase-functions": "^3.11.0",
     "geojson": "^0.5.0",
     "geojson-dissolve": "^3.1.0",
     "gtfs": "^2.0.5",
+    "gtfs-to-html": "git+https://github.com/sirmammingtonham/gtfs-to-html.git",
     "js-base64": "^3.5.2",
-    "jsts": "^2.6.1",
     "lodash": "^4.17.20",
-    "moment": "^2.29.1",
     "typesaurus": "^6.2.0"
   },
   "devDependencies": {
@@ -36,6 +33,7 @@
     "eslint": "^7.6.0",
     "eslint-plugin-import": "^2.22.0",
     "firebase-functions-test": "^0.2.0",
+    "ts-migrate": "^0.1.9",
     "typescript": "^3.9.7"
   },
   "private": true

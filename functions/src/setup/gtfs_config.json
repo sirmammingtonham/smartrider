@@ -6,7 +6,10 @@
       "exclude": []
     }
   ],
+  "sqlitePath": "./gtfs.db",
   "csvOptions": {
     "skip_lines_with_error": true
-  }
+  },
+  "coordinatePrecision": 5,
+  "showMap": false
 }

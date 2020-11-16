@@ -1,6 +1,7 @@
 import * as admin from "firebase-admin";
 import * as gtfs from "gtfs";
-import * as models from "./fs_types";
+import * as gtfs_timetable from "gtfs-to-html";
+import * as models from "./firestore_types";
 import * as Promise from "../helpers/async_util";
 import * as config from "../setup/gtfs_config.json";
 import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
@@ -12,7 +13,10 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
 });
 
-console.log('initialized');
+// admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
+
+
+console.log("initialized");
 
 const parseAgency = async (db: any) => {
   console.log("started parsing Agency");
@@ -223,111 +227,135 @@ const parsePolylines = async () => {
   }).then(() => console.timeEnd("parsePolylines"));
 };
 
-const parseTimetables = async (db: any) => {
-  console.log("started parsing Timetables");
-  console.time("parseTimetables");
-  type TableRoute = { route_id: string };
-  const timetables_root = collection<TableRoute>("timetables");
-  const query_res = await db.all(`
-  SELECT r.route_id, 
-       c.*, 
-       s.stop_id, 
-       s.stop_name, 
-       s.stop_lat, 
-       s.stop_lon, 
-       st.arrival_timestamp, 
-       st.stop_sequence 
-  FROM   routes r 
-        INNER JOIN trips t 
-                ON r.route_id = t.route_id 
-        INNER JOIN calendar c 
-                ON c.service_id = t.service_id 
-        INNER JOIN stop_times st 
-                ON t.trip_id = st.trip_id 
-        INNER JOIN stops s 
-                ON st.stop_id = s.stop_id
-  ORDER  BY r.route_id, 
-            s.stop_id, 
-            st.arrival_timestamp 
-  `);
+const flattenTimetable = async (table: any) => {
+  const stop_list: models.TimetableStop[] = [];
 
-  const stop_map = new Map();
-  query_res.forEach((query: any) => {
-    let obj; // stores stop info in the stop_map
-    if ((obj = stop_map.get(query.stop_id))) {
-      obj.stop_times.push(query.arrival_timestamp);
-    } else {
-      stop_map.set(query.stop_id, {
-        route_id: query.route_id,
-        active_days: {
-          monday: !!query.monday,
-          tuesday: !!query.tuesday,
-          wednesday: !!query.wednesday,
-          thursday: !!query.thursday,
-          friday: !!query.friday,
-          saturday: !!query.saturday,
-          sunday: !!query.sunday,
-        },
-        stop_id: query.stop_id,
-        stop_name: query.stop_name,
-        service_id: query.service_id,
-        stop_lat: query.stop_lat,
-        stop_lon: query.stop_lon,
-        stop_sequence: query.stop_sequence,
-        stop_times: [query.arrival_timestamp],
-      });
-    }
-  });
+  // flatten the object in column major style
+  // let order = 0;
+  for (let i = 0; i < table.stops[0].trips.length; i++) {
+    for (let j = 0; j < table.stops.length; j++) {
+      const stop = table.stops[j].trips[i];
+      stop_list.push({
+        // order: order++,
+        // trip_id: stop.trip_id,
+        arrival_time: stop.arrival_timestamp,
+        // departure_time: stop.departure_timestamp,
+        stop_id: stop.stop_id,
+        formatted_time: stop.formatted_time,
 
-  const route_map = new Map();
-  for (const [_, stop] of stop_map.entries()) {
-    if (!route_map.has(stop.route_id)) {
-      route_map.set(stop.route_id, {
-        monday: [],
-        tuesday: [],
-        wednesday: [],
-        thursday: [],
-        friday: [],
-        saturday: [],
-        sunday: [],
+        stop_sequence: stop.stop_sequence,
+        // stop_headsign: stop.stop_headsign,
+        // pickup_type: stop.pickup_type,
+        // drop_off_type: stop.drop_off_type,
+        // continuous_pickup: stop.continuous_pickup,
+        // continuous_drop_off: stop.continuous_drop_off,
+        // timepoint: stop.timepoint,
+        // type: stop.type,
+        interpolated: stop.interpolated ? stop.interpolated : false,
+        skipped: stop.skipped ? stop.skipped : false,
       });
-    }
-    let table = route_map.get(stop.route_id);
-    for (const [day, value] of Object.entries(stop.active_days)) {
-      if (value) {
-        table[day].push({
-          stop_id: stop.stop_id,
-          stop_name: stop.stop_name,
-          service_id: stop.service_id,
-          stop_lat: stop.stop_lat,
-          stop_lon: stop.stop_lon,
-          stop_sequence: stop.stop_sequence,
-          stop_times: stop.stop_times,
-        });
-      }
     }
   }
+
+  return stop_list;
+};
+
+const parseTimetables = async () => {
+  console.log("started parsing Timetables");
+  console.time("parseTimetables");
+
+  const timetable_config = gtfs_timetable.setDefaultConfig(config);
+
+  // get list of all routes
+  const routes = (await gtfs.getRoutes({}, [], [])).map(
+    (route: any) => route.route_id
+  );
+
+  // maps a day to the id that the gtfs_html takes
+  interface Map<T> {
+    [key: string]: T
+  }
+  const activity_map: Map<string> = {
+    weekday: "1111100",
+    saturday: "0000010",
+    sunday: "0000001",
+  };
+
+  // setup firestore collection
+  type TableRoute = { route_id: string };
+  const timetables_root = collection<TableRoute>("timetables");
+
   const promises = [];
-  for (const [route_id, timetable] of route_map.entries()) {
-    await set(timetables_root, route_id, { route_id: route_id });
-    for (const [day, stops] of Object.entries(timetable)) {
+
+  // iterate through routes and the different days
+  for (const route of routes) {
+    for (const active_days in activity_map) {
+      
+      // get forward and backward timetables
+      let table_f: any;
+      let table_b: any;
+
+      try {
+        table_f = (
+          await gtfs_timetable.getFormattedTimetablePage(
+            `${route}|${activity_map[active_days]}|0`,
+            timetable_config
+          )
+        )[0];
+  
+        table_b = (
+          await gtfs_timetable.getFormattedTimetablePage(
+            `${route}|${activity_map[active_days]}|1`,
+            timetable_config
+          )
+        )[0];
+      } catch (error) {
+        // console.log(`NO TRIPS FOR: ${route}|${activity_map[active_days]}`);
+        ;
+      }
+
+      if (table_f === undefined || table_b === undefined) {
+        // console.log(`NO TRIPS FOR: ${route}|${activity_map[active_days]}`);
+        continue;
+      }
+
+      await set(timetables_root, route, { route_id: route });
+
       const timetables = subcollection<models.Timetable, TableRoute>(
-        day,
+        active_days,
         timetables_root
       );
-      for (const stop of stops as any) {
-        promises.push(
-          set(timetables(route_id), stop.stop_id, {
-            stop_id: stop.stop_id,
-            stop_name: stop.stop_name,
-            service_id: stop.service_id,
-            stop_lat: stop.stop_lat,
-            stop_lon: stop.stop_lon,
-            stop_sequence: stop.stop_sequence,
-            stop_times: stop.stop_times,
-          })
-        );
-      }
+
+      promises.push(
+        set(timetables(route), `${table_f.direction_id}`, {
+          route_id: table_f.route_ids[0],
+          direction_id: table_f.direction_id,
+          direction_name: table_f.direction_name,
+          label: table_f.timetable_label,
+          start_date: table_f.start_date,
+          end_date: table_f.end_date,
+
+          service_id: table_f.service_ids[0],
+          include_dates: table_f.calendarDates.includedDates,
+          exclude_dates: table_f.calendarDates.excludedDates,
+          timetable: await flattenTimetable(table_f),
+        })
+      );
+      promises.push(
+        set(timetables(route), `${table_b.direction_id}`, {
+          route_id: table_b.route_ids[0],
+          direction_id: table_b.direction_id,
+          direction_name: table_b.direction_name,
+          label: table_b.timetable_label,
+          start_date: table_b.start_date,
+          end_date: table_b.end_date,
+
+          service_id: table_b.service_ids[0],
+          include_dates: table_b.calendarDates.includedDates,
+          exclude_dates: table_b.calendarDates.excludedDates,
+          timetable: await flattenTimetable(table_b),
+        })
+      );
     }
   }
 
@@ -381,19 +409,19 @@ const generateDB = async () => {
   await gtfs.import(config);
   await gtfs.openDb(config);
   const db = await gtfs.getDb();
-  // await createIndexes(db);
+  await createIndexes(db);
 
   // do the firestore stuff
-  // await clearFirestore();
+  await clearFirestore();
   return Promise.all([
-    // parseAgency(db),
-    // parseCalendar(db),
-    // parseRoutes(db),
+    parseAgency(db),
+    parseCalendar(db),
+    parseRoutes(db),
     parseStops(db),
-    // parsePolylines(),
-    // parseShapes(db),
-    // parseTrips(db),
-    // parseTimetables(db),
+    parsePolylines(),
+    parseShapes(db),
+    parseTrips(db),
+    parseTimetables(),
   ]);
 };
 
