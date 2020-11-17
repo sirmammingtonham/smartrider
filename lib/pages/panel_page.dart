@@ -91,7 +91,9 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                   controller: _tabController,
                   children: <Widget>[
                     ShuttleTable(),
-                    BusTable(),
+                    BusTable(
+                        stopMap: state.stopMap,
+                        timetableMap: state.timetableMap),
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(

@@ -26,6 +26,17 @@ class BusTimetable {
       this.excludeDates,
       this.timetable});
 
+  List<String> get stopIds {
+    List<String> stopIds = [timetable[0].stopId];
+
+    int i = 1;
+    while (stopIds[0] != timetable[i].stopId) {
+      stopIds.add(timetable[i].stopId);
+      ++i;
+    }
+    return stopIds;
+  }
+
   List<String> get timetableDisplay => timetable.map((table) {
         if (table.skipped) {
           return _skipChar;

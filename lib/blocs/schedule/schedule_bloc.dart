@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:smartrider/data/models/themes.dart';
+
+import 'package:smartrider/data/models/bus/bus_stop.dart';
+import 'package:smartrider/data/models/bus/bus_timetable.dart';
+import 'package:smartrider/data/repository/bus_repository.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +15,9 @@ part 'schedule_event.dart';
 part 'schedule_state.dart';
 
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
-  ScheduleBloc() : super(ScheduleInitialState());
+  final BusRepository busRepo;
+  ScheduleBloc({@required this.busRepo}) : super(ScheduleInitialState());
+
   bool isShuttle =
       true; //true if we have to build the shuttle schedule, false if bus
   ScheduleState prevState;
@@ -30,7 +35,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       } else if (this.prevState is ScheduleTableState) {
         yield* _mapScheduleTableToState();
       }
-    } else if (event is ScheduleTransitionEvent){
+    } else if (event is ScheduleTransitionEvent) {
       this.prevState = event.currentstate;
       yield* _mapScheduleTransitionToState();
     }
@@ -46,9 +51,14 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   }
 
   Stream<ScheduleState> _mapScheduleTableToState() async* {
-    yield ScheduleTableState(isShuttle: this.isShuttle);
+    yield ScheduleTableState(
+        isShuttle: this.isShuttle,
+        stopMap: await busRepo.getStops,
+        timetableMap: await busRepo.getTimetables);
   }
-  Stream<ScheduleState> _mapScheduleTransitionToState() async*{
-    yield ScheduleTransitionState(currentState: this.prevState, isShuttle: this.isShuttle);  
+
+  Stream<ScheduleState> _mapScheduleTransitionToState() async* {
+    yield ScheduleTransitionState(
+        currentState: this.prevState, isShuttle: this.isShuttle);
   }
 }

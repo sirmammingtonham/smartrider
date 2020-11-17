@@ -103,7 +103,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Map<String, BusRoute> busRoutes = {};
   Map<String, BusShape> busShapes = {};
-  Map<String, List<BusStop>> busStops = {};
+  Map<String, BusStop> busStops = {};
   // List<BusStop> busStops = [];
   List<BusVehicleUpdate> busUpdates = [];
 
@@ -292,25 +292,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         size: stopMarkerSize);
 
     shuttleUpdateIcons[22] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_red.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_red.svg',
+        size: vehicleUpdateSize);
     shuttleUpdateIcons[21] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_yellow.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_yellow.svg',
+        size: vehicleUpdateSize);
     shuttleUpdateIcons[24] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_blue.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_blue.svg',
+        size: vehicleUpdateSize);
     shuttleUpdateIcons[28] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_orange.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_orange.svg',
+        size: vehicleUpdateSize);
     shuttleUpdateIcons[-1] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_white.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_white.svg',
+        size: vehicleUpdateSize);
 
     // temporary until we finalize map marker icons
     shuttleUpdateIcons[87] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_blue.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_blue.svg',
+        size: vehicleUpdateSize);
     shuttleUpdateIcons[286] =
         await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-            'assets/bus_icons/bus_orange.svg', size: vehicleUpdateSize);
+            'assets/bus_icons/bus_orange.svg',
+            size: vehicleUpdateSize);
     shuttleUpdateIcons[289] =
         await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-            'assets/bus_icons/bus_yellow.svg', size: vehicleUpdateSize);
+            'assets/bus_icons/bus_yellow.svg',
+            size: vehicleUpdateSize);
   }
 
   Marker _shuttleStopToMarker(ShuttleStop stop) {
@@ -429,9 +437,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
     });
 
-    _enabledBuses.forEach((name, enabled) {
+
+    _enabledBuses.forEach((route, enabled) {
       if (enabled) {
-        busStops[name].forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
+        busStops.values
+            .where((stop) => stop.routeIds.contains(route))
+            .forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
       }
     });
 

@@ -68,22 +68,15 @@ class BusProvider {
   }
 
   /// Returns a [Map] of [BusStop] objects.
-  Future<Map<String, List<BusStop>>> getStops() async {
+  Future<Map<String, BusStop>> getStops() async {
     QuerySnapshot response = await firestore
         .collection('stops')
         .where('route_ids', arrayContainsAny: defaultRoutes)
         .get();
 
-    List<BusStop> stopsList = response.docs
-        .map<BusStop>((doc) => BusStop.fromJson(doc.data()))
-        .toList();
-
-    Map<String, List<BusStop>> stopsMap = {};
-
-    for (String route in defaultRoutes) {
-      stopsMap[route] =
-          stopsList.where((stop) => stop.routeIds.contains(route)).toList();
-    }
+    Map<String, BusStop> stopsMap = Map.fromIterable(response.docs,
+        key: (doc) => doc['stop_id'],
+        value: (doc) => BusStop.fromJson(doc.data()));
 
     return stopsMap;
   }
