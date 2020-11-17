@@ -25,6 +25,8 @@ dependencies:
   firebase_analytics: ^5.0.2
   firebase_auth: ^0.15.0+1s
   cloud_firestore: ^0.12.9+5
+  image_picker: 
+  firebase_storage: 
 
   #map dependencies
   google_maps_flutter: ^0.5.24+1

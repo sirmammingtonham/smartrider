@@ -2,6 +2,14 @@ import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+
+import 'package:firebase_storage/firebase_storage.dart'; // For File Upload To Firestore
+import 'package:image_picker/image_picker.dart'; // For Image Picker
+import 'package:path/path.dart' as Path;
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'dart:io';
 
 abstract class ListItem {
   Widget buildTitle(BuildContext context);
@@ -29,6 +37,49 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    File _image; // Used only if you need a single picture
+
+    Future<String> uploadFile(File _image) async {
+      StorageReference storageReference = FirebaseStorage.instance
+          .ref()
+          .child('profiles/${Path.basename(_image.path)}');
+      StorageUploadTask uploadTask = storageReference.putFile(_image);
+      await uploadTask.onComplete;
+      print('File Uploaded');
+      String returnURL;
+      await storageReference.getDownloadURL().then((fileURL) {
+        returnURL = fileURL;
+      });
+      return returnURL;
+    }
+
+    Future getImage(bool gallery) async {
+      ImagePicker picker = ImagePicker();
+      PickedFile pickedFile;
+      // Let user select photo from gallery
+      if (gallery) {
+        pickedFile = await picker.getImage(
+          source: ImageSource.gallery,
+        );
+      }
+      // Otherwise open camera to get new photo
+      else {
+        pickedFile = await picker.getImage(
+          source: ImageSource.camera,
+        );
+      }
+
+      setState(() {
+        if (pickedFile != null) {
+          _image =
+              File(pickedFile.path); // Use if you only need a single picture
+          uploadFile(_image);
+        } else {
+          print('No image selected.');
+        }
+      });
+    }
+
     return MaterialApp(
         home: Scaffold(
           body: Column(
@@ -101,19 +152,56 @@ class _ProfilePageState extends State<ProfilePage> {
                   // Controls where the profile picture is compare to the profile
                   // greeting.
                   new Positioned(
-                    left: 120.0,
-                    bottom: 100,
-                    // Profile picture.
-                    child: CircularProfileAvatar(
-                      // Link to profile pic:
-                      'https://avatars0.githubusercontent.com/u/8264639?s=460&v=4',
-                      child: FlutterLogo(),
-                      borderColor: Colors.purpleAccent,
-                      borderWidth: 5,
-                      elevation: 2,
-                      radius: 70,
-                    ),
-                  ),
+                      left: 120.0,
+                      bottom: 100,
+                      // Profile picture.
+                      child: CircleAvatar(
+                        backgroundColor: Theme.of(context).buttonColor,
+                        child: IconButton(
+                          icon: _image != null
+                              ? Image.file(_image)
+                              : Text(
+                                  "Change profile",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white.withOpacity(0.8)),
+                                  textAlign: TextAlign.center,
+                                ), // sets initials text, set your own style, default Text(''),
+                          onPressed: () {
+                            getImage(false);
+                            //print(uploadFile(_image));
+                          },
+                        ),
+                        //Text('JS', style: TextStyle(color: Colors.white70)),
+                      )
+
+                      // CircularProfileAvatar(
+                      //   'https://avatars0.githubusercontent.com/u/8264639?s=460&v=4', //sets image path, it should be a URL string. default value is empty string, if path is empty it will display only initials
+                      //   radius: 35, // sets radius, default 50.0
+                      //   backgroundColor: Colors
+                      //       .transparent, // sets background color, default Colors.white
+                      //   //borderWidth: 5, // sets border, default 0.0
+                      //   initialsText: Text(
+                      //     "Change profile",
+                      //     style: TextStyle(
+                      //         fontSize: 12, color: Colors.white.withOpacity(0.8)),
+                      //     textAlign: TextAlign.center,
+                      //   ), // sets initials text, set your own style, default Text('')
+                      //   borderColor:
+                      //       Colors.black, // sets border color, default Colors.white
+                      //   elevation:
+                      //       5.0, // sets elevation (shadow of the profile picture), default value is 0.0
+                      //   foregroundColor: Colors.black.withOpacity(
+                      //       0.5), //sets foreground colour, it works if showInitialTextAbovePicture = true , default Colors.transparent
+                      //   cacheImage:
+                      //       true, // allow widget to cache image against provided url
+                      //   onTap: () {
+                      //     getImage(false);
+                      //   }, // sets on tap
+                      //   showInitialTextAbovePicture:
+                      //       true, // setting it true will show initials text above profile picture, default false
+                      // )
+                      ),
                 ],
                 // Profile pic overflows Stack. Keeps top portion of profile pic
                 // visible to user.
