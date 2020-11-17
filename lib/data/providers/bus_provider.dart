@@ -25,12 +25,12 @@ import '../models/bus/bus_vehicle_update.dart';
 /// a map containing route names and their relevent bus data object.
 class BusProvider {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  
+
   static const defaultRoutes = [
     '87-185',
     '286-185',
     '289-185',
-    '286-184',
+    // '286-184',
   ];
 
   /// Fetchs data from the JSON API and returns a decoded JSON.
@@ -88,26 +88,6 @@ class BusProvider {
     return stopsMap;
   }
 
-  // /// Returns a [Map] of [BusStop] objects.
-  // Future<Map<String, List<BusStop>>> getStops() async {
-  //   QuerySnapshot response = await firestore
-  //       .collection('stops')
-  //       .where('route_ids', arrayContainsAny: defaultRoutes)
-  //       .get();
-
-  //   Map<String, List<BusStop>> stopsMap = {};
-  //   for (QueryDocumentSnapshot doc in response.docs) {
-  //     for (String routeId in doc['route_ids']) {
-  //       if (!stopsMap.containsKey(routeId)) {
-  //         stopsMap[routeId] = [BusStop.fromJson(doc.data())];
-  //       } else {
-  //         stopsMap[routeId].add(BusStop.fromJson(doc.data()));
-  //       }
-  //     }
-  //   }
-  //   return stopsMap;
-  // }
-
   /// Returns a [List] of [BusTrip] objects.
   Future<Map<String, BusTrip>> getTrips() async {
     QuerySnapshot response =
@@ -151,28 +131,28 @@ class BusProvider {
   }
 
   /// Returns a [Map] of <route_name,[BusTimetable]>
-  Future<Map<String, List<BusTimetable>>> getBusTimetable() async {
+  Future<Map<String, BusTimetable>> getBusTimetable() async {
     String day = DateFormat('EEEE').format(DateTime.now());
+    const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    if (weekdays.contains(day)) {
+      day = "weekday";
+    }
     QuerySnapshot response = await firestore
         .collection('timetables')
         .where('route_id', whereIn: defaultRoutes)
         .get();
 
-    Map<String, List<BusTimetable>> retmap = {};
+    Map<String, BusTimetable> timetableMap = {};
     // since timetables are nested in subcollection we have to retrieve those
     for (QueryDocumentSnapshot route in response.docs) {
-      List<BusTimetable> currentTable = [];
-      var table = await route.reference
-          .collection(day.toLowerCase())
-          .orderBy('stop_sequence') // order them by the stop sequence
-          .get();
-      for (var stop in table.docs) {
-        currentTable.add(BusTimetable.fromJson(stop.data()));
-      }
-      retmap[route['route_id']] = currentTable;
+      var table =
+          await route.reference.collection(day.toLowerCase()).doc('0').get();
+
+      timetableMap[route.data()['route_id']] =
+          BusTimetable.fromJson(table.data());
     }
 
-    return retmap;
+    return timetableMap;
   }
 
   // Future<Map<String, List<List<String>>>> getBusTimetableFlat() async {

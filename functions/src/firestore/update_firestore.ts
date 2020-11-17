@@ -231,26 +231,15 @@ const flattenTimetable = async (table: any) => {
   const stop_list: models.TimetableStop[] = [];
 
   // flatten the object in column major style
-  // let order = 0;
   for (let i = 0; i < table.stops[0].trips.length; i++) {
     for (let j = 0; j < table.stops.length; j++) {
       const stop = table.stops[j].trips[i];
       stop_list.push({
-        // order: order++,
-        // trip_id: stop.trip_id,
         arrival_time: stop.arrival_timestamp,
-        // departure_time: stop.departure_timestamp,
         stop_id: stop.stop_id,
         formatted_time: stop.formatted_time,
-
         stop_sequence: stop.stop_sequence,
-        // stop_headsign: stop.stop_headsign,
-        // pickup_type: stop.pickup_type,
-        // drop_off_type: stop.drop_off_type,
-        // continuous_pickup: stop.continuous_pickup,
-        // continuous_drop_off: stop.continuous_drop_off,
-        // timepoint: stop.timepoint,
-        // type: stop.type,
+
         interpolated: stop.interpolated ? stop.interpolated : false,
         skipped: stop.skipped ? stop.skipped : false,
       });
@@ -406,21 +395,21 @@ const createIndexes = async (db: any) => {
 
 const generateDB = async () => {
   // setup sqlite middle man
-  await gtfs.import(config);
+  // await gtfs.import(config);
   await gtfs.openDb(config);
   const db = await gtfs.getDb();
-  await createIndexes(db);
+  // await createIndexes(db);
 
   // do the firestore stuff
-  await clearFirestore();
+  // await clearFirestore();
   return Promise.all([
-    parseAgency(db),
-    parseCalendar(db),
-    parseRoutes(db),
-    parseStops(db),
-    parsePolylines(),
-    parseShapes(db),
-    parseTrips(db),
+    // parseAgency(db),
+    // parseCalendar(db),
+    // parseRoutes(db),
+    // parseStops(db),
+    // parsePolylines(),
+    // parseShapes(db),
+    // parseTrips(db),
     parseTimetables(),
   ]);
 };

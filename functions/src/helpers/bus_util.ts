@@ -126,96 +126,96 @@ export async function genBusTimetable(query: any) {
   return route_map;
 }
 
-function reformatRouteLineStrings(input: any) {
-  let routeLineString;
-  // If routeLineString is not homogenous, convert to multiline
-  if (input.type === "LineString") {
-    routeLineString = turf.combine(turf.featureCollection([turf.lineString(input.coordinates)])).features[0].geometry;
-    routeLineString.properties = input.properties; 
-    // console.log(JSON.stringify(routeLineString));
-  }
-  else {
-    // console.log("multiline");
-    // console.log(JSON.stringify(routeLineString));
-    routeLineString = input;
-  }
+// function reformatRouteLineStrings(input: any) {
+//   let routeLineString;
+//   // If routeLineString is not homogenous, convert to multiline
+//   if (input.type === "LineString") {
+//     routeLineString = turf.combine(turf.featureCollection([turf.lineString(input.coordinates)])).features[0].geometry;
+//     routeLineString.properties = input.properties; 
+//     // console.log(JSON.stringify(routeLineString));
+//   }
+//   else {
+//     // console.log("multiline");
+//     // console.log(JSON.stringify(routeLineString));
+//     routeLineString = input;
+//   }
 
-  return routeLineString;
-}
+//   return routeLineString;
+// }
 
-export async function fixPolylineOffset(raw: any) {
-  // console.log(JSON.stringify(raw));
-  let output:any = [];
+// export async function fixPolylineOffset(raw: any) {
+//   // console.log(JSON.stringify(raw));
+//   let output:any = [];
 
-  for (let rawRouteLineString of raw) {
-    // If routeLineString is not homogenous, convert to multiline
-    let routeLineString = reformatRouteLineStrings(rawRouteLineString);
-    // console.log(JSON.stringify(routeLineString));
-    let newCoords:any = [];
+//   for (let rawRouteLineString of raw) {
+//     // If routeLineString is not homogenous, convert to multiline
+//     let routeLineString = reformatRouteLineStrings(rawRouteLineString);
+//     // console.log(JSON.stringify(routeLineString));
+//     let newCoords:any = [];
 
-    routeLineString.coordinates.forEach((lineString: any) => {
-      let line1 = lineString.shift();
-      let line2 = lineString[0];
-      let newLineString = turf.lineString([line1, line2]).geometry;
-      // console.log(turf.lineString([line1, line2]).geometry);
+//     routeLineString.coordinates.forEach((lineString: any) => {
+//       let line1 = lineString.shift();
+//       let line2 = lineString[0];
+//       let newLineString = turf.lineString([line1, line2]).geometry;
+//       // console.log(turf.lineString([line1, line2]).geometry);
 
-      for (let index in lineString) {
-        // separate each lineString into independent lines
-        if (+index != lineString.length - 1) {
-          const currentLine = turf.lineString([lineString[+index], lineString[+index + 1]]);
-          let isOffset = false;
-          // console.log(JSON.stringify(currentLine));
+//       for (let index in lineString) {
+//         // separate each lineString into independent lines
+//         if (+index != lineString.length - 1) {
+//           const currentLine = turf.lineString([lineString[+index], lineString[+index + 1]]);
+//           let isOffset = false;
+//           // console.log(JSON.stringify(currentLine));
 
-          // create buffer for current line
-          const buffer = turf.buffer(currentLine, 2, {units: 'meters'});
-          // console.log(JSON.stringify(buffer));
+//           // create buffer for current line
+//           const buffer = turf.buffer(currentLine, 2, {units: 'meters'});
+//           // console.log(JSON.stringify(buffer));
 
-          // Check if other routes cross buffer
-          for (let compRawRouteLineString of raw) {
-            let compRouteLineString = reformatRouteLineStrings(compRawRouteLineString);
-            // Make sure route_ids don't match
-            if (compRouteLineString.properties.route_id != routeLineString.properties.route_id) {
-              // console.log(compRouteLineString.properties.route_id + " " + routeLineString.properties.route_id)
-              const compFC = turf.flatten(compRouteLineString);
-              for (let compLineString of compFC.features) {
-                if (turf.booleanCrosses(buffer, compLineString)) {
-                  // console.log(JSON.stringify(turf.combine(turf.featureCollection([buffer, compLineString]))));
-                  const offset = turf.lineOffset(currentLine, 2, {units: "meters"});
-                  isOffset = true;
-                  // console.log(JSON.stringify(turf.combine(turf.featureCollection([currentLine, offset]))));
-                  newLineString = dissolve(newLineString, offset);
-                }
+//           // Check if other routes cross buffer
+//           for (let compRawRouteLineString of raw) {
+//             let compRouteLineString = reformatRouteLineStrings(compRawRouteLineString);
+//             // Make sure route_ids don't match
+//             if (compRouteLineString.properties.route_id != routeLineString.properties.route_id) {
+//               // console.log(compRouteLineString.properties.route_id + " " + routeLineString.properties.route_id)
+//               const compFC = turf.flatten(compRouteLineString);
+//               for (let compLineString of compFC.features) {
+//                 if (turf.booleanCrosses(buffer, compLineString)) {
+//                   // console.log(JSON.stringify(turf.combine(turf.featureCollection([buffer, compLineString]))));
+//                   const offset = turf.lineOffset(currentLine, 2, {units: "meters"});
+//                   isOffset = true;
+//                   // console.log(JSON.stringify(turf.combine(turf.featureCollection([currentLine, offset]))));
+//                   newLineString = dissolve(newLineString, offset);
+//                 }
                 
-              }
-            }
-          }
+//               }
+//             }
+//           }
 
-          if (isOffset == false) {
-            newLineString = dissolve(newLineString, currentLine);
-          }
-        }
-      }
-      // console.log(JSON.stringify(newLineString));
-      if (newLineString?.type == "LineString") {
-        // console.log(JSON.stringify(newLineString));
-        newCoords.push(newLineString?.coordinates);
-      }
-      else if (newLineString?.type == "MultiLineString") {
-        // console.log(JSON.stringify(newLineString));
-        newLineString.coordinates.forEach(ls => {
-          newCoords.push(ls);
-        });
-      }
-    });
-    // console.log(newCoords);
-    let multi:any = turf.multiLineString(newCoords).geometry;
-    multi.properties = {"route_id": routeLineString.properties.route_id };
-    // console.log(JSON.stringify(newMultiLine)); 
-    output.push(multi);
-  }
-  console.log(JSON.stringify(output[0]));
-  return output;
-}
+//           if (isOffset == false) {
+//             newLineString = dissolve(newLineString, currentLine);
+//           }
+//         }
+//       }
+//       // console.log(JSON.stringify(newLineString));
+//       if (newLineString?.type == "LineString") {
+//         // console.log(JSON.stringify(newLineString));
+//         newCoords.push(newLineString?.coordinates);
+//       }
+//       else if (newLineString?.type == "MultiLineString") {
+//         // console.log(JSON.stringify(newLineString));
+//         newLineString.coordinates.forEach(ls => {
+//           newCoords.push(ls);
+//         });
+//       }
+//     });
+//     // console.log(newCoords);
+//     let multi:any = turf.multiLineString(newCoords).geometry;
+//     multi.properties = {"route_id": routeLineString.properties.route_id };
+//     // console.log(JSON.stringify(newMultiLine)); 
+//     output.push(multi);
+//   }
+//   console.log(JSON.stringify(output[0]));
+//   return output;
+// }
 
 
 // const config = {

@@ -14,14 +14,16 @@ class TestApp extends StatelessWidget {
   final provider = BusProvider();
 
   Future<void> test() async {
-    print(await provider.getRoutes());
-    print(await provider.getPolylines());
-    print(await provider.getStops());
-    print(await provider.getTrips());
+    // print(await provider.getRoutes());
+    // print(await provider.getPolylines());
+    // print(await provider.getStops());
+    // print(await provider.getTrips());
     // print(await provider.getBusTimetable());
 
     // print(await provider.getTripUpdates());
     // print(await provider.getVehicleUpdates());
+    var bruh = await provider.getBusTimetable();
+    print(bruh['87-185'].timetableDisplay);
     return;
   }
 
