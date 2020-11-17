@@ -2,9 +2,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 
 const BUS_COLORS = {
-  '87-184': Colors.deepPurple,
-  '286-184': Colors.indigoAccent,
-  '289-184': Colors.blueGrey
+  '87-185': Colors.deepPurple,
+  '286-185': Colors.indigoAccent,
+  '289-185': Colors.blueGrey
 };
 
 class BusShape {

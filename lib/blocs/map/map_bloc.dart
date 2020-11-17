@@ -103,8 +103,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Map<String, BusRoute> busRoutes = {};
   Map<String, BusShape> busShapes = {};
-  //Map<String, List<BusStop>> busStops = {};
-  List<BusStop> busStops = [];
+  Map<String, List<BusStop>> busStops = {};
+  // List<BusStop> busStops = [];
   List<BusVehicleUpdate> busUpdates = [];
 
   Map<String, ShuttleRoute> shuttleRoutes = {};
@@ -191,14 +191,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     shuttleUpdates = await shuttleRepo.getUpdates;
 
     // busRoutes = await busRepo.getRoutes;
-    busShapes = await busRepo.getShapes;
+    busShapes = await busRepo.getPolylines;
     busStops = await busRepo.getStops;
     busUpdates = await busRepo.getUpdates;
 
     prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values
         .toList())); // update preferences with currently active routes
 
-    if (shuttleRepo.isConnected || busRepo.isConnected) {
+    // bus repo should always be connected now because firestore
+    if (shuttleRepo.isConnected) {
       _getEnabledMarkers();
       _getEnabledPolylines();
 
@@ -216,7 +217,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     shuttleUpdates = await shuttleRepo.getUpdates;
     busUpdates = await busRepo.getUpdates;
 
-    if (shuttleRepo.isConnected || busRepo.isConnected) {
+    if (shuttleRepo.isConnected) {
       _getEnabledMarkers();
       _getEnabledPolylines();
       yield MapLoadedState(
@@ -428,25 +429,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
     });
 
-    // hardcoding these for now, should be handled in backend
-    var busMarkerMap = {
-      '87-184': busStops
-          .sublist(0, 60)
-          .map((stop) => _busStopToMapMarker(stop))
-          .toList(),
-      '286-184': busStops
-          .sublist(60, 135)
-          .map((stop) => _busStopToMapMarker(stop))
-          .toList(),
-      '289-184': busStops
-          .sublist(135)
-          .map((stop) => _busStopToMapMarker(stop))
-          .toList(),
-    };
-
     _enabledBuses.forEach((name, enabled) {
       if (enabled) {
-        busMarkerMap[name].forEach((marker) => _mapMarkers.add(marker));
+        busStops[name].forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
       }
     });
 

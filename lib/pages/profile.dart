@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:smartrider/data/models/themes.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// Used to display the profile options.
 abstract class ListItem {
   Widget buildTitle(BuildContext context);
 
   Widget buildSubtitle(BuildContext context);
 }
 
+/// Represents the profile page.
 class ProfilePage extends StatefulWidget {
-  final String role;
-  final String email;
-  final String name;
+  final String role; // What type of rider is the app user
+  final String email; // The user's email
+  final String name; // The user's name.
   ProfilePage(
       {this.title,
       @required this.name,
@@ -24,6 +25,7 @@ class ProfilePage extends StatefulWidget {
   _ProfilePageState createState() => new _ProfilePageState();
 }
 
+/// Represents the current state of the Profile Page
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:smartrider/pages/welcome.dart';
 import 'package:smartrider/pages/home.dart';
 
-
+/// sets the different font properties for the page titles.
 final kTitleStyle = TextStyle(
   color: Colors.white,
   fontFamily: 'CM Sans Serif',
@@ -11,22 +11,28 @@ final kTitleStyle = TextStyle(
   height: 1.5,
 );
 
+/// sets the different font properties for the page subtitles.
 final kSubtitleStyle = TextStyle(
   color: Colors.white,
   fontSize: 28.0,
   height: 1.2,
 );
 
+/// Represents the physical Onboarding Screen.
 class OnboardingScreen extends StatefulWidget {
   @override
   _OnboardingScreenState createState() => _OnboardingScreenState();
 }
 
+/// Represents the current state of the Onboarding Screen. Responsible for
+/// the dynamic display of the screen as the user interacts with it.
 class _OnboardingScreenState extends State<OnboardingScreen> {
+  /// Allows the user to navigate through the three pages of the screen.
   final int _numPages = 3;
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
 
+  /// Keeps track of all of the pages that the user can access
   List<Widget> _buildPageIndicator() {
     List<Widget> list = [];
     for (int i = 0; i < _numPages; i++) {
@@ -35,6 +41,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return list;
   }
 
+  /// Controls animation for which page is open.
   Widget _indicator(bool isActive) {
     return AnimatedContainer(
       duration: Duration(milliseconds: 150),
@@ -48,6 +55,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
+  /// Builds the separate environments that are displayed on the screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,9 +86,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onPressed: () {
                       print('Skip');
                       Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WelcomeScreen(homePage: HomePage())),
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                WelcomeScreen(homePage: HomePage())),
                       );
                     },
                     child: Text(
@@ -212,9 +221,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 onTap: () {
                   print('Get Started');
                   Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => WelcomeScreen(homePage: HomePage())),
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            WelcomeScreen(homePage: HomePage())),
                   );
                 },
                 child: Center(

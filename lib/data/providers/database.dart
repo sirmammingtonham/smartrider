@@ -9,15 +9,15 @@ class DatabaseService {
   final String usid;
   //reference to the user collection in the database
   final CollectionReference _userCollection =
-      Firestore.instance.collection('users');
+      FirebaseFirestore.instance.collection('users');
   //referencing all rpi shuttles collection  (for future use)
   final CollectionReference _shuttleCollection =
-      Firestore.instance.collection('active_shuttles');
+      FirebaseFirestore.instance.collection('active_shuttles');
   DatabaseService({this.usid});
   Future updateUserData(String email, String userType,
       {String rin = "0", String name}) async {
     //Updates the user data for the user corresponding to the usid
-    return await _userCollection.document(usid).setData({
+    return await _userCollection.doc(usid).set({
       'email': name,
       'userType': userType,
       'rin': rin,
@@ -29,12 +29,12 @@ class DatabaseService {
 
   // user list from snapshot
   List<User> _userListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((info) {
+    return snapshot.docs.map((doc) {
       return User(
-          email: info.data['email'],
-          rin: info.data['rin'],
-          userType: info.data['userType'],
-          name: info.data["name"]);
+          email: doc['email'],
+          rin: doc['rin'],
+          userType: doc['userType'],
+          name: doc["name"]);
     }).toList();
   }
 
@@ -45,20 +45,24 @@ class DatabaseService {
     return _userCollection.snapshots().map(_userListFromSnapshot);
   }
 
-  //get the data associated with the specific user
-  Future<Map<String, dynamic>> returnData() async {
-    //return the data associated with the user
-    Map<String, dynamic> data;
-    data = null;
-    Future<DocumentSnapshot> userRef = _userCollection.document(usid).get();
-    await userRef.then((DocumentSnapshot ds) {
-      //print(ds.data);
-      data = ds.data;
-    }).catchError((e) {
-      print("Error Found: $e"); //Prints the error
-      return null;
-    });
+  //// very deprecated!!
+  ///
+  // //get the data associated with the specific user
+  // Future<Map<String, dynamic>> returnData() async {
+  //   //return the data associated with the user
+  //   Map<String, dynamic> data;
+  //   data = null;
+  //   Future<DocumentSnapshot> userRef = _userCollection.doc(usid).get();
+  //   DocumentSnapshot document = 
+  //   await userRef.then((DocumentSnapshot ds) {
+  //     //print(ds.data);
+  //     data = ds.data;
+  //     return data;
+  //   }).catchError((e) {
+  //     print("Error Found: $e"); //Prints the error
+  //     return null;
+  //   });
 
-    return data;
-  }
+  //   // return data;
+  // }
 }

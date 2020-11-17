@@ -12,6 +12,7 @@ import 'package:smartrider/widgets/shuttle_schedules/shuttle_table.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_timeline.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
 
+///
 class PanelPage extends StatefulWidget {
   final PanelController panelController;
   final VoidCallback scheduleChanged;
@@ -171,48 +172,3 @@ Widget panelAppBar(bool isShuttle, PanelController panelController,
     ),
   );
 }
-
-// _handleSearchQuery() {
-//   setState(() {
-//     filter = _textController.text;
-//   });
-// }
-
-// _displayFilterDialog() async {
-//   final builder = (BuildContext ctx) => FilterDialog(
-//         stops: _isShuttle
-//             ? shuttleStopLists[_tabController.index]
-//             : busStopLists[_tabController.index],
-//         controller: _textController,
-//       );
-//   await showDialog(context: context, builder: builder);
-// }
-
-// bool _containsFilter(var curStopList, var curTimeList, var index) {
-//   if (this.filter == null) {
-//     return true;
-//   }
-//   if (double.tryParse(this.filter) != null) {
-//     return curTimeList[index].contains(this.filter);
-//   }
-//   if (this.filter.contains('am') ||
-//       this.filter.contains('pm') ||
-//       this.filter.contains(':')) {
-//     return curTimeList[index].contains(this.filter);
-//   }
-//   if (this.filter.contains('@')) {
-//     var filterSplit = this.filter.split('@');
-//     return (curStopList[index % curStopList.length][0]
-//             .toLowerCase()
-//             .contains(filterSplit[0].toLowerCase()) &&
-//         curTimeList[index].contains(filterSplit[1]));
-//   }
-//   return curStopList[index % curStopList.length][0]
-//       .toLowerCase()
-//       .contains(this.filter.toLowerCase().trim());
-// }
-
-// _jumpMap(double lat, double long) {
-//   this.widget.panelController.animatePanelToPosition(0);
-//   BlocProvider.of<MapBloc>(context).scrollToLocation(LatLng(lat, long));
-// }
