@@ -27,7 +27,8 @@ class ScheduleChangeEvent extends ScheduleEvent{
 }
 class ScheduleTransitionEvent extends ScheduleEvent{
   final ScheduleState currentstate;
-  const ScheduleTransitionEvent({@required this.currentstate});
+  final bool update;
+  const ScheduleTransitionEvent({@required this.currentstate,this.update = false});
   @override
   List<Object> get props => [];
 }

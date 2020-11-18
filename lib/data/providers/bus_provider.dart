@@ -104,15 +104,40 @@ class BusProvider {
   Future<List<BusTripUpdate>> getTripUpdates() async {
     http.Response response =
         await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
-
+   
+    var routes = ["87","286","289"];
     List<BusTripUpdate> tripUpdatesList = response != null
         ? FeedMessage.fromBuffer(response.bodyBytes)
             .entity
             .map((entity) => BusTripUpdate.fromPBEntity(entity))
-            .where((update) => defaultRoutes.contains(update.routeId))
+            .where((update) => routes.contains(update.routeId))
             .toList()
         : [];
-    return tripUpdatesList;
+        return tripUpdatesList;
+  }
+
+  Future<Map<String,Map<String,String>>> getNewTripUpdates() async{
+      http.Response response =
+        await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
+   
+    var routes = ["87","286","289"];
+    List<BusTripUpdate> tripUpdatesList = response != null
+        ? FeedMessage.fromBuffer(response.bodyBytes)
+            .entity
+            .map((entity) => BusTripUpdate.fromPBEntity(entity))
+            .where((update) => routes.contains(update.routeId))
+            .toList()
+        : [];
+      Map<String,Map<String,String>> m = {};
+      tripUpdatesList.forEach((element) {
+        Map<String,String> m1 = {};
+        element.stopTimeUpdate.forEach((stoptime) {
+          m1[stoptime.stopId] = DateFormat('HH:mm').format(DateTime.fromMillisecondsSinceEpoch(stoptime.arrivalTime.toInt()*1000));  
+        });
+        m[element.routeId] = m1;
+       });
+ 
+    return m;
   }
 
   /// Returns a [List] of [BusVehicleUpdate] objects.
@@ -153,6 +178,21 @@ class BusProvider {
     }
 
     return timetableMap;
+  }
+
+  Future<Map<String,Map<String,String>>> getNewBusTimeTable() async{
+    Map<String,BusTimetable> table = await this.getBusTimetable();
+    Map<String,Map<String,String>> newtable = {};
+    table.forEach((key, value) {
+      Map<String,String> m = {};
+      value.timetable.forEach((element) {
+        if (element.stopId != null && element.arrivalTime != null){
+        m[element.stopId] = DateFormat('HH:mm').format(DateTime.fromMillisecondsSinceEpoch((element.arrivalTime)*1000));
+        }
+      });
+      newtable[key] = m;
+    });
+    return newtable;
   }
 
   // Future<Map<String, List<List<String>>>> getBusTimetableFlat() async {

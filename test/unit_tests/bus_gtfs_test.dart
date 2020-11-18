@@ -8,6 +8,7 @@
 //   print("Finished running");
 // }
 import 'package:flutter/material.dart';
+import 'package:smartrider/data/providers/bus_provider.dart';
 import 'package:smartrider/data/providers/bus_provider_deprecated.dart';
 void main() {
   runApp(new MyApp());
@@ -40,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
-    final _busProvider = BusProvider();
+    final BusProvider _busProvider = BusProvider();
     // _busProvider.fetch();
     print("Finished running");
   }

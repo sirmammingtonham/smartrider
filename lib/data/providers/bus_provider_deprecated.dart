@@ -21,7 +21,7 @@ import '../models/bus/bus_timetable.dart';
 /// a REST API to retrieve json files of bus data.
 /// Each member function decodes a json file and returns
 /// a dart iterable containing the relevent bus data object.
-class BusProvider {
+class BusProviderDeprecated {
   /// The connection status of BusProvider.
   bool isConnected;
 
