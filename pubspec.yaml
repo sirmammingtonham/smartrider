@@ -39,7 +39,7 @@ dependencies:
 
 
   protobuf: ^1.0.1
-
+  device_preview: 
   #notication dependencies
   flutter_local_notifications: ^1.4.4+2
 
