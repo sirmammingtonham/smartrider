@@ -25,3 +25,48 @@ RGB for "Navy":
     G : 28
     B : 90
 
+
+===================================
+===================================
+===================================
+
+
+Light Mode:
+
+    primaryColor: White
+        RGB: 255, 255, 255
+        Hex: ffffff
+
+    accentColor: Navy
+        RGB: 24, 28, 90
+        Hex: 181C5A
+
+    primaryColorLight: Dirty White
+        RGB; 245, 245, 245
+        Hex: F5F5F5
+
+    primaryColorDark: Gray
+        RGB: 160, 160, 160
+        Hex: A0A0A0
+
+    
+
+----------------------------
+
+Dark Mode:
+
+    primaryColor: Navy
+        RGB: 24, 28, 90
+        Hex: 181C5A
+
+    accentColor: White
+        RGB: 255, 255, 255
+        Hex: ffffff
+    
+    primaryColorLight: Light Navy
+        RGB: 24, 28, 115
+        Hex: 181C73
+
+    primaryColorDark: Baby Blue
+        RGB: 88, 220, 255
+        Hex: 58DCFF

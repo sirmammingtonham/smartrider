@@ -79,6 +79,13 @@ class _SignupUIState extends State<SignupUI> {
   //Image(image: AssetImage('assets/app_icons/App\ Logo\ v1.png'))
 
   Widget logo() {
+    String pathToImage = "";
+    if (Theme.of(context).primaryColor == Color(0xff181C5A)) {
+      // in dark mode
+      pathToImage = 'assets/app_icons/app_icon_word_dark_mode.png';
+    } else {
+      pathToImage = 'assets/app_icons/app_icon_word_light_mode.png';
+    }
     return Padding(
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
       child: Align(
@@ -86,8 +93,7 @@ class _SignupUIState extends State<SignupUI> {
           height: 400.0,
           width: 400.0,
           decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("assets/app_icons/app_icon_word.png")),
+            image: DecorationImage(image: AssetImage(pathToImage)),
           ),
         ),
         alignment: Alignment.center,
@@ -186,45 +192,49 @@ class _SignupUIState extends State<SignupUI> {
         controller: controller,
         obscureText: isPassField ? _obscurePass : false,
         validator: valFunc,
-        style: TextStyle(fontSize: 20, color: Theme.of(context).primaryColor),
+        style: TextStyle(fontSize: 20, color: Theme.of(context).accentColor),
         decoration: InputDecoration(
-          errorStyle: TextStyle(color: Colors.redAccent),
+          errorStyle: TextStyle(color: Theme.of(context).errorColor),
           hintStyle: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
-              color: Theme.of(context).primaryColor),
+              color: Theme.of(context).accentColor), //text-box word placeholder
           hintText: hint,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).accentColor, // text-box border
               width: 2,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(50),
             borderSide: BorderSide(
-              color: Theme.of(context).primaryColorLight,
+              color: Theme.of(context)
+                  .primaryColorDark, // text-box border when selected
               width: 2,
             ),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context)
+                  .errorColor, // literally nothing, gave it errColor because its called "errorBorder"
               width: 2,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
-              color: Theme.of(context).primaryColorLight,
+              color: Theme.of(context).primaryColorDark, // even more nothing
               width: 2,
             ),
           ),
           prefixIcon: Padding(
             child: IconTheme(
-              data: IconThemeData(color: Theme.of(context).primaryColor),
+              data: IconThemeData(
+                  color: Theme.of(context)
+                      .accentColor), // icons before text-box word placeholders
               child: icon,
             ),
             padding: EdgeInsets.only(left: 30, right: 10),
@@ -233,7 +243,9 @@ class _SignupUIState extends State<SignupUI> {
           suffixIcon: isPassField
               ? Padding(
                   child: IconTheme(
-                    data: IconThemeData(color: Theme.of(context).primaryColor),
+                    data: IconThemeData(
+                        color: Theme.of(context)
+                            .accentColor), // password visibility button
                     child: IconButton(
                         icon: _obscurePass
                             ? Icon(Icons.visibility)
@@ -306,36 +318,33 @@ class _SignupUIState extends State<SignupUI> {
   }
 
   String _emailValidation(String value) {
-    if (value.isEmpty) {
+    if (value.isEmpty)
       return 'Enter an email';
-    } else if (!value.contains("@rpi.edu")) {
-      return "Please enter a valid rpi email";
-    } else {
+    else if (!value.contains("@rpi.edu"))
+      return "You must enter a valid RPI email.";
+    else
       return null;
-    }
   }
 
   String _passValidation(String value) {
-    if (value.length < 6) {
-      return 'Password needs to be at least 6 characters';
-    } else if (value.isEmpty) {
+    if (value.isEmpty)
       return "Please enter a password.";
-    }
-
-    return null;
+    else if (value.length < 6)
+      return 'Password needs to be at least 6 characters';
+    else
+      return null;
   }
 
   String _rinValidation(String val) {
-    if (val.trim().length != 9 || !val.startsWith("66")) {
+    if (val.trim().length != 9 || !val.startsWith("66"))
       return 'Please enter a valid RIN';
-    }
+
     return null;
   }
 
   String _nameValidation(String val) {
-    if (val.trim().length == 0) {
-      return "Please don't leave the name field blank";
-    }
+    if (val.trim().isEmpty) return "Please don't leave the name field blank";
+
     return null;
   }
 
@@ -353,21 +362,21 @@ class _SignupUIState extends State<SignupUI> {
                   child: Stack(
                     children: <Widget>[
                       Positioned(
-                        left: 10,
-                        top: 10,
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            _emailController.clear();
-                            _passwordController.clear();
-                          },
-                          icon: Icon(
-                            Icons.highlight_off,
-                            size: 30.0,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      )
+                          child: Align(
+                              child: IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  _emailController.clear();
+                                  _passwordController.clear();
+                                },
+                                icon: Icon(
+                                  Icons.keyboard_arrow_down,
+                                  size: 40.0,
+                                  color: Theme.of(context)
+                                      .accentColor, // back (X) icon color
+                                ),
+                              ),
+                              alignment: Alignment.center))
                     ],
                   ),
                   height: 50,
@@ -383,36 +392,40 @@ class _SignupUIState extends State<SignupUI> {
                           height: 140,
                           child: Stack(
                             children: <Widget>[
-                              Positioned(
+                              /*
+                                Positioned(
                                 child: Align(
                                   child: Container(
                                     width: 130,
                                     height: 130,
                                     decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Theme.of(context).primaryColor),
+                                        color: Theme.of(context).accentColor),
                                   ),
                                   alignment: Alignment.center,
                                 ),
                               ),
+                              */
                               Positioned(
+                                left: 20,
+                                top: 50,
                                 child: Container(
                                   child: Text(
                                     "LOGIN",
                                     style: TextStyle(
-                                      fontSize: 37,
+                                      fontSize: 60,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: Theme.of(context)
+                                          .accentColor, // LOGIN word color
                                     ),
                                   ),
-                                  alignment: Alignment.center,
                                 ),
                               ),
                             ],
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 20, top: 60),
+                          padding: EdgeInsets.only(bottom: 20, top: 25),
                           child: _input(Icon(Icons.email), "RPI EMAIL",
                               _emailController, false, _emailValidation),
                         ),
@@ -430,8 +443,16 @@ class _SignupUIState extends State<SignupUI> {
                               right: 20,
                               bottom: MediaQuery.of(context).viewInsets.bottom),
                           child: Container(
-                            child: _button("LOGIN", Colors.white, primary,
-                                primary, Colors.white, _loginUser),
+                            child: _button(
+                                "LOGIN",
+                                Theme.of(context).primaryColorLight, //splash
+                                Theme.of(context)
+                                    .primaryColorLight, //highlight color
+                                Theme.of(context)
+                                    .accentColor, //button fill color
+                                Theme.of(context)
+                                    .primaryColorLight, // text color
+                                _loginUser),
                             height: 50,
                             width: MediaQuery.of(context).size.width,
                           ),
@@ -447,7 +468,8 @@ class _SignupUIState extends State<SignupUI> {
             ),
             height: MediaQuery.of(context).size.height / 1.1,
             width: MediaQuery.of(context).size.width,
-            color: Colors.white,
+            color:
+                Theme.of(context).primaryColorLight, // entire login sheet color
           ),
         ),
       );
@@ -458,7 +480,8 @@ class _SignupUIState extends State<SignupUI> {
     _sheetController =
         _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
       return Container(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context)
+            .primaryColor, // color of "invisible" edge rounding of register sheet
         child: ClipRRect(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(40.0), topRight: Radius.circular(40.0)),
@@ -469,22 +492,23 @@ class _SignupUIState extends State<SignupUI> {
                   child: Stack(
                     children: <Widget>[
                       Positioned(
-                        left: 10,
-                        top: 10,
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            _emailController.clear();
-                            _passwordController.clear();
-                            _rinController.clear();
-                          },
-                          icon: Icon(
-                            Icons.highlight_off,
-                            size: 30.0,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      )
+                          child: Align(
+                              child: IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  _rinController.clear();
+                                  _nameController.clear();
+                                  _emailController.clear();
+                                  _passwordController.clear();
+                                },
+                                icon: Icon(
+                                  Icons.keyboard_arrow_down,
+                                  size: 40.0,
+                                  color: Theme.of(context)
+                                      .accentColor, // back (X) icon color
+                                ),
+                              ),
+                              alignment: Alignment.center))
                     ],
                   ),
                   height: 50,
@@ -499,6 +523,7 @@ class _SignupUIState extends State<SignupUI> {
                         height: 140,
                         child: Stack(
                           children: <Widget>[
+                            /*
                             Positioned(
                               child: Align(
                                 child: Container(
@@ -511,18 +536,20 @@ class _SignupUIState extends State<SignupUI> {
                                 alignment: Alignment.center,
                               ),
                             ),
+                            */
                             Positioned(
+                              left: 20,
+                              top: 50,
                               child: Container(
                                 //padding: EdgeInsets.only(bottom: 30, right: 44),
                                 child: Text(
                                   "REGISTER",
                                   style: TextStyle(
-                                    fontSize: 23,
+                                    fontSize: 60,
                                     fontWeight: FontWeight.bold,
                                     color: Theme.of(context).accentColor,
                                   ),
                                 ),
-                                alignment: Alignment.center,
                               ),
                             ),
                             /*
@@ -550,7 +577,7 @@ class _SignupUIState extends State<SignupUI> {
                       Padding(
                         padding: EdgeInsets.only(
                           bottom: 20,
-                          top: 60,
+                          top: 25,
                         ),
                         child: _input(Icon(Icons.contacts), "RIN",
                             _rinController, false, _rinValidation),
@@ -580,8 +607,14 @@ class _SignupUIState extends State<SignupUI> {
                             right: 20,
                             bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: Container(
-                          child: _button("REGISTER", Colors.white, primary,
-                              primary, Colors.white, _registerUser),
+                          child: _button(
+                              "REGISTER",
+                              Theme.of(context).primaryColorLight, //splash
+                              Theme.of(context)
+                                  .primaryColorLight, //highlight color
+                              Theme.of(context).accentColor, //button fill color
+                              Theme.of(context).primaryColorLight, // text color
+                              _registerUser),
                           height: 50,
                           width: MediaQuery.of(context).size.width,
                         ),
@@ -596,7 +629,8 @@ class _SignupUIState extends State<SignupUI> {
             ),
             height: MediaQuery.of(context).size.height / 1.1,
             width: MediaQuery.of(context).size.width,
-            color: Colors.white,
+            color: Theme.of(context)
+                .primaryColorLight, // entire register sheet color
           ),
         ),
       );
@@ -621,7 +655,8 @@ class _SignupUIState extends State<SignupUI> {
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         key: _scaffoldKey,
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor:
+            Theme.of(context).primaryColor, // main welcome screen color
         body: Column(
           children: <Widget>[
             logo(),
@@ -642,22 +677,42 @@ class _SignupUIState extends State<SignupUI> {
                 */
             Padding(
               child: Container(
-                child: _button("LOGIN", primary, Theme.of(context).primaryColor,
-                    Theme.of(context).accentColor, primary, _showLoginSheet),
+                child: _button(
+                    "LOGIN",
+                    Theme.of(context).primaryColorDark, //splash
+                    Theme.of(context).primaryColorDark, //highlight color
+                    Theme.of(context).accentColor, //button fill color
+                    Theme.of(context).primaryColor, // text color
+                    _showLoginSheet),
                 height: 65,
               ),
-              padding: EdgeInsets.only(top: 80, left: 20, right: 20),
+              padding: EdgeInsets.only(top: 10, left: 20, right: 20),
             ),
+            Padding(
+              child: Container(
+                child: _button(
+                    "REGISTER",
+                    Theme.of(context).primaryColorDark, //splash
+                    Theme.of(context).primaryColorDark, //highlight color
+                    Theme.of(context).primaryColor, //button fill color
+                    Theme.of(context).accentColor, // text color
+                    _showRegisterSheet),
+                height: 65,
+              ),
+              padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+            ),
+
+            /*
             Padding(
               child: Container(
                 child: OutlineButton(
                   highlightedBorderColor: Theme.of(context).accentColor,
                   borderSide: BorderSide(
-                      color: Theme.of(context).accentColor, width: 2.0),
+                      color: Theme.of(context).accentColor, width: 2.0), //color of border on register button
                   highlightElevation: 0.0,
-                  splashColor: Theme.of(context).accentColor,
-                  highlightColor: Theme.of(context).primaryColor,
-                  color: Theme.of(context).primaryColor,
+                  splashColor: Theme.of(context).primaryColorDark, // splash when tapped color
+                  highlightColor: Theme.of(context).primaryColorDark, // register button on press and hold
+                  color: Theme.of(context).accentColor, // color of: idk
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
@@ -665,7 +720,7 @@ class _SignupUIState extends State<SignupUI> {
                     "REGISTER",
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).accentColor,
+                        color: Theme.of(context).accentColor, //color of word register on button
                         fontSize: 20),
                   ),
                   onPressed: () {
@@ -676,12 +731,14 @@ class _SignupUIState extends State<SignupUI> {
               ),
               padding: EdgeInsets.only(top: 10, left: 20, right: 20),
             ),
+            */
             Expanded(
               child: Align(
                 child: ClipPath(
                   child: Container(
-                    color: Theme.of(context).accentColor,
-                    height: 450,
+                    color: Theme.of(context)
+                        .accentColor, //color of clip on bottom right
+                    height: 800,
                   ),
                   clipper: BottomWaveClipper(),
                 ),

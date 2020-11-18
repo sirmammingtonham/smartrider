@@ -50,7 +50,7 @@
 		98949174741DD6532AC600D4 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		AAFED6752447060000AE0247 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		AAFED6772447B31100AE0247 /* ApiKeys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ApiKeys.plist; sourceTree = "<group>"; };
-		FA2B82A5255F617B00024DAB /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = Runner.app; path = "/Users/Alex/Documents/School Stuff/Rensselaer/eBinder/Year 2/Sem 1/RCOS/smartrider/ios/../build/ios/Debug-iphoneos/Runner.app"; sourceTree = "<absolute>"; };
+		FAE4094325647BAC006825A7 /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = Runner.app; path = "/Users/Alex/Documents/School Stuff/Rensselaer/eBinder/Year 2/Sem 1/RCOS/smartrider/ios/../build/ios/Debug-iphoneos/Runner.app"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,7 +152,7 @@
 			);
 			name = Runner;
 			productName = Runner;
-			productReference = FA2B82A5255F617B00024DAB /* Runner.app */;
+			productReference = FAE4094325647BAC006825A7 /* Runner.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
