@@ -45,7 +45,7 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
         debugShowCheckedModeBanner: false,
         title: 'smartrider Prototype',
         theme: state.theme,
-        home: WelcomeScreen(homePage: HomePage()));
+        home: state.firstLaunch ? OnboardingScreen() : WelcomeScreen(homePage: HomePage()));
   } else {
     return MaterialApp(home: CircularProgressIndicator());
   }
