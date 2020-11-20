@@ -236,8 +236,22 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: Theme.of(context).textTheme.button,
                   ),
                   onPressed: () {
-                    // TO DO: What to do when the user wants to change their
-                    // password?
+                    BlocProvider.of<AuthenticationBloc>(context).add(
+                      AuthentificationResetPass(email),
+                    );
+                    BlocProvider.of<AuthenticationBloc>(context).add(
+                      AuthenticationLoggedOut(),
+                    );
+                    Navigator.of(context).pop();
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true, // user must tap button!
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Email has been sent"),
+                        );
+                      },
+                    );
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(10.0))),
@@ -264,8 +278,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   onPressed: () {
                     launch(
                         'https://github.com/sirmammingtonham/smartrider/issues/new?assignees=&labels=enhancement&template=feature-request---.md&title=%F0%9F%92%A1+Feature+Request%3A+%5BRequest+Title%5D');
-                    // TO DO: What to do when the user wants to request a
-                    // feature for this app?
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(10.0))),
@@ -287,7 +299,22 @@ class _ProfilePageState extends State<ProfilePage> {
                           actions: [
                             FlatButton(
                                 onPressed: () {
+                                  BlocProvider.of<AuthenticationBloc>(context)
+                                      .add(
+                                    AuthenticationDelete(),
+                                  );
                                   Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible:
+                                        true, // user must tap button!
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text("Account has been deleted"),
+                                      );
+                                    },
+                                  );
                                 },
                                 child: Text("Yes")),
                             FlatButton(

@@ -50,4 +50,9 @@ class AuthRepository {
   Future<FirebaseUser> getActualUser() async {
     return await _firebaseAuth.currentUser();
   }
+
+  Future<void> changePass(email) async {
+    print(email);
+    _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
 }
