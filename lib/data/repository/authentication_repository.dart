@@ -51,6 +51,7 @@ class AuthRepository {
     return await _firebaseAuth.currentUser();
   }
 
+  ///Takes in an email and sends an email to reset password
   Future<void> changePass(email) async {
     print(email);
     _firebaseAuth.sendPasswordResetEmail(email: email);

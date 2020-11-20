@@ -236,6 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: Theme.of(context).textTheme.button,
                   ),
                   onPressed: () {
+                    //Send an email to the user to request a password change
                     BlocProvider.of<AuthenticationBloc>(context).add(
                       AuthentificationResetPass(email),
                     );
@@ -243,6 +244,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       AuthenticationLoggedOut(),
                     );
                     Navigator.of(context).pop();
+                    //Will show a small pop up to tell users the email has been sent
                     showDialog(
                       context: context,
                       barrierDismissible: true, // user must tap button!
@@ -289,9 +291,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: Theme.of(context).textTheme.button,
                   ),
                   onPressed: () {
+                    //Show a box to ask user if they really want to delete their account
                     showDialog(
                       context: context,
-                      barrierDismissible: false, // user must tap button!
+                      barrierDismissible:
+                          false, // user doesn't need to tap button!
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: Text(
@@ -299,6 +303,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           actions: [
                             FlatButton(
                                 onPressed: () {
+                                  //If the user chooses yes, we will call the authentification delete function
                                   BlocProvider.of<AuthenticationBloc>(context)
                                       .add(
                                     AuthenticationDelete(),
@@ -326,8 +331,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         );
                       },
                     );
-                    // TO DO: What to do when the user wants to delete their
-                    // account?
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(10.0))),
