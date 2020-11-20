@@ -1,4 +1,5 @@
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart'; // For File Upload To F
 import 'package:image_picker/image_picker.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'dart:io';
 
@@ -247,7 +249,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: Theme.of(context).textTheme.button,
                   ),
                   onPressed: () {
-                    // TO DO: What to do when the user wants to report a bug?
+                    launch(
+                        'https://github.com/sirmammingtonham/smartrider/issues/new?assignees=&labels=bug&template=bug-report---.md&title=%F0%9F%90%9B+Bug+Report%3A+%5BIssue+Title%5D');
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(10.0))),
@@ -259,6 +262,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: Theme.of(context).textTheme.button,
                   ),
                   onPressed: () {
+                    launch(
+                        'https://github.com/sirmammingtonham/smartrider/issues/new?assignees=&labels=enhancement&template=feature-request---.md&title=%F0%9F%92%A1+Feature+Request%3A+%5BRequest+Title%5D');
                     // TO DO: What to do when the user wants to request a
                     // feature for this app?
                   },
@@ -272,6 +277,28 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: Theme.of(context).textTheme.button,
                   ),
                   onPressed: () {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false, // user must tap button!
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(
+                              "Are you sure you want to delete your account?"),
+                          actions: [
+                            FlatButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("Yes")),
+                            FlatButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("No"))
+                          ],
+                        );
+                      },
+                    );
                     // TO DO: What to do when the user wants to delete their
                     // account?
                   },

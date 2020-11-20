@@ -45,6 +45,9 @@ dependencies:
   #notication dependencies
   flutter_local_notifications: ^1.4.4+2
 
+  #url_launcher
+  url_launcher: ^5.7.10
+
   #ui dependencies
   sliding_up_panel: ^1.0.1
   scrollable_positioned_list: ^0.1.2
@@ -55,7 +58,6 @@ dependencies:
   day_night_switcher: ^0.1.1
   flutter_svg: ^0.19.1
   circular_profile_avatar: ^1.0.8
-  # table_sticky_headers: ^1.1.2
 
   dio: ^3.0.9
   flutter_archive: ^1.0.2
