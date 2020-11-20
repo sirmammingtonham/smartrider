@@ -151,13 +151,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                         itemCount: 5,
                         itemExtent: 50,
                         itemBuilder: (BuildContext context, int timeIndex) {
-                          return ListTile(
-                            dense: true,
-                            leading: Icon(Icons.access_time, size: 20),
-                            title: Text(
-                              '${shuttleTimeLists[idx][timeIndex]}',
-                              style: TextStyle(fontSize: 15),
-                            ),
                             /*
                             * Here we should add the use of DateTime.now()
                             * When the backend team is complete of full implementing
@@ -167,10 +160,21 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                             * var current_time = new DateTime.now();
                             * var shuttle_time = new DateTime.parse(2002-02-27T19:00:00Z);
                             * Duration difference = shuttle_time.difference(current_time);
-                            * "difference.inMinutes" should print out a int that can be given
+                            * 'In ' + difference.inMinutes.toString() + ' minutes' should print out a int
+                            * that can be given
                             * to the user
                             */
-                            subtitle: Text('In 11 minutes'),
+                          //var currentTime = new DateTime.now();
+                          //var shuttleTime = DateTime.parse(2002-02-27T19:00:00Z);
+                          //Duration difference = shuttleTime.difference(currentTime);
+                          return ListTile(
+                            dense: true,
+                            leading: Icon(Icons.access_time, size: 20),
+                            title: Text(
+                              '${shuttleTimeLists[idx][timeIndex]}',
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            subtitle: Text('In vincent is dumb minutes'),
                             trailing: PopupMenuButton<String>(
                                 onSelected: (String selected) {
                                   if (selected == choices[0]) {
@@ -193,8 +197,9 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                                     * scheduleAlarmDateTime = DateTime.parse(*shuttle_timeline object string*);
                                     * *2020-11-13T18:04:00*
                                     */
-                                    scheduleAlarmDateTime = DateTime.now().add(Duration(minutes: 1));
-                                    scheduleAlarm(scheduleAlarmDateTime);
+                                    String shuttleName = curStopList[index % curStopList.length][0];
+                                    scheduleAlarmDateTime = DateTime.now().add(Duration(seconds: 10));
+                                    scheduleAlarm(scheduleAlarmDateTime, shuttleName);
                                   }
                                 },
                                 itemBuilder: (BuildContext context) => choices
@@ -213,7 +218,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     );
   }
 
-  Future<void> scheduleAlarm(DateTime scheduledNotificationDateTime) async {
+  Future<void> scheduleAlarm(DateTime scheduledNotificationDateTime, String shuttleName) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'alarm_notif',
       'alarm_notif',
@@ -232,7 +237,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     await fltrNotification.schedule(
         0,
         'Shuttle Reminder', //
-        'Shuttle x is arriving in x minutes', //"Shuttle x is arriving in x minutes"
+        'Shuttle ' + shuttleName + ' is arriving', //"Shuttle x is arriving in x minutes"
         scheduledNotificationDateTime,
         platformChannelSpecifics);
   }
