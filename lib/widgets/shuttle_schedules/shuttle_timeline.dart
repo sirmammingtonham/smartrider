@@ -107,6 +107,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
           title: Text(curStopList[index % curStopList.length][0]),
           subtitle: Text('Next Arrival: ' +
               shuttleTimeLists[idx][_getTimeIndex(shuttleTimeLists[idx])]),
+
           leading: CustomPaint(
               painter: FillPainter(
                   circleColor: Theme.of(context).buttonColor,
@@ -141,8 +142,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                     constraints: BoxConstraints.expand(width: 8),
                   ),
                   title: Container(
-                    // height: 100.0,
-                    // margin: const EdgeInsets.only(left: 0),
                     child: RefreshIndicator(
                       onRefresh: () =>
                           Future.delayed(const Duration(seconds: 1), () => "1"),
