@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:smartrider/pages/welcome.dart';
 import 'package:smartrider/pages/home.dart';
 
+// prefs bloc
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 final kTitleStyle = TextStyle(
   color: Colors.white,
@@ -76,7 +79,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   alignment: Alignment.centerRight,
                   child: FlatButton(
                     onPressed: () {
-                      print('Skip');
+                      BlocProvider.of<PrefsBloc>(context).add(OnboardingComplete());
                       Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -313,6 +316,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               width: double.infinity,
               child: GestureDetector(
                 onTap: () {
+                  BlocProvider.of<PrefsBloc>(context).add(OnboardingComplete());
                   Navigator.push(
                   context,
                   MaterialPageRoute(

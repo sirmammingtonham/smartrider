@@ -19,7 +19,7 @@ import 'package:smartrider/data/repository/shuttle_repository.dart';
 import 'package:smartrider/pages/welcome.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:showcaseview/showcaseview.dart';
-// import 'package:smartrider/pages/onboarding.dart';
+import 'package:smartrider/pages/onboarding.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,13 +58,13 @@ class SmartRider extends StatelessWidget {
                 busRepo: BusRepository(),
                 shuttleRepo: ShuttleRepository())),
         BlocProvider<ScheduleBloc>(
-              create: (context) => ScheduleBloc(
-                  mapBloc: BlocProvider.of<MapBloc>(context),
-                  busRepo: BusRepository(),
-                  // panelController: _panelController,
-                  // tabController: _tabController
-                  ),
-            ),
+          create: (context) => ScheduleBloc(
+            mapBloc: BlocProvider.of<MapBloc>(context),
+            busRepo: BusRepository(),
+            // panelController: _panelController,
+            // tabController: _tabController
+          ),
+        ),
       ],
       child: BlocBuilder<PrefsBloc, PrefsState>(
           builder: (context, state) => _buildWithTheme(context, state)),
@@ -81,8 +81,10 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
       // builder: DevicePreview.appBuilder,
       theme: state.theme,
       home: ShowCaseWidget(
-        builder:
-            Builder(builder: (context) => WelcomeScreen(homePage: HomePage())),
+        builder: Builder(
+            builder: (context) => state.firstLaunch
+                ? OnboardingScreen()
+                : WelcomeScreen(homePage: HomePage())),
         autoPlay: true,
         autoPlayDelay: Duration(seconds: 10),
       ),
