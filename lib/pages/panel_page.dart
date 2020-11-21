@@ -64,7 +64,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
             if (state is ScheduleTimelineState) {
               return Scaffold(
                 appBar: panelAppBar(state.isShuttle, this.widget.panelController,
-                    _tabController, _tabs),
+                    _tabController, _tabs, context),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
@@ -85,7 +85,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
             } else if (state is ScheduleTableState) {
               return Scaffold(
                 appBar: panelAppBar(state.isShuttle, this.widget.panelController,
-                    _tabController, _tabs),
+                    _tabController, _tabs, context),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
@@ -107,7 +107,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
               BlocProvider.of<ScheduleBloc>(context).add(ScheduleChangeEvent());
               return Scaffold(
                 appBar: panelAppBar(state.isShuttle, this.widget.panelController,
-                    _tabController, _tabs),
+                    _tabController, _tabs, context),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
@@ -135,29 +135,59 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
 }
 
 Widget panelAppBar(bool isShuttle, PanelController panelController,
-    TabController tabController, List<Widget> tabs) {
+    TabController tabController, List<Widget> tabs, BuildContext context) {
   return AppBar(
+    backgroundColor: Theme.of(context).bottomAppBarColor,
     centerTitle: true,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
         top: Radius.circular(20),
       ),
     ),
-    title: Text(isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
+
+    leading: Padding(
+      padding: const EdgeInsets.only(left: 40.0, bottom: 35),
+      child: IconButton(
+      icon: Icon(Icons.keyboard_arrow_down, color: Theme.of(context).primaryColor),
+      onPressed: () {
+        panelController.animatePanelToPosition(0);
+      },
+    )
+   ),
+    title: Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Text(isShuttle ? 'Shuttle Schedules' : 'Bus Schedules', style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 25) ) ),
+
+actions: <Widget>[
+  Padding(
+      padding: const EdgeInsets.only(right: 45.0, bottom: 35),
+      child: IconButton(
+        icon: Icon(Icons.keyboard_arrow_down, color: Theme.of(context).primaryColor),
+        onPressed: () {
+          panelController.animatePanelToPosition(0);
+        },
+       )
+      )
+    ],
+
+
+
+
+/*
     leading: IconButton(
-      icon: Icon(Icons.arrow_downward),
+      icon: Icon(Icons.keyboard_arrow_down, color: Theme.of(context).primaryColor),
       onPressed: () {
         panelController.animatePanelToPosition(0);
       },
     ),
     actions: <Widget>[
       IconButton(
-        icon: Icon(Icons.arrow_downward),
+        icon: Icon(Icons.keyboard_arrow_down, color: Theme.of(context).primaryColor),
         onPressed: () {
           panelController.animatePanelToPosition(0);
         },
       )
-    ],
+    ],*/
     bottom: TabBar(
       unselectedLabelColor: Colors.white.withOpacity(0.3),
       indicatorColor: Colors.white,

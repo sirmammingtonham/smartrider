@@ -91,11 +91,11 @@ class SearchBarState extends State<SearchBar> {
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: CircleAvatar(
-                        backgroundColor: Theme.of(context).buttonColor,
+                        backgroundColor: Theme.of(context).accentColor,
                         child: IconButton(
                           icon: Text(computeUsername(name),
                               style: TextStyle(
-                                  fontSize: 15, color: Colors.white70)),
+                                  fontSize: 15, color: Theme.of(context).primaryColor)),
                           onPressed: () {
                             Navigator.push(
                                 context,

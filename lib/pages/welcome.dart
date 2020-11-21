@@ -407,7 +407,7 @@ class _SignupUIState extends State<SignupUI> {
                               ),
                               */
                               Positioned(
-                                left: 20,
+                                left: 20, 
                                 top: 50,
                                 child: Container(
                                   child: Text(
@@ -445,13 +445,11 @@ class _SignupUIState extends State<SignupUI> {
                           child: Container(
                             child: _button(
                                 "LOGIN",
-                                Theme.of(context).primaryColorLight, //splash
-                                Theme.of(context)
-                                    .primaryColorLight, //highlight color
-                                Theme.of(context)
-                                    .accentColor, //button fill color
-                                Theme.of(context)
-                                    .primaryColorLight, // text color
+                                Theme.of(context).primaryColorDark, //splash
+                              Theme.of(context)
+                                  .primaryColor, //highlight color
+                              Theme.of(context).accentColor, //button fill color
+                              Theme.of(context).primaryColorLight, // text color
                                 _loginUser),
                             height: 50,
                             width: MediaQuery.of(context).size.width,
@@ -609,9 +607,9 @@ class _SignupUIState extends State<SignupUI> {
                         child: Container(
                           child: _button(
                               "REGISTER",
-                              Theme.of(context).primaryColorLight, //splash
+                              Theme.of(context).primaryColorDark, //splash
                               Theme.of(context)
-                                  .primaryColorLight, //highlight color
+                                  .primaryColor, //highlight color
                               Theme.of(context).accentColor, //button fill color
                               Theme.of(context).primaryColorLight, // text color
                               _registerUser),

@@ -49,7 +49,9 @@ Light Mode:
         RGB: 160, 160, 160
         Hex: A0A0A0
 
-    
+    bottomAppBarColor: Darker Navy
+        RGB: 24, 28, 65
+        Hex: 181C41
 
 ----------------------------
 
@@ -70,3 +72,7 @@ Dark Mode:
     primaryColorDark: Baby Blue
         RGB: 88, 220, 255
         Hex: 58DCFF
+
+    bottomAppBarColor: Darker Navy
+        RGB: 180, 180, 180
+        Hex: B4B4B4
