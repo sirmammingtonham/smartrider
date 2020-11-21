@@ -8,7 +8,8 @@ import 'package:smartrider/data/models/bus/bus_stop.dart';
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/custom_sticky_table.dart';
-import 'package:sticky_headers/sticky_headers.dart';
+//import 'package:sticky_headers/sticky_headers.dart';
+//import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class BusTable extends StatefulWidget {
   final Map<String, BusStop> stopMap;
@@ -83,48 +84,67 @@ Widget busList(String routeId, Map<String, BusStop> stopMap,
       .cast<BusStop>();
 
   return Scaffold(
-      body: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            SizedBox(
-              height: 5,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: List.generate(
-                stops.length,
-                (index) => Container(
-                    alignment: Alignment.center,
-                    width: 103,
-                    height: 50,
-                    child: SizedBox(
-                      child: Text(stops[index % stops.length].stopName,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontWeight: FontWeight.bold)),DefaultTextStyle.of(context).style.apply(fontSizeFactor: 0.5),
-                    )),
-              ),
-            ),
-            Flexible(
-              child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: DataTable(
-                    columnSpacing: 50,
-                    columns: List<DataColumn>.generate(
-                        stops.length,
-                        (colIdx) => DataColumn(
-                                label: Flexible(
-                              child: Text(times[colIdx]),
-                            ))),
-                    rows: List<DataRow>.generate(
-                      (times.length / stops.length).truncate(),
-                      (rowIdx) => DataRow(
-                          cells: List<DataCell>.generate(
-                              stops.length,
-                              (colIdx) => DataCell(Text(
-                                  times[rowIdx + 1 * stops.length + colIdx])))),
-                    ),
-                  )),
-            ),
-          ])));
+      body: CustomStickyHeader(
+    columnsLength: stops.length,
+    rowsLength: (times.length / stops.length).truncate(),
+    columnsTitleBuilder: (i) => Container(
+        alignment: Alignment.center,
+        width: 100,
+        height: 50,
+        child: SizedBox(
+          child: Text(stops[i % stops.length].stopName,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold)),
+        )),
+    contentCellBuilder: (i, j) => Text(times[i + 1 * stops.length + j]),
+    cellDimensions: CellDimensions.fixed(
+        contentCellWidth: 100,
+        contentCellHeight: 50,
+        stickyLegendWidth: 100,
+        stickyLegendHeight: 50),
+    // SingleChildScrollView(
+    //     scrollDirection: Axis.horizontal,
+    //     child:
+    //         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    //       SizedBox(
+    //         height: 5,
+    //       ),
+    //       Row(
+    //         mainAxisAlignment: MainAxisAlignment.start,
+    //         children: List.generate(
+    //           stops.length,
+    //           (index) => Container(
+    //               alignment: Alignment.center,
+    //               width: 102.7,
+    //               height: 50,
+    //               child: SizedBox(
+    //   child: Text(stops[index % stops.length].stopName,
+    //       textAlign: TextAlign.center,
+    //       style: TextStyle(fontWeight: FontWeight.bold)),
+    // )),
+    //         ),
+    //       ),
+    //       Flexible(
+    //         child: SingleChildScrollView(
+    //             scrollDirection: Axis.vertical,
+    //             child: DataTable(
+    //               columnSpacing: 50,
+    //               columns: List<DataColumn>.generate(
+    //                   stops.length,
+    //                   (colIdx) => DataColumn(
+    //                           label: Flexible(
+    //                         child: Text(times[colIdx]),
+    //                       ))),
+    //               rows: List<DataRow>.generate(
+    //                 (times.length / stops.length).truncate(),
+    //                 (rowIdx) => DataRow(
+    //                     cells: List<DataCell>.generate(
+    //                         stops.length,
+    //                         (colIdx) => DataCell(Text(
+    //                             times[rowIdx + 1 * stops.length + colIdx])))),
+    //               ),
+    //             )),
+    //       ),
+    //     ]))
+  ));
 }

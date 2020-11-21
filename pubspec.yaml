@@ -53,7 +53,7 @@ dependencies:
   sticky_headers: ^0.1.8
   day_night_switcher: ^0.1.1
   flutter_svg: ^0.19.1
-  # table_sticky_headers: ^1.1.2
+  table_sticky_headers: 
 
   dio: ^3.0.9
   flutter_archive: ^1.0.2
