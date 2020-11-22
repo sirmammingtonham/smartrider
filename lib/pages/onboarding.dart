@@ -246,15 +246,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            SizedBox(height: 30.0),
-                            Text(
-                              'SafeRide',
-                              style: kTitleStyle,
+                            SizedBox(height: 50.0),
+                            Center(
+                            child: Text(
+                              'Request Transportation',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22.0,
+                                height: 1.5,),
+                              ),
                             ),
                             SizedBox(height: 15.0),
-                            Text(
-                              'SubText 3',
-                              style: kSubtitleStyle,
+                            Center(
+                              child: Text(
+                          'With the integration of the RPI SafeRide application, easily make a request for a vehicle to transport you safely around the campus.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                                height: 1.5,
+                                )
+                              )
                             ),
                           ],
                         ),
