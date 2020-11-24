@@ -162,36 +162,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: CircleAvatar(
                         radius: 60,
                         backgroundColor: Colors.purple,
+                        // backgroundImage: should be the person's profile pic.
                         child: Text(username,
-                            style: TextStyle(fontSize: 60, color: Colors.white))
-                        //Text('JS', style: TextStyle(color: Colors.white70)),
-                        ),
-                    // CircularProfileAvatar(
-                    //   'https://avatars0.githubusercontent.com/u/8264639?s=460&v=4', //sets image path, it should be a URL string. default value is empty string, if path is empty it will display only initials
-                    //   radius: 35, // sets radius, default 50.0
-                    //   backgroundColor: Colors
-                    //       .transparent, // sets background color, default Colors.white
-                    //   //borderWidth: 5, // sets border, default 0.0
-                    //   initialsText: Text(
-                    //     "Change profile",
-                    //     style: TextStyle(
-                    //         fontSize: 12, color: Colors.white.withOpacity(0.8)),
-                    //     textAlign: TextAlign.center,
-                    //   ), // sets initials text, set your own style, default Text('')
-                    //   borderColor:
-                    //       Colors.black, // sets border color, default Colors.white
-                    //   elevation:
-                    //       5.0, // sets elevation (shadow of the profile picture), default value is 0.0
-                    //   foregroundColor: Colors.black.withOpacity(
-                    //       0.5), //sets foreground colour, it works if showInitialTextAbovePicture = true , default Colors.transparent
-                    //   cacheImage:
-                    //       true, // allow widget to cache image against provided url
-                    //   onTap: () {
-                    //     getImage(false);
-                    //   }, // sets on tap
-                    //   showInitialTextAbovePicture:
-                    //       true, // setting it true will show initials text above profile picture, default false
-                    // )
+                            style:
+                                TextStyle(fontSize: 60, color: Colors.white))),
                   ),
                 ],
                 // Profile pic overflows Stack. Keeps top portion of profile pic
