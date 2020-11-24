@@ -52,5 +52,7 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Smartrider needs this access to pinpoint your current ilocation on the map.</string>
 </dict>
 </plist>

@@ -80,7 +80,7 @@ class _SignupUIState extends State<SignupUI> {
 
   Widget logo() {
     String pathToImage = "";
-    if (Theme.of(context).primaryColor == Color(0xff181C5A)) {
+    if (Theme.of(context).brightness == Brightness.dark) {
       // in dark mode
       pathToImage = 'assets/app_icons/app_icon_word_dark_mode.png';
     } else {
@@ -248,8 +248,8 @@ class _SignupUIState extends State<SignupUI> {
                             .accentColor), // password visibility button
                     child: IconButton(
                         icon: _obscurePass
-                            ? Icon(Icons.visibility)
-                            : Icon(Icons.visibility_off),
+                            ? Icon(Icons.visibility_off)
+                            : Icon(Icons.visibility),
                         onPressed: () => _sheetController.setState(() {
                               _obscurePass = !_obscurePass;
                             })),
@@ -335,10 +335,11 @@ class _SignupUIState extends State<SignupUI> {
       return null;
   }
 
+  //     === DEPRECIATED ===
   String _rinValidation(String val) {
-    if (val.trim().length != 9 || !val.startsWith("66"))
+    /*if (val.trim().length != 9 || !val.startsWith("66"))
       return 'Please enter a valid RIN';
-
+    */
     return null;
   }
 
@@ -572,6 +573,7 @@ class _SignupUIState extends State<SignupUI> {
                           ],
                         ),
                       ),
+                      /*     === DEPRECIATED ===
                       Padding(
                         padding: EdgeInsets.only(
                           bottom: 20,
@@ -580,6 +582,7 @@ class _SignupUIState extends State<SignupUI> {
                         child: _input(Icon(Icons.contacts), "RIN",
                             _rinController, false, _rinValidation),
                       ),
+                      */
                       Padding(
                         padding: EdgeInsets.only(
                           bottom: 20,

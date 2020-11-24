@@ -53,6 +53,18 @@ Light Mode:
         RGB: 24, 28, 65
         Hex: 181C41
 
+    toggleableActiveColor: Light Green
+        RGB: 105, 230, 105
+        Hex: 69D269
+
+    indicatorColor: Dirty White
+        RGB; 245, 245, 245
+        Hex: F5F5F5
+
+    disabledColor: Light Gray
+        RGB: 210, 210, 210
+        Hex: D2D2D2
+
 ----------------------------
 
 Dark Mode:
@@ -72,7 +84,73 @@ Dark Mode:
     primaryColorDark: Baby Blue
         RGB: 88, 220, 255
         Hex: 58DCFF
+    
+    canvasColor: Navy
+        RGB: 24, 28, 90
+        Hex: 181C5A
 
-    bottomAppBarColor: Darker Navy
-        RGB: 180, 180, 180
-        Hex: B4B4B4
+    bottomAppBarColor: Dull White
+        RGB: 240, 240, 240
+        Hex: F0F0F0
+    
+    toggleableActiveColor: Dark Green
+        RGB: 105, 230, 105
+        Hex: 39A539
+
+    indicatorColor: Baby Blue
+        RGB: 88, 220, 255
+        Hex: 58DCFF
+
+    disabledColor: Gray
+        RGB: 160, 160, 160
+        Hex: A0A0A0
+
+    colorScheme: ColorScheme(
+        primary: Navy
+            RGB: 24, 28, 90
+            Hex: 181C5A
+
+        primaryVariant: Light Navy
+            RGB: 24, 28, 115
+            Hex: 181C73
+    
+        secondary: White
+            RGB: 255, 255, 255
+            Hex: ffffff
+
+        secondaryVariant: Dull White
+            RGB: 240, 240, 240
+            Hex: F0F0F0
+    
+        surface: Navy
+            RGB: 24, 28, 90
+            Hex: 181C5A
+    
+        background: White
+            RGB: 255, 255, 255
+            Hex: ffffff
+
+        error: Calm Red
+            RGB: 235, 81, 81
+            Hex: EB5151
+    
+        onPrimary: White
+            RGB: 255, 255, 255
+            Hex: ffffff
+        
+        onSecondary: Light Navy
+            RGB: 24, 28, 115
+            Hex: 181C73
+
+        onSurface: Navy
+            RGB: 24, 28, 90
+            Hex: 181C5A
+
+        onBackground: White
+            RGB: 255, 255, 255
+            Hex: ffffff
+        
+        onError: Calm Red
+            RGB: 235, 81, 81
+            Hex: EB5151
+    )

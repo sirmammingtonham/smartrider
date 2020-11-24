@@ -23,7 +23,7 @@ class PanelPage extends StatefulWidget {
 
 class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
   final List<Widget> _tabs = [
-    Tab(icon: Icon(Icons.airport_shuttle)),
+    Tab(icon: Icon(Icons.airport_shuttle/*, color: Theme.of(context).primaryColor,*/)),
     Tab(icon: Icon(Icons.directions_bus)),
   ];
 
@@ -74,7 +74,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                 ),
                 floatingActionButton: FloatingActionButton(
                   heroTag: "Filter",
-                  child: Icon(Icons.toc),
+                  child: Icon(Icons.toc, color: Theme.of(context).primaryColor),
                   elevation: 5.0,
                   onPressed: () {
                     BlocProvider.of<ScheduleBloc>(context)
@@ -95,7 +95,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                 ),
                 floatingActionButton: FloatingActionButton(
                   heroTag: "Filter",
-                  child: Icon(Icons.timeline),
+                  child: Icon(Icons.timeline, color: Theme.of(context).primaryColor),
                   elevation: 5.0,
                   onPressed: () {
                     BlocProvider.of<ScheduleBloc>(context)
@@ -156,7 +156,7 @@ Widget panelAppBar(bool isShuttle, PanelController panelController,
    ),
     title: Padding(
       padding: const EdgeInsets.only(bottom: 15),
-      child: Text(isShuttle ? 'Shuttle Schedules' : 'Bus Schedules', style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 25) ) ),
+      child: Text(isShuttle ? 'Shuttle Schedules' : 'Bus Schedules', style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 25) ) ),
 
 actions: <Widget>[
   Padding(
@@ -189,10 +189,11 @@ actions: <Widget>[
       )
     ],*/
     bottom: TabBar(
-      unselectedLabelColor: Colors.white.withOpacity(0.3),
-      indicatorColor: Colors.white,
+      unselectedLabelColor: Theme.of(context).disabledColor,
+      indicatorColor: Theme.of(context).indicatorColor,
       controller: tabController,
       tabs: tabs,
+      labelColor: Theme.of(context).primaryColor,
     ),
   );
 }

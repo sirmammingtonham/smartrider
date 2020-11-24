@@ -1,5 +1,6 @@
 //implementation imports
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
