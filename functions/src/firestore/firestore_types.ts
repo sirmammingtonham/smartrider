@@ -131,5 +131,12 @@ export interface Timetable {
   service_id: string;
   include_dates: string[];
   exclude_dates: string[];
-  timetable: TimetableStop[];
+  stops: {
+    stop_id: string;
+    stop_name: string;
+    stop_lat: number;
+    stop_lon: number;
+  }[];
+  timetable: string[];
+  // timetable: TimetableStop[];
 }
