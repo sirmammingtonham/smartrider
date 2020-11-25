@@ -109,8 +109,8 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
   @override
   void initState() {
     super.initState();
-    _verticalSyncController = _SyncScrollController(
-        [_verticalTitleController, _verticalBodyController]);
+    // _verticalSyncController = _SyncScrollController(
+    //     [_verticalTitleController, _verticalBodyController]);
     _horizontalSyncController = _SyncScrollController(
         [_horizontalTitleController, _horizontalBodyController]);
   }
@@ -213,64 +213,51 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     controller: _horizontalBodyController,
-                    child: NotificationListener<ScrollNotification>(
-                      child: SingleChildScrollView(
-                          controller: _verticalBodyController,
-                          child: Column(
-                            children: List.generate(
-                              widget.rowsLength,
-                              (int i) => Row(
-                                children: List.generate(
-                                  widget.columnsLength,
-                                  (int j) => Container(
-                                    width: widget.cellDimensions.columnWidths !=
-                                            null
-                                        ? widget.cellDimensions.columnWidths[j]
-                                        : widget
-                                            .cellDimensions.contentCellWidth,
-                                    height: widget.cellDimensions.rowHeights !=
-                                            null
-                                        ? widget.cellDimensions.rowHeights[i]
-                                        : widget
-                                            .cellDimensions.contentCellHeight,
-                                    alignment: (() {
-                                      if (widget.cellAlignments
-                                              .contentCellAlignment !=
-                                          null) {
-                                        return widget.cellAlignments
-                                            .contentCellAlignment;
-                                      } else if (widget.cellAlignments
-                                              .columnAlignments !=
-                                          null) {
-                                        return widget
-                                            .cellAlignments.columnAlignments[j];
-                                      } else if (widget
-                                              .cellAlignments.rowAlignments !=
-                                          null) {
-                                        return widget
-                                            .cellAlignments.rowAlignments[i];
-                                      } else if (widget.cellAlignments
-                                              .contentCellAlignments !=
-                                          null) {
-                                        return widget.cellAlignments
-                                            .contentCellAlignments[i][j];
-                                      }
-                                    }()),
-                                    child: FittedBox(
-                                      fit: widget.cellFit,
-                                      child: widget.contentCellBuilder(j, i),
-                                    ),
-                                  ),
-                                ),
+                    child: SingleChildScrollView(
+                        child: Column(
+                      children: List.generate(
+                        widget.rowsLength,
+                        (int i) => Row(
+                          children: List.generate(
+                            widget.columnsLength,
+                            (int j) => Container(
+                              width: widget.cellDimensions.columnWidths != null
+                                  ? widget.cellDimensions.columnWidths[j]
+                                  : widget.cellDimensions.contentCellWidth,
+                              height: widget.cellDimensions.rowHeights != null
+                                  ? widget.cellDimensions.rowHeights[i]
+                                  : widget.cellDimensions.contentCellHeight,
+                              alignment: (() {
+                                if (widget
+                                        .cellAlignments.contentCellAlignment !=
+                                    null) {
+                                  return widget
+                                      .cellAlignments.contentCellAlignment;
+                                } else if (widget
+                                        .cellAlignments.columnAlignments !=
+                                    null) {
+                                  return widget
+                                      .cellAlignments.columnAlignments[j];
+                                } else if (widget
+                                        .cellAlignments.rowAlignments !=
+                                    null) {
+                                  return widget.cellAlignments.rowAlignments[i];
+                                } else if (widget
+                                        .cellAlignments.contentCellAlignments !=
+                                    null) {
+                                  return widget.cellAlignments
+                                      .contentCellAlignments[i][j];
+                                }
+                              }()),
+                              child: FittedBox(
+                                fit: widget.cellFit,
+                                child: widget.contentCellBuilder(j, i),
                               ),
                             ),
-                          )),
-                      onNotification: (ScrollNotification notification) {
-                        _verticalSyncController.processNotification(
-                            notification, _verticalBodyController);
-                        return true;
-                      },
-                    ),
+                          ),
+                        ),
+                      ),
+                    )),
                   ),
                 ),
               ),
