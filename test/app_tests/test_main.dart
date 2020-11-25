@@ -23,7 +23,7 @@ class TestApp extends StatelessWidget {
     // print(await provider.getTripUpdates());
     // print(await provider.getVehicleUpdates());
     var bruh = await provider.getBusTimetable();
-    print(bruh['87-185'].timetableDisplay);
+    print(bruh['87-185'].stops);
     return;
   }
 

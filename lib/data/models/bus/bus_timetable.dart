@@ -1,7 +1,6 @@
-class BusTimetable {
-  final _interpolatedChar = '•'; // bullet point
-  final _skipChar = '—'; // em dash
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+class BusTimetable {
   String routeId;
   int directionId;
   String directionName;
@@ -12,7 +11,8 @@ class BusTimetable {
 
   List<String> includeDates;
   List<String> excludeDates;
-  List<TimetableEntry> timetable;
+  List<TimetableStop> stops;
+  List<String> timetable;
 
   BusTimetable(
       {this.routeId,
@@ -24,28 +24,13 @@ class BusTimetable {
       this.serviceId,
       this.includeDates,
       this.excludeDates,
+      this.stops,
       this.timetable});
 
-  List<String> get stopIds {
-    List<String> stopIds = [timetable[0].stopId];
+  int get numColumns => stops.length;
+  int get numRows => (timetable.length / stops.length).truncate();
 
-    int i = 1;
-    while (stopIds[0] != timetable[i].stopId) {
-      stopIds.add(timetable[i].stopId);
-      ++i;
-    }
-    return stopIds;
-  }
-
-  List<String> get timetableDisplay => timetable.map((table) {
-        if (table.skipped) {
-          return _skipChar;
-        }
-        if (table.interpolated) {
-          return table.formattedTime + _interpolatedChar;
-        }
-        return table.formattedTime;
-      }).toList();
+  String getTime(int i, int j) => timetable[j * stops.length + i];
 
   BusTimetable.fromJson(Map<String, dynamic> json) {
     routeId = json['route_id'];
@@ -59,12 +44,11 @@ class BusTimetable {
     includeDates = json['include_dates'].cast<String>();
     excludeDates = json['exclude_dates'].cast<String>();
 
-    timetable = json['timetable']
-        .map((table) {
-          return TimetableEntry.fromJson(table);
-        })
-        .toList()
-        .cast<TimetableEntry>();
+    stops = json['stops'].map<TimetableStop>((table) {
+      return TimetableStop.fromJson(table);
+    }).toList();
+
+    timetable = json['timetable'].cast<String>();
   }
 
   Map<String, dynamic> toJson() {
@@ -80,46 +64,37 @@ class BusTimetable {
     data['include_dates'] = includeDates;
     data['exclude_dates'] = excludeDates;
 
+    data['stops'] = stops;
+
     data['timetable'] = timetable;
 
     return data;
   }
 }
 
-class TimetableEntry {
-  int arrivalTime;
+class TimetableStop {
   String stopId;
-  String formattedTime;
-  int stopSequence;
-  bool interpolated;
-  bool skipped;
+  double stopLat;
+  double stopLon;
+  String stopName;
 
-  TimetableEntry({
-    this.arrivalTime,
-    this.stopId,
-    this.formattedTime,
-    this.stopSequence,
-    this.interpolated,
-    this.skipped,
-  });
+  TimetableStop({this.stopId, this.stopLat, this.stopLon, this.stopName});
 
-  TimetableEntry.fromJson(Map<String, dynamic> json) {
-    arrivalTime = json['arrival_time'];
+  LatLng get latLng => LatLng(stopLat, stopLon);
+
+  TimetableStop.fromJson(Map<String, dynamic> json) {
     stopId = json['stop_id'];
-    formattedTime = json['formatted_time'];
-    stopSequence = json['stop_sequence'];
-    interpolated = json['interpolated'];
-    skipped = json['skipped'];
+    stopLat = json['stop_lat'];
+    stopLon = json['stop_lon'];
+    stopName = json['stop_name'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['arrival_time'] = arrivalTime;
     data['stop_id'] = stopId;
-    data['formatted_time'] = formattedTime;
-    data['stop_sequence'] = stopSequence;
-    data['interpolated'] = interpolated;
-    data['skipped'] = skipped;
+    data['stop_lat'] = stopLat;
+    data['stop_lon'] = stopLon;
+    data['stop_name'] = stopName;
     return data;
   }
 }

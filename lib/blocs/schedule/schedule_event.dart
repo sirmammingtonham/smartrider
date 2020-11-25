@@ -1,33 +1,18 @@
 part of 'schedule_bloc.dart';
 
-
 abstract class ScheduleEvent extends Equatable {
   const ScheduleEvent();
 }
-class ScheduleInitEvent extends ScheduleEvent{
-  @override
-  List<Object> get props => [];
-}
-class ScheduleTimelineEvent extends ScheduleEvent{
 
-  const ScheduleTimelineEvent();
+class ScheduleInitEvent extends ScheduleEvent {
   @override
   List<Object> get props => [];
 }
-class ScheduleTableEvent extends ScheduleEvent{
 
-  const ScheduleTableEvent();
+class ScheduleViewChangeEvent extends ScheduleEvent {
+  final bool isTimeline;
+  ScheduleViewChangeEvent({@required this.isTimeline});
+
   @override
-  List<Object> get props => [];
-}
-class ScheduleChangeEvent extends ScheduleEvent{
-  
-  @override
-  List<Object> get props => [];
-}
-class ScheduleTransitionEvent extends ScheduleEvent{
-  final ScheduleState currentstate;
-  const ScheduleTransitionEvent({@required this.currentstate});
-  @override
-  List<Object> get props => [];
+  List<Object> get props => [this.isTimeline];
 }

@@ -12,9 +12,9 @@ import 'package:smartrider/widgets/custom_sticky_table.dart';
 //import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class BusTable extends StatefulWidget {
-  final Map<String, BusStop> stopMap;
+
   final Map<String, BusTimetable> timetableMap;
-  BusTable({Key key, @required this.stopMap, @required this.timetableMap})
+  BusTable({Key key, @required this.timetableMap})
       : super(key: key);
 
   @override
@@ -64,9 +64,9 @@ class BusTableState extends State<BusTable>
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            busList('87-185', this.widget.stopMap, this.widget.timetableMap),
-            busList('286-185', this.widget.stopMap, this.widget.timetableMap),
-            busList('289-185', this.widget.stopMap, this.widget.timetableMap),
+            busList(this.widget.timetableMap['87-185']),
+            busList(this.widget.timetableMap['286-185']),
+            busList(this.widget.timetableMap['289-185']),
           ],
         ),
       )
@@ -74,29 +74,29 @@ class BusTableState extends State<BusTable>
   }
 }
 
-Widget busList(String routeId, Map<String, BusStop> stopMap,
-    Map<String, BusTimetable> timetableMap) {
-  List<String> times = timetableMap[routeId].timetableDisplay;
-  var stops = timetableMap[routeId]
-      .stopIds
-      .map((id) => stopMap[id])
-      .toList()
-      .cast<BusStop>();
+Widget busList(BusTimetable table) {
+  // List<String> times = timetableMap[routeId].timetableDisplay;
+  // var stops = timetableMap[routeId]
+  //     .stopIds
+  //     .map((id) => stopMap[id])
+  //     .toList()
+  //     .cast<BusStop>();
 
   return Scaffold(
       body: CustomStickyHeader(
-    columnsLength: stops.length,
-    rowsLength: (times.length / stops.length).truncate(),
+    columnsLength: table.numColumns,
+    rowsLength: table.numRows,
+
     columnsTitleBuilder: (i) => Container(
         alignment: Alignment.center,
         width: 100,
         height: 50,
         child: SizedBox(
-          child: Text(stops[i % stops.length].stopName,
+          child: Text(table.stops[i].stopName,
               textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.bold)),
         )),
-    contentCellBuilder: (i, j) => Text(times[i + 1 * stops.length + j]),
+    contentCellBuilder: (i, j) => Text(table.getTime(i, j)),
     cellDimensions: CellDimensions.fixed(
         contentCellWidth: 100,
         contentCellHeight: 50,

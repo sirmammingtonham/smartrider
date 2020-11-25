@@ -10,34 +10,15 @@ class ScheduleInitialState extends ScheduleState {
 }
 
 class ScheduleTimelineState extends ScheduleState {
-  final bool isShuttle;
-  const ScheduleTimelineState({@required this.isShuttle});
+  const ScheduleTimelineState();
   @override
   List<Object> get props => [];
 }
 
 class ScheduleTableState extends ScheduleState {
-  final bool isShuttle;
-  final Map<String, BusStop> stopMap;
   final Map<String, BusTimetable> timetableMap;
   const ScheduleTableState(
-      {@required this.isShuttle, @required this.stopMap, @required this.timetableMap});
+      {@required this.timetableMap});
   @override
-  List<Object> get props => [isShuttle, timetableMap];
-}
-
-class ScheduleChangeState extends ScheduleState {
-  final bool isShuttle;
-  const ScheduleChangeState({@required this.isShuttle});
-  @override
-  List<Object> get props => [];
-}
-
-class ScheduleTransitionState extends ScheduleState {
-  final bool isShuttle;
-  final ScheduleState currentState;
-  const ScheduleTransitionState(
-      {@required this.isShuttle, @required this.currentState});
-  @override
-  List<Object> get props => [];
+  List<Object> get props => [timetableMap];
 }

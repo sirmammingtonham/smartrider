@@ -56,6 +56,12 @@ class _HomePageState extends State<_HomePage> {
     _isShuttle = true;
   }
 
+  void _changeCallback() {
+    setState(() {
+      _isShuttle = !_isShuttle;
+    });
+  }
+
   /// Builds the map and the schedule dropdown based on dynamic data.
   @override
   Widget build(BuildContext context) {
@@ -107,6 +113,7 @@ class _HomePageState extends State<_HomePage> {
                 SearchBar(),
               ]),
               panel: PanelPage(
+                scheduleChanged: _changeCallback,
                 panelController: _panelController,
               ))),
     );

@@ -16,7 +16,8 @@ import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
 class PanelPage extends StatefulWidget {
   final PanelController panelController;
   final VoidCallback scheduleChanged;
-  PanelPage({Key key, this.panelController, this.scheduleChanged})
+  PanelPage(
+      {Key key, @required this.panelController, @required this.scheduleChanged})
       : super(key: key);
   @override
   PanelPageState createState() => PanelPageState();
@@ -30,6 +31,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
 
   TabController _tabController;
   String filter;
+  bool _isShuttle = true;
 
   @override
   void initState() {
@@ -46,11 +48,13 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  // handling this shit in bloc is too much trouble for something so simple
   _handleTabSelection() {
     if (_tabController.indexIsChanging) {
-      ScheduleState s = BlocProvider.of<ScheduleBloc>(context).state;
-      BlocProvider.of<ScheduleBloc>(context)
-          .add(ScheduleTransitionEvent(currentstate: s));
+      setState(() {
+        _isShuttle = !_isShuttle;
+      });
+      this.widget.scheduleChanged();
     }
   }
 
@@ -64,8 +68,8 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
           builder: (context, state) {
             if (state is ScheduleTimelineState) {
               return Scaffold(
-                appBar: panelAppBar(state.isShuttle,
-                    this.widget.panelController, _tabController, _tabs),
+                appBar: panelAppBar(_isShuttle, this.widget.panelController,
+                    _tabController, _tabs),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
@@ -79,21 +83,19 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                   elevation: 5.0,
                   onPressed: () {
                     BlocProvider.of<ScheduleBloc>(context)
-                        .add(ScheduleTableEvent());
+                        .add(ScheduleViewChangeEvent(isTimeline: false));
                   },
                 ),
               );
             } else if (state is ScheduleTableState) {
               return Scaffold(
-                appBar: panelAppBar(state.isShuttle,
-                    this.widget.panelController, _tabController, _tabs),
+                appBar: panelAppBar(_isShuttle, this.widget.panelController,
+                    _tabController, _tabs),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
                     ShuttleTable(),
-                    BusTable(
-                        stopMap: state.stopMap,
-                        timetableMap: state.timetableMap),
+                    BusTable(timetableMap: state.timetableMap),
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(
@@ -102,35 +104,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                   elevation: 5.0,
                   onPressed: () {
                     BlocProvider.of<ScheduleBloc>(context)
-                        .add(ScheduleTimelineEvent());
-                  },
-                ),
-              );
-            } else if (state is ScheduleTransitionState) {
-              BlocProvider.of<ScheduleBloc>(context).add(ScheduleChangeEvent());
-              return Scaffold(
-                appBar: panelAppBar(state.isShuttle,
-                    this.widget.panelController, _tabController, _tabs),
-                body: TabBarView(
-                  controller: _tabController,
-                  children: <Widget>[
-                    state.currentState is ScheduleTableState
-                        ? ShuttleTable()
-                        : ShuttleTimeline(),
-                    state.currentState is ScheduleTableState
-                        ? BusTable()
-                        : BusTimeline(),
-                  ],
-                ),
-                floatingActionButton: FloatingActionButton(
-                  heroTag: "Filter",
-                  child: state.currentState is ScheduleTableState
-                      ? Icon(Icons.timeline)
-                      : Icon(Icons.toc),
-                  elevation: 5.0,
-                  onPressed: () {
-                    BlocProvider.of<ScheduleBloc>(context)
-                        .add(ScheduleTableEvent());
+                        .add(ScheduleViewChangeEvent(isTimeline: true));
                   },
                 ),
               );
