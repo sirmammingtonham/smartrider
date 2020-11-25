@@ -11,6 +11,7 @@ import 'package:smartrider/widgets/shuttle_schedules/shuttle_timeline.dart';
 import 'package:smartrider/widgets/shuttle_schedules/shuttle_table.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_timeline.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
+import 'package:smartrider/widgets/shuttle_schedules/shuttle_unavailable.dart';
 
 ///
 class PanelPage extends StatefulWidget {
@@ -94,7 +95,8 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
-                    ShuttleTable(),
+                    // ShuttleTable(),
+                    ShuttleUnavailable(),
                     BusTable(timetableMap: state.timetableMap),
                   ],
                 ),
