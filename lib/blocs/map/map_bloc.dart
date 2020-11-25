@@ -28,7 +28,7 @@ import 'package:smartrider/data/models/shuttle/shuttle_update.dart';
 
 import 'package:smartrider/data/models/bus/bus_route.dart';
 import 'package:smartrider/data/models/bus/bus_shape.dart';
-import 'package:smartrider/data/models/bus/bus_stop.dart';
+// import 'package:smartrider/data/models/bus/bus_stop.dart';
 import 'package:smartrider/data/models/bus/bus_vehicle_update.dart';
 
 part 'map_event.dart';
@@ -103,7 +103,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Map<String, BusRoute> busRoutes = {};
   Map<String, BusShape> busShapes = {};
-  Map<String, List<BusStop>> busStops = {};
+  // Map<String, List<BusStop>> busStops = {};
   // List<BusStop> busStops = [];
   List<BusVehicleUpdate> busUpdates = [];
 
@@ -185,15 +185,17 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       /// Poll every 3ish seconds
       await Future.delayed(const Duration(seconds: 2));
     }
-
+    Stopwatch stopwatch = new Stopwatch()..start();
     shuttleRoutes = await shuttleRepo.getRoutes;
     shuttleStops = await shuttleRepo.getStops;
     shuttleUpdates = await shuttleRepo.getUpdates;
 
-    // busRoutes = await busRepo.getRoutes;
+    busRoutes = await busRepo.getRoutes;
     busShapes = await busRepo.getPolylines;
-    busStops = await busRepo.getStops;
+    // busStops = await busRepo.getStops;
     busUpdates = await busRepo.getUpdates;
+
+    print('got the stuff in ${stopwatch.elapsed} seconds');
 
     prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values
         .toList())); // update preferences with currently active routes
@@ -292,25 +294,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         size: stopMarkerSize);
 
     shuttleUpdateIcons[22] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_red.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_red.svg',
+        size: vehicleUpdateSize);
     shuttleUpdateIcons[21] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_yellow.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_yellow.svg',
+        size: vehicleUpdateSize);
     shuttleUpdateIcons[24] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_blue.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_blue.svg',
+        size: vehicleUpdateSize);
     shuttleUpdateIcons[28] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_orange.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_orange.svg',
+        size: vehicleUpdateSize);
     shuttleUpdateIcons[-1] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_white.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_white.svg',
+        size: vehicleUpdateSize);
 
     // temporary until we finalize map marker icons
     shuttleUpdateIcons[87] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_blue.svg', size: vehicleUpdateSize);
+        'assets/bus_icons/bus_blue.svg',
+        size: vehicleUpdateSize);
     shuttleUpdateIcons[286] =
         await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-            'assets/bus_icons/bus_orange.svg', size: vehicleUpdateSize);
+            'assets/bus_icons/bus_orange.svg',
+            size: vehicleUpdateSize);
     shuttleUpdateIcons[289] =
         await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-            'assets/bus_icons/bus_yellow.svg', size: vehicleUpdateSize);
+            'assets/bus_icons/bus_yellow.svg',
+            size: vehicleUpdateSize);
   }
 
   Marker _shuttleStopToMarker(ShuttleStop stop) {
@@ -327,21 +337,21 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         });
   }
 
-  Marker _busStopToMarker(BusStop stop) {
-    return Marker(
-        icon: busStopIcon,
-        infoWindow: InfoWindow(title: stop.stopName),
-        markerId: MarkerId(stop.stopId.toString()),
-        position: stop.getLatLng,
-        onTap: () {
-          _controller.animateCamera(
-            CameraUpdate.newCameraPosition(
-                CameraPosition(target: stop.getLatLng, zoom: 18, tilt: 50)),
-          );
-        });
-  }
+  // Marker _busStopToMarker(BusStop stop) {
+  //   return Marker(
+  //       icon: busStopIcon,
+  //       infoWindow: InfoWindow(title: stop.stopName),
+  //       markerId: MarkerId(stop.stopId.toString()),
+  //       position: stop.getLatLng,
+  //       onTap: () {
+  //         _controller.animateCamera(
+  //           CameraUpdate.newCameraPosition(
+  //               CameraPosition(target: stop.getLatLng, zoom: 18, tilt: 50)),
+  //         );
+  //       });
+  // }
 
-  MapMarker _busStopToMapMarker(BusStop stop) {
+  MapMarker _busStopToMapMarker(BusStopSimplified stop) {
     return MapMarker(
         id: stop.stopId,
         info: stop.stopName,
@@ -431,7 +441,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     _enabledBuses.forEach((name, enabled) {
       if (enabled) {
-        busStops[name].forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
+        busRoutes[name]
+            .stops
+            .forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
       }
     });
 

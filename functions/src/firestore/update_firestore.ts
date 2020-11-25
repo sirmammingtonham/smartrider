@@ -5,17 +5,17 @@ import * as models from "./firestore_types";
 import * as Promise from "../helpers/async_util";
 import * as config from "../setup/gtfs_config.json";
 import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
-import { collection, subcollection, set, all, remove } from "typesaurus";
+import { collection, subcollection, set, all, remove, query } from "typesaurus";
 import { genShapeGeoJSON } from "../helpers/bus_util";
 import { zipObject } from "lodash";
 
 import * as fs from "fs";
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+// });
 
-// admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
+admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
 
 console.log("initialized");
 
@@ -81,18 +81,25 @@ const parseRoutes = async (db: any) => {
   const routes = collection<models.Route>("routes");
   const query_res = await db.all(`
   SELECT r.*, 
-  Group_concat(t.trip_id)  AS trip_ids, 
-  Group_concat(t.shape_id) AS shape_ids, 
-  Group_concat(s.stop_id)  AS stop_ids 
-  FROM   routes r 
+  Group_concat(c.start_date) AS start_dates, 
+  Group_concat(c.end_date)   AS end_dates,
+  Group_concat(t.trip_id)    AS trip_ids, 
+  Group_concat(t.shape_id)   AS shape_ids, 
+  Group_concat(s.stop_id)    AS stop_ids 
+  FROM  routes r 
     INNER JOIN trips t 
-            ON r.route_id = t.route_id 
+            ON r.route_id = t.route_id
     INNER JOIN stop_times st 
             ON t.trip_id = st.trip_id 
     INNER JOIN stops s 
             ON st.stop_id = s.stop_id 
+    INNER JOIN calendar c
+            ON c.service_id = t.service_id
   GROUP  BY r.route_id; 
   `);
+
+  const stops = await await db.all(`SELECT * FROM stops;`);
+
   return Promise.map(query_res, (query: any) => {
     return set(routes, query.route_id, {
       route_id: query.route_id,
@@ -107,9 +114,22 @@ const parseRoutes = async (db: any) => {
       route_sort_order: +query.route_sort_order,
       continuous_pickup: query.continuous_pickup,
       continuous_drop_off: query.continuous_drop_off,
-      trip_ids: [...new Set<string>(query.trip_ids.split(","))],
-      shape_ids: [...new Set<string>(query.shape_ids.split(","))],
-      stop_ids: [...new Set<string>(query.stop_ids.split(","))],
+
+      start_date: Math.min(...query.start_dates.split(',').map((x: string) => +x)),
+      end_date: Math.max(...query.end_dates.split(',').map((x: string) => +x)),
+      // trip_ids: [...new Set<string>(query.trip_ids.split(","))],
+      // shape_ids: [...new Set<string>(query.shape_ids.split(","))],
+      stops: [...new Set(query.stop_ids.split(","))].map((stop: any) => {
+        const curStop = stops.find(
+          (element: any) => element.stop_id === stop
+        );
+        return {
+          stop_id: curStop.stop_id,
+          stop_name: curStop.stop_name,
+          stop_lat: curStop.stop_lat,
+          stop_lon: curStop.stop_lon,
+        };
+      }),
     });
   }).then(() => console.timeEnd("parseRoutes"));
 };
@@ -470,12 +490,12 @@ const generateDB = async () => {
   return Promise.all([
     // parseAgency(db),
     // parseCalendar(db),
-    // parseRoutes(db),
+    parseRoutes(db),
     // parseStops(db),
     // parsePolylines(),
     // parseShapes(db),
     // parseTrips(db),
-    parseTimetables(),
+    // parseTimetables(),
     // parseTest(),
   ]);
 };

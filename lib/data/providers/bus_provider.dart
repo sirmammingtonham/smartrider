@@ -51,7 +51,7 @@ class BusProvider {
         await fetch('routes', idField: 'route_id', routes: defaultRoutes);
 
     Map<String, BusRoute> routeMap = Map.fromIterable(response.docs,
-        key: (doc) => doc['route_short_name'],
+        key: (doc) => doc['route_id'],
         value: (doc) => BusRoute.fromJson(doc.data()));
     return routeMap;
   }
@@ -74,16 +74,16 @@ class BusProvider {
         .where('route_ids', arrayContainsAny: defaultRoutes)
         .get();
 
-    List<BusStop> stopsList = response.docs
-        .map<BusStop>((doc) => BusStop.fromJson(doc.data()))
-        .toList();
+    // List<BusStop> stopsList = response.docs
+    //     .map<BusStop>((doc) => BusStop.fromJson(doc.data()))
+    //     .toList();
 
     Map<String, List<BusStop>> stopsMap = {};
 
-    for (String route in defaultRoutes) {
-      stopsMap[route] =
-          stopsList.where((stop) => stop.routeIds.contains(route)).toList();
-    }
+    // for (String route in defaultRoutes) {
+    //   stopsMap[route] =
+    //       stopsList.where((stop) => stop.routeIds.contains(route)).toList();
+    // }
 
     return stopsMap;
   }
@@ -104,8 +104,8 @@ class BusProvider {
   Future<List<BusTripUpdate>> getTripUpdates() async {
     http.Response response =
         await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
-   
-    var routes = ["87","286","289"];
+
+    var routes = ["87", "286", "289"];
     List<BusTripUpdate> tripUpdatesList = response != null
         ? FeedMessage.fromBuffer(response.bodyBytes)
             .entity
@@ -113,14 +113,14 @@ class BusProvider {
             .where((update) => routes.contains(update.routeId))
             .toList()
         : [];
-        return tripUpdatesList;
+    return tripUpdatesList;
   }
 
-  Future<Map<String,Map<String,String>>> getNewTripUpdates() async{
-      http.Response response =
+  Future<Map<String, Map<String, String>>> getNewTripUpdates() async {
+    http.Response response =
         await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
-   
-    var routes = ["87","286","289"];
+
+    var routes = ["87", "286", "289"];
     List<BusTripUpdate> tripUpdatesList = response != null
         ? FeedMessage.fromBuffer(response.bodyBytes)
             .entity
@@ -128,15 +128,17 @@ class BusProvider {
             .where((update) => routes.contains(update.routeId))
             .toList()
         : [];
-      Map<String,Map<String,String>> m = {};
-      tripUpdatesList.forEach((element) {
-        Map<String,String> m1 = {};
-        element.stopTimeUpdate.forEach((stoptime) {
-          m1[stoptime.stopId] = DateFormat('HH:mm').format(DateTime.fromMillisecondsSinceEpoch(stoptime.arrivalTime.toInt()*1000));  
-        });
-        m[element.routeId] = m1;
-       });
- 
+    Map<String, Map<String, String>> m = {};
+    tripUpdatesList.forEach((element) {
+      Map<String, String> m1 = {};
+      element.stopTimeUpdate.forEach((stoptime) {
+        m1[stoptime.stopId] = DateFormat('HH:mm').format(
+            DateTime.fromMillisecondsSinceEpoch(
+                stoptime.arrivalTime.toInt() * 1000));
+      });
+      m[element.routeId] = m1;
+    });
+
     return m;
   }
 
@@ -180,19 +182,12 @@ class BusProvider {
     return timetableMap;
   }
 
-  Future<Map<String,Map<String,String>>> getNewBusTimeTable() async{
-    Map<String,BusTimetable> table = await this.getBusTimetable();
-    Map<String,Map<String,String>> newtable = {};
-    table.forEach((key, value) {
-      Map<String,String> m = {};
-      value.timetable.forEach((element) {
-        if (element.stopId != null && element.arrivalTime != null){
-        m[element.stopId] = DateFormat('HH:mm').format(DateTime.fromMillisecondsSinceEpoch((element.arrivalTime)*1000));
-        }
-      });
-      newtable[key] = m;
-    });
-    return newtable;
+  Future<void> test() async {
+    Stopwatch stopwatch = new Stopwatch()..start();
+    // await getPolylines();
+    // await getStops();
+    // await getVehicleUpdates();
+    print('executed in ${stopwatch.elapsed}');
   }
 
   // Future<Map<String, List<List<String>>>> getBusTimetableFlat() async {

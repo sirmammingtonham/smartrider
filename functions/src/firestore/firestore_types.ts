@@ -40,9 +40,17 @@ export interface Route {
   continuous_drop_off: number;
 
   // nonstandard, for convenience
-  trip_ids: string[];
-  shape_ids: string[];
-  stop_ids: string[];
+  // trip_ids: string[];
+  // shape_ids: string[];
+  // stop_ids: string[];
+  start_date: number;
+  end_date: number;
+  stops: {
+    stop_id: string,
+    stop_name: string,
+    stop_lat: number,
+    stop_lon: number,
+  }[];
 };
 
 export interface Shape {
