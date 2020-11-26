@@ -124,18 +124,19 @@ class MapUI extends StatelessWidget {
 
       // Location Button
       Positioned(
-        right: 20.0,
-        bottom: 120.0,
+        right: 10.0,
+        bottom: 110.0,
         child: FloatingActionButton(
+          splashColor: Theme.of(context).primaryColorDark,
+          backgroundColor: Theme.of(context).accentColor,
+          // hoverColor: Theme.of(context).primaryColorLight,
+          // foregroundColor: Theme.of(context).errorColor,
+          // focusColor: Theme.of(context).accentColor,
           child: Icon(
-            Icons.gps_fixed,
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.black87
-                : Colors.white70,
+            Icons.near_me,
+            size: 25.0,
+            color: Theme.of(context).primaryColor,
           ),
-          backgroundColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : null,
           onPressed: () {
             BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
           },

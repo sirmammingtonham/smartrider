@@ -64,12 +64,14 @@ class SearchBarState extends State<SearchBar> {
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               height: 55,
               child: Material(
+                color: Theme.of(context).primaryColor,
                 borderRadius: BorderRadius.circular(10.0),
                 elevation: 6.0,
                 child: Row(
                   children: <Widget>[
-                    IconButton(
-                      icon: Icon(SR_Icons.Settings),
+                    IconButton( 
+                      icon: Icon(Icons.settings,
+                          color: Theme.of(context).accentColor),
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
@@ -96,11 +98,11 @@ class SearchBarState extends State<SearchBar> {
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: CircleAvatar(
-                        backgroundColor: Theme.of(context).buttonColor,
+                        backgroundColor: Theme.of(context).accentColor,
                         child: IconButton(
                           icon: Text(computeUsername(name),
                               style: TextStyle(
-                                  fontSize: 15, color: Colors.white70)),
+                                  fontSize: 13, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor)),
                           onPressed: () {
                             Navigator.push(
                                 context,

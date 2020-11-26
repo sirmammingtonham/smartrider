@@ -80,7 +80,11 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/app_icons/logo_v1.png
+# app icons
+    - assets/app_icons/app_icon_v2.png
+    - assets/app_icons/app_icon_star.png
+    - assets/app_icons/app_icon_word_light_mode.png
+    - assets/app_icons/app_icon_word_dark_mode.png
 # jsons
     - assets/map_styles/light.json
     - assets/map_styles/aubergine.json
