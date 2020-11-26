@@ -103,7 +103,8 @@ class BusProvider {
         ? FeedMessage.fromBuffer(response.bodyBytes)
             .entity
             .map((entity) => BusTripUpdate.fromPBEntity(entity))
-            .where((update) => routes.contains(update.routeId))
+            // .where((update) =>
+                // trips.contains(update.id)) // check if trip id is active
             .toList()
         : [];
     return tripUpdatesList;

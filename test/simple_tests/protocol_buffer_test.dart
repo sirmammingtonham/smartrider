@@ -1,13 +1,23 @@
 // import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:smartrider/data/providers/bus_provider.dart';
 import 'package:smartrider/data/models/bus/pb/gtfs-realtime.pb.dart';
 // import '../../lib/data/models/bus/gtfs-realtime.pb.dart';
 
-main() async {
-  var response = await http
-      .get('http://64.128.172.149:8080/gtfsrealtime/VehiclePositions');
-  FeedMessage feed = FeedMessage.fromBuffer(response.bodyBytes);
-  feed.entity.forEach((entity) {
-    print(entity.vehicle.trip.routeId);
+void main() async {
+  /// test for getDatetime()
+  print('starting');
+  BusProvider b = BusProvider();
+  test1(b);
+}
+
+void test1(BusProvider b) async {
+  var a = await b.getTripUpdates();
+
+  a.forEach((element) {
+    element.stopTimeUpdate.forEach((e) {
+      print(e.toJson());
+      // print(DateTime.fromMillisecondsSinceEpoch(e.arrivalTime.toInt() * 1000));
+    });
   });
 }

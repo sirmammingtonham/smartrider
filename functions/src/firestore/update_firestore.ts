@@ -5,17 +5,17 @@ import * as models from "./firestore_types";
 import * as Promise from "../helpers/async_util";
 import * as config from "../setup/gtfs_config.json";
 import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
-import { collection, subcollection, set, all, remove, query } from "typesaurus";
+import { collection, subcollection, set, all, remove } from "typesaurus";
 import { genShapeGeoJSON } from "../helpers/bus_util";
-import { zipObject } from "lodash";
+import { zipObject, zip } from "lodash";
 
 import * as fs from "fs";
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-// });
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+});
 
-admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
+// admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
 
 console.log("initialized");
 
@@ -81,11 +81,13 @@ const parseRoutes = async (db: any) => {
   const routes = collection<models.Route>("routes");
   const query_res = await db.all(`
   SELECT r.*, 
-  Group_concat(c.start_date) AS start_dates, 
+  Group_concat(c.start_date) AS start_dates,
   Group_concat(c.end_date)   AS end_dates,
-  Group_concat(t.trip_id)    AS trip_ids, 
-  Group_concat(t.shape_id)   AS shape_ids, 
-  Group_concat(s.stop_id)    AS stop_ids 
+  Group_concat(t.trip_id)    AS trip_ids,
+  Group_concat(t.shape_id)   AS shape_ids,
+  Group_concat(st.stop_sequence) AS stop_sequences,
+  Group_concat(s.stop_id)    AS stop_ids,
+  Group_concat(t.direction_id) AS direction_ids
   FROM  routes r 
     INNER JOIN trips t 
             ON r.route_id = t.route_id
@@ -100,7 +102,47 @@ const parseRoutes = async (db: any) => {
 
   const stops = await await db.all(`SELECT * FROM stops;`);
 
+  function multiDimensionalUnique(arr: any[]) {
+    var uniques = [];
+    var itemsFound: models.Map<boolean> = {};
+    for (var i = 0, l = arr.length; i < l; i++) {
+      var stringified = JSON.stringify(arr[i]);
+      if (itemsFound[stringified]) {
+        continue;
+      }
+      uniques.push(arr[i]);
+      itemsFound[stringified] = true;
+    }
+    return uniques;
+  }
+
   return Promise.map(query_res, (query: any) => {
+    /// the first part removes duplicates and zips the stop_ids and stop_sequences
+    /// so we can iterate over both simultaneously (like python zip)...
+    /// second part combines values if the stop exists for both forward and back sequences
+    const stop_info = multiDimensionalUnique(
+      zip(
+        query.stop_ids.split(","),
+        query.stop_sequences.split(","),
+        query.direction_ids.split(",")
+      )
+    ).reduce((map, currentValue) => {
+      if (currentValue[0] in map) {
+        if (currentValue[2] === "0") {
+          map[currentValue[0]].forward = currentValue[1];
+        } else {
+          map[currentValue[0]].backward = currentValue[1];
+        }
+      } else {
+        if (currentValue[2] === "0") {
+          map[currentValue[0]] = { forward: currentValue[1], backward: -1 };
+        } else {
+          map[currentValue[0]] = { forward: -1, backward: currentValue[1] };
+        }
+      }
+      return map;
+    }, {});
+
     return set(routes, query.route_id, {
       route_id: query.route_id,
       agency_id: query.agency_id,
@@ -115,19 +157,25 @@ const parseRoutes = async (db: any) => {
       continuous_pickup: query.continuous_pickup,
       continuous_drop_off: query.continuous_drop_off,
 
-      start_date: Math.min(...query.start_dates.split(',').map((x: string) => +x)),
-      end_date: Math.max(...query.end_dates.split(',').map((x: string) => +x)),
+      start_date: Math.min(
+        ...query.start_dates.split(",").map((x: string) => +x)
+      ),
+      end_date: Math.max(...query.end_dates.split(",").map((x: string) => +x)),
+
       // trip_ids: [...new Set<string>(query.trip_ids.split(","))],
       // shape_ids: [...new Set<string>(query.shape_ids.split(","))],
-      stops: [...new Set(query.stop_ids.split(","))].map((stop: any) => {
+
+      stops: Object.keys(stop_info).map((stop_id: string) => {
         const curStop = stops.find(
-          (element: any) => element.stop_id === stop
+          (element: any) => element.stop_id === stop_id
         );
         return {
           stop_id: curStop.stop_id,
           stop_name: curStop.stop_name,
           stop_lat: curStop.stop_lat,
           stop_lon: curStop.stop_lon,
+          stop_sequence_0: +stop_info[stop_id].forward,
+          stop_sequence_1: +stop_info[stop_id].backward,
         };
       }),
     });
@@ -327,11 +375,7 @@ const parseTimetables = async () => {
     (route: any) => route.route_id
   );
 
-  // maps a day to the id that the gtfs_html takes
-  interface Map<T> {
-    [key: string]: T;
-  }
-  const activity_map: Map<string> = {
+  const activity_map: models.Map<string> = {
     weekday: "1111100",
     saturday: "0000010",
     sunday: "0000001",

@@ -1,6 +1,10 @@
 /// firestore types
 // think about grouping tables with the same id together
 // merge calendar and calendar dates? other stuff with same id column?
+
+export interface Map<T> {
+  [key: string]: T;
+}
 export interface Agency {
   agency_id: string;
   agency_name: string;
@@ -10,7 +14,7 @@ export interface Agency {
   agency_phone: string;
   agency_fare_url: string;
   agency_email: string;
-};
+}
 
 export interface Calendar {
   service_id: string;
@@ -23,7 +27,7 @@ export interface Calendar {
   exceptions: {
     [date: number]: number;
   };
-};
+}
 
 export interface Route {
   route_id: string;
@@ -46,12 +50,14 @@ export interface Route {
   start_date: number;
   end_date: number;
   stops: {
-    stop_id: string,
-    stop_name: string,
-    stop_lat: number,
-    stop_lon: number,
+    stop_id: string;
+    stop_name: string;
+    stop_lat: number;
+    stop_lon: number;
+    stop_sequence_0: number;
+    stop_sequence_1: number;
   }[];
-};
+}
 
 export interface Shape {
   shape_id: string;
@@ -59,7 +65,7 @@ export interface Shape {
   shape_pt_lon: number;
   shape_pt_sequence: number;
   shape_dist_traveled: number;
-};
+}
 
 export interface Stop {
   stop_id: string;
@@ -85,7 +91,7 @@ export interface Stop {
   route_ids: string[];
   shape_ids: string[];
   trip_ids: string[];
-};
+}
 
 export interface Trip {
   trip_id: string;
@@ -98,13 +104,13 @@ export interface Trip {
   shape_id: string;
   wheelchair_accessible: number;
   bikes_allowed: number;
-};
+}
 
 export interface Polyline {
   route_id: string;
   type: string;
   geoJSON: string; // convert to string so we can just pass it to request
-};
+}
 
 export interface TimetableStop {
   // order: number;

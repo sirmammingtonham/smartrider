@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:smartrider/data/providers/bus_provider.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -13,16 +14,10 @@ class TestApp extends StatelessWidget {
   final provider = BusProvider();
 
   Future<void> test() async {
-    // print(await provider.getRoutes());
-    // print(await provider.getPolylines());
-    // print(await provider.getStops());
-    // print(await provider.getTrips());
-    // print(await provider.getBusTimetable());
-
-    // print(await provider.getTripUpdates());
-    // print(await provider.getVehicleUpdates());
-    var bruh = await provider.getBusTimetable();
-    print(bruh['87-185'].stops);
+    var routes = await provider.getRoutes();
+    for (var stop in routes['87-185'].forwardStops) {
+      print(stop.toJson());
+    }
     return;
   }
 
