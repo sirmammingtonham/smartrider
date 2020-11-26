@@ -32,6 +32,29 @@ class AuthenticationBloc
     } else if (event is AuthenticationSignUp) {
       yield* _mapAuthenticationSignUpToState(
           event.email, event.name, event.pass, event.rin, event.role);
+    } else if (event is AuthentificationResetPass) {
+      yield* _mapAuthenticationResetPassToState(event.email);
+    } else if (event is AuthenticationDelete) {
+      yield* _mapAuthenticationDelete();
+    }
+  }
+
+  Stream<AuthenticationState> _mapAuthenticationDelete() async* {
+    FirebaseUser user = await _authRepository.getActualUser();
+    try {
+      user.delete();
+      print("success");
+    } catch (e) {
+      print("bruh momemt occured: " + e);
+    }
+    yield AuthenticationInit();
+  }
+
+  Stream<AuthenticationState> _mapAuthenticationResetPassToState(email) async* {
+    try {
+      _authRepository.changePass(email);
+    } catch (e) {
+      print("bruh momemt occured: " + e);
     }
   }
 

@@ -25,6 +25,8 @@ dependencies:
   firebase_analytics: ^5.0.2
   firebase_auth: ^0.15.0+1s
   cloud_firestore: ^0.12.9+5
+  image_picker: 
+  firebase_storage: 
 
   #map dependencies
   google_maps_flutter: ^0.5.24+1
@@ -43,6 +45,9 @@ dependencies:
   #notication dependencies
   flutter_local_notifications: ^1.4.4+2
 
+  #url_launcher
+  url_launcher: ^5.7.10
+
   #ui dependencies
   sliding_up_panel: ^1.0.1
   scrollable_positioned_list: ^0.1.2
@@ -52,7 +57,7 @@ dependencies:
   intl: ^0.16.1
   day_night_switcher: ^0.1.1
   flutter_svg: ^0.19.1
-  # table_sticky_headers: ^1.1.2
+  circular_profile_avatar: ^1.0.8
 
   dio: ^3.0.9
   flutter_archive: ^1.0.2

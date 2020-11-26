@@ -32,6 +32,9 @@ class SearchBar extends StatefulWidget {
   State<StatefulWidget> createState() => SearchBarState();
 }
 
+String username;
+String email;
+
 class SearchBarState extends State<SearchBar> {
   String name;
   String role;
@@ -51,6 +54,8 @@ class SearchBarState extends State<SearchBar> {
         if (state is AuthenticationSuccess) {
           name = state.displayName;
           role = state.role;
+          email = name;
+          username = computeUsername(name);
           return Positioned(
             top: topBarDist,
             right: 15,
