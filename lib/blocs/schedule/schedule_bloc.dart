@@ -29,8 +29,16 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         yield* _mapScheduleTableToState();
       }
     }
+    
+  
   }
-
+  /// return map<route_id, list<time>>
+  // Future<Map<String,Map<String,String>>> combineUpdatesTable() async{
+  //   Map<String,Map<String,String>> updates = await provider.getNewTripUpdates();
+  //   // might combine with bustimetable in the future
+  //   return updates;
+  //   }
+   
   Stream<ScheduleState> _mapScheduleInitToState() async* {
     yield ScheduleTimelineState();
   }
@@ -42,4 +50,6 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   Stream<ScheduleState> _mapScheduleTableToState() async* {
     yield ScheduleTableState(timetableMap: timetableMap);
   }
+  
+  
 }

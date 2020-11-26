@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
+import 'dart:async';
 // bloc stuff
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
@@ -40,7 +40,12 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
     _tabController = new TabController(vsync: this, length: _tabs.length);
     _tabController.addListener(_handleTabSelection);
     BlocProvider.of<ScheduleBloc>(context).add(ScheduleInitEvent());
-    filter = null;
+    // const pollRefreshDelay = const Duration(seconds: 5); // update every 3 sec
+    // new Timer.periodic(
+    //     pollRefreshDelay,
+    //     (Timer t) =>
+    // BlocProvider.of<ScheduleBloc>(context).add(ScheduleTransitionEvent(currentstate: BlocProvider.of<ScheduleBloc>(context).state, update: true))
+    // );
   }
 
   @override

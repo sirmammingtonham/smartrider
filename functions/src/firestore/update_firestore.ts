@@ -5,16 +5,17 @@ import * as models from "./firestore_types";
 import * as Promise from "../helpers/async_util";
 import * as config from "../setup/gtfs_config.json";
 import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
-import { collection, subcollection, set, all, remove } from "typesaurus";
+import { collection, subcollection, set, all, remove, query } from "typesaurus";
 import { genShapeGeoJSON } from "../helpers/bus_util";
 import { zipObject } from "lodash";
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-});
+import * as fs from "fs";
 
-// admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+// });
 
+admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
 
 console.log("initialized");
 
@@ -80,18 +81,25 @@ const parseRoutes = async (db: any) => {
   const routes = collection<models.Route>("routes");
   const query_res = await db.all(`
   SELECT r.*, 
-  Group_concat(t.trip_id)  AS trip_ids, 
-  Group_concat(t.shape_id) AS shape_ids, 
-  Group_concat(s.stop_id)  AS stop_ids 
-  FROM   routes r 
+  Group_concat(c.start_date) AS start_dates, 
+  Group_concat(c.end_date)   AS end_dates,
+  Group_concat(t.trip_id)    AS trip_ids, 
+  Group_concat(t.shape_id)   AS shape_ids, 
+  Group_concat(s.stop_id)    AS stop_ids 
+  FROM  routes r 
     INNER JOIN trips t 
-            ON r.route_id = t.route_id 
+            ON r.route_id = t.route_id
     INNER JOIN stop_times st 
             ON t.trip_id = st.trip_id 
     INNER JOIN stops s 
             ON st.stop_id = s.stop_id 
+    INNER JOIN calendar c
+            ON c.service_id = t.service_id
   GROUP  BY r.route_id; 
   `);
+
+  const stops = await await db.all(`SELECT * FROM stops;`);
+
   return Promise.map(query_res, (query: any) => {
     return set(routes, query.route_id, {
       route_id: query.route_id,
@@ -106,9 +114,22 @@ const parseRoutes = async (db: any) => {
       route_sort_order: +query.route_sort_order,
       continuous_pickup: query.continuous_pickup,
       continuous_drop_off: query.continuous_drop_off,
-      trip_ids: [...new Set<string>(query.trip_ids.split(","))],
-      shape_ids: [...new Set<string>(query.shape_ids.split(","))],
-      stop_ids: [...new Set<string>(query.stop_ids.split(","))],
+
+      start_date: Math.min(...query.start_dates.split(',').map((x: string) => +x)),
+      end_date: Math.max(...query.end_dates.split(',').map((x: string) => +x)),
+      // trip_ids: [...new Set<string>(query.trip_ids.split(","))],
+      // shape_ids: [...new Set<string>(query.shape_ids.split(","))],
+      stops: [...new Set(query.stop_ids.split(","))].map((stop: any) => {
+        const curStop = stops.find(
+          (element: any) => element.stop_id === stop
+        );
+        return {
+          stop_id: curStop.stop_id,
+          stop_name: curStop.stop_name,
+          stop_lat: curStop.stop_lat,
+          stop_lon: curStop.stop_lon,
+        };
+      }),
     });
   }).then(() => console.timeEnd("parseRoutes"));
 };
@@ -228,25 +249,71 @@ const parsePolylines = async () => {
 };
 
 const flattenTimetable = async (table: any) => {
-  const stop_list: models.TimetableStop[] = [];
+  const time_list: string[] = [];
 
   // flatten the object in column major style
   for (let i = 0; i < table.stops[0].trips.length; i++) {
     for (let j = 0; j < table.stops.length; j++) {
       const stop = table.stops[j].trips[i];
-      stop_list.push({
-        arrival_time: stop.arrival_timestamp,
-        stop_id: stop.stop_id,
-        formatted_time: stop.formatted_time,
-        stop_sequence: stop.stop_sequence,
+      // stop_list.push({
+      //   arrival_time: stop.arrival_timestamp,
+      //   stop_id: stop.stop_id,
+      //   formatted_time: stop.formatted_time,
+      //   stop_sequence: stop.stop_sequence,
 
-        interpolated: stop.interpolated ? stop.interpolated : false,
-        skipped: stop.skipped ? stop.skipped : false,
-      });
+      //   interpolated: stop.interpolated ? stop.interpolated : false,
+      //   skipped: stop.skipped ? stop.skipped : false,
+      // });
+      if (stop.skipped === true) {
+        time_list.push(` — `);
+      } else if (stop.interpolated === true) {
+        time_list.push(`${stop.formatted_time} •`);
+      } else {
+        time_list.push(stop.formatted_time);
+      }
     }
   }
 
-  return stop_list;
+  return time_list;
+};
+
+const parseTest = async () => {
+  const timetable_config = gtfs_timetable.setDefaultConfig(config);
+
+  const table_f = (
+    await gtfs_timetable.getFormattedTimetablePage(
+      `87-185|1111100|0`,
+      timetable_config
+    )
+  )[0];
+
+  const flat = await flattenTimetable(table_f);
+
+  fs.writeFileSync(
+    "out.json",
+    JSON.stringify({
+      route_id: table_f.route_ids[0],
+      direction_id: table_f.direction_id,
+      direction_name: table_f.direction_name,
+      label: table_f.timetable_label,
+      start_date: table_f.start_date,
+      end_date: table_f.end_date,
+
+      service_id: table_f.service_ids[0],
+      include_dates: table_f.calendarDates.includedDates,
+      exclude_dates: table_f.calendarDates.excludedDates,
+
+      stops: table_f.stops.map((stop: any) => {
+        return {
+          stop_id: stop.stop_id,
+          stop_name: stop.stop_name,
+          stop_lat: stop.stop_lat,
+          stop_lon: stop.stop_lon,
+        };
+      }),
+      timetable: flat,
+    })
+  );
 };
 
 const parseTimetables = async () => {
@@ -262,7 +329,7 @@ const parseTimetables = async () => {
 
   // maps a day to the id that the gtfs_html takes
   interface Map<T> {
-    [key: string]: T
+    [key: string]: T;
   }
   const activity_map: Map<string> = {
     weekday: "1111100",
@@ -279,7 +346,6 @@ const parseTimetables = async () => {
   // iterate through routes and the different days
   for (const route of routes) {
     for (const active_days in activity_map) {
-      
       // get forward and backward timetables
       let table_f: any;
       let table_b: any;
@@ -291,7 +357,7 @@ const parseTimetables = async () => {
             timetable_config
           )
         )[0];
-  
+
         table_b = (
           await gtfs_timetable.getFormattedTimetablePage(
             `${route}|${activity_map[active_days]}|1`,
@@ -300,7 +366,6 @@ const parseTimetables = async () => {
         )[0];
       } catch (error) {
         // console.log(`NO TRIPS FOR: ${route}|${activity_map[active_days]}`);
-        ;
       }
 
       if (table_f === undefined || table_b === undefined) {
@@ -327,6 +392,16 @@ const parseTimetables = async () => {
           service_id: table_f.service_ids[0],
           include_dates: table_f.calendarDates.includedDates,
           exclude_dates: table_f.calendarDates.excludedDates,
+
+          stops: table_f.stops.map((stop: any) => {
+            return {
+              stop_id: stop.stop_id,
+              stop_name: stop.stop_name,
+              stop_lat: stop.stop_lat,
+              stop_lon: stop.stop_lon,
+            };
+          }),
+
           timetable: await flattenTimetable(table_f),
         })
       );
@@ -342,6 +417,16 @@ const parseTimetables = async () => {
           service_id: table_b.service_ids[0],
           include_dates: table_b.calendarDates.includedDates,
           exclude_dates: table_b.calendarDates.excludedDates,
+
+          stops: table_f.stops.map((stop: any) => {
+            return {
+              stop_id: stop.stop_id,
+              stop_name: stop.stop_name,
+              stop_lat: stop.stop_lat,
+              stop_lon: stop.stop_lon,
+            };
+          }),
+
           timetable: await flattenTimetable(table_b),
         })
       );
@@ -405,12 +490,13 @@ const generateDB = async () => {
   return Promise.all([
     // parseAgency(db),
     // parseCalendar(db),
-    // parseRoutes(db),
+    parseRoutes(db),
     // parseStops(db),
     // parsePolylines(),
     // parseShapes(db),
     // parseTrips(db),
-    parseTimetables(),
+    // parseTimetables(),
+    // parseTest(),
   ]);
 };
 
