@@ -12,7 +12,8 @@ class BusTimetable {
   List<String> includeDates;
   List<String> excludeDates;
   List<TimetableStop> stops;
-  List<String> timetable;
+  List<String> formatted;
+  List<int> timestamps;
 
   BusTimetable(
       {this.routeId,
@@ -25,12 +26,29 @@ class BusTimetable {
       this.includeDates,
       this.excludeDates,
       this.stops,
-      this.timetable});
+      this.formatted});
 
   int get numColumns => stops.length;
-  int get numRows => (timetable.length / stops.length).truncate();
+  int get numRows => (formatted.length / stops.length).truncate();
 
-  String getTime(int i, int j) => timetable[j * stops.length + i];
+  String getTime(int i, int j) => formatted[j * stops.length + i];
+  int getTimestamp(int i, int j) => timestamps[j * stops.length + i];
+
+  String getClosestTime(int i) {
+    int now = DateTime.now().hour * 3600 +
+        DateTime.now().minute * 60 +
+        DateTime.now().second;
+
+    List<int> min = [0, 0];
+
+    for (int j = 0; j < numColumns; ++j) {
+      int diff = (getTimestamp(i, j) - now).abs();
+      if (diff < getTimestamp(min[0], min[1])) {
+        min = [i, j];
+      }
+    }
+    return getTime(min[0], min[1]);
+  }
 
   BusTimetable.fromJson(Map<String, dynamic> json) {
     routeId = json['route_id'];
@@ -48,7 +66,8 @@ class BusTimetable {
       return TimetableStop.fromJson(table);
     }).toList();
 
-    timetable = json['timetable'].cast<String>();
+    formatted = json['formatted'].cast<String>();
+    timestamps = json['timestamps'].cast<int>();
   }
 
   Map<String, dynamic> toJson() {
@@ -66,7 +85,8 @@ class BusTimetable {
 
     data['stops'] = stops;
 
-    data['timetable'] = timetable;
+    data['formatted'] = formatted;
+    data['timestamps'] = timestamps;
 
     return data;
   }

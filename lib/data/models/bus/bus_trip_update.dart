@@ -71,7 +71,7 @@ class BusTripUpdate {
     data['route_id'] = this.routeId;
     data['stop_time_update'] = this.stopTimeUpdate;
     data['vehicle_id'] = this.vehicleId;
-    return Map();
+    return data;
   }
 
   // TODO

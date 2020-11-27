@@ -10,15 +10,17 @@ class ScheduleInitialState extends ScheduleState {
 }
 
 class ScheduleTimelineState extends ScheduleState {
-  const ScheduleTimelineState();
+  final Map<String, BusRoute> busRoutes;
+  const ScheduleTimelineState({@required this.busRoutes});
+  
   @override
-  List<Object> get props => [];
+  List<Object> get props => [this.busRoutes];
 }
 
 class ScheduleTableState extends ScheduleState {
   final Map<String, BusTimetable> timetableMap;
-  const ScheduleTableState(
-      {@required this.timetableMap});
+  const ScheduleTableState({@required this.timetableMap});
+
   @override
-  List<Object> get props => [timetableMap];
+  List<Object> get props => [this.timetableMap];
 }

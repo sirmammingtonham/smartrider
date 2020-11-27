@@ -14,6 +14,12 @@ class TestApp extends StatelessWidget {
   final provider = BusProvider();
 
   Future<void> test() async {
+    var timetable = await provider.getBusTimetable();
+    print(timetable['87-185'].getClosestTime(0));
+    return;
+  }
+
+  Future<void> test0() async {
     var routes = await provider.getRoutes();
     for (var stop in routes['87-185'].forwardStops) {
       print(stop.toJson());

@@ -151,6 +151,7 @@ export interface Timetable {
     stop_lat: number;
     stop_lon: number;
   }[];
-  timetable: string[];
+  formatted: string[];
+  timestamps: number[];
   // timetable: TimetableStop[];
 }

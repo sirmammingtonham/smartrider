@@ -40,12 +40,6 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
     _tabController = new TabController(vsync: this, length: _tabs.length);
     _tabController.addListener(_handleTabSelection);
     BlocProvider.of<ScheduleBloc>(context).add(ScheduleInitEvent());
-    // const pollRefreshDelay = const Duration(seconds: 5); // update every 3 sec
-    // new Timer.periodic(
-    //     pollRefreshDelay,
-    //     (Timer t) =>
-    // BlocProvider.of<ScheduleBloc>(context).add(ScheduleTransitionEvent(currentstate: BlocProvider.of<ScheduleBloc>(context).state, update: true))
-    // );
   }
 
   @override
@@ -80,7 +74,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                   controller: _tabController,
                   children: <Widget>[
                     ShuttleTimeline(),
-                    BusTimeline(),
+                    BusTimeline(busRoutes: state.busRoutes),
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(

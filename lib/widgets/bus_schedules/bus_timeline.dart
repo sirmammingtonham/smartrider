@@ -1,25 +1,25 @@
 // ui dependencies
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:intl/intl.dart';
+import 'package:smartrider/data/models/bus/bus_route.dart';
 
 // loading custom widgets and data
-import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
 
-List<String> choices = ['See on map', 'View on timetable'];
+const List<String> choices = ['See on map', 'View on timetable'];
 
 /// Creates an object that contains all the busses and their respective stops.
 class BusTimeline extends StatefulWidget {
-  final Function containsFilter;
   final Function jumpMap;
-  BusTimeline({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
+  final Map<String, BusRoute> busRoutes;
+  BusTimeline({Key key, this.jumpMap, this.busRoutes}) : super(key: key);
   @override
   BusTimelineState createState() => BusTimelineState();
 }
 
 /// Defines each bus and makes a tab for each one atop of the schedule panel.
-class BusTimelineState extends State<BusTimeline> with SingleTickerProviderStateMixin {
+class BusTimelineState extends State<BusTimeline>
+    with SingleTickerProviderStateMixin {
   final List<Widget> busTabs = [
     Tab(text: 'Route 87'),
     Tab(text: 'Route 286'),
@@ -27,10 +27,12 @@ class BusTimelineState extends State<BusTimeline> with SingleTickerProviderState
   ];
 
   TabController _tabController;
+
+  // TODO: better way to do this
   var isExpandedList = new List<bool>.filled(100, false);
-  @override
 
   /// Affects the expansion of each bus's list of stops
+  @override
   void initState() {
     super.initState();
     _tabController = new TabController(vsync: this, length: busTabs.length);
@@ -71,9 +73,9 @@ class BusTimelineState extends State<BusTimeline> with SingleTickerProviderState
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            busList(0, this.widget.containsFilter, this.widget.jumpMap),
-            busList(1, this.widget.containsFilter, this.widget.jumpMap),
-            busList(2, this.widget.containsFilter, this.widget.jumpMap),
+            busList('87-185', this.widget.jumpMap),
+            busList('286-185', this.widget.jumpMap),
+            busList('289-185', this.widget.jumpMap),
           ],
         ),
       )
@@ -82,20 +84,18 @@ class BusTimelineState extends State<BusTimeline> with SingleTickerProviderState
 
   /// Builds the buslist widget which contains all the stops and
   /// useful user information like the next arrival.
-  @override
-  Widget busList(int idx, Function _containsFilter, Function _jumpMap) {
+  Widget busList(String routeId, Function _jumpMap) {
+    var busStops = this.widget.busRoutes[routeId].forwardStops;
+
     /// Returns the scrollable list for our bus stops to be contained in.
     return ScrollablePositionedList.builder(
-      itemCount: busStopLists[idx].length,
+      itemCount: busStops.length,
       itemBuilder: (context, index) {
-        /// Contains the current stops for the busses.
-        var curStopList = busStopLists[idx];
-
         /// Contains our Expansion Tile to control how the user views each bus stop.
         return CustomExpansionTile(
-          title: Text(curStopList[index % curStopList.length][0]),
-          subtitle: Text('Next Arrival: ' +
-              busTimeLists[idx][_getTimeIndex(busTimeLists[idx])]),
+          title: Text(busStops[index].stopName),
+          // TODO: update the arrival times
+          subtitle: Text('Next Arrival: ' + '4:20pm'),
           tilePadding: EdgeInsets.symmetric(vertical: 11.0, horizontal: 16.0),
 
           /// Controls the leading circle icon in front of each bus stop.
@@ -104,17 +104,17 @@ class BusTimelineState extends State<BusTimeline> with SingleTickerProviderState
                   circleColor: Theme.of(context).buttonColor,
                   lineColor: Theme.of(context).primaryColorLight,
                   first: index == 0,
-                  last: index == curStopList.length - 1),
+                  last: index == busStops.length - 1),
               child: Container(
                 height: 50,
                 width: 45,
               )),
-          trailing: isExpandedList[index % curStopList.length]
+          trailing: isExpandedList[index]
               ? Text('Hide Arrivals -')
               : Text('Show Arrivals +'),
           onExpansionChanged: (value) {
             setState(() {
-              isExpandedList[index % curStopList.length] = value;
+              isExpandedList[index] = value;
             });
           },
 
@@ -124,7 +124,7 @@ class BusTimelineState extends State<BusTimeline> with SingleTickerProviderState
               painter: StrokePainter(
                 circleColor: Theme.of(context).buttonColor,
                 lineColor: Theme.of(context).primaryColorLight,
-                last: index == curStopList.length - 1,
+                last: index == busStops.length - 1,
               ),
 
               /// A list item for every arrival time for the selected bus stop.
@@ -150,8 +150,9 @@ class BusTimelineState extends State<BusTimeline> with SingleTickerProviderState
                           return ListTile(
                             dense: true,
                             leading: Icon(Icons.access_time, size: 20),
+                            // TODO: update the arrival times
                             title: Text(
-                              '${busTimeLists[idx][timeIndex]}',
+                              '4:20pm',
                               style: TextStyle(fontSize: 15),
                             ),
                             subtitle: Text('In 11 minutes'),
@@ -172,33 +173,6 @@ class BusTimelineState extends State<BusTimeline> with SingleTickerProviderState
       },
     );
   }
-}
-
-/// Returns the stop that is closest to the current time.
-_getTimeIndex(List<String> curTimeList) {
-  var now = DateTime.now();
-  var f = DateFormat('H.m');
-  double min = double.maxFinite;
-  double curTime = double.parse(f.format(now));
-  double compTime;
-  String closest;
-
-  /// Formats the times to be displayed.
-  curTimeList.forEach((time) {
-    var t = time.replaceAll(':', '.');
-    compTime = double.tryParse(t.substring(0, t.length - 2));
-    if (compTime == null) return;
-    if (t.endsWith('pm') && !t.startsWith("12")) {
-      compTime += 12.0;
-    }
-    if ((curTime - compTime).abs() < min) {
-      min = (curTime - compTime).abs();
-      closest = time;
-    }
-  });
-
-  /// Returns the time that the first bus will arrive to the current selected bus stop.
-  return curTimeList.indexWhere((element) => element == closest);
 }
 
 /// Creates our "lines and circles" on the left hand side of the

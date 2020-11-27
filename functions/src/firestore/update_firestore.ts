@@ -297,8 +297,8 @@ const parsePolylines = async () => {
 };
 
 const flattenTimetable = async (table: any) => {
-  const time_list: string[] = [];
-
+  const formatted_list: string[] = [];
+  const timestamp_list: number[] = [];
   // flatten the object in column major style
   for (let i = 0; i < table.stops[0].trips.length; i++) {
     for (let j = 0; j < table.stops.length; j++) {
@@ -313,16 +313,19 @@ const flattenTimetable = async (table: any) => {
       //   skipped: stop.skipped ? stop.skipped : false,
       // });
       if (stop.skipped === true) {
-        time_list.push(` — `);
+        formatted_list.push(` — `);
+        timestamp_list.push(-1);
       } else if (stop.interpolated === true) {
-        time_list.push(`${stop.formatted_time} •`);
+        formatted_list.push(`${stop.formatted_time} •`);
+        timestamp_list.push(stop.arrival_timestamp);
       } else {
-        time_list.push(stop.formatted_time);
+        formatted_list.push(stop.formatted_time);
+        timestamp_list.push(stop.arrival_timestamp);
       }
     }
   }
 
-  return time_list;
+  return {formatted: formatted_list, timestamps: timestamp_list};
 };
 
 const parseTest = async () => {
@@ -424,6 +427,7 @@ const parseTimetables = async () => {
         timetables_root
       );
 
+      const f_timetables = await flattenTimetable(table_f);
       promises.push(
         set(timetables(route), `${table_f.direction_id}`, {
           route_id: table_f.route_ids[0],
@@ -446,9 +450,12 @@ const parseTimetables = async () => {
             };
           }),
 
-          timetable: await flattenTimetable(table_f),
+          formatted: f_timetables.formatted,
+          timestamps: f_timetables.timestamps
         })
       );
+
+      const b_timetables = await flattenTimetable(table_b);
       promises.push(
         set(timetables(route), `${table_b.direction_id}`, {
           route_id: table_b.route_ids[0],
@@ -470,8 +477,9 @@ const parseTimetables = async () => {
               stop_lon: stop.stop_lon,
             };
           }),
-
-          timetable: await flattenTimetable(table_b),
+  
+          formatted: b_timetables.formatted,
+          timestamps: b_timetables.timestamps
         })
       );
     }
@@ -534,12 +542,12 @@ const generateDB = async () => {
   return Promise.all([
     // parseAgency(db),
     // parseCalendar(db),
-    parseRoutes(db),
+    // parseRoutes(db),
     // parseStops(db),
     // parsePolylines(),
     // parseShapes(db),
     // parseTrips(db),
-    // parseTimetables(),
+    parseTimetables(),
     // parseTest(),
   ]);
 };

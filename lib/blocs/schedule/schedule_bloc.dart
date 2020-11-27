@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:smartrider/data/models/bus/bus_route.dart';
 
 import 'package:smartrider/data/models/bus/bus_stop.dart';
 import 'package:smartrider/data/models/bus/bus_timetable.dart';
@@ -16,12 +17,14 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final BusRepository busRepo;
   ScheduleBloc({@required this.busRepo}) : super(ScheduleInitialState());
 
+  Map<String, BusRoute> busRoutes;
   Map<String, BusTimetable> timetableMap;
 
   Stream<ScheduleState> mapEventToState(ScheduleEvent event) async* {
     if (event is ScheduleInitEvent) {
+      busRoutes = await busRepo.getRoutes;
       timetableMap = await busRepo.getTimetables;
-      yield* _mapScheduleInitToState();
+      yield* _mapScheduleTimelineToState();
     } else if (event is ScheduleViewChangeEvent) {
       if (event.isTimeline) {
         yield* _mapScheduleTimelineToState();
@@ -29,27 +32,24 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         yield* _mapScheduleTableToState();
       }
     }
-    
-  
   }
+
   /// return map<route_id, list<time>>
   // Future<Map<String,Map<String,String>>> combineUpdatesTable() async{
   //   Map<String,Map<String,String>> updates = await provider.getNewTripUpdates();
   //   // might combine with bustimetable in the future
   //   return updates;
   //   }
-   
-  Stream<ScheduleState> _mapScheduleInitToState() async* {
-    yield ScheduleTimelineState();
-  }
+
+  // Stream<ScheduleState> _mapScheduleInitToState() async* {
+  //   yield ScheduleTimelineState();
+  // }
 
   Stream<ScheduleState> _mapScheduleTimelineToState() async* {
-    yield ScheduleTimelineState(); // is shuttle default to true
+    yield ScheduleTimelineState(busRoutes: busRoutes); // is shuttle default to true
   }
 
   Stream<ScheduleState> _mapScheduleTableToState() async* {
     yield ScheduleTableState(timetableMap: timetableMap);
   }
-  
-  
 }
