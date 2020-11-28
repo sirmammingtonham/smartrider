@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:smartrider/data/models/bus/bus_route.dart';
+import 'package:smartrider/data/models/bus/bus_timetable.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
@@ -12,7 +13,13 @@ const List<String> choices = ['See on map', 'View on timetable'];
 class BusTimeline extends StatefulWidget {
   final Function jumpMap;
   final Map<String, BusRoute> busRoutes;
-  BusTimeline({Key key, this.jumpMap, this.busRoutes}) : super(key: key);
+  final Map<String, BusTimetable> busTables;
+  BusTimeline(
+      {Key key,
+      this.jumpMap,
+      @required this.busRoutes,
+      @required this.busTables})
+      : super(key: key);
   @override
   BusTimelineState createState() => BusTimelineState();
 }
@@ -85,17 +92,21 @@ class BusTimelineState extends State<BusTimeline>
   /// Builds the buslist widget which contains all the stops and
   /// useful user information like the next arrival.
   Widget busList(String routeId, Function _jumpMap) {
-    var busStops = this.widget.busRoutes[routeId].forwardStops;
-
+    var busStops = widget.busTables[routeId]
+        .stops; //this.widget.busRoutes[routeId].forwardStops;
+    // this.widget.busTables[routeId].stops;
+//
     /// Returns the scrollable list for our bus stops to be contained in.
     return ScrollablePositionedList.builder(
       itemCount: busStops.length,
       itemBuilder: (context, index) {
+        var stopTimes = this.widget.busTables[routeId].getClosestTimes(index);
+
         /// Contains our Expansion Tile to control how the user views each bus stop.
         return CustomExpansionTile(
           title: Text(busStops[index].stopName),
           // TODO: update the arrival times
-          subtitle: Text('Next Arrival: ' + '4:20pm'),
+          subtitle: Text('Next Arrival: ${stopTimes[0][0]}'),
           tilePadding: EdgeInsets.symmetric(vertical: 11.0, horizontal: 16.0),
 
           /// Controls the leading circle icon in front of each bus stop.
@@ -141,21 +152,21 @@ class BusTimelineState extends State<BusTimeline>
                       displacement: 1,
 
                       /// A list of the upcoming bus stop arrivals.
+                      //TODO: If a stop has no time (dash), dont display those times 
                       child: ListView.builder(
                         shrinkWrap: true,
-                        itemCount: 5,
+                        itemCount: stopTimes.length,
                         itemExtent: 50,
                         itemBuilder: (BuildContext context, int timeIndex) {
                           /// The container in which the bus stop arrival times are displayed.
                           return ListTile(
                             dense: true,
                             leading: Icon(Icons.access_time, size: 20),
-                            // TODO: update the arrival times
                             title: Text(
-                              '4:20pm',
+                              stopTimes[timeIndex][0],
                               style: TextStyle(fontSize: 15),
                             ),
-                            subtitle: Text('In 11 minutes'),
+                            subtitle: Text('In ${(stopTimes[timeIndex][1]/60).truncate()} minutes'),
                             trailing: PopupMenuButton<String>(
                                 onSelected: null,
                                 itemBuilder: (BuildContext context) => choices

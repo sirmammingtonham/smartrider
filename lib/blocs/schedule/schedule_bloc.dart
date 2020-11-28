@@ -18,12 +18,12 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ScheduleBloc({@required this.busRepo}) : super(ScheduleInitialState());
 
   Map<String, BusRoute> busRoutes;
-  Map<String, BusTimetable> timetableMap;
+  Map<String, BusTimetable> busTables;
 
   Stream<ScheduleState> mapEventToState(ScheduleEvent event) async* {
     if (event is ScheduleInitEvent) {
       busRoutes = await busRepo.getRoutes;
-      timetableMap = await busRepo.getTimetables;
+      busTables = await busRepo.getTimetables;
       yield* _mapScheduleTimelineToState();
     } else if (event is ScheduleViewChangeEvent) {
       if (event.isTimeline) {
@@ -46,10 +46,12 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   // }
 
   Stream<ScheduleState> _mapScheduleTimelineToState() async* {
-    yield ScheduleTimelineState(busRoutes: busRoutes); // is shuttle default to true
+    yield ScheduleTimelineState(
+        busRoutes: busRoutes,
+        busTables: busTables);
   }
 
   Stream<ScheduleState> _mapScheduleTableToState() async* {
-    yield ScheduleTableState(timetableMap: timetableMap);
+    yield ScheduleTableState(busTables: busTables);
   }
 }

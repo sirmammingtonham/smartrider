@@ -15,7 +15,9 @@ class TestApp extends StatelessWidget {
 
   Future<void> test() async {
     var timetable = await provider.getBusTimetable();
-    print(timetable['87-185'].getClosestTime(0));
+    for (int i = 0; i < timetable['87-185'].numColumns; i++) {
+      print(timetable['87-185'].getClosestTimes(i));
+    }
     return;
   }
 

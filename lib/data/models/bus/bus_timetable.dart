@@ -31,23 +31,47 @@ class BusTimetable {
   int get numColumns => stops.length;
   int get numRows => (formatted.length / stops.length).truncate();
 
-  String getTime(int i, int j) => formatted[j * stops.length + i];
-  int getTimestamp(int i, int j) => timestamps[j * stops.length + i];
+  String getTime(int x, int y) => formatted[y * stops.length + x];
+  int getTimestamp(int x, int y) => timestamps[y * stops.length + x];
 
-  String getClosestTime(int i) {
+  /// returns a list of [string, int] pairs, string represents a formatted time and
+  /// int represents
+  List<List<dynamic>> getClosestTimes(int i) {
     int now = DateTime.now().hour * 3600 +
         DateTime.now().minute * 60 +
         DateTime.now().second;
 
-    List<int> min = [0, 0];
+    int min = 0;
 
-    for (int j = 0; j < numColumns; ++j) {
-      int diff = (getTimestamp(i, j) - now).abs();
-      if (diff < getTimestamp(min[0], min[1])) {
-        min = [i, j];
+    for (int j = 0; j < numRows; ++j) {
+      // check if current difference is less than previous minimum
+      bool isLower =
+          (getTimestamp(i, j) - now).abs() < (getTimestamp(i, min) - now).abs();
+
+      if (getTimestamp(i, j) > now && isLower) {
+        min = j;
       }
     }
-    return getTime(min[0], min[1]);
+
+    /// basically just checks how many times we can generate
+    /// (checks if we'll run out of stops before we generate 5 closest times)
+    /// might be a cleaner way to do this but this should work for now
+    int offsetLength;
+    if (numRows - min < 5) {
+      if (numRows - min < 1) {
+        offsetLength = 1;
+      } else {
+        print('huh');
+        offsetLength = numRows - min;
+      }
+    } else {
+      offsetLength = 5;
+    }
+
+    return List.generate(offsetLength, (index) => index)
+        .map((offset) =>
+            [getTime(i, min + offset), getTimestamp(i, min + offset) - now])
+        .toList();
   }
 
   BusTimetable.fromJson(Map<String, dynamic> json) {
