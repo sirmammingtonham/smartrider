@@ -125,6 +125,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
           title: Text(curStopList[index % curStopList.length][0]),
           subtitle: Text('Next Arrival: ' +
               shuttleTimeLists[idx][_getTimeIndex(shuttleTimeLists[idx])]),
+
           leading: CustomPaint(
               painter: FillPainter(
                   circleColor: _getTabColor(_tabController),
@@ -159,8 +160,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                     constraints: BoxConstraints.expand(width: 8),
                   ),
                   title: Container(
-                    // height: 100.0,
-                    // margin: const EdgeInsets.only(left: 0),
                     child: RefreshIndicator(
                       onRefresh: () =>
                           Future.delayed(const Duration(seconds: 1), () => "1"),
@@ -170,6 +169,22 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                         itemCount: 5,
                         itemExtent: 50,
                         itemBuilder: (BuildContext context, int timeIndex) {
+                            /*
+                            * Here we should add the use of DateTime.now()
+                            * When the backend team is complete of full implementing
+                            * time.dart file we can use each objects values to find the
+                            * difference to the current time.
+                            * EX:
+                            * var current_time = new DateTime.now();
+                            * var shuttle_time = new DateTime.parse(2002-02-27T19:00:00Z);
+                            * Duration difference = shuttle_time.difference(current_time);
+                            * 'In ' + difference.inMinutes.toString() + ' minutes' should print out a int
+                            * that can be given
+                            * to the user
+                            */
+                          //var currentTime = new DateTime.now();
+                          //var shuttleTime = DateTime.parse(2002-02-27T19:00:00Z);
+                          //Duration difference = shuttleTime.difference(currentTime);
                           return ListTile(
                             dense: true,
                             leading: Icon(Icons.access_time, size: 20),
@@ -177,7 +192,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                               '${shuttleTimeLists[idx][timeIndex]}',
                               style: TextStyle(fontSize: 15),
                             ),
-                            subtitle: Text('In 11 minutes'),
+                            subtitle: Text('In vincent is dumb minutes'),
                             trailing: PopupMenuButton<String>(
                                 onSelected: (String selected) {
                                   if (selected == choices[0]) {
@@ -188,7 +203,21 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                                             shuttleStopLists[idx][index][2]));
                                   }
                                   if (selected == choices[2]) {
-                                    scheduleAlarm();
+                                    DateTime scheduleAlarmDateTime;
+                                    /*
+                                    * DateTime.parse() should be used directly from the bus/shuttle
+                                    * api which generates the time and date of each stop.
+                                    * We parse it into scheduleAlarmDateTime to be used as a
+                                    * alarm.
+                                    * Currently backend will be working on this so this is a work
+                                    * in progress.
+                                    * EX:
+                                    * scheduleAlarmDateTime = DateTime.parse(*shuttle_timeline object string*);
+                                    * *2020-11-13T18:04:00*
+                                    */
+                                    String shuttleName = curStopList[index % curStopList.length][0];
+                                    scheduleAlarmDateTime = DateTime.now().add(Duration(seconds: 10));
+                                    scheduleAlarm(scheduleAlarmDateTime, shuttleName);
                                   }
                                 },
                                 itemBuilder: (BuildContext context) => choices
@@ -207,9 +236,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     );
   }
 
-  Future<void> scheduleAlarm() async {
-    var scheduledNotificationDateTime =
-        DateTime.now().add(Duration(seconds: 10));
+  Future<void> scheduleAlarm(DateTime scheduledNotificationDateTime, String shuttleName) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'alarm_notif',
       'alarm_notif',
@@ -227,8 +254,12 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
         presentSound: true);
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await fltrNotification.schedule(0, 'Test', 'bruh',
-        scheduledNotificationDateTime, platformChannelSpecifics);
+    await fltrNotification.schedule(
+        0,
+        'Shuttle Reminder', //
+        'Shuttle ' + shuttleName + ' is arriving', //"Shuttle x is arriving in x minutes"
+        scheduledNotificationDateTime,
+        platformChannelSpecifics);
   }
 }
 
