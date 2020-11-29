@@ -76,7 +76,11 @@ class _HomePageState extends State<_HomePage> {
                     busRepo: BusRepository(),
                     shuttleRepo: ShuttleRepository())),
             BlocProvider<ScheduleBloc>(
-                create: (context) => ScheduleBloc(busRepo: BusRepository()))
+              create: (context) => ScheduleBloc(
+                  mapBloc: BlocProvider.of<MapBloc>(context),
+                  busRepo: BusRepository(),
+                  panelController: _panelController),
+            ),
           ],
           child: SlidingUpPanel(
               // sliding panel (body is the background, panelBuilder is the actual panel)

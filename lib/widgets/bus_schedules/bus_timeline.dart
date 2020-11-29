@@ -214,7 +214,7 @@ class BusTimelineState extends State<BusTimeline>
       String choice, TimetableStop busStop, List<dynamic> stopTime) {
     if (choice == choices[0]) {
       BlocProvider.of<ScheduleBloc>(context)
-          .scheduleAlarm(stopTime[1], busStop.stopName, isShuttle: false);
+          .scheduleBusAlarm(stopTime[1], busStop);
     } else if (choice == choices[1]) {
       this.widget.panelController.animatePanelToPosition(0);
       BlocProvider.of<MapBloc>(context).scrollToLocation(busStop.latLng);

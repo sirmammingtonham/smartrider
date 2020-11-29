@@ -2,9 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:smartrider/data/models/bus/bus_route.dart';
+import 'package:smartrider/data/models/shuttle/shuttle_stop.dart';
 
-import 'package:smartrider/data/models/bus/bus_stop.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
+
 import 'package:smartrider/data/models/bus/bus_timetable.dart';
 import 'package:smartrider/data/repository/bus_repository.dart';
 
@@ -16,6 +20,8 @@ part 'schedule_state.dart';
 
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final BusRepository busRepo;
+  final MapBloc mapBloc;
+  final PanelController panelController;
 
   /// notification stuff
   final FlutterLocalNotificationsPlugin _notifications =
@@ -37,7 +43,11 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
           presentBadge: true,
           presentSound: true));
 
-  ScheduleBloc({@required this.busRepo}) : super(ScheduleInitialState()) {
+  ScheduleBloc(
+      {@required this.mapBloc,
+      @required this.busRepo,
+      @required this.panelController})
+      : super(ScheduleInitialState()) {
     _notifications.initialize(
         InitializationSettings(AndroidInitializationSettings('app_icon'),
             IOSInitializationSettings()),
@@ -48,23 +58,33 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   Map<String, BusTimetable> busTables;
 
   Future _notificationSelected(String payload) async {
-    /// TODO: should zoom the map onto the stop or open the timeline
-    // showDialog(
-    //   context: context,
-    //   builder: (context) => AlertDialog(
-    //     content: Text("Notification : $payload"),
-    //   ),
-    // );
+    var split = payload.split('/').map((coord) => double.tryParse(coord));
+    LatLng loc = LatLng(split.first, split.last);
+    panelController.animatePanelToPosition(0);
+    mapBloc.scrollToLocation(loc);
   }
 
-  Future<void> scheduleAlarm(int secondsFromNow, String stopName,
-      {bool isShuttle = true}) async {
+  Future<void> scheduleBusAlarm(int secondsFromNow, TimetableStop stop) async {
     await _notifications.schedule(
-        0,
-        isShuttle ? 'Shuttle Reminder' : 'Bus Reminder', //
-        isShuttle ? 'Shuttle ' : 'Bus ' + stopName + ' is arriving soon!',
+        0, //DateTime.now().millisecondsSinceEpoch // unique id? doesnt seem to do anything
+        'Your bus is almost here!',
+        '${stop.stopName} is arriving soon!',
         DateTime.now().add(Duration(seconds: secondsFromNow)),
         _platformChannelSpecifics,
+        payload:
+            '${stop.stopLat}/${stop.stopLon}', // split it so we can parse later
+        androidAllowWhileIdle: true);
+  }
+
+  Future<void> scheduleShuttleAlarm(int secondsFromNow, ShuttleStop stop) async {
+    await _notifications.schedule(
+        0, //DateTime.now().millisecondsSinceEpoch // unique id? doesnt seem to do anything
+        'Your bus is almost here!',
+        '${stop.name} is arriving soon!',
+        DateTime.now().add(Duration(seconds: secondsFromNow)),
+        _platformChannelSpecifics,
+        payload:
+            '${stop.latitude}/${stop.longitude}', // split it so we can parse later
         androidAllowWhileIdle: true);
   }
 
@@ -79,20 +99,8 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       } else {
         yield* _mapScheduleTableToState();
       }
-    } else if (event is ScheduleNotificationEvent) {
     } else {}
   }
-
-  /// return map<route_id, list<time>>
-  // Future<Map<String,Map<String,String>>> combineUpdatesTable() async{
-  //   Map<String,Map<String,String>> updates = await provider.getNewTripUpdates();
-  //   // might combine with bustimetable in the future
-  //   return updates;
-  //   }
-
-  // Stream<ScheduleState> _mapScheduleInitToState() async* {
-  //   yield ScheduleTimelineState();
-  // }
 
   Stream<ScheduleState> _mapScheduleTimelineToState() async* {
     yield ScheduleTimelineState(busRoutes: busRoutes, busTables: busTables);
