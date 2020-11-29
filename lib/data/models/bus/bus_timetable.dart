@@ -36,7 +36,7 @@ class BusTimetable {
 
   /// returns a list of [string, int] pairs, string represents a formatted time and
   /// int represents
-  List<List<dynamic>> getClosestTimes(int i) {
+  Iterable<List<dynamic>> getClosestTimes(int i) {
     int now = DateTime.now().hour * 3600 +
         DateTime.now().minute * 60 +
         DateTime.now().second;
@@ -61,17 +61,20 @@ class BusTimetable {
       if (numRows - min < 1) {
         offsetLength = 1;
       } else {
-        print('huh');
         offsetLength = numRows - min;
       }
     } else {
       offsetLength = 5;
     }
 
-    return List.generate(offsetLength, (index) => index)
-        .map((offset) =>
-            [getTime(i, min + offset), getTimestamp(i, min + offset) - now])
-        .toList();
+    return List.generate(offsetLength, (index) => index).map((offset) => [
+          getTime(i, min + offset),
+          now < getTimestamp(i, min + offset)
+              ? getTimestamp(i, min + offset) - now
+              : 86400 -
+                  now +
+                  getTimestamp(i, min + offset) // 86400 seconds in a day
+        ]);
   }
 
   BusTimetable.fromJson(Map<String, dynamic> json) {
