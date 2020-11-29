@@ -1,22 +1,30 @@
 // ui dependencies
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/data/models/bus/bus_route.dart';
 import 'package:smartrider/data/models/bus/bus_timetable.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
 
-const List<String> choices = ['See on map', 'View on timetable'];
+const List<String> choices = [
+  'Set Reminder',
+  'See on map',
+  'View on timetable'
+];
 
 /// Creates an object that contains all the busses and their respective stops.
 class BusTimeline extends StatefulWidget {
-  final Function jumpMap;
+  final PanelController panelController;
   final Map<String, BusRoute> busRoutes;
   final Map<String, BusTimetable> busTables;
   BusTimeline(
       {Key key,
-      this.jumpMap,
+      @required this.panelController,
       @required this.busRoutes,
       @required this.busTables})
       : super(key: key);
@@ -80,9 +88,9 @@ class BusTimelineState extends State<BusTimeline>
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            busList('87-185', this.widget.jumpMap),
-            busList('286-185', this.widget.jumpMap),
-            busList('289-185', this.widget.jumpMap),
+            busList('87-185'),
+            busList('286-185'),
+            busList('289-185'),
           ],
         ),
       )
@@ -91,11 +99,10 @@ class BusTimelineState extends State<BusTimeline>
 
   /// Builds the buslist widget which contains all the stops and
   /// useful user information like the next arrival.
-  Widget busList(String routeId, Function _jumpMap) {
+  Widget busList(String routeId) {
     var busStops = widget.busTables[routeId]
         .stops; //this.widget.busRoutes[routeId].forwardStops;
-    // this.widget.busTables[routeId].stops;
-//
+
     /// Returns the scrollable list for our bus stops to be contained in.
     return RefreshIndicator(
         onRefresh: () => Future.delayed(const Duration(seconds: 1), () => "1"),
@@ -184,7 +191,10 @@ class BusTimelineState extends State<BusTimeline>
                               ),
                               subtitle: Text(subText),
                               trailing: PopupMenuButton<String>(
-                                  onSelected: null,
+                                  onSelected: (choice) => _handlePopupSelection(
+                                      choice,
+                                      busStops[index],
+                                      stopTimes[timeIndex]),
                                   itemBuilder: (BuildContext context) => choices
                                       .map((choice) => PopupMenuItem<String>(
                                           value: choice, child: Text(choice)))
@@ -199,7 +209,20 @@ class BusTimelineState extends State<BusTimeline>
           },
         ));
   }
+
+  void _handlePopupSelection(
+      String choice, TimetableStop busStop, List<dynamic> stopTime) {
+    if (choice == choices[0]) {
+      BlocProvider.of<ScheduleBloc>(context)
+          .scheduleAlarm(stopTime[1], busStop.stopName, isShuttle: false);
+    } else if (choice == choices[1]) {
+      this.widget.panelController.animatePanelToPosition(0);
+      BlocProvider.of<MapBloc>(context).scrollToLocation(busStop.latLng);
+    }
+  }
 }
+
+///TODO: Move these custom painters to another file
 
 /// Creates our "lines and circles" on the left hand side of the
 /// schedule list for each bus. This particular class is responsible

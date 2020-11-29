@@ -16,3 +16,11 @@ class ScheduleViewChangeEvent extends ScheduleEvent {
   @override
   List<Object> get props => [this.isTimeline];
 }
+
+class ScheduleNotificationEvent extends ScheduleEvent {
+  // final bool isTimeline;
+  ScheduleNotificationEvent();
+
+  @override
+  List<Object> get props => [];
+}

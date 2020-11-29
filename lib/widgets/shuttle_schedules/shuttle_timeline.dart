@@ -1,9 +1,13 @@
 // ui dependencies
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
 //import 'package:flutter/rendering.dart';
 
@@ -11,16 +15,16 @@ import 'package:intl/intl.dart';
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
 
-List<String> choices = ['See on map', 'View on timetable', 'Set Reminder'];
-
-final FlutterLocalNotificationsPlugin fltrNotification =
-    FlutterLocalNotificationsPlugin();
+const List<String> choices = [
+  'Set Reminder',
+  'See on map',
+  'View on timetable'
+];
 
 /// Creates an object that contains all the shuttles and their respective stops.
 class ShuttleTimeline extends StatefulWidget {
-  final Function containsFilter;
-  final Function jumpMap;
-  ShuttleTimeline({Key key, this.containsFilter, this.jumpMap})
+  final PanelController panelController;
+  ShuttleTimeline({Key key, @required this.panelController})
       : super(key: key);
   @override
   ShuttleTimelineState createState() => ShuttleTimelineState();
@@ -43,12 +47,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
   /// Affects the expansion of each shuttles list of stops
   void initState() {
     super.initState();
-    var androidInitilize = AndroidInitializationSettings('app_icon');
-    var iOSinitilize = IOSInitializationSettings();
-    var initilizationsSettings =
-        new InitializationSettings(androidInitilize, iOSinitilize);
-    fltrNotification.initialize(initilizationsSettings,
-        onSelectNotification: notificationSelected);
     _tabController = TabController(vsync: this, length: shuttleTabs.length);
     _tabController.addListener(() {
       isExpandedList.fillRange(0, 100, false);
@@ -73,15 +71,6 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     }
   }
 
-  Future notificationSelected(String payload) async {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Text("Notification : $payload"),
-      ),
-    );
-  }
-
   /// Builds each tab for each shuttle and also accounts for the users
   /// light preferences.
   @override
@@ -104,10 +93,10 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            shuttleList(0, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(1, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(2, this.widget.containsFilter, this.widget.jumpMap),
-            shuttleList(3, this.widget.containsFilter, this.widget.jumpMap),
+            shuttleList(0),
+            shuttleList(1),
+            shuttleList(2),
+            shuttleList(3),
           ],
         ),
       )
@@ -116,7 +105,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
 
   /// Builds the shuttlelist widget which contains all the stops and
   /// useful user information like the next arrival.
-  Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
+  Widget shuttleList(int idx) {
     return ScrollablePositionedList.builder(
       itemCount: shuttleStopLists[idx].length,
       itemBuilder: (context, index) {
@@ -194,32 +183,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                             ),
                             subtitle: Text('In vincent is dumb minutes'),
                             trailing: PopupMenuButton<String>(
-                                onSelected: (String selected) {
-                                  if (selected == choices[0]) {
-                                    _jumpMap(
-                                        double.parse(
-                                            shuttleStopLists[idx][index][1]),
-                                        double.parse(
-                                            shuttleStopLists[idx][index][2]));
-                                  }
-                                  if (selected == choices[2]) {
-                                    DateTime scheduleAlarmDateTime;
-                                    /*
-                                    * DateTime.parse() should be used directly from the bus/shuttle
-                                    * api which generates the time and date of each stop.
-                                    * We parse it into scheduleAlarmDateTime to be used as a
-                                    * alarm.
-                                    * Currently backend will be working on this so this is a work
-                                    * in progress.
-                                    * EX:
-                                    * scheduleAlarmDateTime = DateTime.parse(*shuttle_timeline object string*);
-                                    * *2020-11-13T18:04:00*
-                                    */
-                                    String shuttleName = curStopList[index % curStopList.length][0];
-                                    scheduleAlarmDateTime = DateTime.now().add(Duration(seconds: 10));
-                                    scheduleAlarm(scheduleAlarmDateTime, shuttleName);
-                                  }
-                                },
+                                onSelected: (choice) => _handlePopupSelection(choice),
                                 itemBuilder: (BuildContext context) => choices
                                     .map((choice) => PopupMenuItem<String>(
                                         value: choice, child: Text(choice)))
@@ -236,30 +200,15 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     );
   }
 
-  Future<void> scheduleAlarm(DateTime scheduledNotificationDateTime, String shuttleName) async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'alarm_notif',
-      'alarm_notif',
-      'Channel for Alarm notification',
-      icon: 'app_icon',
-
-      ///sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
-      largeIcon: DrawableResourceAndroidBitmap('app_icon'),
-    );
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails(
-
-        ///sound: 'a_long_cold_sting.wav',
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true);
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await fltrNotification.schedule(
-        0,
-        'Shuttle Reminder', //
-        'Shuttle ' + shuttleName + ' is arriving', //"Shuttle x is arriving in x minutes"
-        scheduledNotificationDateTime,
-        platformChannelSpecifics);
+  void _handlePopupSelection(
+      String choice) {
+    if (choice == choices[0]) {
+      // BlocProvider.of<ScheduleBloc>(context)
+      //     .scheduleAlarm(stopTime[1], 'busStop.stopName', isShuttle: true);
+    } else if (choice == choices[1]) {
+      this.widget.panelController.animatePanelToPosition(0);
+      // BlocProvider.of<MapBloc>(context).scrollToLocation();
+    }
   }
 }
 

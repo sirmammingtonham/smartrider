@@ -26,13 +26,14 @@ class PanelPage extends StatefulWidget {
 
 class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
   final List<Widget> _tabs = [
-    Tab(icon: Icon(Icons.airport_shuttle)),
     Tab(icon: Icon(Icons.directions_bus)),
+    Tab(icon: Icon(Icons.airport_shuttle)),
+    
   ];
 
   TabController _tabController;
   String filter;
-  bool _isShuttle = true;
+  bool _isShuttle = false;
 
   @override
   void initState() {
@@ -73,8 +74,14 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
-                    ShuttleTimeline(),
-                    BusTimeline(busRoutes: state.busRoutes, busTables: state.busTables,),
+                    BusTimeline(
+                      panelController: this.widget.panelController,
+                      busRoutes: state.busRoutes,
+                      busTables: state.busTables,
+                    ),
+                    ShuttleTimeline(
+                        panelController: this.widget.panelController),
+                    
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(
@@ -95,8 +102,9 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                   controller: _tabController,
                   children: <Widget>[
                     // ShuttleTable(),
-                    ShuttleUnavailable(),
+                    
                     BusTable(timetableMap: state.busTables),
+                    ShuttleUnavailable(),
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(

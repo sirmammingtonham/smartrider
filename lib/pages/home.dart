@@ -53,7 +53,7 @@ class _HomePageState extends State<_HomePage> {
   void initState() {
     super.initState();
     _panelController = new PanelController();
-    _isShuttle = true;
+    _isShuttle = false;
   }
 
   void _changeCallback() {
