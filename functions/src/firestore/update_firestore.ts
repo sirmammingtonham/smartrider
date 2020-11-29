@@ -325,7 +325,7 @@ const flattenTimetable = async (table: any) => {
     }
   }
 
-  return {formatted: formatted_list, timestamps: timestamp_list};
+  return { formatted: formatted_list, timestamps: timestamp_list };
 };
 
 const parseTest = async () => {
@@ -396,6 +396,12 @@ const parseTimetables = async () => {
       // get forward and backward timetables
       let table_f: any;
       let table_b: any;
+      await set(timetables_root, route, { route_id: route });
+
+      const timetables = subcollection<models.Timetable, TableRoute>(
+        active_days,
+        timetables_root
+      );
 
       try {
         table_f = (
@@ -405,83 +411,80 @@ const parseTimetables = async () => {
           )
         )[0];
 
+        const f_timetables = await flattenTimetable(table_f);
+        promises.push(
+          set(timetables(route), `${table_f.direction_id}`, {
+            route_id: table_f.route_ids[0],
+            direction_id: table_f.direction_id,
+            direction_name: table_f.direction_name,
+            label: table_f.timetable_label,
+            start_date: table_f.start_date,
+            end_date: table_f.end_date,
+
+            service_id: table_f.service_ids[0],
+            include_dates: table_f.calendarDates.includedDates,
+            exclude_dates: table_f.calendarDates.excludedDates,
+
+            stops: table_f.stops.map((stop: any) => {
+              return {
+                stop_id: stop.stop_id,
+                stop_name: stop.stop_name,
+                stop_lat: stop.stop_lat,
+                stop_lon: stop.stop_lon,
+              };
+            }),
+
+            formatted: f_timetables.formatted,
+            timestamps: f_timetables.timestamps,
+          })
+        );
+      } catch (error) {
+        // console.log(error);
+        console.log(`NO TRIPS FOR: ${route}|${activity_map[active_days]}|0`);
+      }
+      try {
         table_b = (
           await gtfs_timetable.getFormattedTimetablePage(
             `${route}|${activity_map[active_days]}|1`,
             timetable_config
           )
         )[0];
+
+        const b_timetables = await flattenTimetable(table_b);
+        promises.push(
+          set(timetables(route), `${table_b.direction_id}`, {
+            route_id: table_b.route_ids[0],
+            direction_id: table_b.direction_id,
+            direction_name: table_b.direction_name,
+            label: table_b.timetable_label,
+            start_date: table_b.start_date,
+            end_date: table_b.end_date,
+
+            service_id: table_b.service_ids[0],
+            include_dates: table_b.calendarDates.includedDates,
+            exclude_dates: table_b.calendarDates.excludedDates,
+
+            stops: table_f.stops.map((stop: any) => {
+              return {
+                stop_id: stop.stop_id,
+                stop_name: stop.stop_name,
+                stop_lat: stop.stop_lat,
+                stop_lon: stop.stop_lon,
+              };
+            }),
+
+            formatted: b_timetables.formatted,
+            timestamps: b_timetables.timestamps,
+          })
+        );
       } catch (error) {
-        // console.log(`NO TRIPS FOR: ${route}|${activity_map[active_days]}`);
+        console.log(`NO TRIPS FOR: ${route}|${activity_map[active_days]}|1`);
       }
 
-      if (table_f === undefined || table_b === undefined) {
-        // console.log(`NO TRIPS FOR: ${route}|${activity_map[active_days]}`);
-        continue;
-      }
-
-      await set(timetables_root, route, { route_id: route });
-
-      const timetables = subcollection<models.Timetable, TableRoute>(
-        active_days,
-        timetables_root
-      );
-
-      const f_timetables = await flattenTimetable(table_f);
-      promises.push(
-        set(timetables(route), `${table_f.direction_id}`, {
-          route_id: table_f.route_ids[0],
-          direction_id: table_f.direction_id,
-          direction_name: table_f.direction_name,
-          label: table_f.timetable_label,
-          start_date: table_f.start_date,
-          end_date: table_f.end_date,
-
-          service_id: table_f.service_ids[0],
-          include_dates: table_f.calendarDates.includedDates,
-          exclude_dates: table_f.calendarDates.excludedDates,
-
-          stops: table_f.stops.map((stop: any) => {
-            return {
-              stop_id: stop.stop_id,
-              stop_name: stop.stop_name,
-              stop_lat: stop.stop_lat,
-              stop_lon: stop.stop_lon,
-            };
-          }),
-
-          formatted: f_timetables.formatted,
-          timestamps: f_timetables.timestamps
-        })
-      );
-
-      const b_timetables = await flattenTimetable(table_b);
-      promises.push(
-        set(timetables(route), `${table_b.direction_id}`, {
-          route_id: table_b.route_ids[0],
-          direction_id: table_b.direction_id,
-          direction_name: table_b.direction_name,
-          label: table_b.timetable_label,
-          start_date: table_b.start_date,
-          end_date: table_b.end_date,
-
-          service_id: table_b.service_ids[0],
-          include_dates: table_b.calendarDates.includedDates,
-          exclude_dates: table_b.calendarDates.excludedDates,
-
-          stops: table_f.stops.map((stop: any) => {
-            return {
-              stop_id: stop.stop_id,
-              stop_name: stop.stop_name,
-              stop_lat: stop.stop_lat,
-              stop_lon: stop.stop_lon,
-            };
-          }),
-  
-          formatted: b_timetables.formatted,
-          timestamps: b_timetables.timestamps
-        })
-      );
+      // if (table_f === undefined || table_b === undefined) {
+      //   console.log(`NO TRIPS FOR: ${route}|${activity_map[active_days]}`);
+      //   continue;
+      // }
     }
   }
 
