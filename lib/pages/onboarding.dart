@@ -63,10 +63,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               end: Alignment.bottomCenter,
               stops: [0.1, 0.4, 0.7, 0.9],
               colors: [
-                Color(0xFF3594DD),
-                Color(0xFF165DC0),
-                Color(0xFF07489C),
-                Color(0xFF083663),
+                Color(0xFF03A9F4),
+                Color(0xFF039BE5),
+                Color(0xFF0288D1),
+                Color(0xFF0277BD),
               ],
             ),
           ),
@@ -246,6 +246,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Container( 
+                                    decoration: BoxDecoration( 
+                                      border: Border.all(
+                                        width: 3,
+                                      ),
+                                    ),
+                                  child: Image.asset("assets/onboarding_images/rpi_stock_photo.png",   
+                                  height: 200.0,
+                                  width: 300.0,
+                                    ),
+                                  ),
+                                ),
+                              ]
+                            ),
                             SizedBox(height: 50.0),
                             Center(
                             child: Text(
@@ -321,9 +340,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       bottomSheet: _currentPage == _numPages - 1
           ? Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
+                border: Border.all(color: Colors.white),
                 borderRadius: BorderRadius.all(Radius.circular(20)),
-                color: Colors.white
+                color: Colors.blue
               ),
               height: 75,
               width: double.infinity,
@@ -342,7 +361,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Text(
                       'Get started',
                       style: TextStyle(
-                        color: Color(0xFF083663),
+                        color: Color(0xFFFAFAFA),
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
