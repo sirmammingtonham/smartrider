@@ -186,7 +186,7 @@ class SettingsWidget extends StatelessWidget {
               ),
               cardBuilder(state.buses.keys
                   .map((key) => SwitchListTile(
-                        title: Text(key),
+                        title: Text(PrefsBloc.busIdMap[key]),
                         value: state.buses[key],
                         onChanged: (bool value) {
                           state.buses[key] = value;

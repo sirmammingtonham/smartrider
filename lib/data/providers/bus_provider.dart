@@ -30,7 +30,7 @@ class BusProvider {
     '87-185',
     '286-185',
     '289-185',
-    // '286-184',
+    '288-185', // cdta express shuttle
   ];
 
   /// Fetchs data from the JSON API and returns a decoded JSON.

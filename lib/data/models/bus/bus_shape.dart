@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 const BUS_COLORS = {
   '87-185': Colors.deepPurple,
   '286-185': Colors.indigoAccent,
-  '289-185': Colors.blueGrey
+  '289-185': Colors.blueGrey,
+  '288-185': Colors.green,
 };
 
 class BusShape {

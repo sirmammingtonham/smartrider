@@ -39,6 +39,7 @@ class BusTimelineState extends State<BusTimeline>
     Tab(text: 'Route 87'),
     Tab(text: 'Route 286'),
     Tab(text: 'Route 289'),
+    Tab(text: 'Express Shuttle'),
   ];
 
   TabController _tabController;
@@ -91,6 +92,7 @@ class BusTimelineState extends State<BusTimeline>
             busList('87-185'),
             busList('286-185'),
             busList('289-185'),
+            busList('288-185'),
           ],
         ),
       )
@@ -124,7 +126,7 @@ class BusTimelineState extends State<BusTimeline>
               title: Text(busStops[index].stopName),
               subtitle: Text('Next Arrival: ${stopTimes[0][0]}'),
               tilePadding:
-                  EdgeInsets.symmetric(vertical: 11.0, horizontal: 16.0),
+                  EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
 
               /// Controls the leading circle icon in front of each bus stop.
               leading: CustomPaint(
