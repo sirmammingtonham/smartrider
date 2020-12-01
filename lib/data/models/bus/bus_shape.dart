@@ -2,17 +2,17 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 
 const BUS_COLORS = {
-  '87-185': Colors.deepPurple,
-  '286-185': Colors.indigoAccent,
-  '289-185': Colors.pinkAccent,
-  '288-185': Colors.green,
+  '87-185': Colors.purple,
+  '286-185': Colors.deepOrange,
+  '289-185': Colors.cyan,
+  '288-185': Colors.pinkAccent,
 };
 
 const BUS_WIDTHS = {
   '87-185': 6,
   '286-185': 5,
-  '289-185': 3,
-  '288-185': 4,
+  '289-185': 4,
+  '288-185': 3,
 };
 
 class BusShape {
