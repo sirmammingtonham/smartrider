@@ -23,7 +23,9 @@ class PanelPage extends StatefulWidget {
 
 class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
   final List<Widget> _tabs = [
-    Tab(icon: Icon(Icons.airport_shuttle/*, color: Theme.of(context).primaryColor,*/)),
+    Tab(
+        icon: Icon(Icons
+            .airport_shuttle /*, color: Theme.of(context).primaryColor,*/)),
     Tab(icon: Icon(Icons.directions_bus)),
   ];
 
@@ -63,8 +65,12 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
           builder: (context, state) {
             if (state is ScheduleTimelineState) {
               return Scaffold(
-                appBar: panelAppBar(state.isShuttle,
-                    this.widget.panelController, _tabController, _tabs),
+                appBar: panelAppBar(
+                    state.isShuttle,
+                    this.widget.panelController,
+                    _tabController,
+                    _tabs,
+                    context),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
@@ -84,8 +90,12 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
               );
             } else if (state is ScheduleTableState) {
               return Scaffold(
-                appBar: panelAppBar(state.isShuttle,
-                    this.widget.panelController, _tabController, _tabs),
+                appBar: panelAppBar(
+                    state.isShuttle,
+                    this.widget.panelController,
+                    _tabController,
+                    _tabs,
+                    context),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
@@ -95,7 +105,8 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                 ),
                 floatingActionButton: FloatingActionButton(
                   heroTag: "Filter",
-                  child: Icon(Icons.timeline, color: Theme.of(context).primaryColor),
+                  child: Icon(Icons.timeline,
+                      color: Theme.of(context).primaryColor),
                   elevation: 5.0,
                   onPressed: () {
                     BlocProvider.of<ScheduleBloc>(context)
@@ -106,8 +117,12 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
             } else if (state is ScheduleTransitionState) {
               BlocProvider.of<ScheduleBloc>(context).add(ScheduleChangeEvent());
               return Scaffold(
-                appBar: panelAppBar(state.isShuttle,
-                    this.widget.panelController, _tabController, _tabs),
+                appBar: panelAppBar(
+                    state.isShuttle,
+                    this.widget.panelController,
+                    _tabController,
+                    _tabs,
+                    context),
                 body: TabBarView(
                   controller: _tabController,
                   children: <Widget>[
@@ -149,34 +164,33 @@ Widget panelAppBar(bool isShuttle, PanelController panelController,
         top: Radius.circular(20),
       ),
     ),
-
     leading: Padding(
-      padding: const EdgeInsets.only(left: 40.0, bottom: 35),
-      child: IconButton(
-      icon: Icon(Icons.keyboard_arrow_down, color: Theme.of(context).primaryColor),
-      onPressed: () {
-        panelController.animatePanelToPosition(0);
-      },
-    )
-   ),
+        padding: const EdgeInsets.only(left: 40.0, bottom: 35),
+        child: IconButton(
+          icon: Icon(Icons.keyboard_arrow_down,
+              color: Theme.of(context).primaryColor),
+          onPressed: () {
+            panelController.animatePanelToPosition(0);
+          },
+        )),
     title: Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: Text(isShuttle ? 'Shuttle Schedules' : 'Bus Schedules', style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 25) ) ),
-
-actions: <Widget>[
-  Padding(
-      padding: const EdgeInsets.only(right: 45.0, bottom: 35),
-      child: IconButton(
-        icon: Icon(Icons.keyboard_arrow_down, color: Theme.of(context).primaryColor),
-        onPressed: () {
-          panelController.animatePanelToPosition(0);
-        },
-       )
-      )
+        padding: const EdgeInsets.only(bottom: 15),
+        child: Text(isShuttle ? 'Shuttle Schedules' : 'Bus Schedules',
+            style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 25))),
+    actions: <Widget>[
+      Padding(
+          padding: const EdgeInsets.only(right: 45.0, bottom: 35),
+          child: IconButton(
+            icon: Icon(Icons.keyboard_arrow_down,
+                color: Theme.of(context).primaryColor),
+            onPressed: () {
+              panelController.animatePanelToPosition(0);
+            },
+          ))
     ],
-
-
-
 
 /*
     leading: IconButton(
