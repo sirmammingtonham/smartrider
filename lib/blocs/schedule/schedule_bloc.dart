@@ -136,7 +136,9 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       } else {
         yield* _mapScheduleTableToState();
       }
-    } else {}
+    } else {
+      print('error in schedule bloc');
+    }
   }
 
   Stream<ScheduleState> _mapScheduleTimelineToState() async* {

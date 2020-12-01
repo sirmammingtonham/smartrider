@@ -98,7 +98,7 @@ class BusProvider {
     http.Response response =
         await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
 
-    var routes = ["87", "286", "289", "288"];
+    // var routes = ["87", "286", "289", "288"];
     List<BusTripUpdate> tripUpdatesList = response != null
         ? FeedMessage.fromBuffer(response.bodyBytes)
             .entity
@@ -110,32 +110,6 @@ class BusProvider {
     return tripUpdatesList;
   }
 
-  Future<Map<String, Map<String, String>>> getNewTripUpdates() async {
-    http.Response response =
-        await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
-
-    var routes = ["87", "286", "289", "288"];
-    List<BusTripUpdate> tripUpdatesList = response != null
-        ? FeedMessage.fromBuffer(response.bodyBytes)
-            .entity
-            .map((entity) => BusTripUpdate.fromPBEntity(entity))
-            .where((update) => routes.contains(update.routeId))
-            .toList()
-        : [];
-    Map<String, Map<String, String>> m = {};
-    tripUpdatesList.forEach((element) {
-      Map<String, String> m1 = {};
-      element.stopTimeUpdate.forEach((stoptime) {
-        m1[stoptime.stopId] = DateFormat('HH:mm').format(
-            DateTime.fromMillisecondsSinceEpoch(
-                stoptime.arrivalTime.toInt() * 1000));
-      });
-      m[element.routeId] = m1;
-    });
-
-    return m;
-  }
-
   /// Returns a [List] of [BusVehicleUpdate] objects.
   Future<List<BusVehicleUpdate>> getVehicleUpdates() async {
     http.Response response = await http
@@ -145,7 +119,9 @@ class BusProvider {
         ? FeedMessage.fromBuffer(response.bodyBytes)
             .entity
             .map((entity) => BusVehicleUpdate.fromPBEntity(entity))
-            .where((update) => defaultRoutes.contains(update.routeId))
+            .where((update) => defaultRoutes
+              .map((str) => str.split('-')[0])
+              .contains(update.routeId))
             .toList()
         : [];
     return vehicleUpdatesList;
@@ -175,21 +151,4 @@ class BusProvider {
 
     return timetableMap;
   }
-
-  Future<void> test() async {
-    Stopwatch stopwatch = new Stopwatch()..start();
-    // await getPolylines();
-    // await getStops();
-    // await getVehicleUpdates();
-    print('executed in ${stopwatch.elapsed}');
-  }
-
-  // Future<Map<String, List<List<String>>>> getBusTimetableFlat() async {
-  //   var timetable = await getBusTimetable();
-  //   Map<String, List<List<String>>> retmap = {};
-
-  //   timetable.forEach((route, table) {
-
-  //   });
-  // }
 }

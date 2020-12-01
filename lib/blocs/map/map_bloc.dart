@@ -227,7 +227,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     yield MapLoadedState(
         polylines: _currentPolylines,
-        markers: _currentMarkers.followedBy(_getMarkerClusters(zoomLevel)).toSet(),
+        markers:
+            _currentMarkers.followedBy(_getMarkerClusters(zoomLevel)).toSet(),
         isBus: _isBus);
   }
 
@@ -403,11 +404,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   Marker _busUpdateToMarker(BusVehicleUpdate update) {
+    int routeId = int.parse(update.routeId);
     // real time update shuttles
     return Marker(
-        icon: shuttleUpdateIcons[shuttleUpdateIcons.containsKey(update.routeId)
-            ? update.routeId
-            : -1],
+        icon: shuttleUpdateIcons[
+            shuttleUpdateIcons.containsKey(routeId)
+                ? routeId
+                : -1],
         infoWindow: InfoWindow(title: "Shuttle ID: ${update.id.toString()}"),
         markerId: MarkerId(update.id.toString()),
         position: update.getLatLng,
