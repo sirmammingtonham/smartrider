@@ -108,15 +108,7 @@ class SettingsWidget extends StatelessWidget {
             ),
           ],
         ),
-        body: NotificationListener<OverscrollNotification>(
-            onNotification: (t) {
-              if (t.overscroll < -15) {
-                Navigator.pop(context);
-                return true;
-              }
-              return false;
-            },
-            child: ListView(children: <Widget>[
+        body:ListView(children: <Widget>[
               // GENERAL SETTINGS
               Container(
                 margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
@@ -231,6 +223,6 @@ class SettingsWidget extends StatelessWidget {
                   ],
                 ),
               )
-            ])));
+            ]));
   }
 }

@@ -28,9 +28,9 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   bool _isBus;
   bool _isTimeline;
 
-  /// bool to prevent [_handleTabSelection] callback from switching 
+  /// bool to prevent [_handleTabSelection] callback from switching
   /// if type is updated via bloc event
-  bool _isChanging; 
+  bool _isChanging;
 
   /// notification stuff
   final FlutterLocalNotificationsPlugin _notifications =
@@ -68,6 +68,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
 
     _isBus = true;
     _isTimeline = true;
+    _isChanging = false;
   }
 
   void _handleTabSelection() {
