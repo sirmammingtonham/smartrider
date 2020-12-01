@@ -1,5 +1,6 @@
 // implementation imports
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
@@ -408,13 +409,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // real time update shuttles
     return Marker(
         icon: shuttleUpdateIcons[
-            shuttleUpdateIcons.containsKey(routeId)
-                ? routeId
-                : -1],
+            shuttleUpdateIcons.containsKey(routeId) ? routeId : -1],
         infoWindow: InfoWindow(title: "Shuttle ID: ${update.id.toString()}"),
         markerId: MarkerId(update.id.toString()),
         position: update.getLatLng,
-        // rotation: update.heading,   figure out some way to calculate heading? cdta website does somehow
+        rotation: _calculateBusHeading(update),
         anchor: Offset(0.5, 0.5),
         onTap: () {
           _controller.animateCamera(
@@ -422,6 +421,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 CameraPosition(target: update.getLatLng, zoom: 18, tilt: 50)),
           );
         });
+  }
+
+  double _calculateBusHeading(BusVehicleUpdate update) {
+    BusStopSimplified stop;
+    //TODO: get bus direction id
+    try {
+      stop = busRoutes[update.routeId + '-185']
+          .forwardStops[update.currentStopSequence];
+    } catch (error) {
+      stop = busRoutes[update.routeId + '-185']
+          .reverseStops[update.currentStopSequence];
+    }
+
+    double lat1 = stop.stopLat;
+    double lat2 = update.latitude;
+    double lon1 = stop.stopLon;
+    double lon2 = update.longitude;
+
+    double dL = lon2 - lon1;
+
+    // https://towardsdatascience.com/calculating-the-bearing-between-two-geospatial-coordinates-66203f57e4b4
+    double x = cos(lat2) * sin(dL);
+    double y = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dL);
+    double bearing = atan2(x, y); // in radians
+    double heading = (bearing * 180 / pi + 360) % 360; // convert to degrees
+
+    return heading;
   }
 
   Set<Polyline> _getEnabledPolylines() {

@@ -1,6 +1,10 @@
 //implementation imports
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:smartrider/data/models/bus/bus_route.dart';
+import 'package:smartrider/data/models/bus/bus_vehicle_update.dart';
 
 import 'package:smartrider/data/providers/bus_provider.dart';
 
@@ -12,6 +16,28 @@ void main() async {
 
 class TestApp extends StatelessWidget {
   final provider = BusProvider();
+
+  Future<void> testRouteId() async {
+    var routes = await provider.getRoutes();
+    var vehicles = await provider.getVehicleUpdates();
+
+    BusVehicleUpdate update = vehicles[0];
+    BusStopSimplified stop = routes[update.routeId + '-185']
+        .forwardStops[update.currentStopSequence];
+
+    double lat1 = update.latitude;
+    double lat2 = stop.stopLat;
+    double lon1 = update.longitude;
+    double lon2 = stop.stopLon;
+
+    double heading = atan2(sin(lon2 - lon1) * cos(lat2),
+            cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon2 - lon1)) %
+        2 *
+        pi;
+
+    print(heading);
+    return;
+  }
 
   Future<void> test() async {
     var timetable = await provider.getBusTimetable();
@@ -43,7 +69,7 @@ class TestApp extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Stopwatch stopwatch = new Stopwatch()..start();
-            test().then((_) {
+            testRouteId().then((_) {
               print('executed in ${stopwatch.elapsed}');
             });
           },

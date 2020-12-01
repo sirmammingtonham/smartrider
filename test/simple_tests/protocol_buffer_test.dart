@@ -24,16 +24,26 @@ Future test3() async {
       .get('http://64.128.172.149:8080/gtfsrealtime/VehiclePositions');
 
   // var routes = ["87", "286", "289"];
-  List<BusVehicleUpdate> vehicleUpdatesList = response != null
+  // List<BusVehicleUpdate> vehicleUpdatesList = response != null
+  //     ? FeedMessage.fromBuffer(response.bodyBytes)
+  //         .entity
+  //         .map((entity) => BusVehicleUpdate.fromPBEntity(entity))
+  //         .where((update) => defaultRoutes
+  //             .map((str) => str.split('-')[0])
+  //             .contains(update.routeId))
+  //         .toList()
+  //     : [];
+  // print(vehicleUpdatesList.map((update) => update.currentStatus));
+
+  List<FeedEntity> vehicleUpdatesList = response != null
       ? FeedMessage.fromBuffer(response.bodyBytes)
           .entity
-          .map((entity) => BusVehicleUpdate.fromPBEntity(entity))
-          .where((update) => defaultRoutes
-              .map((str) => str.split('-')[0])
-              .contains(update.routeId))
+          .map((entity) => entity)
           .toList()
       : [];
-  print(vehicleUpdatesList.map((update) => update.routeId));
+  for (FeedEntity ent in vehicleUpdatesList) {
+    print(ent.toProto3Json());
+  }
 }
 
 // Future test2() async {
