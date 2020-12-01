@@ -4,8 +4,15 @@ import 'package:flutter/material.dart';
 const BUS_COLORS = {
   '87-185': Colors.deepPurple,
   '286-185': Colors.indigoAccent,
-  '289-185': Colors.blueGrey,
+  '289-185': Colors.pinkAccent,
   '288-185': Colors.green,
+};
+
+const BUS_WIDTHS = {
+  '87-185': 6,
+  '286-185': 5,
+  '289-185': 3,
+  '288-185': 4,
 };
 
 class BusShape {
@@ -20,7 +27,7 @@ class BusShape {
         .map((linestring) => Polyline(
             polylineId: PolylineId('${this.routeId}${i++}'),
             color: BUS_COLORS[this.routeId].withAlpha(200),
-            width: 4,
+            width: BUS_WIDTHS[this.routeId],
             // patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
             points: linestring))
         .toList();

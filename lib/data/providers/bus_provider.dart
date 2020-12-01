@@ -98,7 +98,7 @@ class BusProvider {
     http.Response response =
         await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
 
-    var routes = ["87", "286", "289"];
+    var routes = ["87", "286", "289", "288"];
     List<BusTripUpdate> tripUpdatesList = response != null
         ? FeedMessage.fromBuffer(response.bodyBytes)
             .entity
@@ -114,7 +114,7 @@ class BusProvider {
     http.Response response =
         await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
 
-    var routes = ["87", "286", "289"];
+    var routes = ["87", "286", "289", "288"];
     List<BusTripUpdate> tripUpdatesList = response != null
         ? FeedMessage.fromBuffer(response.bodyBytes)
             .entity
