@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'dart:async';
+
 // bloc stuff
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
@@ -16,6 +16,7 @@ import 'package:smartrider/widgets/shuttle_schedules/shuttle_unavailable.dart';
 ///
 class PanelPage extends StatefulWidget {
   final PanelController panelController;
+  // final TabController tabController;
   final VoidCallback scheduleChanged;
   PanelPage(
       {Key key, @required this.panelController, @required this.scheduleChanged})
@@ -28,36 +29,23 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
   final List<Widget> _tabs = [
     Tab(icon: Icon(Icons.directions_bus)),
     Tab(icon: Icon(Icons.airport_shuttle)),
-    
   ];
 
-  TabController _tabController;
-  String filter;
-  bool _isShuttle = false;
+  ScheduleBloc _scheduleBloc;
 
   @override
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, length: _tabs.length);
-    _tabController.addListener(_handleTabSelection);
-    BlocProvider.of<ScheduleBloc>(context).add(ScheduleInitEvent());
+    _scheduleBloc = BlocProvider.of<ScheduleBloc>(context)
+      ..add(ScheduleInitEvent());
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _scheduleBloc.close();
     super.dispose();
   }
 
-  // handling this shit in bloc is too much trouble for something so simple
-  _handleTabSelection() {
-    if (_tabController.indexIsChanging) {
-      setState(() {
-        _isShuttle = !_isShuttle;
-      });
-      this.widget.scheduleChanged();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,19 +57,17 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
           builder: (context, state) {
             if (state is ScheduleTimelineState) {
               return Scaffold(
-                appBar: panelAppBar(_isShuttle, this.widget.panelController,
-                    _tabController, _tabs),
+                appBar: panelAppBar(state.isBus, _scheduleBloc.panelController,
+                    _scheduleBloc.tabController, _tabs),
                 body: TabBarView(
-                  controller: _tabController,
+                  controller: _scheduleBloc.tabController,
                   children: <Widget>[
                     BusTimeline(
-                      panelController: this.widget.panelController,
-                      busRoutes: state.busRoutes,
+                      panelController: _scheduleBloc.panelController,
                       busTables: state.busTables,
                     ),
                     ShuttleTimeline(
-                        panelController: this.widget.panelController),
-                    
+                        panelController: _scheduleBloc.panelController),
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(
@@ -96,13 +82,13 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
               );
             } else if (state is ScheduleTableState) {
               return Scaffold(
-                appBar: panelAppBar(_isShuttle, this.widget.panelController,
-                    _tabController, _tabs),
+                appBar: panelAppBar(state.isBus, _scheduleBloc.panelController,
+                    _scheduleBloc.tabController, _tabs),
                 body: TabBarView(
-                  controller: _tabController,
+                  controller: _scheduleBloc.tabController,
                   children: <Widget>[
                     // ShuttleTable(),
-                    
+
                     BusTable(timetableMap: state.busTables),
                     ShuttleUnavailable(),
                   ],
@@ -125,7 +111,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
   }
 }
 
-Widget panelAppBar(bool isShuttle, PanelController panelController,
+Widget panelAppBar(bool isBus, PanelController panelController,
     TabController tabController, List<Widget> tabs) {
   return AppBar(
     centerTitle: true,
@@ -134,7 +120,7 @@ Widget panelAppBar(bool isShuttle, PanelController panelController,
         top: Radius.circular(20),
       ),
     ),
-    title: Text(isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
+    title: Text(isBus ? 'Bus Schedules' : 'Shuttle Schedules'),
     leading: IconButton(
       icon: Icon(Icons.arrow_downward),
       onPressed: () {

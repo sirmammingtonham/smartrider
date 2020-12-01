@@ -47,7 +47,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
   /// Affects the expansion of each shuttles list of stops
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: shuttleTabs.length);
+    _tabController = TabController(vsync: this, length: shuttleTabs.length, initialIndex: 1);
     _tabController.addListener(() {
       isExpandedList.fillRange(0, 100, false);
       _handleTabSelection();

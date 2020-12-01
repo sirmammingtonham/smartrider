@@ -20,12 +20,12 @@ const List<String> choices = [
 /// Creates an object that contains all the busses and their respective stops.
 class BusTimeline extends StatefulWidget {
   final PanelController panelController;
-  final Map<String, BusRoute> busRoutes;
+  // final Map<String, BusRoute> busRoutes;
   final Map<String, BusTimetable> busTables;
   BusTimeline(
       {Key key,
       @required this.panelController,
-      @required this.busRoutes,
+      // @required this.busRoutes,
       @required this.busTables})
       : super(key: key);
   @override
@@ -45,17 +45,17 @@ class BusTimelineState extends State<BusTimeline>
   TabController _tabController;
 
   // TODO: better way to do this
-  var isExpandedList = new List<bool>.filled(100, false);
+  var isExpandedList = List<bool>.filled(50, false);
 
   /// Affects the expansion of each bus's list of stops
   @override
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, length: busTabs.length);
+    _tabController = TabController(vsync: this, length: busTabs.length);
     _tabController.addListener(() {
-      isExpandedList.fillRange(0, 100, false);
+      isExpandedList.fillRange(0, 50, false);
     });
-    isExpandedList.fillRange(0, 100, false);
+    isExpandedList.fillRange(0, 50, false);
   }
 
   @override

@@ -11,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
@@ -100,7 +101,11 @@ class ShuttleMapState extends State<ShuttleMap> {
           },
           mapType: _mapType,
         );
-        return MapUI(googleMap: googleMap);
+        return MapUI(
+          googleMap: googleMap,
+          isBus: state.isBus,
+          currentZoom: currentZoom,
+        );
       } else {
         return Center(child: Text("error bruh"));
       }
@@ -109,18 +114,44 @@ class ShuttleMapState extends State<ShuttleMap> {
 }
 
 class MapUI extends StatelessWidget {
-  const MapUI({
-    Key key,
-    @required this.googleMap,
-  }) : super(key: key);
+  const MapUI(
+      {Key key,
+      @required this.googleMap,
+      @required this.isBus,
+      @required this.currentZoom})
+      : super(key: key);
 
   final GoogleMap googleMap;
+  final bool isBus;
+  final double currentZoom;
 
   @override
   Widget build(BuildContext context) {
     return Stack(alignment: Alignment.topCenter, children: <Widget>[
       // Actual map
       googleMap,
+
+      Positioned(
+        right: 20.0,
+        bottom: 190.0,
+        child: FloatingActionButton(
+          child: Icon(
+            isBus ? Icons.airport_shuttle : Icons.directions_bus,
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.black87
+                : Theme.of(context).accentColor,
+          ),
+          backgroundColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.white
+              : Colors.white70,
+          onPressed: () {
+            BlocProvider.of<MapBloc>(context)
+                .add(MapTypeChangeEvent(zoomLevel: currentZoom));
+            BlocProvider.of<ScheduleBloc>(context).add(ScheduleTypeChangeEvent());
+          },
+          heroTag: "mapViewChangeButton",
+        ),
+      ),
 
       // Location Button
       Positioned(
@@ -139,6 +170,7 @@ class MapUI extends StatelessWidget {
           onPressed: () {
             BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
           },
+          heroTag: "scrollToLocButton",
         ),
       ),
     ]);

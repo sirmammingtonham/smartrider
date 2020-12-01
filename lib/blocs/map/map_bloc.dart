@@ -95,7 +95,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final ShuttleRepository shuttleRepo;
   final BusRepository busRepo;
   final PrefsBloc prefsBloc;
+
+  bool _isBus;
   StreamSubscription prefsStream;
+  double zoomLevel = 14.0;
+
   Map<String, bool> _enabledShuttles = {};
   Map<String, bool> _enabledBuses = {};
 
@@ -129,6 +133,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       @required this.busRepo,
       @required this.prefsBloc})
       : super(MapLoadingState()) {
+    _isBus = true;
+
     rootBundle.loadString('assets/map_styles/aubergine.json').then((string) {
       _darkMapStyle = string;
     });
@@ -169,7 +175,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await _initMapElements();
       yield* _mapDataRequestedToState();
     } else if (event is MapUpdateEvent) {
-      yield* _mapUpdateRequestedToState(event.zoomLevel);
+      zoomLevel = event.zoomLevel;
+      yield* _mapUpdateRequestedToState();
+    } else if (event is MapTypeChangeEvent) {
+      _isBus = !_isBus;
+      if (event.zoomLevel != null) {
+        zoomLevel = event.zoomLevel;
+      }
+      yield* _mapUpdateRequestedToState();
     } else if (event is MapMoveEvent) {
       yield* _mapMoveToState(event.zoomLevel);
     } else {
@@ -186,58 +199,67 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await Future.delayed(const Duration(seconds: 2));
     }
     Stopwatch stopwatch = new Stopwatch()..start();
-    shuttleRoutes = await shuttleRepo.getRoutes;
-    shuttleStops = await shuttleRepo.getStops;
-    shuttleUpdates = await shuttleRepo.getUpdates;
 
+    // if (_isBus) {
     busRoutes = await busRepo.getRoutes;
     busShapes = await busRepo.getPolylines;
     // busStops = await busRepo.getStops;
     busUpdates = await busRepo.getUpdates;
+    // } else {
+    shuttleRoutes = await shuttleRepo.getRoutes;
+    shuttleStops = await shuttleRepo.getStops;
+    shuttleUpdates = await shuttleRepo.getUpdates;
+    prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values
+        .toList())); // update preferences with currently active routes
+    // }
 
     print('got the stuff in ${stopwatch.elapsed} seconds');
 
-    prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values
-        .toList())); // update preferences with currently active routes
-
     // bus repo should always be connected now because firestore
-    if (shuttleRepo.isConnected) {
-      _getEnabledMarkers();
-      _getEnabledPolylines();
-
-      yield MapLoadedState(
-          polylines: _currentPolylines,
-          markers:
-              _currentMarkers.followedBy(_getMarkerClusters(14.0)).toSet());
-    } else {
+    if (!_isBus && !shuttleRepo.isConnected) {
       isLoading = true;
       yield MapErrorState(message: 'NETWORK ISSUE');
+      return;
     }
+
+    _getEnabledMarkers();
+    _getEnabledPolylines();
+
+    yield MapLoadedState(
+        polylines: _currentPolylines,
+        markers: _currentMarkers.followedBy(_getMarkerClusters(zoomLevel)).toSet(),
+        isBus: _isBus);
   }
 
-  Stream<MapState> _mapUpdateRequestedToState(double zoomLevel) async* {
-    shuttleUpdates = await shuttleRepo.getUpdates;
-    busUpdates = await busRepo.getUpdates;
-
-    if (shuttleRepo.isConnected) {
-      _getEnabledMarkers();
-      _getEnabledPolylines();
-      yield MapLoadedState(
-          polylines: _currentPolylines,
-          markers: _currentMarkers
-              .followedBy(_getMarkerClusters(zoomLevel))
-              .toSet());
+  Stream<MapState> _mapUpdateRequestedToState() async* {
+    if (_isBus) {
+      busUpdates = await busRepo.getUpdates;
     } else {
+      shuttleUpdates = await shuttleRepo.getUpdates;
+    }
+
+    if (!_isBus && !shuttleRepo.isConnected) {
       isLoading = true;
       yield MapErrorState(message: 'NETWORK ISSUE');
+      return;
     }
+
+    _getEnabledMarkers();
+    _getEnabledPolylines();
+
+    yield MapLoadedState(
+        polylines: _currentPolylines,
+        markers:
+            _currentMarkers.followedBy(_getMarkerClusters(zoomLevel)).toSet(),
+        isBus: _isBus);
   }
 
   Stream<MapState> _mapMoveToState(double zoomLevel) async* {
     yield MapLoadedState(
         polylines: _currentPolylines,
         markers:
-            _getMarkerClusters(zoomLevel).followedBy(_currentMarkers).toSet());
+            _getMarkerClusters(zoomLevel).followedBy(_currentMarkers).toSet(),
+        isBus: _isBus);
   }
 
   /// non-state related functions
@@ -401,16 +423,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Set<Polyline> _getEnabledPolylines() {
     _currentPolylines.clear();
-    _enabledShuttles.forEach((id, enabled) {
-      if (enabled) {
-        _currentPolylines.add(shuttleRoutes[id].getPolyline);
-      }
-    });
-    _enabledBuses.forEach((id, enabled) {
-      if (enabled) {
-        _currentPolylines.addAll(busShapes[id].getPolylines);
-      }
-    });
+    if (_isBus) {
+      _enabledBuses.forEach((id, enabled) {
+        if (enabled) {
+          _currentPolylines.addAll(busShapes[id].getPolylines);
+        }
+      });
+    } else {
+      _enabledShuttles.forEach((id, enabled) {
+        if (enabled) {
+          _currentPolylines.add(shuttleRoutes[id].getPolyline);
+        }
+      });
+    }
 
     return _currentPolylines;
   }
@@ -419,34 +444,34 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _currentMarkers.clear();
     _mapMarkers.clear();
 
-    for (var update in shuttleUpdates) {
-      _currentMarkers.add(_shuttleUpdateToMarker(update));
-    }
-
-    for (var update in busUpdates) {
-      _currentMarkers.add(_busUpdateToMarker(update));
-    }
-
-    var shuttleMarkerMap = {
-      for (var stop in shuttleStops) stop.id: _shuttleStopToMarker(stop)
-    };
-
-    _enabledShuttles.forEach((route, enabled) {
-      if (enabled) {
-        shuttleRoutes[route].stopIds.forEach((id) {
-          _currentMarkers.add(shuttleMarkerMap[id]);
-        });
+    if (_isBus) {
+      for (var update in busUpdates) {
+        _currentMarkers.add(_busUpdateToMarker(update));
       }
-    });
-
-
-    _enabledBuses.forEach((route, enabled) {
-      if (enabled) {
-        busRoutes[route]
-            .stops
-            .forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
+      _enabledBuses.forEach((route, enabled) {
+        if (enabled) {
+          busRoutes[route]
+              .stops
+              .forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
+        }
+      });
+    } else {
+      for (var update in shuttleUpdates) {
+        _currentMarkers.add(_shuttleUpdateToMarker(update));
       }
-    });
+
+      var shuttleMarkerMap = {
+        for (var stop in shuttleStops) stop.id: _shuttleStopToMarker(stop)
+      };
+
+      _enabledShuttles.forEach((route, enabled) {
+        if (enabled) {
+          shuttleRoutes[route].stopIds.forEach((id) {
+            _currentMarkers.add(shuttleMarkerMap[id]);
+          });
+        }
+      });
+    }
 
     return _currentMarkers;
   }

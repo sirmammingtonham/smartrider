@@ -33,7 +33,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   Stream<PrefsState> mapEventToState(PrefsEvent event) async* {
     if (event is LoadPrefsEvent) {
       hideInactiveRoutes = true;
-      _shuttles = new Map();
+      _shuttles = {};
 
       // placeholders for now
       _buses = {

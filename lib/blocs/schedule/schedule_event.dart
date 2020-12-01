@@ -9,9 +9,17 @@ class ScheduleInitEvent extends ScheduleEvent {
   List<Object> get props => [];
 }
 
+class ScheduleTypeChangeEvent extends ScheduleEvent {
+  ScheduleTypeChangeEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class ScheduleViewChangeEvent extends ScheduleEvent {
+
   final bool isTimeline;
-  ScheduleViewChangeEvent({@required this.isTimeline});
+  ScheduleViewChangeEvent({ @required this.isTimeline});
 
   @override
   List<Object> get props => [this.isTimeline];

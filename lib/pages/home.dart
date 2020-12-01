@@ -40,9 +40,10 @@ class _HomePage extends StatefulWidget {
 }
 
 /// Builds the current instance of the home page.
-class _HomePageState extends State<_HomePage> {
+class _HomePageState extends State<_HomePage>
+    with SingleTickerProviderStateMixin {
   PanelController _panelController; // Lets the user control the stop tabs
-
+  TabController _tabController;
   // The height of the tab when the user is viewing the shuttle and bus stops
   double _panelHeightOpen;
 
@@ -53,6 +54,8 @@ class _HomePageState extends State<_HomePage> {
   void initState() {
     super.initState();
     _panelController = new PanelController();
+    _tabController = new TabController(vsync: this, length: 2);
+    // _tabController.addListener(_handleTabSelection);
     _isShuttle = false;
   }
 
@@ -79,7 +82,9 @@ class _HomePageState extends State<_HomePage> {
               create: (context) => ScheduleBloc(
                   mapBloc: BlocProvider.of<MapBloc>(context),
                   busRepo: BusRepository(),
-                  panelController: _panelController),
+                  panelController: _panelController,
+                  tabController: _tabController,
+                  homePageCallback: _changeCallback),
             ),
           ],
           child: SlidingUpPanel(
@@ -119,6 +124,7 @@ class _HomePageState extends State<_HomePage> {
               panel: PanelPage(
                 scheduleChanged: _changeCallback,
                 panelController: _panelController,
+                // tabController: _tabController,
               ))),
     );
   }
