@@ -27,7 +27,6 @@ extension ColorExtended on Color {
     final hsl = HSLColor.fromColor(this);
     final hslLight =
         hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
-    print(hslLight.toColor());
     return hslLight.toColor();
   }
 }

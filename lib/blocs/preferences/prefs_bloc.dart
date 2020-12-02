@@ -57,6 +57,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
       _sharedPrefs.setBool(event.name, event.val);
       yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
     } else if (event is PrefsUpdateEvent) {
+      yield PrefsChangedState();
       yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
     } else if (event is InitActiveRoutesEvent) {
       // hide all inactive routes if first time launching app today

@@ -108,8 +108,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Map<String, BusRoute> busRoutes = {};
   Map<String, BusShape> busShapes = {};
-  // Map<String, List<BusStop>> busStops = {};
-  // List<BusStop> busStops = [];
   List<BusVehicleUpdate> busUpdates = [];
 
   Map<String, ShuttleRoute> shuttleRoutes = {};
@@ -192,27 +190,22 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   Stream<MapState> _mapDataRequestedToState() async* {
-    if (isLoading) {
-      yield MapLoadingState();
-      isLoading = false;
-    } else {
-      /// Poll every 3ish seconds
-      await Future.delayed(const Duration(seconds: 2));
-    }
+    yield MapLoadingState();
+
     Stopwatch stopwatch = new Stopwatch()..start();
 
-    // if (_isBus) {
-    busRoutes = await busRepo.getRoutes;
-    busShapes = await busRepo.getPolylines;
-    // busStops = await busRepo.getStops;
-    busUpdates = await busRepo.getUpdates;
-    // } else {
-    shuttleRoutes = await shuttleRepo.getRoutes;
-    shuttleStops = await shuttleRepo.getStops;
-    shuttleUpdates = await shuttleRepo.getUpdates;
-    prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values
-        .toList())); // update preferences with currently active routes
-    // }
+    if (_isBus) {
+      busRoutes = await busRepo.getRoutes;
+      busShapes = await busRepo.getPolylines;
+      busUpdates = await busRepo.getUpdates;
+      prefsBloc.add(PrefsUpdateEvent()); // just to get enabled bus routes
+    } else {
+      shuttleRoutes = await shuttleRepo.getRoutes;
+      shuttleStops = await shuttleRepo.getStops;
+      shuttleUpdates = await shuttleRepo.getUpdates;
+      prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values
+          .toList())); // update preferences with currently active routes
+    }
 
     print('got the stuff in ${stopwatch.elapsed} seconds');
 
@@ -237,6 +230,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     if (_isBus) {
       busUpdates = await busRepo.getUpdates;
     } else {
+      if (shuttleRoutes.isEmpty) {
+        print('getting shuttle stuff now');
+        yield* _mapDataRequestedToState();
+        return;
+      }
       shuttleUpdates = await shuttleRepo.getUpdates;
     }
 
@@ -325,19 +323,17 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     };
 
     [22, 21, 24, 28].forEach((id) async {
-      _updateIcons[id] =
-          await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-              'assets/bus_icons/update_marker.svg',
-              color: shuttleColors[id].lighten(0.15),
-              size: vehicleUpdateSize);
+      _updateIcons[id] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+          'assets/bus_icons/update_marker.svg',
+          color: shuttleColors[id].lighten(0.15),
+          size: vehicleUpdateSize);
     });
 
     [87, 286, 289, 288].forEach((id) async {
-      _updateIcons[id] =
-          await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-              'assets/bus_icons/update_marker.svg',
-              color: BUS_COLORS['$id-185'].lighten(0.15),
-              size: vehicleUpdateSize);
+      _updateIcons[id] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+          'assets/bus_icons/update_marker.svg',
+          color: BUS_COLORS['$id-185'].lighten(0.15),
+          size: vehicleUpdateSize);
     });
 
     // default white
@@ -386,9 +382,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Marker _shuttleUpdateToMarker(ShuttleUpdate update) {
     // real time update shuttles
     return Marker(
-        icon: _updateIcons[_updateIcons.containsKey(update.routeId)
-            ? update.routeId
-            : -1],
+        icon: _updateIcons[
+            _updateIcons.containsKey(update.routeId) ? update.routeId : -1],
         infoWindow:
             InfoWindow(title: "Shuttle ID: ${update.vehicleId.toString()}"),
         flat: true,
@@ -408,8 +403,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     int routeId = int.parse(update.routeId);
     // real time update shuttles
     return Marker(
-        icon: _updateIcons[
-            _updateIcons.containsKey(routeId) ? routeId : -1],
+        icon: _updateIcons[_updateIcons.containsKey(routeId) ? routeId : -1],
         infoWindow: InfoWindow(title: "Bus ID: ${update.id.toString()}"),
         flat: true,
         markerId: MarkerId(update.id.toString()),
@@ -478,6 +472,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       for (var update in busUpdates) {
         _currentMarkers.add(_busUpdateToMarker(update));
       }
+
       _enabledBuses.forEach((route, enabled) {
         if (enabled) {
           busRoutes[route]
