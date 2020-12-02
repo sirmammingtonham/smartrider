@@ -41,9 +41,13 @@ Future test3() async {
           .map((entity) => entity)
           .toList()
       : [];
+<<<<<<< Updated upstream
   for (FeedEntity ent in vehicleUpdatesList) {
     print(ent.toProto3Json());
   }
+=======
+  print(vehicleUpdatesList.map((e) => print(e.bearing)));
+>>>>>>> Stashed changes
 }
 
 // Future test2() async {

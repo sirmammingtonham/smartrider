@@ -6,6 +6,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/data/models/bus/bus_route.dart';
+import 'package:smartrider/data/models/bus/bus_shape.dart';
 import 'package:smartrider/data/models/bus/bus_timetable.dart';
 
 // loading custom widgets and data
@@ -22,6 +23,12 @@ class BusTimeline extends StatefulWidget {
   final PanelController panelController;
   // final Map<String, BusRoute> busRoutes;
   final Map<String, BusTimetable> busTables;
+  var BUSCOLORS = [
+       Colors.purple,
+        Colors.deepOrange,
+        Colors.cyan,
+        Colors.pinkAccent,
+    ];
   BusTimeline(
       {Key key,
       @required this.panelController,
@@ -63,7 +70,7 @@ class BusTimelineState extends State<BusTimeline>
     _tabController.dispose();
     super.dispose();
   }
-
+ 
   /// Builds each tab for each bus and also accounts for the users
   /// light preferences.
   @override
@@ -72,6 +79,7 @@ class BusTimelineState extends State<BusTimeline>
     return Column(children: <Widget>[
       /// The tab bar displayed when the bus icon is selected.
       TabBar(
+        indicatorColor: this.widget.BUSCOLORS[_tabController.index],
         isScrollable: true,
         tabs: busTabs,
         labelColor: Theme.of(context).brightness == Brightness.light
@@ -104,7 +112,6 @@ class BusTimelineState extends State<BusTimeline>
   Widget busList(String routeId) {
     var busStops = widget.busTables[routeId]
         .stops; //this.widget.busRoutes[routeId].forwardStops;
-
     /// Returns the scrollable list for our bus stops to be contained in.
     return RefreshIndicator(
         onRefresh: () => Future.delayed(const Duration(seconds: 1), () => "1"),
@@ -131,7 +138,7 @@ class BusTimelineState extends State<BusTimeline>
               /// Controls the leading circle icon in front of each bus stop.
               leading: CustomPaint(
                   painter: FillPainter(
-                      circleColor: Theme.of(context).buttonColor,
+                      circleColor: BUS_COLORS[routeId],
                       lineColor: Theme.of(context).primaryColorLight,
                       first: index == 0,
                       last: index == busStops.length - 1),

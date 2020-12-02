@@ -39,7 +39,7 @@ class BusShape {
             points: linestring))
         .toList();
   }
-
+  
   BusShape.fromJson(Map<String, dynamic> json) {
     this.routeId = json['properties']['route_id'];
     this.coordinates = [];

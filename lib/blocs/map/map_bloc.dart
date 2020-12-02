@@ -409,8 +409,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // real time update shuttles
     return Marker(
         icon: shuttleUpdateIcons[
-            shuttleUpdateIcons.containsKey(routeId) ? routeId : -1],
-        infoWindow: InfoWindow(title: "Shuttle ID: ${update.id.toString()}"),
+            shuttleUpdateIcons.containsKey(routeId)
+                ? routeId
+                : -1],
+        infoWindow: InfoWindow(title: "Bus ID: ${update.id.toString()}"),
         markerId: MarkerId(update.id.toString()),
         position: update.getLatLng,
         rotation: _calculateBusHeading(update),
