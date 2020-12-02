@@ -61,6 +61,7 @@ class BusTimelineState extends State<BusTimeline>
     _tabController = TabController(vsync: this, length: busTabs.length);
     _tabController.addListener(() {
       isExpandedList.fillRange(0, 50, false);
+      setState(() {});
     });
     isExpandedList.fillRange(0, 50, false);
   }
@@ -70,7 +71,7 @@ class BusTimelineState extends State<BusTimeline>
     _tabController.dispose();
     super.dispose();
   }
- 
+
   /// Builds each tab for each bus and also accounts for the users
   /// light preferences.
   @override
