@@ -24,8 +24,7 @@ const List<String> choices = [
 /// Creates an object that contains all the shuttles and their respective stops.
 class ShuttleTimeline extends StatefulWidget {
   final PanelController panelController;
-  ShuttleTimeline({Key key, @required this.panelController})
-      : super(key: key);
+  ShuttleTimeline({Key key, @required this.panelController}) : super(key: key);
   @override
   ShuttleTimelineState createState() => ShuttleTimelineState();
 }
@@ -40,6 +39,13 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     Tab(text: 'WEEKEND'),
   ];
 
+  static const List<Color> SHUTTLE_COLORS = [
+    Colors.green,
+    Colors.red,
+    Colors.blue,
+    Colors.orange
+  ];
+
   TabController _tabController;
   var isExpandedList = List<bool>.filled(100, false);
   @override
@@ -47,7 +53,8 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
   /// Affects the expansion of each shuttles list of stops
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: shuttleTabs.length, initialIndex: 1);
+    _tabController =
+        TabController(vsync: this, length: shuttleTabs.length, initialIndex: 1);
     _tabController.addListener(() {
       isExpandedList.fillRange(0, 100, false);
       _handleTabSelection();
@@ -59,25 +66,13 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     setState(() {});
   }
 
-  _getTabColor(TabController tc) {
-    if (tc.index == 0) {
-      return Colors.green;
-    } else if (tc.index == 1) {
-      return Colors.red;
-    } else if (tc.index == 2) {
-      return Colors.blue;
-    } else {
-      return Colors.orange;
-    }
-  }
-
   /// Builds each tab for each shuttle and also accounts for the users
   /// light preferences.
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       TabBar(
-        indicatorColor: _getTabColor(_tabController),
+        indicatorColor: SHUTTLE_COLORS[_tabController.index],
         isScrollable: true,
         tabs: shuttleTabs,
         labelColor: Theme.of(context).brightness == Brightness.light
@@ -114,10 +109,9 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
           title: Text(curStopList[index % curStopList.length][0]),
           subtitle: Text('Next Arrival: ' +
               shuttleTimeLists[idx][_getTimeIndex(shuttleTimeLists[idx])]),
-
           leading: CustomPaint(
               painter: FillPainter(
-                  circleColor: _getTabColor(_tabController),
+                  circleColor: SHUTTLE_COLORS[_tabController.index],
                   lineColor: Theme.of(context).primaryColorLight,
                   first: index == 0,
                   last: index == curStopList.length - 1),
@@ -158,7 +152,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                         itemCount: 5,
                         itemExtent: 50,
                         itemBuilder: (BuildContext context, int timeIndex) {
-                            /*
+                          /*
                             * Here we should add the use of DateTime.now()
                             * When the backend team is complete of full implementing
                             * time.dart file we can use each objects values to find the
@@ -183,7 +177,8 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                             ),
                             subtitle: Text('In vincent is dumb minutes'),
                             trailing: PopupMenuButton<String>(
-                                onSelected: (choice) => _handlePopupSelection(choice),
+                                onSelected: (choice) =>
+                                    _handlePopupSelection(choice),
                                 itemBuilder: (BuildContext context) => choices
                                     .map((choice) => PopupMenuItem<String>(
                                         value: choice, child: Text(choice)))
@@ -200,8 +195,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     );
   }
 
-  void _handlePopupSelection(
-      String choice) {
+  void _handlePopupSelection(String choice) {
     if (choice == choices[0]) {
       // BlocProvider.of<ScheduleBloc>(context)
       //     .scheduleAlarm(stopTime[1], 'busStop.stopName', isShuttle: true);
