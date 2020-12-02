@@ -121,7 +121,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Set<Polyline> _currentPolylines = <Polyline>{};
 
   BitmapDescriptor shuttleStopIcon, busStopIcon;
-  Map<int, BitmapDescriptor> shuttleUpdateIcons = {}; // maps id to image
+  Map<int, BitmapDescriptor> _updateIcons = {}; // maps id to image
 
   bool isLoading = true;
   Fluster<MapMarker> fluster;
@@ -317,34 +317,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         'assets/bus_icons/marker_bus.svg',
         size: stopMarkerSize);
 
-    shuttleUpdateIcons[22] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_red.svg',
-        size: vehicleUpdateSize);
-    shuttleUpdateIcons[21] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_yellow.svg',
-        size: vehicleUpdateSize);
-    shuttleUpdateIcons[24] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_blue.svg',
-        size: vehicleUpdateSize);
-    shuttleUpdateIcons[28] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_orange.svg',
-        size: vehicleUpdateSize);
-    shuttleUpdateIcons[-1] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_white.svg',
-        size: vehicleUpdateSize);
+    final shuttleColors = {
+      22: Colors.red,
+      21: Colors.yellow,
+      24: Colors.blue,
+      28: Colors.orange
+    };
 
-    // temporary until we finalize map marker icons
-    shuttleUpdateIcons[87] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/bus_blue.svg',
+    [22, 21, 24, 28].forEach((id) async {
+      _updateIcons[id] =
+          await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+              'assets/bus_icons/update_marker.svg',
+              color: shuttleColors[id].lighten(0.15),
+              size: vehicleUpdateSize);
+    });
+
+    [87, 286, 289, 288].forEach((id) async {
+      _updateIcons[id] =
+          await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+              'assets/bus_icons/update_marker.svg',
+              color: BUS_COLORS['$id-185'].lighten(0.15),
+              size: vehicleUpdateSize);
+    });
+
+    // default white
+    _updateIcons[-1] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+        'assets/bus_icons/update_marker.svg',
         size: vehicleUpdateSize);
-    shuttleUpdateIcons[286] =
-        await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-            'assets/bus_icons/bus_orange.svg',
-            size: vehicleUpdateSize);
-    shuttleUpdateIcons[289] =
-        await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-            'assets/bus_icons/bus_yellow.svg',
-            size: vehicleUpdateSize);
   }
 
   Marker _shuttleStopToMarker(ShuttleStop stop) {
@@ -387,11 +386,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Marker _shuttleUpdateToMarker(ShuttleUpdate update) {
     // real time update shuttles
     return Marker(
-        icon: shuttleUpdateIcons[shuttleUpdateIcons.containsKey(update.routeId)
+        icon: _updateIcons[_updateIcons.containsKey(update.routeId)
             ? update.routeId
             : -1],
         infoWindow:
             InfoWindow(title: "Shuttle ID: ${update.vehicleId.toString()}"),
+        flat: true,
         markerId: MarkerId(update.id.toString()),
         position: update.getLatLng,
         rotation: update.heading,
@@ -408,11 +408,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     int routeId = int.parse(update.routeId);
     // real time update shuttles
     return Marker(
-        icon: shuttleUpdateIcons[
-            shuttleUpdateIcons.containsKey(routeId)
-                ? routeId
-                : -1],
+        icon: _updateIcons[
+            _updateIcons.containsKey(routeId) ? routeId : -1],
         infoWindow: InfoWindow(title: "Bus ID: ${update.id.toString()}"),
+        flat: true,
         markerId: MarkerId(update.id.toString()),
         position: update.getLatLng,
         rotation: _calculateBusHeading(update),
