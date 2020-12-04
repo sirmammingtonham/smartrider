@@ -73,6 +73,7 @@ flutter:
 
   assets:
     - assets/app_icons/logo_v1.png
+    - assets/app_icons/logo_v2.png
 # jsons
     - assets/map_styles/light.json
     - assets/map_styles/aubergine.json

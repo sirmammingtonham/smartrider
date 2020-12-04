@@ -45,7 +45,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       height: 8.0,
       width: isActive ? 24.0 : 16.0,
       decoration: BoxDecoration(
-        color: isActive ? Colors.white : Color(0xFF7B51D3),
+        color: isActive ? Colors.black : Color(0xFF181c5b),
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
     );
@@ -58,17 +58,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         value: SystemUiOverlayStyle.light,
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0.1, 0.4, 0.7, 0.9],
-              colors: [
-                Color(0xFF03A9F4),
-                Color(0xFF039BE5),
-                Color(0xFF0288D1),
-                Color(0xFF0277BD),
-              ],
-            ),
+            color: Colors.white
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 30),
@@ -89,8 +79,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Text(
                       'Skip',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1b1d5c),
                         fontSize: 20.0,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -113,9 +104,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           children: <Widget>[
                             Center(
                               child: Image(
-                                image: AssetImage("assets/app_icons/logo_v1.png"),
+                                image: AssetImage("assets/app_icons/logo_v2.png"),
                                 height: 300.0,
-                                width: 150.0,
+                                width: 300.0,
                               ),
                             ),
                             SizedBox(height: 50.0),
@@ -123,7 +114,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               child: Text(
                                 'Welcome to SmartRider!',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white,
+                                style: TextStyle(
+                                  color: Color(0xFF181c5b),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 26.0,
                                   height: 1.5,),
@@ -135,8 +127,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 'All of your RPI transportation needs in one place, instantly accessible.',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF181c5b),
                                   fontSize: 16.0,
+                                  fontWeight: FontWeight.w500,
                                   height: 1.5,
                                 )
                               ),
@@ -173,7 +166,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               child: Text(
                                 'Interactive Map',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white,
+                                style: TextStyle(
+                                  color: Color(0xFF181c5b),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 26.0,
                                   height: 1.5,),
@@ -185,8 +179,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 'Easily locate nearby transporation stops and routes with live shuttle/bus tracking.',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF181c5b),
                                   fontSize: 16.0,
+                                  fontWeight: FontWeight.w500,
                                   height: 1.5,
                                 )
                               ),
@@ -220,9 +215,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               child: Text(
                                 'Comprehensive Schedules',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white,
+                                style: TextStyle(
+                                  color: Color(0xFF181c5b),
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 22.0,
+                                  fontSize: 26.0,
                                   height: 1.5,),
                               ),
                             ),
@@ -232,8 +228,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 "Access transportation route arrival times throughout the day and schedule reminders for specific stops.",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF181c5b),
                                   fontSize: 16.0,
+                                  fontWeight: FontWeight.w500,
                                   height: 1.5,
                                 )
                               ),
@@ -270,7 +267,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             child: Text(
                               'Request Transportation',
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white,
+                              style: TextStyle(
+                                color: Color(0xFF181c5b),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 22.0,
                                 height: 1.5,),
@@ -282,8 +280,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           'With the integration of the RPI SafeRide application, easily make a request for a vehicle to transport you safely around the campus.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF181c5b),
                                 fontSize: 16.0,
+                                fontWeight: FontWeight.w500,
                                 height: 1.5,
                                 )
                               )
@@ -316,14 +315,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 Text(
                                   'Next',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Color(0xFF181c5b),
                                     fontSize: 18.0,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 SizedBox(width: 10.0),
                                 Icon(
                                   Icons.arrow_forward,
-                                  color: Colors.white,
+                                  color: Color(0xFF181c5b),
                                   size: 30.0,
                                 ),
                               ],
@@ -340,9 +340,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       bottomSheet: _currentPage == _numPages - 1
           ? Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                color: Colors.blue
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.all(Radius.circular(double.infinity)),
+                color: Color(0xFF181c5b) 
               ),
               height: 75,
               width: double.infinity,
@@ -361,9 +361,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Text(
                       'Get started',
                       style: TextStyle(
-                        color: Color(0xFFFAFAFA),
+                        color: Colors.white,
                         fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
