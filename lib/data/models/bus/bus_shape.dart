@@ -5,7 +5,7 @@ const BUS_COLORS = {
   '87-185': Colors.purple,
   '286-185': Colors.deepOrange,
   '289-185': Colors.lightBlue,
-  '288-185': Colors.lightGreenAccent,
+  '288-185': Colors.green,
 };
 
 const BUS_WIDTHS = {
