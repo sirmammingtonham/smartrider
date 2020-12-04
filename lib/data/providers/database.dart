@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:smartrider/data/models/backend/user_list.dart';
 import 'package:smartrider/data/models/backend/user.dart';
 
-/* Contains all the functions for handling the database */
+/* Contains functions for handling the database */
 
 class DatabaseService {
   //unique user id, will be generated from authorization class after a user successfully logs in
@@ -11,8 +10,8 @@ class DatabaseService {
   final CollectionReference _userCollection =
       FirebaseFirestore.instance.collection('users');
   //referencing all rpi shuttles collection  (for future use)
-  final CollectionReference _shuttleCollection =
-      FirebaseFirestore.instance.collection('active_shuttles');
+  // final CollectionReference _shuttleCollection =
+  //     FirebaseFirestore.instance.collection('active_shuttles');
   DatabaseService({this.usid});
   Future updateUserData(String email, String userType,
       {String rin = "0", String name}) async {

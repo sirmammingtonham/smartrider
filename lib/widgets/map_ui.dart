@@ -35,9 +35,10 @@ class ShuttleMapState extends State<ShuttleMap> {
   double currentZoom = 14.0;
   MapBloc mapBloc;
   GoogleMap googleMap;
-  Set<Polyline> polylines = {};
-  Set<Marker> markers = {};
-  bool isBus = true;
+  
+  Set<Polyline> _polylines = {};
+  Set<Marker> _markers = {};
+  bool _isBus = true;
   bool _isLoading = true;
 
   @override
@@ -65,9 +66,9 @@ class ShuttleMapState extends State<ShuttleMap> {
       if (state is MapLoadingState) {
         _isLoading = true;
       } else if (state is MapLoadedState) {
-        polylines = state.polylines;
-        markers = state.markers;
-        isBus = state.isBus;
+        _polylines = state.polylines;
+        _markers = state.markers;
+        _isBus = state.isBus;
         _isLoading = false;
       } else {
         return Center(child: Text("error bruh"));
@@ -95,8 +96,8 @@ class ShuttleMapState extends State<ShuttleMap> {
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
             trafficEnabled: false,
-            polylines: polylines,
-            markers: markers,
+            polylines: _polylines,
+            markers: _markers,
             zoomControlsEnabled: true,
             onCameraMove: (position) {
               currentZoom = position.zoom;
@@ -104,7 +105,7 @@ class ShuttleMapState extends State<ShuttleMap> {
             },
             mapType: MapType.normal,
           ),
-          isBus: isBus,
+          isBus: _isBus,
           currentZoom: currentZoom,
         ),
       );

@@ -107,8 +107,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
         var curStopList = shuttleStopLists[idx];
         return CustomExpansionTile(
           title: Text(curStopList[index % curStopList.length][0]),
-          subtitle: Text('Next Arrival: ' +
-              shuttleTimeLists[idx][_getTimeIndex(shuttleTimeLists[idx])]),
+          subtitle: Text('Info unavailable'),
           leading: CustomPaint(
               painter: FillPainter(
                   circleColor: SHUTTLE_COLORS[_tabController.index],
@@ -175,7 +174,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                               '${shuttleTimeLists[idx][timeIndex]}',
                               style: TextStyle(fontSize: 15),
                             ),
-                            subtitle: Text('In vincent is dumb minutes'),
+                            subtitle: Text('Info unavailable'),
                             trailing: PopupMenuButton<String>(
                                 onSelected: (choice) =>
                                     _handlePopupSelection(choice),

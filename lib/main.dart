@@ -1,7 +1,6 @@
 //implementation imports
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:device_preview/device_preview.dart';
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';

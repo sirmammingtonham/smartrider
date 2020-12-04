@@ -2,8 +2,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:smartrider/util/bitmap_helpers.dart';
 
@@ -11,7 +9,6 @@ import 'package:smartrider/util/bitmap_helpers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:fluster/fluster.dart';
-import 'package:meta/meta.dart';
 
 // bloc imports
 import 'package:equatable/equatable.dart';
@@ -29,7 +26,6 @@ import 'package:smartrider/data/models/shuttle/shuttle_update.dart';
 
 import 'package:smartrider/data/models/bus/bus_route.dart';
 import 'package:smartrider/data/models/bus/bus_shape.dart';
-// import 'package:smartrider/data/models/bus/bus_stop.dart';
 import 'package:smartrider/data/models/bus/bus_vehicle_update.dart';
 
 part 'map_event.dart';
@@ -98,30 +94,29 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final PrefsBloc prefsBloc;
 
   bool _isBus;
-  StreamSubscription prefsStream;
-  double zoomLevel = 14.0;
+  StreamSubscription _prefsStream;
+  double _zoomLevel = 14.0;
 
   Map<String, bool> _enabledShuttles = {};
   Map<String, bool> _enabledBuses = {};
 
   GoogleMapController _controller;
 
-  Map<String, BusRoute> busRoutes = {};
-  Map<String, BusShape> busShapes = {};
-  List<BusVehicleUpdate> busUpdates = [];
+  Map<String, BusRoute> _busRoutes = {};
+  Map<String, BusShape> _busShapes = {};
+  List<BusVehicleUpdate> _busUpdates = [];
 
-  Map<String, ShuttleRoute> shuttleRoutes = {};
-  List<ShuttleStop> shuttleStops = [];
-  List<ShuttleUpdate> shuttleUpdates = [];
+  Map<String, ShuttleRoute> _shuttleRoutes = {};
+  List<ShuttleStop> _shuttleStops = [];
+  List<ShuttleUpdate> _shuttleUpdates = [];
   List<MapMarker> _mapMarkers = [];
 
   Set<Marker> _currentMarkers = <Marker>{};
   Set<Polyline> _currentPolylines = <Polyline>{};
 
-  BitmapDescriptor shuttleStopIcon, busStopIcon;
+  BitmapDescriptor _shuttleStopIcon, _busStopIcon;
   Map<int, BitmapDescriptor> _updateIcons = {}; // maps id to image
 
-  bool isLoading = true;
   Fluster<MapMarker> fluster;
   String _lightMapStyle;
   String _darkMapStyle;
@@ -141,7 +136,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _lightMapStyle = string;
     });
 
-    prefsStream = prefsBloc.listen((prefsState) {
+    _prefsStream = prefsBloc.listen((prefsState) {
       if (prefsState is PrefsLoadedState) {
         _enabledShuttles = prefsState.shuttles;
         _enabledBuses = prefsState.buses;
@@ -156,7 +151,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   @override
   Future<void> close() {
-    prefsStream.cancel();
+    _prefsStream.cancel();
     return super.close();
   }
 
@@ -174,12 +169,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await _initMapElements();
       yield* _mapDataRequestedToState();
     } else if (event is MapUpdateEvent) {
-      zoomLevel = event.zoomLevel;
+      _zoomLevel = event.zoomLevel;
       yield* _mapUpdateRequestedToState();
     } else if (event is MapTypeChangeEvent) {
       _isBus = !_isBus;
       if (event.zoomLevel != null) {
-        zoomLevel = event.zoomLevel;
+        _zoomLevel = event.zoomLevel;
       }
       yield* _mapUpdateRequestedToState();
     } else if (event is MapMoveEvent) {
@@ -195,15 +190,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     Stopwatch stopwatch = new Stopwatch()..start();
 
     if (_isBus) {
-      busRoutes = await busRepo.getRoutes;
-      busShapes = await busRepo.getPolylines;
-      busUpdates = await busRepo.getUpdates;
+      _busRoutes = await busRepo.getRoutes;
+      _busShapes = await busRepo.getPolylines;
+      _busUpdates = await busRepo.getUpdates;
       prefsBloc.add(PrefsUpdateEvent()); // just to get enabled bus routes
     } else {
-      shuttleRoutes = await shuttleRepo.getRoutes;
-      shuttleStops = await shuttleRepo.getStops;
-      shuttleUpdates = await shuttleRepo.getUpdates;
-      prefsBloc.add(InitActiveRoutesEvent(shuttleRoutes.values
+      _shuttleRoutes = await shuttleRepo.getRoutes;
+      _shuttleStops = await shuttleRepo.getStops;
+      _shuttleUpdates = await shuttleRepo.getUpdates;
+      prefsBloc.add(InitActiveRoutesEvent(_shuttleRoutes.values
           .toList())); // update preferences with currently active routes
     }
 
@@ -211,7 +206,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     // bus repo should always be connected now because firestore
     if (!_isBus && !shuttleRepo.isConnected) {
-      isLoading = true;
       yield MapErrorState(message: 'NETWORK ISSUE');
       return;
     }
@@ -222,24 +216,23 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     yield MapLoadedState(
         polylines: _currentPolylines,
         markers:
-            _currentMarkers.followedBy(_getMarkerClusters(zoomLevel)).toSet(),
+            _currentMarkers.followedBy(_getMarkerClusters(_zoomLevel)).toSet(),
         isBus: _isBus);
   }
 
   Stream<MapState> _mapUpdateRequestedToState() async* {
     if (_isBus) {
-      busUpdates = await busRepo.getUpdates;
+      _busUpdates = await busRepo.getUpdates;
     } else {
-      if (shuttleRoutes.isEmpty) {
+      if (_shuttleRoutes.isEmpty) {
         print('getting shuttle stuff now');
         yield* _mapDataRequestedToState();
         return;
       }
-      shuttleUpdates = await shuttleRepo.getUpdates;
+      _shuttleUpdates = await shuttleRepo.getUpdates;
     }
 
     if (!_isBus && !shuttleRepo.isConnected) {
-      isLoading = true;
       yield MapErrorState(message: 'NETWORK ISSUE');
       return;
     }
@@ -250,7 +243,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     yield MapLoadedState(
         polylines: _currentPolylines,
         markers:
-            _currentMarkers.followedBy(_getMarkerClusters(zoomLevel)).toSet(),
+            _currentMarkers.followedBy(_getMarkerClusters(_zoomLevel)).toSet(),
         isBus: _isBus);
   }
 
@@ -308,10 +301,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Future<void> _initMapElements() async {
     final stopMarkerSize = Size(80, 80);
     final vehicleUpdateSize = Size(100, 100);
-    shuttleStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+    _shuttleStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/shuttle_icons/marker_shuttle.svg',
         size: stopMarkerSize);
-    busStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+    _busStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/bus_icons/marker_bus.svg',
         size: stopMarkerSize);
 
@@ -344,7 +337,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Marker _shuttleStopToMarker(ShuttleStop stop) {
     return Marker(
-        icon: shuttleStopIcon,
+        icon: _shuttleStopIcon,
         infoWindow: InfoWindow(title: stop.name),
         markerId: MarkerId(stop.id.toString()),
         position: stop.getLatLng,
@@ -375,7 +368,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         id: stop.stopId,
         info: stop.stopName,
         position: stop.getLatLng,
-        icon: busStopIcon,
+        icon: _busStopIcon,
         controller: _controller);
   }
 
@@ -422,10 +415,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     BusStopSimplified stop;
     //TODO: get bus direction id
     try {
-      stop = busRoutes[update.routeId + '-185']
+      stop = _busRoutes[update.routeId + '-185']
           .forwardStops[update.currentStopSequence];
     } catch (error) {
-      stop = busRoutes[update.routeId + '-185']
+      stop = _busRoutes[update.routeId + '-185']
           .reverseStops[update.currentStopSequence];
     }
 
@@ -450,13 +443,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     if (_isBus) {
       _enabledBuses.forEach((id, enabled) {
         if (enabled) {
-          _currentPolylines.addAll(busShapes[id].getPolylines);
+          _currentPolylines.addAll(_busShapes[id].getPolylines);
         }
       });
     } else {
       _enabledShuttles.forEach((id, enabled) {
         if (enabled) {
-          _currentPolylines.add(shuttleRoutes[id].getPolyline);
+          _currentPolylines.add(_shuttleRoutes[id].getPolyline);
         }
       });
     }
@@ -469,29 +462,29 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _mapMarkers.clear();
 
     if (_isBus) {
-      for (var update in busUpdates) {
+      for (var update in _busUpdates) {
         _currentMarkers.add(_busUpdateToMarker(update));
       }
 
       _enabledBuses.forEach((route, enabled) {
         if (enabled) {
-          busRoutes[route]
+          _busRoutes[route]
               .stops
               .forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
         }
       });
     } else {
-      for (var update in shuttleUpdates) {
+      for (var update in _shuttleUpdates) {
         _currentMarkers.add(_shuttleUpdateToMarker(update));
       }
 
       var shuttleMarkerMap = {
-        for (var stop in shuttleStops) stop.id: _shuttleStopToMarker(stop)
+        for (var stop in _shuttleStops) stop.id: _shuttleStopToMarker(stop)
       };
 
       _enabledShuttles.forEach((route, enabled) {
         if (enabled) {
-          shuttleRoutes[route].stopIds.forEach((id) {
+          _shuttleRoutes[route].stopIds.forEach((id) {
             _currentMarkers.add(shuttleMarkerMap[id]);
           });
         }
@@ -518,7 +511,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           MapMarker(
               id: cluster.id.toString(),
               position: LatLng(lat, lng),
-              icon: this.busStopIcon, // replace with cluster marker
+              icon: this._busStopIcon, // replace with cluster marker
               info: fluster.children(cluster.id).length.toString(),
               isCluster: cluster.isCluster,
               clusterId: cluster.id,
