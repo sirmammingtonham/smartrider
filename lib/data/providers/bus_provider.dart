@@ -104,7 +104,7 @@ class BusProvider {
             .entity
             .map((entity) => BusTripUpdate.fromPBEntity(entity))
             // .where((update) =>
-                // trips.contains(update.id)) // check if trip id is active
+            // trips.contains(update.id)) // check if trip id is active
             .toList()
         : [];
     return tripUpdatesList;
@@ -120,8 +120,8 @@ class BusProvider {
             .entity
             .map((entity) => BusVehicleUpdate.fromPBEntity(entity))
             .where((update) => defaultRoutes
-              .map((str) => str.split('-')[0])
-              .contains(update.routeId))
+                .map((str) => str.split('-')[0])
+                .contains(update.routeId))
             .toList()
         : [];
     return vehicleUpdatesList;
@@ -145,8 +145,10 @@ class BusProvider {
       var table =
           await route.reference.collection(day.toLowerCase()).doc('0').get();
 
-      timetableMap[route.data()['route_id']] =
-          BusTimetable.fromJson(table.data());
+      if (table.data() != null) {
+        timetableMap[route.data()['route_id']] =
+            BusTimetable.fromJson(table.data());
+      } 
     }
 
     return timetableMap;

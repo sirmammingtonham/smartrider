@@ -7,12 +7,13 @@ import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/data/models/bus/bus_shape.dart';
 import 'package:smartrider/data/models/bus/bus_timetable.dart';
+import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
 
 const List<String> choices = [
-  'Set Reminder',
+  'Set reminder',
   'See on map',
   'View on timetable'
 ];
@@ -22,7 +23,7 @@ class BusTimeline extends StatefulWidget {
   final PanelController panelController;
   // final Map<String, BusRoute> busRoutes;
   final Map<String, BusTimetable> busTables;
-  
+
   BusTimeline(
       {Key key,
       @required this.panelController,
@@ -105,6 +106,10 @@ class BusTimelineState extends State<BusTimeline>
   /// Builds the buslist widget which contains all the stops and
   /// useful user information like the next arrival.
   Widget busList(String routeId) {
+    // check if schedule is unavailable
+    if (!widget.busTables.containsKey(routeId)) {
+      return BusUnavailable();
+    }
     var busStops = widget.busTables[routeId]
         .stops; //this.widget.busRoutes[routeId].forwardStops;
     /// Returns the scrollable list for our bus stops to be contained in.
