@@ -2,7 +2,6 @@
   "compilerOptions": {
     "module": "commonjs",
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
     "outDir": "lib",
     "rootDir": "src",
     "sourceMap": true,
@@ -13,6 +12,6 @@
   "compileOnSave": true,
   "include": [
     "src/**/*",
-    "decs.d.ts"
+    "decs.d.ts", "timetables"
   ]
 }

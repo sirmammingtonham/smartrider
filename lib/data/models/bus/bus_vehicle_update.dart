@@ -18,7 +18,7 @@ class BusVehicleUpdate {
   /// Representation of [vehicle.position] attributes
   double latitude;
   double longitude;
-
+  double bearing;
   int currentStopSequence;
   dynamic currentStatus;
   Int64 timestamp;
@@ -64,15 +64,13 @@ class BusVehicleUpdate {
   BusVehicleUpdate.fromPBEntity(FeedEntity entity) {
     id = entity.id;
     isDeleted = entity.isDeleted;
-
     tripId = entity.vehicle.trip.tripId;
     startTime = entity.vehicle.trip.startTime;
     startDate = entity.vehicle.trip.startDate;
     routeId = entity.vehicle.trip.routeId;
-
     latitude = entity.vehicle.position.latitude;
     longitude = entity.vehicle.position.longitude;
-
+    bearing =  entity.vehicle.position.bearing;
     currentStopSequence = entity.vehicle.currentStopSequence;
     currentStatus = entity.vehicle.currentStatus;
     timestamp = entity.vehicle.timestamp;

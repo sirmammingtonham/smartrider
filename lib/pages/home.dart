@@ -40,9 +40,10 @@ class _HomePage extends StatefulWidget {
 }
 
 /// Builds the current instance of the home page.
-class _HomePageState extends State<_HomePage> {
+class _HomePageState extends State<_HomePage>
+    with SingleTickerProviderStateMixin {
   PanelController _panelController; // Lets the user control the stop tabs
-
+  TabController _tabController;
   // The height of the tab when the user is viewing the shuttle and bus stops
   double _panelHeightOpen;
 
@@ -53,7 +54,15 @@ class _HomePageState extends State<_HomePage> {
   void initState() {
     super.initState();
     _panelController = new PanelController();
-    _isShuttle = true;
+    _tabController = new TabController(vsync: this, length: 2);
+    // _tabController.addListener(_handleTabSelection);
+    _isShuttle = false;
+  }
+
+  void _changeCallback() {
+    setState(() {
+      _isShuttle = !_isShuttle;
+    });
   }
 
   /// Builds the map and the schedule dropdown based on dynamic data.
@@ -69,7 +78,14 @@ class _HomePageState extends State<_HomePage> {
                     prefsBloc: BlocProvider.of<PrefsBloc>(context),
                     busRepo: BusRepository(),
                     shuttleRepo: ShuttleRepository())),
-            BlocProvider<ScheduleBloc>(create: (context) => ScheduleBloc())
+            BlocProvider<ScheduleBloc>(
+              create: (context) => ScheduleBloc(
+                  mapBloc: BlocProvider.of<MapBloc>(context),
+                  busRepo: BusRepository(),
+                  panelController: _panelController,
+                  tabController: _tabController,
+                  homePageCallback: _changeCallback),
+            ),
           ],
           child: SlidingUpPanel(
               // sliding panel (body is the background, panelBuilder is the actual panel)
@@ -106,7 +122,9 @@ class _HomePageState extends State<_HomePage> {
                 SearchBar(),
               ]),
               panel: PanelPage(
+                scheduleChanged: _changeCallback,
                 panelController: _panelController,
+                // tabController: _tabController,
               ))),
     );
   }

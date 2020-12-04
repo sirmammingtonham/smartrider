@@ -2,9 +2,23 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 
 const BUS_COLORS = {
-  '87-184': Colors.deepPurple,
-  '286-184': Colors.indigoAccent,
-  '289-184': Colors.blueGrey
+  '87-185': Colors.purple,
+  '286-185': Colors.deepOrange,
+  '289-185': Colors.lightBlue,
+  '288-185': Colors.green,
+};
+
+const BUS_WIDTHS = {
+  '87-185': 6,
+  '286-185': 5,
+  '289-185': 4,
+  '288-185': 3,
+};
+const BUS_INDICIES = {
+  '87-185': 0,
+  '286-185': 1,
+  '289-185': 2,
+  '288-185': 3,
 };
 
 class BusShape {
@@ -18,13 +32,14 @@ class BusShape {
     return coordinates
         .map((linestring) => Polyline(
             polylineId: PolylineId('${this.routeId}${i++}'),
-            color: BUS_COLORS[this.routeId].withAlpha(200),
-            width: 4,
+            color: BUS_COLORS[this.routeId].withAlpha(255),
+            width: BUS_WIDTHS[this.routeId],
+            zIndex: BUS_INDICIES[this.routeId],
             // patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
             points: linestring))
         .toList();
   }
-
+  
   BusShape.fromJson(Map<String, dynamic> json) {
     this.routeId = json['properties']['route_id'];
     this.coordinates = [];

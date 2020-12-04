@@ -1,17 +1,24 @@
 //implementation imports
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/data/repository/authentication_repository.dart';
+
 // page imports
 import 'package:smartrider/pages/welcome.dart';
 import 'package:smartrider/pages/home.dart';
-import 'package:smartrider/pages/onboarding.dart';
+// import 'package:smartrider/pages/onboarding.dart';
 
-void main() => runApp(SmartRider());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(SmartRider(), // Wrap your app
+  );
+}
 
 class SmartRider extends StatelessWidget {
   // This widget is the root of your application.
@@ -44,6 +51,8 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'smartrider Prototype',
+        // locale: DevicePreview.locale(context), // Add the locale here
+        // builder: DevicePreview.appBuilder,
         theme: state.theme,
         home: WelcomeScreen(homePage: HomePage()));
   } else {

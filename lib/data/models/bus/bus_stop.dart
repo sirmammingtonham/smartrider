@@ -7,18 +7,26 @@ class BusStop {
   String stopId;
   String stopCode;
   String stopName;
-  Null ttsStopName;
+  int ttsStopName;
   String stopDesc;
   double stopLat;
   double stopLon;
   String zoneId;
   String stopUrl;
   int locationType;
-  Null parentStation;
+  int parentStation;
   String stopTimezone;
   int wheelchairBoarding;
-  Null levelId;
-  Null platformCode;
+  int levelId;
+  int platformCode;
+
+  List<int> arrivalTimes;
+  List<int> departureTimes;
+  List<int> stopSequence;
+
+  List<String> routeIds;
+  List<String> shapeIds;
+  List<String> tripIds;
 
   BusStop(
       {this.stopId,
@@ -35,7 +43,13 @@ class BusStop {
       this.stopTimezone,
       this.wheelchairBoarding,
       this.levelId,
-      this.platformCode});
+      this.platformCode,
+      this.arrivalTimes,
+      this.departureTimes,
+      this.stopSequence,
+      this.routeIds,
+      this.shapeIds,
+      this.tripIds});
 
   LatLng get getLatLng => LatLng(this.stopLat, this.stopLon);
 
@@ -55,6 +69,14 @@ class BusStop {
     wheelchairBoarding = json['wheelchair_boarding'];
     levelId = json['level_id'];
     platformCode = json['platform_code'];
+
+    arrivalTimes = json['arrival_times'].cast<int>();
+    departureTimes = json['departure_times'].cast<int>();
+    stopSequence = json['stop_sequence'].cast<int>();
+
+    routeIds = json['route_ids'].cast<String>();
+    shapeIds = json['shape_ids'].cast<String>();
+    tripIds = json['trip_ids'].cast<String>();
   }
 
   Map<String, dynamic> toJson() {
@@ -74,6 +96,13 @@ class BusStop {
     data['wheelchair_boarding'] = this.wheelchairBoarding;
     data['level_id'] = this.levelId;
     data['platform_code'] = this.platformCode;
+    data['arrival_times'] = this.arrivalTimes;
+    data['departure_times'] = this.departureTimes;
+    data['stop_sequence'] = this.stopSequence;
+
+    data['route_ids'] = this.routeIds;
+    data['shape_ids'] = this.shapeIds;
+    data['trip_ids'] = this.tripIds;
     return data;
   }
 }

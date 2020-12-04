@@ -20,19 +20,27 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   Map<String, bool> _shuttles;
   Map<String, bool> _buses;
 
+  static const Map<String, String> busIdMap = {
+    '87-185': 'Route 87',
+    '286-185': 'Route 286',
+    '289-185': 'Route 289',
+    '288-185': 'CDTA Express Shuttle',
+  };
+
   PrefsBloc() : super(PrefsLoadingState());
 
   @override
   Stream<PrefsState> mapEventToState(PrefsEvent event) async* {
     if (event is LoadPrefsEvent) {
       hideInactiveRoutes = true;
-      _shuttles = new Map();
+      _shuttles = {};
 
       // placeholders for now
       _buses = {
-        '87-184': true,
-        '286-184': true,
-        '289-184': true,
+        '87-185': true,
+        '286-185': true,
+        '289-185': true,
+        '288-185': true,
       };
       _sharedPrefs = await SharedPreferences.getInstance();
 
@@ -49,6 +57,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
       _sharedPrefs.setBool(event.name, event.val);
       yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
     } else if (event is PrefsUpdateEvent) {
+      yield PrefsChangedState();
       yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
     } else if (event is InitActiveRoutesEvent) {
       // hide all inactive routes if first time launching app today
