@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-///
+/// The IssueRequest page lets the user enter
 class IssueRequest extends StatefulWidget {
   IssueRequest();
 
