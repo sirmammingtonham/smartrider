@@ -84,6 +84,14 @@ class _ProfilePageState extends State<ProfilePage> {
     //   });
     // }
 
+    // FOR THE FUTURE: The easiest way so far to load the background image as
+    // a URL. For now, I have hardcoded a profile picture just for the value.
+    // The user's profile picture should be stored in FireBase. Then, after it
+    // is stored, whenever the profile page is clicked, there should be a call
+    // to the database with the link of the profile pic. Replace _profilePic
+    // with that result.
+    var _profilePic =
+        'https://jennymthompson.files.wordpress.com/2014/08/shrek_face.jpg';
     return MaterialApp(
         home: Scaffold(
           body: Column(
@@ -163,9 +171,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         radius: 60,
                         backgroundColor: Colors.purple,
                         // backgroundImage: should be the person's profile pic.
-                        child: Text(username,
-                            style:
-                                TextStyle(fontSize: 60, color: Colors.white))),
+                        backgroundImage: NetworkImage(_profilePic),
+                        child: (_profilePic == '')
+                            ? Text(username,
+                                style: TextStyle(
+                                    fontSize: 60, color: Colors.white))
+                            : null),
                   ),
                 ],
                 // Profile pic overflows Stack. Keeps top portion of profile pic
