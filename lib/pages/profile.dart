@@ -13,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'dart:io';
+import 'package:smartrider/pages/issue_request.dart';
 
 abstract class ListItem {
   Widget buildTitle(BuildContext context);
@@ -90,8 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // is stored, whenever the profile page is clicked, there should be a call
     // to the database with the link of the profile pic. Replace _profilePic
     // with that result.
-    var _profilePic =
-        'https://jennymthompson.files.wordpress.com/2014/08/shrek_face.jpg';
+    var _profilePic = '';
     return MaterialApp(
         home: Scaffold(
           body: Column(
@@ -246,25 +246,16 @@ class _ProfilePageState extends State<ProfilePage> {
               RaisedButton(
                   padding: const EdgeInsets.symmetric(horizontal: 119.0),
                   child: Text(
-                    'REPORT BUG',
+                    'REPORT BUG / REQUEST FEATURE',
                     style: Theme.of(context).textTheme.button,
                   ),
                   onPressed: () {
-                    launch(
-                        'https://github.com/sirmammingtonham/smartrider/issues/new?assignees=&labels=bug&template=bug-report---.md&title=%F0%9F%90%9B+Bug+Report%3A+%5BIssue+Title%5D');
-                  },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(10.0))),
-              // Request Feature Button
-              RaisedButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 100.0),
-                  child: Text(
-                    'REQUEST FEATURE',
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                  onPressed: () {
-                    launch(
-                        'https://github.com/sirmammingtonham/smartrider/issues/new?assignees=&labels=enhancement&template=feature-request---.md&title=%F0%9F%92%A1+Feature+Request%3A+%5BRequest+Title%5D');
+                    // launch(
+                    //'https://github.com/sirmammingtonham/smartrider/issues/new?assignees=&labels=bug&template=bug-report---.md&title=%F0%9F%90%9B+Bug+Report%3A+%5BIssue+Title%5D');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => IssueRequest()),
+                    );
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(10.0))),
