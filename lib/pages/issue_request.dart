@@ -1,4 +1,45 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class Post {
+  final String title;
+  final String body;
+  final String labels;
+
+  Post({this.title, this.body, this.labels});
+
+  factory Post.fromJson(Map json) {
+    return Post(
+      title: json['title'],
+      body: json['body'],
+      labels: json['labels'],
+    );
+  }
+
+  Map toMap() {
+    var map = new Map();
+    map["title"] = title;
+    map["body"] = body;
+    map["labels"] = labels;
+
+    return map;
+  }
+}
+
+Future createPost(String url, {Map body}) async {
+  return http.post(url, body: body).then((http.Response response) {
+    final int statusCode = response.statusCode;
+
+    if (statusCode < 200 || statusCode > 400 || json == null) {
+      print(statusCode);
+      throw new Exception("Error while fetching data");
+    }
+    return Post.fromJson(json.decode(response.body));
+  });
+}
 
 /// The IssueRequest page lets the user enter
 class IssueRequest extends StatefulWidget {
@@ -12,6 +53,10 @@ class IssueRequest extends StatefulWidget {
 class _IssueRequestState extends State<IssueRequest> {
   bool valuefirst = false; // for checkbox
   String dropdownValue = ""; // for dropdown
+  Future post; // http post held in here.
+  String postUrl =
+      "https://github.com/repos/:sirmammingtonham/:smartrider/issues";
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -153,7 +198,6 @@ class _IssueRequestState extends State<IssueRequest> {
         Container(
           width: 350.0,
           child: ElevatedButton(
-            onPressed: () {},
             style: ButtonStyle(
                 backgroundColor:
                     MaterialStateProperty.all<Color>(Colors.purple[600])),
@@ -161,6 +205,14 @@ class _IssueRequestState extends State<IssueRequest> {
               'SUBMIT REQUEST',
               style: TextStyle(color: Colors.white),
             ),
+            onPressed: () async {
+              // These values should be changed to include the information from
+              // the front-end.
+              Post newPost = new Post(
+                  title: "123", body: "test", labels: ["hello"].toString());
+              Post p = await createPost(postUrl, body: newPost.toMap());
+              print(p.title);
+            },
           ),
         )
       ])),
