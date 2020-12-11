@@ -244,7 +244,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       borderRadius: new BorderRadius.circular(10.0))),
               // Report Bug Button
               RaisedButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 119.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 53.0),
                   child: Text(
                     'REPORT BUG / REQUEST FEATURE',
                     style: Theme.of(context).textTheme.button,
