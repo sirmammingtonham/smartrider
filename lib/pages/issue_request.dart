@@ -4,13 +4,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+/// Represents an HTTP POST to send to GitHub
 class Post {
-  final String title;
-  final String body;
-  final String labels;
+  final String title; // Title of the issue.
+  final String body; // Issue description.
+  final String
+      labels; // Tags for the issue (should make it userBug or userFeature). NEEDS TO BE A LIST
 
+  /// Constructor.
   Post({this.title, this.body, this.labels});
 
+  /// Translates json post from JSON-format to dart object Post (above)
   factory Post.fromJson(Map json) {
     return Post(
       title: json['title'],
@@ -19,6 +23,8 @@ class Post {
     );
   }
 
+  /// Translates POST object to Map, which is the data structure needed to make
+  /// the HTTP POST request.
   Map toMap() {
     var map = new Map();
     map["title"] = title;
@@ -29,6 +35,8 @@ class Post {
   }
 }
 
+/// Contains the HTTP POST request, given our URL and the Map, which represents
+/// the contents within the POST request.
 Future createPost(String url, {Map body}) async {
   return http.post(url, body: body).then((http.Response response) {
     final int statusCode = response.statusCode;
@@ -41,7 +49,10 @@ Future createPost(String url, {Map body}) async {
   });
 }
 
-/// The IssueRequest page lets the user enter
+/// The IssueRequest page lets the user enter a bug/feature request through the
+/// app, rather than through the GitHub issue page. It can also allow us to
+/// add more options that separates the user's bug/feature requests from the
+/// developer's bug/feature requests.
 class IssueRequest extends StatefulWidget {
   IssueRequest();
 
@@ -50,10 +61,14 @@ class IssueRequest extends StatefulWidget {
   _IssueRequestState createState() => new _IssueRequestState();
 }
 
+/// Represents the current state of the Issue Request Page.
 class _IssueRequestState extends State<IssueRequest> {
   bool valuefirst = false; // for checkbox
   String dropdownValue = ""; // for dropdown
   Future post; // http post held in here.
+
+  // Below is the POST URL, which links the POST message to the smartrider
+  // GitHub Repository.
   String postUrl =
       "https://github.com/repos/:sirmammingtonham/:smartrider/issues";
 
@@ -61,7 +76,7 @@ class _IssueRequestState extends State<IssueRequest> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-      backgroundColor: Colors.grey[800],
+      backgroundColor: Colors.grey[800], // Background color of app.
       body: SingleChildScrollView(
           child: Column(children: [
         new Padding(
@@ -77,6 +92,7 @@ class _IssueRequestState extends State<IssueRequest> {
               onPressed: () {
                 Navigator.pop(context);
               },
+              // Style should be replaced with theme.
               child: Text('< BACK', style: TextStyle(color: Colors.white)),
               style: ButtonStyle(
                   backgroundColor:
@@ -106,6 +122,7 @@ class _IssueRequestState extends State<IssueRequest> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 3.0),
         ),
+        // Contains TextField and styling for the issue title.
         Container(
             width: 330.0,
             height: 50.0,
@@ -138,6 +155,7 @@ class _IssueRequestState extends State<IssueRequest> {
                 style: TextStyle(color: Colors.white)),
           ],
         ),
+        // Contains TextField and styling for the issue title.
         Container(
             width: 330.0,
             child: TextField(
@@ -154,6 +172,8 @@ class _IssueRequestState extends State<IssueRequest> {
           padding: const EdgeInsets.symmetric(vertical: 3.0),
         ),
         Text("This is a:", style: TextStyle(color: Colors.white)),
+        // Represents the labels for the issue.
+        // FUTURE: Make the selection prettier, maybe checkboxes or stylish tags?
         new DropdownButton<String>(
             value: dropdownValue,
             items: <String>['', 'Bug', 'Feature', 'Other'].map((String value) {
@@ -162,6 +182,7 @@ class _IssueRequestState extends State<IssueRequest> {
                 child: new Text(value),
               );
             }).toList(),
+            // Changes the Dropdown appearance to display the user's choice.
             onChanged: (String newValue) {
               setState(() {
                 dropdownValue = newValue;
@@ -205,8 +226,9 @@ class _IssueRequestState extends State<IssueRequest> {
               'SUBMIT REQUEST',
               style: TextStyle(color: Colors.white),
             ),
+            // Submits the POST request to the GitHub repository to form an issue.
             onPressed: () async {
-              // These values should be changed to include the information from
+              // FUTURE: These values should be changed to include the information from
               // the front-end.
               Post newPost = new Post(
                   title: "123", body: "test", labels: ["hello"].toString());
