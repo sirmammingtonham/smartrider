@@ -1,3 +1,4 @@
+import 'package:feature_discovery/feature_discovery.dart';
 //implementation imports
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,7 +17,8 @@ import 'package:smartrider/pages/home.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(SmartRider(), // Wrap your app
+  runApp(
+    SmartRider(), // Wrap your app
   );
 }
 
@@ -54,7 +56,10 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
         // locale: DevicePreview.locale(context), // Add the locale here
         // builder: DevicePreview.appBuilder,
         theme: state.theme,
-        home: WelcomeScreen(homePage: HomePage()));
+        home: FeatureDiscovery.withProvider(
+          persistenceProvider: NoPersistenceProvider(),
+          child: WelcomeScreen(homePage: HomePage()),
+        ));
   } else {
     return MaterialApp(home: CircularProgressIndicator());
   }

@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/pages/profile.dart';
 import 'package:smartrider/widgets/icons.dart';
+import 'package:feature_discovery/feature_discovery.dart';
+import 'package:flutter/scheduler.dart';
 import 'dart:io' show Platform;
 
 // auth bloc import
@@ -39,6 +41,20 @@ class SearchBarState extends State<SearchBar> {
   SearchBarState();
 
   @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
+      FeatureDiscovery.discoverFeatures(
+        context,
+        const <String>{
+          // Feature ids for every feature that you want to showcase in order.
+          'SearchBar',
+        },
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     var topBarDist; //Distance between top of phone bezel & top search bar
     if (Platform.isAndroid) {
@@ -52,70 +68,80 @@ class SearchBarState extends State<SearchBar> {
           name = state.displayName;
           role = state.role;
           return Positioned(
-            top: topBarDist,
-            right: 15,
-            left: 15,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              height: 55,
-              child: Material(
-                borderRadius: BorderRadius.circular(10.0),
-                elevation: 6.0,
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(SR_Icons.Settings),
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          // BlocProvider.of<PrefsBloc>(context).add(LoadPrefsEvent());
-                          return SettingsPage();
-                        }));
-                      },
-                    ),
-                    Expanded(
-                        // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
-                        child: PlacesAutocompleteField(
-                      apiKey: Platform.environment['MAPS_API_KEY'],
-                      hint: "Need a Safe Ride?",
-                      location: Location(
-                          42.729980, -73.676682), // location of union as center
-                      radius:
-                          1000, // 1km from union seems to be a good estimate of the bounds on safe ride's website
-                      language: "en",
-                      components: [Component(Component.country, "us")],
-                      strictbounds: true,
-                      sessionToken: Uuid().generateV4(),
-                      inputDecoration: null,
-                    )),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: CircleAvatar(
-                        backgroundColor: Theme.of(context).buttonColor,
-                        child: IconButton(
-                          icon: Text(computeUsername(name),
-                              style: TextStyle(
-                                  fontSize: 15, color: Colors.white70)),
+              top: topBarDist,
+              right: 15,
+              left: 15,
+              child: DescribedFeatureOverlay(
+                featureId: "SearchBar",
+                tapTarget: Icon(Icons.drive_eta),
+                backgroundColor: Colors.blue,
+                title: const Text('Search Bar'),
+                description: const Text('asdsdgdfgdfg dfgdf gdfg dfg dfg f '),
+                onOpen: () async {
+                  print('The overlay is about to be displayed.');
+                  return true;
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  height: 55,
+                  child: Material(
+                    borderRadius: BorderRadius.circular(10.0),
+                    elevation: 6.0,
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(SR_Icons.Settings),
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ProfilePage(
-                                          title: computeUsername(name),
-                                          name: null,
-                                          role: role,
-                                          email: name,
-                                        )));
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              // BlocProvider.of<PrefsBloc>(context).add(LoadPrefsEvent());
+                              return SettingsPage();
+                            }));
                           },
                         ),
-                        //Text('JS', style: TextStyle(color: Colors.white70)),
-                      ),
+                        Expanded(
+                            // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
+                            child: PlacesAutocompleteField(
+                          apiKey: Platform.environment['MAPS_API_KEY'],
+                          hint: "Need a Safe Ride?",
+                          location: Location(42.729980,
+                              -73.676682), // location of union as center
+                          radius:
+                              1000, // 1km from union seems to be a good estimate of the bounds on safe ride's website
+                          language: "en",
+                          components: [Component(Component.country, "us")],
+                          strictbounds: true,
+                          sessionToken: Uuid().generateV4(),
+                          inputDecoration: null,
+                        )),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: CircleAvatar(
+                            backgroundColor: Theme.of(context).buttonColor,
+                            child: IconButton(
+                              icon: Text(computeUsername(name),
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.white70)),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProfilePage(
+                                              title: computeUsername(name),
+                                              name: null,
+                                              role: role,
+                                              email: name,
+                                            )));
+                              },
+                            ),
+                            //Text('JS', style: TextStyle(color: Colors.white70)),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          );
+              ));
         } else {
           print("something's wrong with auth bloc");
           return Positioned(
