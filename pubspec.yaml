@@ -36,6 +36,9 @@ dependencies:
   fluster: ^1.1.2
   protobuf: ^1.0.1
 
+  #saferide dependencies
+  hypertrack_views_flutter: ^0.1.0
+
   #notication dependencies
   flutter_local_notifications: ^1.4.4+2
 
