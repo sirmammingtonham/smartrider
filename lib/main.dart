@@ -1,4 +1,3 @@
-import 'package:feature_discovery/feature_discovery.dart';
 //implementation imports
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -51,15 +50,13 @@ class SmartRider extends StatelessWidget {
 Widget _buildWithTheme(BuildContext context, PrefsState state) {
   if (state is PrefsLoadedState) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'smartrider Prototype',
-        // locale: DevicePreview.locale(context), // Add the locale here
-        // builder: DevicePreview.appBuilder,
-        theme: state.theme,
-        home: FeatureDiscovery.withProvider(
-          persistenceProvider: NoPersistenceProvider(),
-          child: WelcomeScreen(homePage: HomePage()),
-        ));
+      debugShowCheckedModeBanner: false,
+      title: 'smartrider Prototype',
+      // locale: DevicePreview.locale(context), // Add the locale here
+      // builder: DevicePreview.appBuilder,
+      theme: state.theme,
+      home: WelcomeScreen(homePage: HomePage()),
+    );
   } else {
     return MaterialApp(home: CircularProgressIndicator());
   }

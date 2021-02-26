@@ -5,8 +5,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
-import 'package:feature_discovery/feature_discovery.dart';
-import 'package:flutter/scheduler.dart';
 
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
@@ -54,15 +52,6 @@ class _HomePageState extends State<_HomePage>
 
   @override
   void initState() {
-    SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
-      FeatureDiscovery.discoverFeatures(
-        context,
-        const <String>{
-          // Feature ids for every feature that you want to showcase in order.
-          'slidingPanel',
-        },
-      );
-    });
     super.initState();
     _panelController = new PanelController();
     _tabController = new TabController(vsync: this, length: 2);
@@ -98,58 +87,45 @@ class _HomePageState extends State<_HomePage>
                 homePageCallback: _changeCallback),
           ),
         ],
-        child: DescribedFeatureOverlay(
-            featureId: "slidingPanel",
-            tapTarget: Icon(Icons.drive_eta),
-            backgroundColor: Colors.blue,
-            contentLocation: ContentLocation.above,
-            title: const Text('Bus/Shuttle schedules'),
-            description: const Text(
-                'Slide up on the panel below to display both bus and shuttle times'),
-            onOpen: () async {
-              print('The overlay is about to be displayed.');
-              return true;
-            },
-            child: SlidingUpPanel(
-                // sliding panel (body is the background, panelBuilder is the actual panel)
-                controller: _panelController,
-                maxHeight: _panelHeightOpen,
-                minHeight: _panelHeightClosed,
-                parallaxEnabled: true,
-                renderPanelSheet: false,
-                backdropEnabled: true,
-                parallaxOffset: .1,
+        child: SlidingUpPanel(
+            // sliding panel (body is the background, panelBuilder is the actual panel)
+            controller: _panelController,
+            maxHeight: _panelHeightOpen,
+            minHeight: _panelHeightClosed,
+            parallaxEnabled: true,
+            renderPanelSheet: false,
+            backdropEnabled: true,
+            parallaxOffset: .1,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(20.0),
+            ),
+            collapsed: AppBar(
+              centerTitle: true,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(20.0),
+                  top: Radius.circular(18.0),
                 ),
-                collapsed: AppBar(
-                  centerTitle: true,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(18.0),
-                    ),
-                  ),
-                  leading: Icon(Icons.arrow_upward),
-                  title:
-                      Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
-                  actions: <Widget>[
-                    Padding(
-                        padding: const EdgeInsets.only(right: 12.0),
-                        child: Icon(Icons.arrow_upward))
-                  ],
-                ),
-                // stack the search bar widget over the map ui
-                body: Stack(children: <Widget>[
-                  ShuttleMap(
-                    key: mapState,
-                  ),
-                  SearchBar(),
-                ]),
-                panel: PanelPage(
-                  scheduleChanged: _changeCallback,
-                  panelController: _panelController,
-                  // tabController: _tabController,
-                ))),
+              ),
+              leading: Icon(Icons.arrow_upward),
+              title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
+              actions: <Widget>[
+                Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: Icon(Icons.arrow_upward))
+              ],
+            ),
+            // stack the search bar widget over the map ui
+            body: Stack(children: <Widget>[
+              ShuttleMap(
+                key: mapState,
+              ),
+              SearchBar(),
+            ]),
+            panel: PanelPage(
+              scheduleChanged: _changeCallback,
+              panelController: _panelController,
+              // tabController: _tabController,
+            )),
       ),
     );
   }
