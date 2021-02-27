@@ -93,8 +93,10 @@ class SearchBarState extends State<SearchBar> {
                       sessionToken: Uuid().generateV4(),
                       inputDecoration: null,
                     )),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
+                    Showcase(
+                      key: three,
+                      description: 'another one',
+                      shapeBorder: CircleBorder(),
                       child: CircleAvatar(
                         backgroundColor: Theme.of(context).buttonColor,
                         child: IconButton(
@@ -115,7 +117,7 @@ class SearchBarState extends State<SearchBar> {
                         ),
                         //Text('JS', style: TextStyle(color: Colors.white70)),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
