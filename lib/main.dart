@@ -11,6 +11,7 @@ import 'package:smartrider/data/repository/authentication_repository.dart';
 // page imports
 import 'package:smartrider/pages/welcome.dart';
 import 'package:smartrider/pages/home.dart';
+import 'package:showcaseview/showcaseview.dart';
 // import 'package:smartrider/pages/onboarding.dart';
 
 void main() async {
@@ -55,7 +56,10 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
       // locale: DevicePreview.locale(context), // Add the locale here
       // builder: DevicePreview.appBuilder,
       theme: state.theme,
-      home: WelcomeScreen(homePage: HomePage()),
+      home: ShowCaseWidget(
+        builder:
+            Builder(builder: (context) => WelcomeScreen(homePage: HomePage())),
+      ),
     );
   } else {
     return MaterialApp(home: CircularProgressIndicator());

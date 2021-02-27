@@ -5,6 +5,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
@@ -16,6 +18,9 @@ import 'package:smartrider/data/repository/bus_repository.dart';
 import 'package:smartrider/widgets/map_ui.dart';
 import 'package:smartrider/widgets/search_bar.dart';
 import 'package:smartrider/pages/panel_page.dart';
+
+GlobalKey one = GlobalKey();
+GlobalKey two = GlobalKey();
 
 /// Default page that is displayed once the user logs in.
 class HomePage extends StatelessWidget {
@@ -68,6 +73,9 @@ class _HomePageState extends State<_HomePage>
   /// Builds the map and the schedule dropdown based on dynamic data.
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => ShowCaseWidget.of(context).startShowCase([two, one]));
+
     /// Height of the stop schedules when open
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
     return Material(
@@ -99,21 +107,32 @@ class _HomePageState extends State<_HomePage>
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(20.0),
             ),
-            collapsed: AppBar(
-              centerTitle: true,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(18.0),
-                ),
-              ),
-              leading: Icon(Icons.arrow_upward),
-              title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
-              actions: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: Icon(Icons.arrow_upward))
-              ],
-            ),
+            collapsed: Showcase(
+                key: one,
+                description: 'Swipe up to view shuttle/bus schedules',
+                disposeOnTap: true,
+                onToolTipClick: () {
+                  _panelController.open();
+                },
+                onTargetClick: () {
+                  _panelController.open();
+                },
+                child: AppBar(
+                  centerTitle: true,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(18.0),
+                    ),
+                  ),
+                  leading: Icon(Icons.arrow_upward),
+                  title:
+                      Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
+                  actions: <Widget>[
+                    Padding(
+                        padding: const EdgeInsets.only(right: 12.0),
+                        child: Icon(Icons.arrow_upward))
+                  ],
+                )),
             // stack the search bar widget over the map ui
             body: Stack(children: <Widget>[
               ShuttleMap(

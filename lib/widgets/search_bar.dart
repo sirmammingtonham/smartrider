@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/pages/profile.dart';
+import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/widgets/icons.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'dart:io' show Platform;
 
 // auth bloc import
@@ -28,6 +30,7 @@ String computeUsername(String name) {
 
 class SearchBar extends StatefulWidget {
   SearchBar();
+
   @override
   State<StatefulWidget> createState() => SearchBarState();
 }
@@ -37,7 +40,6 @@ class SearchBarState extends State<SearchBar> {
   String role;
 
   SearchBarState();
-
   @override
   Widget build(BuildContext context) {
     var topBarDist; //Distance between top of phone bezel & top search bar
@@ -63,16 +65,19 @@ class SearchBarState extends State<SearchBar> {
                 elevation: 6.0,
                 child: Row(
                   children: <Widget>[
-                    IconButton(
-                      icon: Icon(SR_Icons.Settings),
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          // BlocProvider.of<PrefsBloc>(context).add(LoadPrefsEvent());
-                          return SettingsPage();
-                        }));
-                      },
-                    ),
+                    Showcase(
+                        key: two,
+                        description: 'test',
+                        child: IconButton(
+                          icon: Icon(SR_Icons.Settings),
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              // BlocProvider.of<PrefsBloc>(context).add(LoadPrefsEvent());
+                              return SettingsPage();
+                            }));
+                          },
+                        )),
                     Expanded(
                         // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
                         child: PlacesAutocompleteField(
