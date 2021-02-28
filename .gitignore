@@ -119,3 +119,6 @@ strings.dart
 android/app/src/main/res/api-keys.template
 ApiKeys.plist
 GoogleService-Info.plist
+
+# node module
+node_modules/
