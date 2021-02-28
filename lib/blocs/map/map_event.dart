@@ -27,6 +27,14 @@ class MapTypeChangeEvent extends MapEvent {
   List<Object> get props => [zoomLevel];
 }
 
+class MapSaferideCalledEvent extends MapEvent {
+  final LatLng coord;
+  const MapSaferideCalledEvent({@required this.coord});
+
+  @override
+  List<Object> get props => [coord];
+}
+
 class MapMoveEvent extends MapEvent {
   final double zoomLevel;
   const MapMoveEvent({this.zoomLevel});

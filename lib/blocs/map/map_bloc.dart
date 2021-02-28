@@ -177,6 +177,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         _zoomLevel = event.zoomLevel;
       }
       yield* _mapUpdateRequestedToState();
+    } else if (event is MapSaferideCalledEvent) {
+      scrollToLocation(event.coord);
+      // should have something to create marker at coord, some other stuff too
+      yield* _mapUpdateRequestedToState();
     } else if (event is MapMoveEvent) {
       yield* _mapMoveToState(event.zoomLevel);
     } else {

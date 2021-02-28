@@ -1,21 +1,25 @@
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/pages/profile.dart';
 import 'package:smartrider/widgets/icons.dart';
 import 'dart:io' show Platform;
 
 // auth bloc import
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
+
 // import map background
 import 'package:smartrider/pages/settings.dart';
 
 // import places api
+import 'package:google_maps_webservice/geocoding.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:smartrider/widgets/autocomplete.dart';
+import 'package:smartrider/widgets/destination_autocomplete.dart';
 
-import 'dart:io';
+// import 'dart:io';
+import 'package:smartrider/util/strings.dart';
 
 String computeUsername(String name) {
   //compute initials to be displayed on search bar
@@ -35,8 +39,40 @@ class SearchBar extends StatefulWidget {
 class SearchBarState extends State<SearchBar> {
   String name;
   String role;
+  MapBloc mapBloc;
+  final geocoder = GoogleMapsGeocoding(apiKey: GOOGLE_API_KEY);
 
   SearchBarState();
+
+  @override
+  void initState() {
+    super.initState();
+
+    mapBloc = BlocProvider.of<MapBloc>(context);
+  }
+
+  @override
+  void dispose() {
+    mapBloc.close();
+    super.dispose();
+  }
+
+  void onAutocompleteSelect(Prediction p) async {
+    GeocodingResponse responses = await geocoder.searchByPlaceId(p.placeId);
+    if (responses.status != 'OK') {
+      print(responses.status);
+      print(responses.errorMessage);
+      // add error state to bloc?
+      return;
+    }
+    if (responses.results.isNotEmpty) {
+      GeocodingResult r = responses.results[0];
+      final LatLng coord =
+          LatLng(r.geometry.location.lat, r.geometry.location.lng);
+      mapBloc.add(MapSaferideCalledEvent(coord: coord));
+    }
+    // var address = await Geocoder.local.findAddressesFromQuery(p.description);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +112,8 @@ class SearchBarState extends State<SearchBar> {
                     Expanded(
                         // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
                         child: PlacesAutocompleteField(
-                      apiKey: Platform.environment['MAPS_API_KEY'],
+                      apiKey:
+                          GOOGLE_API_KEY, //Platform.environment['MAPS_API_KEY'],
                       hint: "Need a Safe Ride?",
                       location: Location(
                           42.729980, -73.676682), // location of union as center
@@ -85,8 +122,9 @@ class SearchBarState extends State<SearchBar> {
                       language: "en",
                       components: [Component(Component.country, "us")],
                       strictbounds: true,
-                      sessionToken: Uuid().generateV4(),
+                      // sessionToken: Uuid().generateV4(),
                       inputDecoration: null,
+                      onSelected: onAutocompleteSelect,
                     )),
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
