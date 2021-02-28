@@ -35,10 +35,10 @@ class ShuttleMapState extends State<ShuttleMap> {
   double currentZoom = 14.0;
   MapBloc mapBloc;
   GoogleMap googleMap;
-  
+
   Set<Polyline> _polylines = {};
   Set<Marker> _markers = {};
-  bool _isBus = true;
+  MapStateEnum _mapState = MapStateEnum.bus;
   bool _isLoading = true;
 
   @override
@@ -68,7 +68,7 @@ class ShuttleMapState extends State<ShuttleMap> {
       } else if (state is MapLoadedState) {
         _polylines = state.polylines;
         _markers = state.markers;
-        _isBus = state.isBus;
+        _mapState = state.mapState;
         _isLoading = false;
       } else {
         return Center(child: Text("error bruh"));
@@ -105,7 +105,7 @@ class ShuttleMapState extends State<ShuttleMap> {
             },
             mapType: MapType.normal,
           ),
-          isBus: _isBus,
+          mapState: _mapState,
           currentZoom: currentZoom,
         ),
       );
@@ -117,16 +117,43 @@ class MapUI extends StatelessWidget {
   const MapUI(
       {Key key,
       @required this.googleMap,
-      @required this.isBus,
+      @required this.mapState,
       @required this.currentZoom})
       : super(key: key);
 
   final GoogleMap googleMap;
-  final bool isBus;
+  final MapStateEnum mapState;
   final double currentZoom;
 
   @override
   Widget build(BuildContext context) {
+    Icon swapStateIcon;
+    switch (mapState) {
+      case MapStateEnum.bus:
+        swapStateIcon = Icon(
+          Icons.airport_shuttle,
+          color: Theme.of(context).brightness == Brightness.light
+              ? Colors.black87
+              : Theme.of(context).accentColor,
+        );
+        break;
+      case MapStateEnum.shuttle:
+        swapStateIcon = Icon(
+          Icons.directions_bus,
+          color: Theme.of(context).brightness == Brightness.light
+              ? Colors.black87
+              : Theme.of(context).accentColor,
+        );
+        break;
+      case MapStateEnum.saferide:
+        swapStateIcon = Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).brightness == Brightness.light
+              ? Colors.black87
+              : Theme.of(context).accentColor,
+        );
+        break;
+    }
     return Stack(alignment: Alignment.topCenter, children: <Widget>[
       // Actual map
       googleMap,
@@ -135,12 +162,7 @@ class MapUI extends StatelessWidget {
         right: 20.0,
         bottom: 190.0,
         child: FloatingActionButton(
-          child: Icon(
-            isBus ? Icons.airport_shuttle : Icons.directions_bus,
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.black87
-                : Theme.of(context).accentColor,
-          ),
+          child: swapStateIcon,
           backgroundColor: Theme.of(context).brightness == Brightness.light
               ? Colors.white
               : Colors.white70,

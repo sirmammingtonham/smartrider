@@ -14,8 +14,8 @@ class MapLoadingState extends MapState {
 class MapLoadedState extends MapState {
   final Set<Polyline> polylines;
   final Set<Marker> markers;
-  final bool isBus;
-  const MapLoadedState({@required this.polylines, @required this.markers, @required this.isBus});
+  final MapStateEnum mapState;
+  const MapLoadedState({@required this.polylines, @required this.markers, @required this.mapState});
 
   @override
   List<Object> get props => [polylines, markers];
