@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/util/multi_bloc_builder.dart';
 
 import 'package:smartrider/pages/profile.dart';
@@ -22,8 +22,6 @@ import 'package:smartrider/widgets/destination_autocomplete.dart';
 
 // import 'dart:io';
 import 'package:smartrider/util/strings.dart';
-
-const testCoord = LatLng(42.729280, -73.679056);
 
 String computeUsername(String name) {
   //compute initials to be displayed on search bar
@@ -45,9 +43,8 @@ class SearchBarState extends State<SearchBar> {
       topBarDist; // Distance between top of phone bezel & top search bar //TODO: use fraction instead of hard coded value
   String name;
   String role;
-  MapBloc mapBloc;
+  SaferideBloc saferideBloc;
   AuthenticationBloc authBloc;
-  final geocoder = GoogleMapsGeocoding(apiKey: GOOGLE_API_KEY);
 
   SearchBarState();
 
@@ -55,7 +52,7 @@ class SearchBarState extends State<SearchBar> {
   void initState() {
     super.initState();
 
-    mapBloc = BlocProvider.of<MapBloc>(context);
+    saferideBloc = BlocProvider.of<SaferideBloc>(context);
     authBloc = BlocProvider.of<AuthenticationBloc>(context);
 
     if (Platform.isAndroid) {
@@ -67,40 +64,40 @@ class SearchBarState extends State<SearchBar> {
 
   @override
   void dispose() {
-    mapBloc.close();
+    saferideBloc.close();
     authBloc.close();
     super.dispose();
   }
 
-  void onAutocompleteSelect(Prediction p) async {
-    GeocodingResponse responses = await geocoder.searchByPlaceId(p.placeId);
-    if (responses.status != 'OK') {
-      print(responses.status);
-      print(responses.errorMessage);
-      // add error state to bloc?
-      return;
+  void _showAutocomplete() async {
+    Prediction p = await PlacesAutocomplete.show(
+      context: context,
+      apiKey: GOOGLE_API_KEY, //Platform.environment['MAPS_API_KEY'],
+      hint: "Need a Safe Ride?",
+      location: Location(42.729980, -73.676682), // location of union as center
+      radius: 1000, // 1km decent estimate of the bounds on safe ride's website
+      language: "en",
+      components: [Component(Component.country, "us")],
+      strictbounds: true,
+    );
+
+    if (p != null) {
+      saferideBloc.add(SaferideSelectionEvent(prediction: p));
     }
-    if (responses.results.isNotEmpty) {
-      GeocodingResult r = responses.results[0];
-      final LatLng coord =
-          LatLng(r.geometry.location.lat, r.geometry.location.lng);
-      mapBloc.add(MapSaferideCalledEvent(coord: coord));
-    }
-    // var address = await Geocoder.local.findAddressesFromQuery(p.description);
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocBuilder(
-      blocs: [mapBloc, authBloc],
+      blocs: [saferideBloc, authBloc],
       builder: (context, states) {
-        final mapState = states.get<MapState>();
+        final saferideState = states.get<SaferideState>();
         final authState = states.get<AuthenticationState>();
 
         name = authState is AuthenticationSuccess ? authState.displayName : '';
         role = authState is AuthenticationSuccess ? authState.role : '';
-        
-        if (mapState is MapLoadedState && mapState.mapState == MapStateEnum.saferide) {
+
+        if (saferideState is SaferideSelectionState) {
           return Positioned(
               top: topBarDist,
               right: 15,
@@ -115,7 +112,7 @@ class SearchBarState extends State<SearchBar> {
                             height: double.infinity,
                             child: Icon(Icons.my_location),
                           ),
-                          title: const Text('Card title 1'),
+                          title: Text(saferideState.pickupDescription),
                           subtitle: const Text('Pickup location'),
                           onTap: () {},
                         ),
@@ -124,15 +121,17 @@ class SearchBarState extends State<SearchBar> {
                           leading: Container(
                               height: double.infinity,
                               child: Icon(Icons.place)),
-                          title: const Text('Card title 2'),
+                          title: Text(saferideState.destDescription),
                           subtitle: const Text('Dropoff location'),
                           trailing: IconButton(
                             icon: Icon(Icons.cancel),
                             onPressed: () {
-                              print('pressed');
+                              saferideBloc.add(SaferideNoEvent());
                             },
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            _showAutocomplete();
+                          },
                         )
                       ]))));
         } else {
@@ -168,8 +167,7 @@ class SearchBarState extends State<SearchBar> {
                 Expanded(
                     child: ListTile(
                         title: const Text('Test saferide call to union'),
-                        onTap: () => mapBloc
-                            .add(MapSaferideCalledEvent(coord: testCoord)))),
+                        onTap: () => saferideBloc.add(SaferideSelectionTestEvent()))),
                 // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
                 //     PlacesAutocompleteField(
                 //   apiKey:

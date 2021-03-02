@@ -1,6 +1,5 @@
 // ui imports
 import 'package:flutter/material.dart';
-import 'package:smartrider/widgets/icons.dart';
 
 // import places api
 import 'package:google_maps_webservice/places.dart';

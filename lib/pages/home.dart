@@ -8,6 +8,7 @@ import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/data/repository/shuttle_repository.dart';
 import 'package:smartrider/data/repository/bus_repository.dart';
@@ -15,7 +16,7 @@ import 'package:smartrider/data/repository/bus_repository.dart';
 // custom widget imports
 import 'package:smartrider/widgets/map_ui.dart';
 import 'package:smartrider/widgets/search_bar.dart';
-import 'package:smartrider/pages/panel_page.dart';
+import 'package:smartrider/pages/sliding_panel_page.dart';
 
 /// Default page that is displayed once the user logs in.
 class HomePage extends StatelessWidget {
@@ -48,21 +49,12 @@ class _HomePageState extends State<_HomePage>
   double _panelHeightOpen;
 
   double _panelHeightClosed = 95.0; // Height of the closed tab
-  bool _isShuttle; // used to determine what text to display
 
   @override
   void initState() {
     super.initState();
     _panelController = new PanelController();
     _tabController = new TabController(vsync: this, length: 2);
-    // _tabController.addListener(_handleTabSelection);
-    _isShuttle = false;
-  }
-
-  void _changeCallback() {
-    setState(() {
-      _isShuttle = !_isShuttle;
-    });
   }
 
   /// Builds the map and the schedule dropdown based on dynamic data.
@@ -73,8 +65,12 @@ class _HomePageState extends State<_HomePage>
     return Material(
       child: MultiBlocProvider(
           providers: [
+            BlocProvider<SaferideBloc>(
+              create: (context) => SaferideBloc(),
+            ),
             BlocProvider<MapBloc>(
                 create: (context) => MapBloc(
+                    saferideBloc: BlocProvider.of<SaferideBloc>(context),
                     prefsBloc: BlocProvider.of<PrefsBloc>(context),
                     busRepo: BusRepository(),
                     shuttleRepo: ShuttleRepository())),
@@ -83,8 +79,7 @@ class _HomePageState extends State<_HomePage>
                   mapBloc: BlocProvider.of<MapBloc>(context),
                   busRepo: BusRepository(),
                   panelController: _panelController,
-                  tabController: _tabController,
-                  homePageCallback: _changeCallback),
+                  tabController: _tabController),
             ),
           ],
           child: SlidingUpPanel(
@@ -107,7 +102,11 @@ class _HomePageState extends State<_HomePage>
                   ),
                 ),
                 leading: Icon(Icons.arrow_upward),
-                title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
+                title: BlocBuilder<MapBloc, MapState>(
+                    builder: (context, state) => Text(
+                        state is MapLoadedState && !state.isBus
+                            ? 'Shuttle Schedules'
+                            : 'Bus Schedules')),
                 actions: <Widget>[
                   Padding(
                       padding: const EdgeInsets.only(right: 12.0),
@@ -122,9 +121,7 @@ class _HomePageState extends State<_HomePage>
                 SearchBar(),
               ]),
               panel: PanelPage(
-                scheduleChanged: _changeCallback,
                 panelController: _panelController,
-                // tabController: _tabController,
               ))),
     );
   }

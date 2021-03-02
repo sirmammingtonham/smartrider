@@ -23,7 +23,6 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final MapBloc mapBloc;
   final PanelController panelController;
   final TabController tabController;
-  final VoidCallback homePageCallback;
 
   bool _isBus;
   bool _isTimeline;
@@ -56,8 +55,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       {@required this.mapBloc,
       @required this.busRepo,
       @required this.panelController,
-      @required this.tabController,
-      @required this.homePageCallback})
+      @required this.tabController})
       : super(ScheduleInitialState()) {
     _notifications.initialize(
         InitializationSettings(AndroidInitializationSettings('app_icon'),
@@ -126,7 +124,6 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         yield* _mapScheduleTableToState();
       }
     } else if (event is ScheduleTypeChangeEvent) {
-      homePageCallback();
       _isChanging = true;
       tabController.animateTo(_isBus ? 1 : 0);
       _isChanging = false;

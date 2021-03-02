@@ -8,18 +8,16 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/widgets/shuttle_schedules/shuttle_timeline.dart';
-import 'package:smartrider/widgets/shuttle_schedules/shuttle_table.dart';
+// import 'package:smartrider/widgets/shuttle_schedules/shuttle_table.dart';
+import 'package:smartrider/widgets/shuttle_schedules/shuttle_unavailable.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_timeline.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
-import 'package:smartrider/widgets/shuttle_schedules/shuttle_unavailable.dart';
 
-///
+
 class PanelPage extends StatefulWidget {
   final PanelController panelController;
-  // final TabController tabController;
-  final VoidCallback scheduleChanged;
   PanelPage(
-      {Key key, @required this.panelController, @required this.scheduleChanged})
+      {Key key, @required this.panelController})
       : super(key: key);
   @override
   PanelPageState createState() => PanelPageState();

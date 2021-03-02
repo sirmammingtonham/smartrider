@@ -1,6 +1,3 @@
-// implementation imports
-import 'dart:async';
-
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -35,10 +32,10 @@ class ShuttleMapState extends State<ShuttleMap> {
   double currentZoom = 14.0;
   MapBloc mapBloc;
   GoogleMap googleMap;
-
+  
   Set<Polyline> _polylines = {};
   Set<Marker> _markers = {};
-  MapStateEnum _mapState = MapStateEnum.bus;
+  bool _isBus = true;
   bool _isLoading = true;
 
   @override
@@ -47,11 +44,6 @@ class ShuttleMapState extends State<ShuttleMap> {
 
     mapBloc = BlocProvider.of<MapBloc>(context);
     mapBloc.add(MapInitEvent());
-    const pollRefreshDelay = const Duration(seconds: 3); // update every 3 sec
-    new Timer.periodic(
-        pollRefreshDelay,
-        (Timer t) => BlocProvider.of<MapBloc>(context)
-            .add(MapUpdateEvent(zoomLevel: currentZoom)));
   }
 
   @override
@@ -68,7 +60,7 @@ class ShuttleMapState extends State<ShuttleMap> {
       } else if (state is MapLoadedState) {
         _polylines = state.polylines;
         _markers = state.markers;
-        _mapState = state.mapState;
+        _isBus = state.isBus;
         _isLoading = false;
       } else {
         return Center(child: Text("error bruh"));
@@ -105,7 +97,7 @@ class ShuttleMapState extends State<ShuttleMap> {
             },
             mapType: MapType.normal,
           ),
-          mapState: _mapState,
+          isBus: _isBus,
           currentZoom: currentZoom,
         ),
       );
@@ -117,43 +109,16 @@ class MapUI extends StatelessWidget {
   const MapUI(
       {Key key,
       @required this.googleMap,
-      @required this.mapState,
+      @required this.isBus,
       @required this.currentZoom})
       : super(key: key);
 
   final GoogleMap googleMap;
-  final MapStateEnum mapState;
+  final bool isBus;
   final double currentZoom;
 
   @override
   Widget build(BuildContext context) {
-    Icon swapStateIcon;
-    switch (mapState) {
-      case MapStateEnum.bus:
-        swapStateIcon = Icon(
-          Icons.airport_shuttle,
-          color: Theme.of(context).brightness == Brightness.light
-              ? Colors.black87
-              : Theme.of(context).accentColor,
-        );
-        break;
-      case MapStateEnum.shuttle:
-        swapStateIcon = Icon(
-          Icons.directions_bus,
-          color: Theme.of(context).brightness == Brightness.light
-              ? Colors.black87
-              : Theme.of(context).accentColor,
-        );
-        break;
-      case MapStateEnum.saferide:
-        swapStateIcon = Icon(
-          Icons.arrow_back,
-          color: Theme.of(context).brightness == Brightness.light
-              ? Colors.black87
-              : Theme.of(context).accentColor,
-        );
-        break;
-    }
     return Stack(alignment: Alignment.topCenter, children: <Widget>[
       // Actual map
       googleMap,
@@ -162,7 +127,12 @@ class MapUI extends StatelessWidget {
         right: 20.0,
         bottom: 190.0,
         child: FloatingActionButton(
-          child: swapStateIcon,
+          child: Icon(
+            isBus ? Icons.airport_shuttle : Icons.directions_bus,
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.black87
+                : Theme.of(context).accentColor,
+          ),
           backgroundColor: Theme.of(context).brightness == Brightness.light
               ? Colors.white
               : Colors.white70,
