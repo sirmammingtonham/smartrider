@@ -92,7 +92,8 @@ class _HomePageState extends State<_HomePage>
         body: Stack(children: <Widget>[
           SmartriderMap(),
           SearchBar(),
-          saferideState is SaferideSelectionState
+          saferideState is SaferideSelectionState ||
+                  saferideState is SaferideConfirmedState
               ? SaferideStatusWidget()
               : Container()
         ]),

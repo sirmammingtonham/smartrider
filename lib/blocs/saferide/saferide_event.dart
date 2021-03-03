@@ -13,32 +13,26 @@ class SaferideSelectionEvent extends SaferideEvent {
   final LatLng pickupLatLng;
   final Prediction prediction;
 
-  SaferideSelectionEvent({this.pickupLatLng, this.prediction});
+  const SaferideSelectionEvent({this.pickupLatLng, this.prediction});
 
   @override
   List<Object> get props => [pickupLatLng, prediction];
 }
 
 class SaferideSelectionTestEvent extends SaferideEvent {
-  final testCoord = LatLng(42.729280, -73.679056);
+  final testCoord = const LatLng(42.729280, -73.679056);
   final testAdr = "1761 15th St, Troy, NY 12180";
   final testDesc = "Rensselaer Union";
-  SaferideSelectionTestEvent();
+  const SaferideSelectionTestEvent();
 
   @override
   List<Object> get props => [];
 }
 
-// class SaferideSelectionEvent extends SaferideEvent {
-//   final LatLng coordinate;
-//   final String address;
-//   final String description;
+// not sure what fields to add to this yet
+class SaferideConfirmedEvent extends SaferideEvent {
+  const SaferideConfirmedEvent();
 
-//   SaferideSelectionEvent(
-//       {@required this.coordinate,
-//       @required this.address,
-//       @required this.description});
-
-//   @override
-//   List<Object> get props => [coordinate, address];
-// }
+  @override
+  List<Object> get props => [];
+}

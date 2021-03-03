@@ -24,7 +24,7 @@ class SaferideSelectionState extends SaferideState {
   final String pickupDescription;
   final String destDescription;
 
-  SaferideSelectionState(
+  const SaferideSelectionState(
       {@required this.pickupLatLng,
       @required this.pickupDescription,
       @required this.destLatLng,
@@ -45,8 +45,24 @@ class SaferideErrorState extends SaferideState {
   final String status;
   final String message;
 
-  SaferideErrorState({@required this.status, @required this.message});
+  const SaferideErrorState({@required this.status, @required this.message});
 
   @override
   List<Object> get props => [status, message];
+}
+
+class SaferideConfirmedState extends SaferideState {
+  final String driverName;
+  final String licensePlate;
+  final int queuePosition;
+  final int timeEstimate;
+  // phone number too
+
+  const SaferideConfirmedState(
+      {@required this.driverName,
+      @required this.licensePlate,
+      @required this.queuePosition, @required this.timeEstimate});
+
+  @override
+  List<Object> get props => [driverName, licensePlate, queuePosition];
 }

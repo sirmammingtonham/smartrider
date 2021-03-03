@@ -13,7 +13,9 @@ part 'saferide_event.dart';
 part 'saferide_state.dart';
 
 class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
-  final geocoder = GoogleMapsGeocoding(apiKey: GOOGLE_API_KEY);
+  final _geocoder = GoogleMapsGeocoding(apiKey: GOOGLE_API_KEY);
+  int _queueLength =
+      3; // can use firebase to retrieve this (need listener to yield states on change!)
   Prediction _currentPrediction;
 
   SaferideBloc() : super(SaferideInitialState());
@@ -25,7 +27,19 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       yield* _mapSaferideSelectionToState(event);
     } else if (event is SaferideSelectionTestEvent) {
       yield* _mapTestToState(event);
+    } else if (event is SaferideConfirmedEvent) {
+      yield* _mapConfirmToState(event);
     }
+  }
+
+  Stream<SaferideState> _mapConfirmToState(
+      SaferideConfirmedEvent event) async* {
+    // hardcode for now to test ui reactions
+    yield SaferideConfirmedState(
+        licensePlate: 'H32KHS',
+        driverName: 'ya boi',
+        queuePosition: _queueLength,
+        timeEstimate: 5);
   }
 
   Stream<SaferideState> _mapTestToState(
@@ -60,7 +74,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     }
 
     final GeocodingResponse responses =
-        await geocoder.searchByPlaceId(_currentPrediction.placeId);
+        await _geocoder.searchByPlaceId(_currentPrediction.placeId);
     if (responses.status != 'OK') {
       yield SaferideErrorState(
           status: responses.status, message: responses.errorMessage);
