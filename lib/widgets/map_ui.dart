@@ -77,7 +77,7 @@ class ShuttleMapState extends State<ShuttleMap> {
             },
             initialCameraPosition: kInitialPosition,
             compassEnabled: false,
-            mapToolbarEnabled: true,
+            mapToolbarEnabled: false,
             cameraTargetBounds: CameraTargetBounds(rpiBounds),
             minMaxZoomPreference: MinMaxZoomPreference(14.0, 18.0),
             rotateGesturesEnabled: true,
@@ -90,7 +90,7 @@ class ShuttleMapState extends State<ShuttleMap> {
             trafficEnabled: false,
             polylines: _polylines,
             markers: _markers,
-            zoomControlsEnabled: true,
+            zoomControlsEnabled: false,
             onCameraMove: (position) {
               currentZoom = position.zoom;
               mapBloc.add(MapMoveEvent(zoomLevel: currentZoom));

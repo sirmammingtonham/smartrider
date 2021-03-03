@@ -34,8 +34,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _scheduleBloc = BlocProvider.of<ScheduleBloc>(context)
-      ..add(ScheduleInitEvent());
+    _scheduleBloc = BlocProvider.of<ScheduleBloc>(context);
   }
 
   @override

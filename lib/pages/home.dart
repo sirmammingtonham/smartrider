@@ -4,14 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
-import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
-import 'package:smartrider/data/repository/shuttle_repository.dart';
-import 'package:smartrider/data/repository/bus_repository.dart';
 
 // custom widget imports
 import 'package:smartrider/widgets/map_ui.dart';
@@ -53,8 +49,10 @@ class _HomePageState extends State<_HomePage>
   @override
   void initState() {
     super.initState();
-    _panelController = new PanelController();
-    _tabController = new TabController(vsync: this, length: 2);
+    _panelController = PanelController();
+    _tabController = TabController(vsync: this, length: 2);
+    BlocProvider.of<ScheduleBloc>(context).add(ScheduleInitEvent(
+        panelController: _panelController, tabController: _tabController));
   }
 
   /// Builds the map and the schedule dropdown based on dynamic data.
@@ -62,27 +60,8 @@ class _HomePageState extends State<_HomePage>
   Widget build(BuildContext context) {
     /// Height of the stop schedules when open
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
-    return Material(
-      child: MultiBlocProvider(
-          providers: [
-            BlocProvider<SaferideBloc>(
-              create: (context) => SaferideBloc(),
-            ),
-            BlocProvider<MapBloc>(
-                create: (context) => MapBloc(
-                    saferideBloc: BlocProvider.of<SaferideBloc>(context),
-                    prefsBloc: BlocProvider.of<PrefsBloc>(context),
-                    busRepo: BusRepository(),
-                    shuttleRepo: ShuttleRepository())),
-            BlocProvider<ScheduleBloc>(
-              create: (context) => ScheduleBloc(
-                  mapBloc: BlocProvider.of<MapBloc>(context),
-                  busRepo: BusRepository(),
-                  panelController: _panelController,
-                  tabController: _tabController),
-            ),
-          ],
-          child: SlidingUpPanel(
+    return 
+          SlidingUpPanel(
               // sliding panel (body is the background, panelBuilder is the actual panel)
               controller: _panelController,
               maxHeight: _panelHeightOpen,
@@ -122,7 +101,7 @@ class _HomePageState extends State<_HomePage>
               ]),
               panel: PanelPage(
                 panelController: _panelController,
-              ))),
+              ),
     );
   }
 }
