@@ -30,7 +30,25 @@ class SmartriderMap extends StatelessWidget {
       @required SaferideState saferideState,
       @required MapState mapState}) {
     Widget viewButton;
-    Widget locationButton;
+    Widget locationButton = Positioned(
+      right: 20.0,
+      bottom: saferideState is SaferideSelectionState ? 160.0 : 120.0,
+      child: FloatingActionButton(
+        child: Icon(
+          Icons.gps_fixed,
+          color: Theme.of(context).brightness == Brightness.light
+              ? Colors.black87
+              : Colors.white70,
+        ),
+        backgroundColor: Theme.of(context).brightness == Brightness.light
+            ? Colors.white
+            : null,
+        onPressed: () {
+          BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
+        },
+        heroTag: "scrollToLocButton",
+      ),
+    );
     GoogleMap map = GoogleMap(
       onMapCreated: (controller) {
         BlocProvider.of<MapBloc>(context).updateController(context, controller);
@@ -82,32 +100,11 @@ class SmartriderMap extends StatelessWidget {
           heroTag: "mapViewChangeButton",
         ),
       );
-      locationButton = Positioned(
-        right: 20.0,
-        bottom: 120.0,
-        child: FloatingActionButton(
-          child: Icon(
-            Icons.gps_fixed,
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.black87
-                : Colors.white70,
-          ),
-          backgroundColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : null,
-          onPressed: () {
-            BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
-          },
-          heroTag: "scrollToLocButton",
-        ),
-      );
     }
 
-    return Stack(alignment: Alignment.topCenter, children: <Widget>[
-      map,
-      viewButton ?? Container(),
-      locationButton ?? Container()
-    ]);
+    return Stack(
+        alignment: Alignment.topCenter,
+        children: <Widget>[map, viewButton ?? Container(), locationButton]);
   }
 
   @override

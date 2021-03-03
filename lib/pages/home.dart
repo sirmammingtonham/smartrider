@@ -12,8 +12,9 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/util/multi_bloc_builder.dart';
 
 // custom widget imports
-import 'package:smartrider/widgets/map_ui.dart';
+import 'package:smartrider/widgets/map_widget.dart';
 import 'package:smartrider/widgets/search_bar.dart';
+import 'package:smartrider/widgets/saferide_status_widget.dart';
 import 'package:smartrider/pages/sliding_panel_page.dart';
 
 /// Default page that is displayed once the user logs in.
@@ -41,8 +42,6 @@ class _HomePage extends StatefulWidget {
 /// Builds the current instance of the home page.
 class _HomePageState extends State<_HomePage>
     with SingleTickerProviderStateMixin {
-  final SmartriderMap _mapView = SmartriderMap();
-  final SearchBar _searchBar = SearchBar();
   PanelController _panelController; // Lets the user control the stop tabs
   TabController _tabController;
   // The height of the tab when the user is viewing the shuttle and bus stops
@@ -91,8 +90,11 @@ class _HomePageState extends State<_HomePage>
         ),
         // stack the search bar widget over the map ui
         body: Stack(children: <Widget>[
-          _mapView,
-          _searchBar,
+          SmartriderMap(),
+          SearchBar(),
+          saferideState is SaferideSelectionState
+              ? SaferideStatusWidget()
+              : Container()
         ]),
         panel: PanelPage(
           panelController: _panelController,
