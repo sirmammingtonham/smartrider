@@ -13,12 +13,9 @@ import 'package:smartrider/widgets/shuttle_schedules/shuttle_unavailable.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_timeline.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
 
-
 class PanelPage extends StatefulWidget {
   final PanelController panelController;
-  PanelPage(
-      {Key key, @required this.panelController})
-      : super(key: key);
+  PanelPage({Key key, @required this.panelController}) : super(key: key);
   @override
   PanelPageState createState() => PanelPageState();
 }
@@ -29,20 +26,43 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
     Tab(icon: Icon(Icons.airport_shuttle)),
   ];
 
-  ScheduleBloc _scheduleBloc;
-
   @override
   void initState() {
     super.initState();
-    _scheduleBloc = BlocProvider.of<ScheduleBloc>(context);
   }
 
-  @override
-  void dispose() {
-    _scheduleBloc.close();
-    super.dispose();
+  Widget panelAppBar(bool isBus, PanelController panelController,
+      TabController tabController, List<Widget> tabs) {
+    return AppBar(
+      centerTitle: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      title: Text(isBus ? 'Bus Schedules' : 'Shuttle Schedules'),
+      leading: IconButton(
+        icon: Icon(Icons.arrow_downward),
+        onPressed: () {
+          panelController.animatePanelToPosition(0);
+        },
+      ),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.arrow_downward),
+          onPressed: () {
+            panelController.animatePanelToPosition(0);
+          },
+        )
+      ],
+      bottom: TabBar(
+        unselectedLabelColor: Colors.white.withOpacity(0.3),
+        indicatorColor: Colors.white,
+        controller: tabController,
+        tabs: tabs,
+      ),
+    );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,17 +74,23 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
           builder: (context, state) {
             if (state is ScheduleTimelineState) {
               return Scaffold(
-                appBar: panelAppBar(state.isBus, _scheduleBloc.panelController,
-                    _scheduleBloc.tabController, _tabs),
+                appBar: panelAppBar(
+                    state.isBus,
+                    BlocProvider.of<ScheduleBloc>(context).panelController,
+                    BlocProvider.of<ScheduleBloc>(context).tabController,
+                    _tabs),
                 body: TabBarView(
-                  controller: _scheduleBloc.tabController,
+                  controller:
+                      BlocProvider.of<ScheduleBloc>(context).tabController,
                   children: <Widget>[
                     BusTimeline(
-                      panelController: _scheduleBloc.panelController,
+                      panelController: BlocProvider.of<ScheduleBloc>(context)
+                          .panelController,
                       busTables: state.busTables,
                     ),
                     ShuttleTimeline(
-                        panelController: _scheduleBloc.panelController),
+                        panelController: BlocProvider.of<ScheduleBloc>(context)
+                            .panelController),
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(
@@ -79,10 +105,14 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
               );
             } else if (state is ScheduleTableState) {
               return Scaffold(
-                appBar: panelAppBar(state.isBus, _scheduleBloc.panelController,
-                    _scheduleBloc.tabController, _tabs),
+                appBar: panelAppBar(
+                    state.isBus,
+                    BlocProvider.of<ScheduleBloc>(context).panelController,
+                    BlocProvider.of<ScheduleBloc>(context).tabController,
+                    _tabs),
                 body: TabBarView(
-                  controller: _scheduleBloc.tabController,
+                  controller:
+                      BlocProvider.of<ScheduleBloc>(context).tabController,
                   children: <Widget>[
                     // ShuttleTable(),
 
@@ -106,37 +136,4 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
           },
         ));
   }
-}
-
-Widget panelAppBar(bool isBus, PanelController panelController,
-    TabController tabController, List<Widget> tabs) {
-  return AppBar(
-    centerTitle: true,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(20),
-      ),
-    ),
-    title: Text(isBus ? 'Bus Schedules' : 'Shuttle Schedules'),
-    leading: IconButton(
-      icon: Icon(Icons.arrow_downward),
-      onPressed: () {
-        panelController.animatePanelToPosition(0);
-      },
-    ),
-    actions: <Widget>[
-      IconButton(
-        icon: Icon(Icons.arrow_downward),
-        onPressed: () {
-          panelController.animatePanelToPosition(0);
-        },
-      )
-    ],
-    bottom: TabBar(
-      unselectedLabelColor: Colors.white.withOpacity(0.3),
-      indicatorColor: Colors.white,
-      controller: tabController,
-      tabs: tabs,
-    ),
-  );
 }

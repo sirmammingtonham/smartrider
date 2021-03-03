@@ -174,6 +174,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     return super.close();
   }
 
+  GoogleMapController get controller => _controller;
+
   updateController(BuildContext context, GoogleMapController controller) {
     _controller = controller;
     _controller.setMapStyle(Theme.of(context).brightness == Brightness.dark
@@ -194,16 +196,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       yield* _mapUpdateRequestedToState();
     } else if (event is MapTypeChangeEvent) {
       _isBus = !_isBus;
-      if (event.zoomLevel != null) {
-        _zoomLevel = event.zoomLevel;
-      }
       yield* _mapUpdateRequestedToState();
     } else if (event is MapSaferideSelectionEvent) {
       _saferideDest = event.coord;
       scrollToLocation(_saferideDest);
       yield* _mapSaferideSelectionToState(event);
     } else if (event is MapMoveEvent) {
-      yield* _mapMoveToState(event.zoomLevel);
+      _zoomLevel = event.zoomLevel;
+      yield* _mapMoveToState();
     } else {
       yield MapErrorState();
     }
@@ -293,11 +293,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         isBus: _isBus);
   }
 
-  Stream<MapState> _mapMoveToState(double zoomLevel) async* {
+  Stream<MapState> _mapMoveToState() async* {
     yield MapLoadedState(
         polylines: _currentPolylines,
         markers:
-            _getMarkerClusters(zoomLevel).followedBy(_currentMarkers).toSet(),
+            _getMarkerClusters(_zoomLevel).followedBy(_currentMarkers).toSet(),
         isBus: _isBus);
   }
 
@@ -461,11 +461,16 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     BusStopSimplified stop;
     //TODO: get bus direction id
     try {
-      stop = _busRoutes[update.routeId + '-185']
-          .forwardStops[update.currentStopSequence];
-    } catch (error) {
-      stop = _busRoutes[update.routeId + '-185']
-          .reverseStops[update.currentStopSequence];
+      try {
+        stop = _busRoutes[update.routeId + '-185']
+            .forwardStops[update.currentStopSequence];
+      } catch (error) {
+        stop = _busRoutes[update.routeId + '-185']
+            .reverseStops[update.currentStopSequence];
+      }
+    } catch (e) {
+      print(e); // need to update gtfs database
+      return 0.0;
     }
 
     double lat1 = stop.stopLat;

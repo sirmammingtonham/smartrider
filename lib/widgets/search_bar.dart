@@ -1,7 +1,6 @@
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/util/multi_bloc_builder.dart';
 
@@ -43,8 +42,6 @@ class SearchBarState extends State<SearchBar> {
       topBarDist; // Distance between top of phone bezel & top search bar //TODO: use fraction instead of hard coded value
   String name;
   String role;
-  SaferideBloc saferideBloc;
-  AuthenticationBloc authBloc;
 
   SearchBarState();
 
@@ -52,21 +49,11 @@ class SearchBarState extends State<SearchBar> {
   void initState() {
     super.initState();
 
-    saferideBloc = BlocProvider.of<SaferideBloc>(context);
-    authBloc = BlocProvider.of<AuthenticationBloc>(context);
-
     if (Platform.isAndroid) {
       topBarDist = 30.0;
     } else {
       topBarDist = 45.0;
     }
-  }
-
-  @override
-  void dispose() {
-    saferideBloc.close();
-    authBloc.close();
-    super.dispose();
   }
 
   void _showAutocomplete() async {
@@ -82,14 +69,14 @@ class SearchBarState extends State<SearchBar> {
     );
 
     if (p != null) {
-      saferideBloc.add(SaferideSelectionEvent(prediction: p));
+      BlocProvider.of<SaferideBloc>(context).add(SaferideSelectionEvent(prediction: p));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocBuilder(
-      blocs: [saferideBloc, authBloc],
+      blocs: [BlocProvider.of<SaferideBloc>(context), BlocProvider.of<AuthenticationBloc>(context)],
       builder: (context, states) {
         final saferideState = states.get<SaferideState>();
         final authState = states.get<AuthenticationState>();
@@ -126,7 +113,7 @@ class SearchBarState extends State<SearchBar> {
                           trailing: IconButton(
                             icon: Icon(Icons.cancel),
                             onPressed: () {
-                              saferideBloc.add(SaferideNoEvent());
+                              BlocProvider.of<SaferideBloc>(context).add(SaferideNoEvent());
                             },
                           ),
                           onTap: () {
@@ -167,7 +154,8 @@ class SearchBarState extends State<SearchBar> {
                 Expanded(
                     child: ListTile(
                         title: const Text('Test saferide call to union'),
-                        onTap: () => saferideBloc.add(SaferideSelectionTestEvent()))),
+                        onTap: () =>
+                            BlocProvider.of<SaferideBloc>(context).add(SaferideSelectionTestEvent()))),
                 // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
                 //     PlacesAutocompleteField(
                 //   apiKey:

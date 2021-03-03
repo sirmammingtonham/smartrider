@@ -7,7 +7,9 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
+import 'package:smartrider/util/multi_bloc_builder.dart';
 
 // custom widget imports
 import 'package:smartrider/widgets/map_ui.dart';
@@ -39,6 +41,8 @@ class _HomePage extends StatefulWidget {
 /// Builds the current instance of the home page.
 class _HomePageState extends State<_HomePage>
     with SingleTickerProviderStateMixin {
+  final SmartriderMap _mapView = SmartriderMap();
+  final SearchBar _searchBar = SearchBar();
   PanelController _panelController; // Lets the user control the stop tabs
   TabController _tabController;
   // The height of the tab when the user is viewing the shuttle and bus stops
@@ -51,57 +55,69 @@ class _HomePageState extends State<_HomePage>
     super.initState();
     _panelController = PanelController();
     _tabController = TabController(vsync: this, length: 2);
+    BlocProvider.of<MapBloc>(context).add(MapInitEvent());
     BlocProvider.of<ScheduleBloc>(context).add(ScheduleInitEvent(
         panelController: _panelController, tabController: _tabController));
   }
+
+  Widget _slidingPanel(SaferideState saferideState, MapState mapState) =>
+      SlidingUpPanel(
+        controller: _panelController,
+        maxHeight: _panelHeightOpen,
+        minHeight: _panelHeightClosed,
+        parallaxEnabled: true,
+        renderPanelSheet: false,
+        backdropEnabled: true,
+        parallaxOffset: .1,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20.0),
+        ),
+        collapsed: AppBar(
+          centerTitle: true,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(18.0),
+            ),
+          ),
+          leading: Icon(Icons.arrow_upward),
+          title: Text(mapState is MapLoadedState && !mapState.isBus
+              ? 'Shuttle Schedules'
+              : 'Bus Schedules'),
+          actions: <Widget>[
+            Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: Icon(Icons.arrow_upward))
+          ],
+        ),
+        // stack the search bar widget over the map ui
+        body: Stack(children: <Widget>[
+          _mapView,
+          _searchBar,
+        ]),
+        panel: PanelPage(
+          panelController: _panelController,
+        ),
+      );
 
   /// Builds the map and the schedule dropdown based on dynamic data.
   @override
   Widget build(BuildContext context) {
     /// Height of the stop schedules when open
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
-    return 
-          SlidingUpPanel(
-              // sliding panel (body is the background, panelBuilder is the actual panel)
-              controller: _panelController,
-              maxHeight: _panelHeightOpen,
-              minHeight: _panelHeightClosed,
-              parallaxEnabled: true,
-              renderPanelSheet: false,
-              backdropEnabled: true,
-              parallaxOffset: .1,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(20.0),
-              ),
-              collapsed: AppBar(
-                centerTitle: true,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(18.0),
-                  ),
-                ),
-                leading: Icon(Icons.arrow_upward),
-                title: BlocBuilder<MapBloc, MapState>(
-                    builder: (context, state) => Text(
-                        state is MapLoadedState && !state.isBus
-                            ? 'Shuttle Schedules'
-                            : 'Bus Schedules')),
-                actions: <Widget>[
-                  Padding(
-                      padding: const EdgeInsets.only(right: 12.0),
-                      child: Icon(Icons.arrow_upward))
-                ],
-              ),
-              // stack the search bar widget over the map ui
-              body: Stack(children: <Widget>[
-                ShuttleMap(
-                  key: mapState,
-                ),
-                SearchBar(),
-              ]),
-              panel: PanelPage(
-                panelController: _panelController,
-              ),
-    );
+    return MultiBlocBuilder(
+        blocs: [
+          BlocProvider.of<SaferideBloc>(context),
+          BlocProvider.of<MapBloc>(context)
+        ],
+        builder: (context, states) {
+          final saferideState = states.get<SaferideState>();
+          final mapState = states.get<MapState>();
+          if (saferideState is SaferideNoState) {
+            _panelController.show();
+          } else if (saferideState is SaferideSelectionState) {
+            _panelController.hide();
+          }
+          return _slidingPanel(saferideState, mapState);
+        });
   }
 }

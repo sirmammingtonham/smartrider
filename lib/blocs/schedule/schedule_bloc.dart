@@ -62,7 +62,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
 
   void _handleTabSelection() {
     if (_tabController.indexIsChanging && !_isChanging) {
-      mapBloc.add(MapTypeChangeEvent(zoomLevel: null));
+      mapBloc.add(MapTypeChangeEvent());
       add(ScheduleTypeChangeEvent());
     }
   }

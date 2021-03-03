@@ -44,7 +44,7 @@ dependencies:
   flutter_local_notifications: ^1.4.4+2
 
   #ui dependencies
-  sliding_up_panel: ^1.0.1
+  sliding_up_panel: ^1.0.2
   scrollable_positioned_list: ^0.1.8
   google_fonts: ^0.3.9
   cupertino_icons: ^0.1.2
