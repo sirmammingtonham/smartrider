@@ -69,14 +69,18 @@ class SearchBarState extends State<SearchBar> {
     );
 
     if (p != null) {
-      BlocProvider.of<SaferideBloc>(context).add(SaferideSelectionEvent(prediction: p));
+      BlocProvider.of<SaferideBloc>(context)
+          .add(SaferideSelectionEvent(prediction: p));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocBuilder(
-      blocs: [BlocProvider.of<SaferideBloc>(context), BlocProvider.of<AuthenticationBloc>(context)],
+      blocs: [
+        BlocProvider.of<SaferideBloc>(context),
+        BlocProvider.of<AuthenticationBloc>(context)
+      ],
       builder: (context, states) {
         final saferideState = states.get<SaferideState>();
         final authState = states.get<AuthenticationState>();
@@ -113,7 +117,8 @@ class SearchBarState extends State<SearchBar> {
                           trailing: IconButton(
                             icon: Icon(Icons.cancel),
                             onPressed: () {
-                              BlocProvider.of<SaferideBloc>(context).add(SaferideNoEvent());
+                              BlocProvider.of<SaferideBloc>(context)
+                                  .add(SaferideNoEvent());
                             },
                           ),
                           onTap: () {
@@ -121,6 +126,8 @@ class SearchBarState extends State<SearchBar> {
                           },
                         )
                       ]))));
+        } else if (saferideState is SaferideConfirmedState) {
+          return Container();
         } else {
           // print("something's wrong with auth bloc");
           return searchBar();
@@ -154,8 +161,8 @@ class SearchBarState extends State<SearchBar> {
                 Expanded(
                     child: ListTile(
                         title: const Text('Test saferide call to union'),
-                        onTap: () =>
-                            BlocProvider.of<SaferideBloc>(context).add(SaferideSelectionTestEvent()))),
+                        onTap: () => BlocProvider.of<SaferideBloc>(context)
+                            .add(SaferideSelectionTestEvent()))),
                 // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
                 //     PlacesAutocompleteField(
                 //   apiKey:

@@ -30,8 +30,16 @@ class SaferideSelectionTestEvent extends SaferideEvent {
 }
 
 // not sure what fields to add to this yet
+// probably should add some data class to store recent selection fields
 class SaferideConfirmedEvent extends SaferideEvent {
   const SaferideConfirmedEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class SaferideCancelEvent extends SaferideEvent {
+  const SaferideCancelEvent();
 
   @override
   List<Object> get props => [];

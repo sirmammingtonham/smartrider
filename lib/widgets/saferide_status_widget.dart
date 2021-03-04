@@ -102,7 +102,9 @@ class SaferideStatusWidget extends StatelessWidget {
                         subtitle: Text('Driver'),
                         trailing: Icon(Icons.call),
                       ),
-                      Divider(height: 0,),
+                      Divider(
+                        height: 0,
+                      ),
                       ListTile(
                         leading: Icon(Icons.drive_eta),
                         title: Text('Queue position: #${state.queuePosition}'),
@@ -120,7 +122,10 @@ class SaferideStatusWidget extends StatelessWidget {
                             style: TextStyle(fontSize: 15),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          BlocProvider.of<SaferideBloc>(context)
+                              .add(SaferideCancelEvent());
+                        },
                       )
                     ],
                   ),

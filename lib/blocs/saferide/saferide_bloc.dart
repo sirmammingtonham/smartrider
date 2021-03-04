@@ -29,7 +29,19 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       yield* _mapTestToState(event);
     } else if (event is SaferideConfirmedEvent) {
       yield* _mapConfirmToState(event);
+    } else if (event is SaferideCancelEvent) {
+      if (_cancelSaferide()) {
+        yield SaferideNoState();
+      } else {
+        yield SaferideErrorState(status: 'FAIL', message: 'Couldn\'t cancel');
+      }
     }
+  }
+
+  /// attempts to cancel saferide
+  /// true if successful, false if fail
+  bool _cancelSaferide() {
+    return true;
   }
 
   Stream<SaferideState> _mapConfirmToState(
