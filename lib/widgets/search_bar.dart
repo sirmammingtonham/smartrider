@@ -66,7 +66,7 @@ class SearchBarState extends State<SearchBar> {
                 child: Row(
                   children: <Widget>[
                     Showcase(
-                        key: two,
+                        key: showcaseSettings,
                         description: 'test',
                         child: IconButton(
                           icon: Icon(SR_Icons.Settings),
@@ -94,7 +94,7 @@ class SearchBarState extends State<SearchBar> {
                       inputDecoration: null,
                     )),
                     Showcase(
-                      key: three,
+                      key: showcaseProfile,
                       description: 'another one',
                       shapeBorder: CircleBorder(),
                       child: CircleAvatar(
