@@ -138,7 +138,7 @@ class MapUI extends StatelessWidget {
         bottom: 190.0,
         child: Showcase(
           key: showcaseViewChange,
-          description: 'hahah',
+          description: 'Tap to see shuttles or buses',
           shapeBorder: CircleBorder(),
           child: FloatingActionButton(
             child: Icon(
@@ -167,7 +167,7 @@ class MapUI extends StatelessWidget {
         bottom: 120.0,
         child: Showcase(
           key: showcaseLocation,
-          description: 'vincent dumb',
+          description: 'Tap to see your location',
           shapeBorder: CircleBorder(),
           child: FloatingActionButton(
             child: Icon(

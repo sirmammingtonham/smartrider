@@ -24,7 +24,7 @@ GlobalKey showcaseProfile = GlobalKey();
 GlobalKey showcaseSlidingPanel = GlobalKey();
 GlobalKey showcaseViewChange = GlobalKey();
 GlobalKey showcaseLocation = GlobalKey();
-GlobalKey six = GlobalKey();
+GlobalKey showcaseSearch = GlobalKey();
 
 /// Default page that is displayed once the user logs in.
 class HomePage extends StatelessWidget {
@@ -127,6 +127,11 @@ class _HomePageState extends State<_HomePage>
                 onTargetClick: () {
                   _panelController.open();
                 },
+                shapeBorder: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(18.0),
+                  ),
+                ),
                 child: AppBar(
                   centerTitle: true,
                   shape: RoundedRectangleBorder(

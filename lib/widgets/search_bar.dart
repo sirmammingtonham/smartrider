@@ -67,7 +67,7 @@ class SearchBarState extends State<SearchBar> {
                   children: <Widget>[
                     Showcase(
                         key: showcaseSettings,
-                        description: 'test',
+                        description: 'Tap to see settings',
                         child: IconButton(
                           icon: Icon(SR_Icons.Settings),
                           onPressed: () {
@@ -95,7 +95,7 @@ class SearchBarState extends State<SearchBar> {
                     )),
                     Showcase(
                       key: showcaseProfile,
-                      description: 'another one',
+                      description: 'Tap to see your profile',
                       shapeBorder: CircleBorder(),
                       child: CircleAvatar(
                         backgroundColor: Theme.of(context).buttonColor,
