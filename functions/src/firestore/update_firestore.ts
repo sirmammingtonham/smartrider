@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import * as functions from "firebase-functions";
 import * as gtfs from "gtfs";
 import * as gtfs_timetable from "gtfs-to-html";
 import * as models from "./firestore_types";
@@ -7,8 +8,7 @@ import * as config from "../setup/gtfs_config.json";
 import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
 import { collection, subcollection, set, all, remove } from "typesaurus";
 import { genShapeGeoJSON } from "../helpers/bus_util";
-import { zipObject, zip } from "lodash";
-
+import { zipObject, zip, isNumber } from "lodash";
 import * as fs from "fs";
 
 admin.initializeApp({
@@ -103,10 +103,10 @@ const parseRoutes = async (db: any) => {
   const stops = await await db.all(`SELECT * FROM stops;`);
 
   function multiDimensionalUnique(arr: any[]) {
-    var uniques = [];
-    var itemsFound: models.Map<boolean> = {};
-    for (var i = 0, l = arr.length; i < l; i++) {
-      var stringified = JSON.stringify(arr[i]);
+    const uniques = [];
+    const itemsFound: models.Map<boolean> = {};
+    for (let i = 0, l = arr.length; i < l; i++) {
+      const stringified = JSON.stringify(arr[i]);
       if (itemsFound[stringified]) {
         continue;
       }
@@ -301,8 +301,8 @@ const flattenTimetable = async (table: any) => {
   const timestamp_list: number[] = [];
   // flatten the object in column major style
   for (let i = 0; i < table.stops[0].trips.length; i++) {
-    for (let j = 0; j < table.stops.length; j++) {
-      const stop = table.stops[j].trips[i];
+    for (const entry of table.stops) {
+      const stop = entry.trips[i];
       // stop_list.push({
       //   arrival_time: stop.arrival_timestamp,
       //   stop_id: stop.stop_id,
@@ -513,7 +513,7 @@ const clearFirestore = async () => {
       (doc: any) => {
         return remove(coll, doc.ref.id);
       },
-      { concurrency: 1000 }
+      { concurrency: 500 }
     );
   }
   console.timeEnd("clearFirestore");
@@ -535,29 +535,68 @@ const createIndexes = async (db: any) => {
 
 const generateDB = async () => {
   // setup sqlite middle man
-  // await gtfs.import(config);
+  await gtfs.import(config);
   await gtfs.openDb(config);
   const db = await gtfs.getDb();
-  // await createIndexes(db);
+  await createIndexes(db);
 
   // do the firestore stuff
-  // await clearFirestore();
+  await clearFirestore();
   return Promise.all([
-    // parseAgency(db),
-    // parseCalendar(db),
-    // parseRoutes(db),
-    // parseStops(db),
-    // parsePolylines(),
-    // parseShapes(db),
-    // parseTrips(db),
+    parseAgency(db),
+    parseCalendar(db),
+    parseRoutes(db),
+    parseStops(db),
+    parsePolylines(),
+    parseShapes(db),
+    parseTrips(db),
     parseTimetables(),
     // parseTest(),
   ]);
 };
 
-console.time("generateDB");
-generateDB()
-  .then(() => {
-    console.timeEnd("generateDB");
-  })
-  .catch((error) => console.error(error));
+
+export const refreshDataBase = functions.pubsub.schedule('0 3 * * *')  // run at 3:00 am everyday eastern time
+    .timeZone('America/New_York')
+    .onRun((context) => {
+        const db = admin.firestore();
+
+        const enddates: number[] = [];
+
+        db.collection("routes").get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                const end_date = doc.get('end_date');
+                if (isNumber(end_date)) {
+                    enddates.push(end_date);
+                }
+                else {
+                    console.log("error bruh");
+                }
+            });
+
+            enddates.sort();
+
+            const currentDate = new Date();
+            const dd = String(currentDate.getDate()).padStart(2, '0');
+            const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const yyyy = currentDate.getFullYear();
+            const today: number = +(yyyy + mm + dd);
+
+            if (enddates[0] <= today) { //update needed
+                // generateDB().then(() => console.log("update successful")).catch((error) => {
+                //     console.log(error);
+                // });   // uncomment this to refresh db
+                console.log("update needed");
+            }
+            else {  //update not needed
+                console.log("no update needed");
+            }
+        }).catch((error) => console.log(error));
+    });
+
+// console.time("generateDB");
+// generateDB()
+//   .then(() => {
+//     console.timeEnd("generateDB");
+//   })
+//   .catch((error) => console.error(error));

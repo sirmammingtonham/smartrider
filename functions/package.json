@@ -17,7 +17,7 @@
     "@turf/turf": "^5.1.6",
     "axios": "^0.21.1",
     "firebase-admin": "^9.3.0",
-    "firebase-functions": "^3.11.0",
+    "firebase-functions": "^3.13.2",
     "geojson": "^0.5.0",
     "geojson-dissolve": "^3.1.0",
     "gtfs": "^2.0.5",
@@ -25,6 +25,7 @@
     "js-base64": "^3.5.2",
     "laneify": "^0.3.1",
     "lodash": "^4.17.20",
+    "moment": "^2.29.1",
     "typesaurus": "^6.2.0"
   },
   "devDependencies": {
