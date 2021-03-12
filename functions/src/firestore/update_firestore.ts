@@ -583,10 +583,9 @@ export const refreshDataBase = functions.pubsub.schedule('0 3 * * *')  // run at
             const today: number = +(yyyy + mm + dd);
 
             if (enddates[0] <= today) { //update needed
-                // generateDB().then(() => console.log("update successful")).catch((error) => {
-                //     console.log(error);
-                // });   // uncomment this to refresh db
-                console.log("update needed");
+                generateDB().then(() => console.log("update successful")).catch((error) => {
+                    console.log(error);
+                });   
             }
             else {  //update not needed
                 console.log("no update needed");
