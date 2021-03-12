@@ -59,6 +59,8 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
       home: ShowCaseWidget(
         builder:
             Builder(builder: (context) => WelcomeScreen(homePage: HomePage())),
+        autoPlay: true,
+        autoPlayDelay: Duration(seconds: 10),
       ),
     );
   } else {

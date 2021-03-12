@@ -12,6 +12,8 @@ import 'package:smartrider/widgets/shuttle_schedules/shuttle_table.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_timeline.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
 import 'package:smartrider/widgets/shuttle_schedules/shuttle_unavailable.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:smartrider/pages/home.dart';
 
 ///
 class PanelPage extends StatefulWidget {
@@ -45,7 +47,6 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
     _scheduleBloc.close();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +121,10 @@ Widget panelAppBar(bool isBus, PanelController panelController,
         top: Radius.circular(20),
       ),
     ),
-    title: Text(isBus ? 'Bus Schedules' : 'Shuttle Schedules'),
+    title: Showcase(
+        key: showcaseBusTab,
+        description: 'Tap this tooltip to view shuttle/bus schedules',
+        child: Text(isBus ? 'Bus Schedules' : 'Shuttle Schedules')),
     leading: IconButton(
       icon: Icon(Icons.arrow_downward),
       onPressed: () {

@@ -6,6 +6,7 @@ import 'package:smartrider/data/models/themes.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 // model imports
 import 'package:smartrider/data/models/shuttle/shuttle_route.dart';
@@ -44,6 +45,9 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
       };
       _sharedPrefs = await SharedPreferences.getInstance();
 
+      if (!_sharedPrefs.containsKey('firstTimeLoad')) {
+        _sharedPrefs.setBool('firstTimeLoad', false);
+      }
       if (!_sharedPrefs.containsKey('darkMode')) {
         _sharedPrefs.setBool('darkMode', false);
       }

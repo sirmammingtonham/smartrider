@@ -1,5 +1,6 @@
 // implementation imports
 import 'dart:async';
+import 'dart:ui';
 
 // ui imports
 import 'package:flutter/material.dart';
@@ -132,13 +133,24 @@ class MapUI extends StatelessWidget {
     return Stack(alignment: Alignment.topCenter, children: <Widget>[
       // Actual map
       googleMap,
-
+      Positioned(
+        right: 180,
+        bottom: 350,
+        child: Showcase(
+            key: showcaseMap,
+            title: "This is the map!",
+            description: 'Swipe to look around and pinch to zoom in/out',
+            child: SizedBox(
+              height: 400,
+              width: 300,
+            )),
+      ),
       Positioned(
         right: 20.0,
         bottom: 190.0,
         child: Showcase(
           key: showcaseViewChange,
-          description: 'Tap to see shuttles or buses',
+          description: 'Tap to switch between shuttles or buses',
           shapeBorder: CircleBorder(),
           child: FloatingActionButton(
             child: Icon(
