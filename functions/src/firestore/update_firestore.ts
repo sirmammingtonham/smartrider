@@ -15,6 +15,11 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
 });
 
+const runtimeOpts: functions.RuntimeOptions = {
+  timeoutSeconds: 540,
+  memory: "1GB",
+};
+
 // admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
 
 console.log("initialized");
@@ -556,7 +561,7 @@ const generateDB = async () => {
 };
 
 
-export const refreshDataBase = functions.pubsub.schedule('0 3 * * *')  // run at 3:00 am everyday eastern time
+export const refreshDataBase = functions.runWith(runtimeOpts).pubsub.schedule('0 3 * * *')  // run at 3:00 am everyday eastern time
     .timeZone('America/New_York')
     .onRun((context) => {
         const db = admin.firestore();
