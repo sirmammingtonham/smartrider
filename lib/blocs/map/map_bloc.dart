@@ -14,6 +14,7 @@ import 'package:fluster/fluster.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 
 // repository imports
 import 'package:smartrider/data/repository/bus_repository.dart';
@@ -92,10 +93,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final ShuttleRepository shuttleRepo;
   final BusRepository busRepo;
   final PrefsBloc prefsBloc;
+  final SaferideBloc saferideBloc;
 
-  bool _isBus;
   StreamSubscription _prefsStream;
+  StreamSubscription _saferideStream;
   double _zoomLevel = 14.0;
+  bool _isBus;
 
   Map<String, bool> _enabledShuttles = {};
   Map<String, bool> _enabledBuses = {};
@@ -110,6 +113,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   List<ShuttleStop> _shuttleStops = [];
   List<ShuttleUpdate> _shuttleUpdates = [];
   List<MapMarker> _mapMarkers = [];
+  LatLng _saferideDest;
 
   Set<Marker> _currentMarkers = <Marker>{};
   Set<Polyline> _currentPolylines = <Polyline>{};
@@ -121,10 +125,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   String _lightMapStyle;
   String _darkMapStyle;
 
+  final _updateRefreshDelay = const Duration(seconds: 3); // update every 3 sec
+  Timer _updateTimer;
+
   /// MapBloc named constructor
   MapBloc(
       {@required this.shuttleRepo,
       @required this.busRepo,
+      @required this.saferideBloc,
       @required this.prefsBloc})
       : super(MapLoadingState()) {
     _isBus = true;
@@ -147,13 +155,26 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
       }
     });
+    _saferideStream = saferideBloc.listen((saferideState) {
+      if (saferideState is SaferideSelectionState) {
+        add(MapSaferideSelectionEvent(coord: saferideState.destLatLng));
+      } else if (saferideState is SaferideNoState) {
+        scrollToCurrentLocation();
+        add(MapUpdateEvent(zoomLevel: _zoomLevel));
+        _updateTimer = Timer.periodic(_updateRefreshDelay,
+            (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+      }
+    });
   }
 
   @override
   Future<void> close() {
     _prefsStream.cancel();
+    _saferideStream.cancel();
     return super.close();
   }
+
+  GoogleMapController get controller => _controller;
 
   updateController(BuildContext context, GoogleMapController controller) {
     _controller = controller;
@@ -167,18 +188,22 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Stream<MapState> mapEventToState(MapEvent event) async* {
     if (event is MapInitEvent) {
       await _initMapElements();
+      _updateTimer = Timer.periodic(_updateRefreshDelay,
+          (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
       yield* _mapDataRequestedToState();
     } else if (event is MapUpdateEvent) {
       _zoomLevel = event.zoomLevel;
       yield* _mapUpdateRequestedToState();
     } else if (event is MapTypeChangeEvent) {
       _isBus = !_isBus;
-      if (event.zoomLevel != null) {
-        _zoomLevel = event.zoomLevel;
-      }
       yield* _mapUpdateRequestedToState();
+    } else if (event is MapSaferideSelectionEvent) {
+      _saferideDest = event.coord;
+      scrollToLocation(_saferideDest);
+      yield* _mapSaferideSelectionToState(event);
     } else if (event is MapMoveEvent) {
-      yield* _mapMoveToState(event.zoomLevel);
+      _zoomLevel = event.zoomLevel;
+      yield* _mapMoveToState();
     } else {
       yield MapErrorState();
     }
@@ -220,12 +245,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         isBus: _isBus);
   }
 
+  Stream<MapState> _mapSaferideSelectionToState(
+      MapSaferideSelectionEvent event) async* {
+    _updateTimer.cancel();
+    _currentPolylines.clear();
+    _currentMarkers.clear();
+    _mapMarkers.clear();
+    _currentMarkers.add(Marker(
+        icon: _shuttleStopIcon,
+        infoWindow: InfoWindow(title: "saferide dest test marker"),
+        markerId: MarkerId("saferide_dest"),
+        position: _saferideDest,
+        onTap: () {
+          _controller.animateCamera(
+            CameraUpdate.newCameraPosition(
+                CameraPosition(target: _saferideDest, zoom: 18, tilt: 50)),
+          );
+        }));
+
+    yield MapLoadedState(
+        polylines: _currentPolylines, markers: _currentMarkers, isBus: false);
+  }
+
   Stream<MapState> _mapUpdateRequestedToState() async* {
     if (_isBus) {
       _busUpdates = await busRepo.getUpdates;
     } else {
       if (_shuttleRoutes.isEmpty) {
-        print('getting shuttle stuff now');
         yield* _mapDataRequestedToState();
         return;
       }
@@ -247,17 +293,17 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         isBus: _isBus);
   }
 
-  Stream<MapState> _mapMoveToState(double zoomLevel) async* {
+  Stream<MapState> _mapMoveToState() async* {
     yield MapLoadedState(
         polylines: _currentPolylines,
         markers:
-            _getMarkerClusters(zoomLevel).followedBy(_currentMarkers).toSet(),
+            _getMarkerClusters(_zoomLevel).followedBy(_currentMarkers).toSet(),
         isBus: _isBus);
   }
 
   /// non-state related functions
   void scrollToCurrentLocation() async {
-    var currentLocation;
+    Position currentLocation;
     try {
       currentLocation = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.best);
@@ -265,7 +311,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       return;
     }
 
-    var loc = LatLng(currentLocation.latitude, currentLocation.longitude);
+    LatLng loc = LatLng(currentLocation.latitude, currentLocation.longitude);
 
     if (rpiBounds.contains(loc)) {
       _controller.animateCamera(
@@ -415,11 +461,16 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     BusStopSimplified stop;
     //TODO: get bus direction id
     try {
-      stop = _busRoutes[update.routeId + '-185']
-          .forwardStops[update.currentStopSequence];
-    } catch (error) {
-      stop = _busRoutes[update.routeId + '-185']
-          .reverseStops[update.currentStopSequence];
+      try {
+        stop = _busRoutes[update.routeId + '-185']
+            .forwardStops[update.currentStopSequence];
+      } catch (error) {
+        stop = _busRoutes[update.routeId + '-185']
+            .reverseStops[update.currentStopSequence];
+      }
+    } catch (e) {
+      print(e); // need to update gtfs database
+      return 0.0;
     }
 
     double lat1 = stop.stopLat;

@@ -30,3 +30,39 @@ subprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+//task copyJavadocsAndSources {
+//    inputs.files configurations.runtime
+//    outputs.dir "${buildDir}/download"
+//    doLast {
+//        def componentIds = configurations.runtime.incoming.resolutionResult.allDependencies.collect { it.selected.id }
+//        ArtifactResolutionResult result = dependencies.createArtifactResolutionQuery()
+//            .forComponents(componentIds)
+//            .withArtifacts(JvmLibrary, SourcesArtifact, JavadocArtifact)
+//            .execute()
+//        def sourceArtifacts = []
+//        result.resolvedComponents.each { ComponentArtifactsResult component ->
+//            Set<ArtifactResult> sources = component.getArtifacts(SourcesArtifact)
+//            println "Found ${sources.size()} sources for ${component.id}"
+//            sources.each { ArtifactResult ar ->
+//                if (ar instanceof ResolvedArtifactResult) {
+//                    sourceArtifacts << ar.file
+//                }
+//            }
+//        }
+//
+//        copy {
+//            from sourceArtifacts
+//            into "${buildDir}/download"
+//        }
+//    }
+//}
+
+//apply plugin: 'java'
+apply plugin: 'idea'
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}

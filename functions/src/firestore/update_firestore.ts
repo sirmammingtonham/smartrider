@@ -535,21 +535,21 @@ const createIndexes = async (db: any) => {
 
 const generateDB = async () => {
   // setup sqlite middle man
-  // await gtfs.import(config);
+  await gtfs.import(config);
   await gtfs.openDb(config);
   const db = await gtfs.getDb();
-  // await createIndexes(db);
+  await createIndexes(db);
 
   // do the firestore stuff
-  // await clearFirestore();
+  await clearFirestore();
   return Promise.all([
-    // parseAgency(db),
-    // parseCalendar(db),
-    // parseRoutes(db),
-    // parseStops(db),
-    // parsePolylines(),
-    // parseShapes(db),
-    // parseTrips(db),
+    parseAgency(db),
+    parseCalendar(db),
+    parseRoutes(db),
+    parseStops(db),
+    parsePolylines(),
+    parseShapes(db),
+    parseTrips(db),
     parseTimetables(),
     // parseTest(),
   ]);
