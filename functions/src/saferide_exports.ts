@@ -5,7 +5,6 @@
 import * as functions from "firebase-functions";
 import * as hypertrack from "./helpers/hypertrack_util";
 import * as admin from "firebase-admin";
-import * as firebase from "firebase-admin";
 
 admin.initializeApp(functions.config().firebase);
 const firestore = admin.firestore();
@@ -24,6 +23,7 @@ export const srOnOrderUpdate = functions.firestore
     const afterStatus = change.after.data().status;
 
     if (beforeStatus === "NEW" && afterStatus === "ACCEPTED") {
+      /////
       // await hypertrack.acceptOrder(change, context);
       console.log("acceptOrder: ", change, context);
     } else if (
@@ -35,6 +35,35 @@ export const srOnOrderUpdate = functions.firestore
       // await hypertrack.endRide(change, context);
     } else if (beforeStatus !== "CANCELLED" && afterStatus === "CANCELLED") {
       // await hypertrack.rejectRide(change, context);
+    }
+  });
+
+// Updates earliest order to accepted if a driver is available
+export const srOnDriverUpdate = functions.firestore
+  .document("drivers/{driverId}")
+  .onUpdate(async (change, _context) => {
+    const before = change.before.data();
+    const after = change.after.data();
+
+    if (before.available === false && after.available === true) {
+      console.log("Driver: " + after.device_id + " is now available");
+
+      const earliestOrderQuery = firestore
+        .collection("orders")
+        .orderBy("createdAt", "asc").limit(1);
+
+      // Changes status of order to accepted
+      // status = "accepted"
+      // driver = after
+      const snap = await earliestOrderQuery.get();
+      if (snap.docs.length > 0) {
+        const earliestOrderPath = snap.docs[0].ref.path;
+        const driverPath = change.after.ref.path;
+
+        await firestore.doc(driverPath).update({ available: false });
+        await firestore.doc(earliestOrderPath)
+          .update({ status: "ACCEPTED", driver: after });
+      }
     }
   });
 
@@ -53,32 +82,52 @@ export const srOnCreate = functions.firestore
     console.log(snap.data());
   });
 
-// export const createTest = functions
-//   .runWith(runtimeOpts)
-//   .https.onRequest((req, res) => {
-//     if (req.method !== "GET") {
-//       console.log("Invalid request!");
-//       res.status(400);
-//       return;
-//     }
+export const setDriver = functions
+  .runWith(runtimeOpts)
+  .https.onRequest(async (req, res) => {
+    if (req.method !== "GET") {
+      console.log("Invalid request!");
+      res.status(400);
+      return;
+    }
 
-//     // Add a new document in collection "orders"
-//     db.collection("orders").add({
-//       name: "ya boiIIIIiiii",
-//       vehicle: "Tesla Cybertruck",
-//       date: new Date()
-//     })
-//     .then(() => {
-//       console.log("Document successfully written!");
-//       res.status(200).json({ message: "Document successfully written!" });
-//     })
-//     .catch((error) => {
-//       console.error("Error writing document: ", error);
-//       res.status(500);
-//     });
-//   });
+    const docs = await firestore.collection("drivers").listDocuments();
+    await docs[0].update({ available: true });
+    res.send("changed driver!!!");
+  });
+
+export const createTest = functions
+  .runWith(runtimeOpts)
+  .https.onRequest(async (req, res) => {
+    if (req.method !== "GET") {
+      console.log("Invalid request!");
+      res.status(400);
+      return;
+    }
+
+    // Add a new document in collection "orders"
+
+
+    for (let i = 0; i < 20; i++) {
+      await db.collection("orders").add({
+        name: "ya boiIIIIiiii",
+        vehicle: "Tesla Cybertruck",
+        createdAt: new Date(1975 + 2 * i, (i % 12), 28 - i),
+        status: "NEW"
+      });
+    }
+    for (let i = 0; i < 3; i++) {
+      await db.collection("drivers").add({
+        id: `${145 * i + 234}`,
+        email: "joe@mama.org",
+        available: false
+      });
+    }
+    res.send("teststest");
+  });
 
 // http://localhost:5001/<your project name e.g. uber-for-x-58779>/us-central1/onTripUpdate
+// used by hypertrack to update order status, shouldn't get called from app
 export const srOnTripUpdate = functions
   .runWith(runtimeOpts)
   .https.onRequest(async (req, res) => {
@@ -135,4 +184,4 @@ export const createOrder = functions
   });
 
 // FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-const db = firebase.firestore();
+const db = admin.firestore();

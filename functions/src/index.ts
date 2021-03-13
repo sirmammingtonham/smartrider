@@ -1,8 +1,8 @@
-// import * as bus from "./bus_exports";
-// import * as saferide from "./saferide_exports";
+import * as bus from "./bus_exports";
+import * as saferide from "./saferide_exports";
 
 // // bus functions
-// export const helloWorld = bus.helloWorld;
+export const helloWorld = bus.helloWorld;
 // export const busRoutes = bus.busRoutes;
 // export const busTrips = bus.busTrips;
 // export const busStops = bus.busStops;
@@ -13,8 +13,11 @@
 // // export const srUpdateOrderStatus = saferide.srUpdateOrderStatus;
 // // export const srDelOrder = saferide.srDelOrder;
 // export const srOnTripUpdate = saferide.srOnTripUpdate;
-// export const srOnCreate = saferide.srOnCreate;
-// export const createTest = saferide.createTest;
+export const srOnCreate = saferide.srOnCreate;
+export const srOnOrderUpdate = saferide.srOnOrderUpdate;
+export const srOnDriverUpdate = saferide.srOnDriverUpdate;
+export const setDriver = saferide.setDriver;
+export const createTest = saferide.createTest;
 
 // import * as t from "./firestore/create_fs"
 
