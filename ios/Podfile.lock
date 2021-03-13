@@ -436,7 +436,7 @@ SPEC CHECKSUMS:
   FirebaseCoreDiagnostics: 770ac5958e1372ce67959ae4b4f31d8e127c3ac1
   FirebaseFirestore: adff4877869ca91a11250cc0989a6cd56bad163f
   FirebaseInstallations: 466c7b4d1f58fe16707693091da253726a731ed2
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_local_notifications: 9e4738ce2471c5af910d961a6b7eadcf57c50186
   geolocator: 1ae40084cc6c1586ce5ad12cfc3fd38c64d05f2f
   google_maps_flutter: c7f9c73576de1fbe152a227bfd6e6c4ae8088619
