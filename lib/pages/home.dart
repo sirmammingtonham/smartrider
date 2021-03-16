@@ -71,16 +71,13 @@ class _HomePageState extends State<_HomePage>
   }
 
   void startShowcase(PrefsLoadedState prefState, context) {
-    if (prefState.prefs.getBool('firstTimeLoad') == true) {
+    if (prefState.prefs.getBool('firstTimeLoad') == false) {
       ShowCaseWidget.of(context).startShowCase([
         showcaseSettings,
         showcaseProfile,
-        showcaseSlidingPanel,
         showcaseViewChange,
         showcaseLocation,
-        showcaseSearch,
-        showcaseBusTab,
-        showcaseMap
+        showcaseSlidingPanel
       ]);
       prefState.prefs.setBool('firstTimeLoad', false);
     }

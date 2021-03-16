@@ -153,6 +153,7 @@ class SearchBarState extends State<SearchBar> {
                 Showcase(
                     key: showcaseSettings,
                     description: 'Tap to see settings',
+                    shapeBorder: RoundedRectangleBorder(),
                     child: IconButton(
                       icon: Icon(SR_Icons.Settings),
                       onPressed: () {

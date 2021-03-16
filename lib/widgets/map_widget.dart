@@ -36,21 +36,25 @@ class SmartriderMap extends StatelessWidget {
     Widget locationButton = Positioned(
       right: 20.0,
       bottom: saferideState is SaferideSelectionState ? 160.0 : 120.0,
-      child: FloatingActionButton(
-        child: Icon(
-          Icons.gps_fixed,
-          color: Theme.of(context).brightness == Brightness.light
-              ? Colors.black87
-              : Colors.white70,
-        ),
-        backgroundColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.white
-            : null,
-        onPressed: () {
-          BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
-        },
-        heroTag: "scrollToLocButton",
-      ),
+      child: Showcase(
+          key: showcaseLocation,
+          description: 'Tap to see your location',
+          shapeBorder: CircleBorder(),
+          child: FloatingActionButton(
+            child: Icon(
+              Icons.gps_fixed,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.black87
+                  : Colors.white70,
+            ),
+            backgroundColor: Theme.of(context).brightness == Brightness.light
+                ? Colors.white
+                : null,
+            onPressed: () {
+              BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
+            },
+            heroTag: "scrollToLocButton",
+          )),
     );
     GoogleMap map = GoogleMap(
       onMapCreated: (controller) {
@@ -83,25 +87,29 @@ class SmartriderMap extends StatelessWidget {
       viewButton = Positioned(
         right: 20.0,
         bottom: 190.0,
-        child: FloatingActionButton(
-          child: Icon(
-            mapState is MapLoadedState && mapState.isBus
-                ? Icons.airport_shuttle
-                : Icons.directions_bus,
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.black87
-                : Theme.of(context).accentColor,
-          ),
-          backgroundColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : Colors.white70,
-          onPressed: () {
-            BlocProvider.of<MapBloc>(context).add(MapTypeChangeEvent());
-            BlocProvider.of<ScheduleBloc>(context)
-                .add(ScheduleTypeChangeEvent());
-          },
-          heroTag: "mapViewChangeButton",
-        ),
+        child: Showcase(
+            key: showcaseViewChange,
+            description: 'Tap to see shuttles or buses',
+            shapeBorder: CircleBorder(),
+            child: FloatingActionButton(
+              child: Icon(
+                mapState is MapLoadedState && mapState.isBus
+                    ? Icons.airport_shuttle
+                    : Icons.directions_bus,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black87
+                    : Theme.of(context).accentColor,
+              ),
+              backgroundColor: Theme.of(context).brightness == Brightness.light
+                  ? Colors.white
+                  : Colors.white70,
+              onPressed: () {
+                BlocProvider.of<MapBloc>(context).add(MapTypeChangeEvent());
+                BlocProvider.of<ScheduleBloc>(context)
+                    .add(ScheduleTypeChangeEvent());
+              },
+              heroTag: "mapViewChangeButton",
+            )),
       );
     }
 
