@@ -26,7 +26,7 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final int _numPages = 4;
+  final int _numPages = 5;
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
 
@@ -149,16 +149,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Image(
-                                image: AssetImage("assets/onboarding_images/onboarding_page2_1.png"),
+                                image: AssetImage("assets/onboarding_images/interactive_map.png"),
                                 height: 300.0,
-                                width: 150.0,
+                                width: 300.0
                                 ),
-                                Spacer(flex:1),
-                                Image( 
-                                  image: AssetImage("assets/onboarding_images/onboarding_page2_2.png"),
-                                  height: 300.0, 
-                                  width: 150.0,
-                                )
                               ]
                             ),
                             SizedBox(height: 50.0),
@@ -198,27 +192,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Image(
-                                image: AssetImage("assets/onboarding_images/onboarding_page3_1.png"),
+                                image: AssetImage("assets/onboarding_images/comprehensive_scheduling.png"),
                                 height: 300.0,
-                                width: 150.0,
+                                width: 300.0,
                                 ),
-                                Spacer(flex:1),
-                                Image( 
-                                  image: AssetImage("assets/onboarding_images/onboarding_page3_2.png"),
-                                  height: 300.0, 
-                                  width: 150.0,
-                                )
                               ]
                             ),
                             SizedBox(height: 50.0),
                             Center(
                               child: Text(
-                                'Comprehensive Schedules',
+                                'Comprehensive Scheduling',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Color(0xFF181c5b),
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 26.0,
+                                  fontSize: 22.0,
                                   height: 1.5,),
                               ),
                             ),
@@ -249,13 +237,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 Align(
                                   alignment: Alignment.bottomCenter,
                                   child: Container( 
-                                    decoration: BoxDecoration( 
-                                      border: Border.all(
-                                        width: 3,
-                                      ),
-                                    ),
-                                  child: Image.asset("assets/onboarding_images/rpi_stock_photo.png",   
-                                  height: 200.0,
+                                  child: Image.asset("assets/onboarding_images/request_transportation.png",   
+                                  height: 300.0,
                                   width: 300.0,
                                     ),
                                   ),
@@ -287,6 +270,49 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 )
                               )
                             ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(40.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Image(
+                                image: AssetImage("assets/onboarding_images/customizable_view.png"),
+                                height: 340.0,
+                                width: 300.0,
+                                ),
+                              ]
+                            ),
+                            SizedBox(height: 50.0),
+                            Center(
+                              child: Text(
+                                'Cuztomizable View',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF181c5b),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 26.0,
+                                  height: 1.5,),
+                              ),
+                            ),
+                            SizedBox(height: 15.0),
+                            Center(
+                              child: Text(
+                                "Conveniently choose which routes and stops are displayed on the map.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF181c5b),
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.5,
+                                )
+                              ),
+                            )
                           ],
                         ),
                       ),
