@@ -12,6 +12,9 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/util/multi_bloc_builder.dart';
 
+import 'package:smartrider/pages/home.dart';
+import 'package:showcaseview/showcaseview.dart';
+
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
   northeast: const LatLng(42.751583, -73.616713),

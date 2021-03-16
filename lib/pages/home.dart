@@ -72,7 +72,16 @@ class _HomePageState extends State<_HomePage>
 
   void startShowcase(PrefsLoadedState prefState, context) {
     if (prefState.prefs.getBool('firstTimeLoad') == true) {
-      ShowCaseWidget.of(context).startShowCase([showcaseSlidingPanel]);
+      ShowCaseWidget.of(context).startShowCase([
+        showcaseSettings,
+        showcaseProfile,
+        showcaseSlidingPanel,
+        showcaseViewChange,
+        showcaseLocation,
+        showcaseSearch,
+        showcaseBusTab,
+        showcaseMap
+      ]);
       prefState.prefs.setBool('firstTimeLoad', false);
     }
   }
@@ -142,18 +151,6 @@ class _HomePageState extends State<_HomePage>
   /// Builds the map and the schedule dropdown based on dynamic data.
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => ShowCaseWidget.of(context).startShowCase([
-              showcaseSettings,
-              showcaseProfile,
-              showcaseSlidingPanel,
-              showcaseViewChange,
-              showcaseLocation,
-              showcaseSearch,
-              showcaseBusTab,
-              showcaseMap
-            ]));
-
     /// Height of the stop schedules when open
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
     return MultiBlocBuilder(
