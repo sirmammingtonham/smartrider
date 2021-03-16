@@ -46,7 +46,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
       _sharedPrefs = await SharedPreferences.getInstance();
 
       if (!_sharedPrefs.containsKey('firstTimeLoad')) {
-        _sharedPrefs.setBool('firstTimeLoad', false);
+        _sharedPrefs.setBool('firstTimeLoad', true);
       }
       if (!_sharedPrefs.containsKey('darkMode')) {
         _sharedPrefs.setBool('darkMode', false);

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:showcaseview/showcaseview.dart';
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
@@ -16,6 +18,15 @@ import 'package:smartrider/widgets/map_widget.dart';
 import 'package:smartrider/widgets/search_bar.dart';
 import 'package:smartrider/widgets/saferide_status_widget.dart';
 import 'package:smartrider/pages/sliding_panel_page.dart';
+
+GlobalKey showcaseSettings = GlobalKey();
+GlobalKey showcaseProfile = GlobalKey();
+GlobalKey showcaseSlidingPanel = GlobalKey();
+GlobalKey showcaseViewChange = GlobalKey();
+GlobalKey showcaseLocation = GlobalKey();
+GlobalKey showcaseSearch = GlobalKey();
+GlobalKey showcaseBusTab = GlobalKey();
+GlobalKey showcaseMap = GlobalKey();
 
 /// Default page that is displayed once the user logs in.
 class HomePage extends StatelessWidget {
@@ -59,7 +70,15 @@ class _HomePageState extends State<_HomePage>
         panelController: _panelController, tabController: _tabController));
   }
 
-  Widget _slidingPanel(SaferideState saferideState, MapState mapState) =>
+  void startShowcase(PrefsLoadedState prefState, context) {
+    if (prefState.prefs.getBool('firstTimeLoad') == true) {
+      ShowCaseWidget.of(context).startShowCase([showcaseSlidingPanel]);
+      prefState.prefs.setBool('firstTimeLoad', false);
+    }
+  }
+
+  Widget _slidingPanel(SaferideState saferideState, MapState mapState,
+          PrefsState prefsState) =>
       SlidingUpPanel(
         controller: _panelController,
         maxHeight: _panelHeightOpen,
@@ -71,23 +90,41 @@ class _HomePageState extends State<_HomePage>
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20.0),
         ),
-        collapsed: AppBar(
-          centerTitle: true,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(18.0),
+        collapsed: Showcase(
+            key: showcaseSlidingPanel,
+            description: 'Tap this tooltip to view shuttle/bus schedules',
+            disposeOnTap: true,
+            onToolTipClick: () {
+              _panelController.open();
+            },
+            onTargetClick: () {
+              _panelController.open().then((_) => setState(() {
+                    ShowCaseWidget.of(context)
+                        .startShowCase([showcaseLocation]);
+                  }));
+            },
+            shapeBorder: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(18.0),
+              ),
             ),
-          ),
-          leading: Icon(Icons.arrow_upward),
-          title: Text(mapState is MapLoadedState && !mapState.isBus
-              ? 'Shuttle Schedules'
-              : 'Bus Schedules'),
-          actions: <Widget>[
-            Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: Icon(Icons.arrow_upward))
-          ],
-        ),
+            child: AppBar(
+              centerTitle: true,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(18.0),
+                ),
+              ),
+              leading: Icon(Icons.arrow_upward),
+              title: Text(mapState is MapLoadedState && !mapState.isBus
+                  ? 'Shuttle Schedules'
+                  : 'Bus Schedules'),
+              actions: <Widget>[
+                Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: Icon(Icons.arrow_upward))
+              ],
+            )),
         // stack the search bar widget over the map ui
         body: Stack(children: <Widget>[
           SmartriderMap(),
@@ -110,17 +147,31 @@ class _HomePageState extends State<_HomePage>
     return MultiBlocBuilder(
         blocs: [
           BlocProvider.of<SaferideBloc>(context),
-          BlocProvider.of<MapBloc>(context)
+          BlocProvider.of<MapBloc>(context),
+          BlocProvider.of<PrefsBloc>(context),
         ],
         builder: (context, states) {
           final saferideState = states.get<SaferideState>();
           final mapState = states.get<MapState>();
+          final prefState = states.get<PrefsState>();
           if (saferideState is SaferideNoState) {
             _panelController.show();
           } else if (saferideState is SaferideSelectionState) {
             _panelController.hide();
           }
-          return _slidingPanel(saferideState, mapState);
+          if (prefState is PrefsLoadingState) {
+            return Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          } else if (prefState is PrefsLoadedState) {
+            WidgetsBinding.instance
+                .addPostFrameCallback((_) => startShowcase(prefState, context));
+            return _slidingPanel(saferideState, mapState, prefState);
+          } else if (prefState is PrefsSavingState) {
+            return Center(child: CircularProgressIndicator());
+          } else {
+            return Center(child: Text("oh poops"));
+          }
         });
   }
 }
