@@ -13,6 +13,8 @@
 // // export const srUpdateOrderStatus = saferide.srUpdateOrderStatus;
 // // export const srDelOrder = saferide.srDelOrder;
 // export const srOnTripUpdate = saferide.srOnTripUpdate;
+// export const srOnCreate = saferide.srOnCreate;
+// export const createTest = saferide.createTest;
 
 // import * as t from "./firestore/create_fs"
 

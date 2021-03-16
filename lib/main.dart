@@ -4,9 +4,16 @@ import 'package:firebase_core/firebase_core.dart';
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
+import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
+import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
+
+// data repository imports
 import 'package:smartrider/data/repository/authentication_repository.dart';
+import 'package:smartrider/data/repository/bus_repository.dart';
+import 'package:smartrider/data/repository/shuttle_repository.dart';
 
 // page imports
 import 'package:smartrider/pages/welcome.dart';
@@ -41,6 +48,23 @@ class SmartRider extends StatelessWidget {
           aBloc.add(AuthenticationStarted());
           return aBloc;
         }),
+        BlocProvider<SaferideBloc>(
+          create: (context) => SaferideBloc(),
+        ),
+        BlocProvider<MapBloc>(
+            create: (context) => MapBloc(
+                saferideBloc: BlocProvider.of<SaferideBloc>(context),
+                prefsBloc: BlocProvider.of<PrefsBloc>(context),
+                busRepo: BusRepository(),
+                shuttleRepo: ShuttleRepository())),
+        BlocProvider<ScheduleBloc>(
+              create: (context) => ScheduleBloc(
+                  mapBloc: BlocProvider.of<MapBloc>(context),
+                  busRepo: BusRepository(),
+                  // panelController: _panelController,
+                  // tabController: _tabController
+                  ),
+            ),
       ],
       child: BlocBuilder<PrefsBloc, PrefsState>(
           builder: (context, state) => _buildWithTheme(context, state)),

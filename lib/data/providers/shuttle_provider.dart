@@ -37,18 +37,18 @@ class ShuttleProvider {
 
   /// Getter method to retrieve the list of routes
   Future<Map<String, ShuttleRoute>> getRoutes() async {
-  /// Returns a map that contains the bus id and its routes.
-  ///
-  /// Fetch 'routes' data from the JSON API and store in varaible 'response'.
-  /// If unable to retreive data, repsonse is set to null
-  /// New map is created to hold the shuttle id's and values.
-  /// Create a map instance where the keys and its values are computed
-  /// using a hashmap. Decode the data. 
-  /// Using json, the key is assigned by getting the 'name'
-  /// and the value is assigned to the routes of the shuttle
-  /// 
-  ///
-  ///     return routeMap;
+    /// Returns a map that contains the bus id and its routes.
+    ///
+    /// Fetch 'routes' data from the JSON API and store in varaible 'response'.
+    /// If unable to retreive data, repsonse is set to null
+    /// New map is created to hold the shuttle id's and values.
+    /// Create a map instance where the keys and its values are computed
+    /// using a hashmap. Decode the data.
+    /// Using json, the key is assigned by getting the 'name'
+    /// and the value is assigned to the routes of the shuttle
+    ///
+    ///
+    ///     return routeMap;
     var response = await fetch('routes');
     Map<String, ShuttleRoute> routeMap = response != null
         ? Map.fromIterable(
@@ -63,15 +63,15 @@ class ShuttleProvider {
 
   /// Getter method to retrieve the list of stops
   Future<List<ShuttleStop>> getStops() async {
-  /// Returns a list of shuttle stops.
-  ///
-  /// Fetch 'stops' data from JSON API and store in variable 'response'
-  /// If unable to retreive data, response is set equal to null. 
-  /// Create list to store data.
-  /// Decode the data and insert values into the list.
-  /// 
-  ///
-  ///     return stopsList;
+    /// Returns a list of shuttle stops.
+    ///
+    /// Fetch 'stops' data from JSON API and store in variable 'response'
+    /// If unable to retreive data, response is set equal to null.
+    /// Create list to store data.
+    /// Decode the data and insert values into the list.
+    ///
+    ///
+    ///     return stopsList;
     var response = await fetch('stops');
 
     List<ShuttleStop> stopsList = response != null
@@ -85,15 +85,15 @@ class ShuttleProvider {
 
   /// Getter method to retrieve the list of updated shuttles
   Future<List<ShuttleUpdate>> getUpdates() async {
-  /// Returns a list of shuttle updates.
-  ///
-  /// Fetch 'updates' data from JSON API and store in variable 'response'
-  /// If unable to retreive data, response is set equal to null. 
-  /// Create list to store data.
-  /// Decode the data and insert values into the list.
-  /// 
-  ///
-  ///     return updatesList;
+    /// Returns a list of shuttle updates.
+    ///
+    /// Fetch 'updates' data from JSON API and store in variable 'response'
+    /// If unable to retreive data, response is set equal to null.
+    /// Create list to store data.
+    /// Decode the data and insert values into the list.
+    ///
+    ///
+    ///     return updatesList;
     var response = await fetch('updates');
 
     List<ShuttleUpdate> updatesList = response != null
@@ -107,16 +107,16 @@ class ShuttleProvider {
 
   /// Getter method to retrieve the list of shuttle eta (estimated times of arrival)
   Future<List<ShuttleEta>> getEtas() async {
-  /// Returns a list of shuttle eta (estimated times of arriaval).
-  ///
-  /// Fetch 'eta' data from JSON API and store in variable 'response'
-  /// If unable to retreive data, response is set equal to null. 
-  /// Create empty list 'etas'
-  /// Store data in a map. 
-  /// Decode the in the map and trasfer contents in to etas list
-  /// 
-  /// 
-  ///     return etas;
+    /// Returns a list of shuttle eta (estimated times of arriaval).
+    ///
+    /// Fetch 'eta' data from JSON API and store in variable 'response'
+    /// If unable to retreive data, response is set equal to null.
+    /// Create empty list 'etas'
+    /// Store data in a map.
+    /// Decode the in the map and trasfer contents in to etas list
+    ///
+    ///
+    ///     return etas;
     var response = await fetch('eta');
     List<ShuttleEta> etas = [];
     Map<String, dynamic> etamap = response != null

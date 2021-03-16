@@ -21,9 +21,8 @@ part 'schedule_state.dart';
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final BusRepository busRepo;
   final MapBloc mapBloc;
-  final PanelController panelController;
-  final TabController tabController;
-  final VoidCallback homePageCallback;
+  PanelController _panelController;
+  TabController _tabController;
 
   bool _isBus;
   bool _isTimeline;
@@ -41,39 +40,29 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         'alarm_notif',
         'Channel for Alarm notification',
         icon: 'app_icon',
-
-        ///sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
         largeIcon: DrawableResourceAndroidBitmap('app_icon'),
       ),
       IOSNotificationDetails(
+          presentAlert: true, presentBadge: true, presentSound: true));
 
-          ///sound: 'a_long_cold_sting.wav',
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true));
-
-  ScheduleBloc(
-      {@required this.mapBloc,
-      @required this.busRepo,
-      @required this.panelController,
-      @required this.tabController,
-      @required this.homePageCallback})
+  ScheduleBloc({@required this.mapBloc, @required this.busRepo})
       : super(ScheduleInitialState()) {
     _notifications.initialize(
         InitializationSettings(AndroidInitializationSettings('app_icon'),
             IOSInitializationSettings()),
         onSelectNotification: _notificationSelected);
 
-    tabController.addListener(_handleTabSelection);
-
     _isBus = true;
     _isTimeline = true;
     _isChanging = false;
   }
 
+  PanelController get panelController => _panelController;
+  TabController get tabController => _tabController;
+
   void _handleTabSelection() {
-    if (tabController.indexIsChanging && !_isChanging) {
-      mapBloc.add(MapTypeChangeEvent(zoomLevel: null));
+    if (_tabController.indexIsChanging && !_isChanging) {
+      mapBloc.add(MapTypeChangeEvent());
       add(ScheduleTypeChangeEvent());
     }
   }
@@ -84,13 +73,13 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   Future _notificationSelected(String payload) async {
     var split = payload.split('/').map((coord) => double.tryParse(coord));
     LatLng loc = LatLng(split.first, split.last);
-    panelController.animatePanelToPosition(0);
+    _panelController.animatePanelToPosition(0);
     mapBloc.scrollToLocation(loc);
   }
 
   Future<void> scheduleBusAlarm(int secondsFromNow, TimetableStop stop) async {
     await _notifications.schedule(
-        0, //DateTime.now().millisecondsSinceEpoch // unique id? doesnt seem to do anything
+        DateTime.now().millisecondsSinceEpoch,
         'Your bus is almost here!',
         '${stop.stopName} is arriving soon!',
         DateTime.now().add(Duration(seconds: secondsFromNow)),
@@ -103,8 +92,8 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   Future<void> scheduleShuttleAlarm(
       int secondsFromNow, ShuttleStop stop) async {
     await _notifications.schedule(
-        0, //DateTime.now().millisecondsSinceEpoch // unique id? doesnt seem to do anything
-        'Your bus is almost here!',
+        DateTime.now().millisecondsSinceEpoch,
+        'Your shuttle is almost here!',
         '${stop.name} is arriving soon!',
         DateTime.now().add(Duration(seconds: secondsFromNow)),
         _platformChannelSpecifics,
@@ -115,6 +104,8 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
 
   Stream<ScheduleState> mapEventToState(ScheduleEvent event) async* {
     if (event is ScheduleInitEvent) {
+      _tabController = event.tabController..addListener(_handleTabSelection);
+      _panelController = event.panelController;
       // busRoutes = await busRepo.getRoutes;
       busTables = await busRepo.getTimetables;
       yield* _mapScheduleTimelineToState();
@@ -126,9 +117,8 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         yield* _mapScheduleTableToState();
       }
     } else if (event is ScheduleTypeChangeEvent) {
-      homePageCallback();
       _isChanging = true;
-      tabController.animateTo(_isBus ? 1 : 0);
+      _tabController.animateTo(_isBus ? 1 : 0);
       _isChanging = false;
       _isBus = !_isBus;
       if (_isTimeline) {
