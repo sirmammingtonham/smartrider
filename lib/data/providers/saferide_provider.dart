@@ -1,10 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Saferide models
+// saferide imports
+import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
+import 'package:smartrider/util/strings.dart';
+
+// saferide models
 import '../models/saferide/order.dart';
 
 class SaferideProvider {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final HypertrackViewsFlutter hypertrack =
+      HypertrackViewsFlutter(PUBLISHABLE_KEY);
 
   //fill in the fields specified in order.dart with the orders collection in the firebase
   Future<void> createOrder(Order order) async {
@@ -20,7 +26,8 @@ class SaferideProvider {
       'createdAt': order.createdAt,
       'updatedAt': order.updatedAt
     });
-    // .then((value) => print("Order successfully added."))
-    // .catchError((error) => print("Failed to add order: $error"));
   }
+
+  Stream<MovementStatus> subscribeToDeviceUpdates(String deviceId) =>
+      hypertrack.subscribeToDeviceUpdates(deviceId);
 }

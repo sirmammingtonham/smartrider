@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:smartrider/data/repository/saferide_repository.dart';
 import 'package:smartrider/util/bitmap_helpers.dart';
 
 // map imports
@@ -92,11 +93,13 @@ final LatLngBounds rpiBounds = LatLngBounds(
 class MapBloc extends Bloc<MapEvent, MapState> {
   final ShuttleRepository shuttleRepo;
   final BusRepository busRepo;
+  final SaferideRepository saferideRepo;
   final PrefsBloc prefsBloc;
   final SaferideBloc saferideBloc;
 
   StreamSubscription _prefsStream;
   StreamSubscription _saferideStream;
+  List<StreamSubscription> _srVehicleStreams;
   double _zoomLevel = 14.0;
   bool _isBus;
 
@@ -132,6 +135,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   MapBloc(
       {@required this.shuttleRepo,
       @required this.busRepo,
+      @required this.saferideRepo,
       @required this.saferideBloc,
       @required this.prefsBloc})
       : super(MapLoadingState()) {
@@ -190,6 +194,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await _initMapElements();
       _updateTimer = Timer.periodic(_updateRefreshDelay,
           (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+      _initSaferideTracking();
       yield* _mapDataRequestedToState();
     } else if (event is MapUpdateEvent) {
       _zoomLevel = event.zoomLevel;
@@ -299,6 +304,17 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         markers:
             _getMarkerClusters(_zoomLevel).followedBy(_currentMarkers).toSet(),
         isBus: _isBus);
+  }
+
+  void _initSaferideTracking() {
+    // TODO: pull all the active vehicles, use saferide repo to subscribe to updates,
+    //  create a listener for each subscription stream that adds a mapUpdate event
+    // to update position of safe ride vehicle markers
+    
+    // TODO after: need a good way of updating active vehicles so we don't
+    // have to call this function every time a new saferide comes online
+    // maybe we can subscribe to the firestore collection and listen for changes?
+    // too many mf listeners but better than polling every 3 seconds...
   }
 
   /// non-state related functions

@@ -13,6 +13,7 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 // data repository imports
 import 'package:smartrider/data/repository/authentication_repository.dart';
 import 'package:smartrider/data/repository/bus_repository.dart';
+import 'package:smartrider/data/repository/saferide_repository.dart';
 import 'package:smartrider/data/repository/shuttle_repository.dart';
 
 // page imports
@@ -55,7 +56,8 @@ class SmartRider extends StatelessWidget {
                 saferideBloc: BlocProvider.of<SaferideBloc>(context),
                 prefsBloc: BlocProvider.of<PrefsBloc>(context),
                 busRepo: BusRepository(),
-                shuttleRepo: ShuttleRepository())),
+                shuttleRepo: ShuttleRepository(),
+                saferideRepo: SaferideRepository())),
         BlocProvider<ScheduleBloc>(
               create: (context) => ScheduleBloc(
                   mapBloc: BlocProvider.of<MapBloc>(context),
