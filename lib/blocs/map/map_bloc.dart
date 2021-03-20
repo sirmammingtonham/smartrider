@@ -184,6 +184,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   @override
   Future<void> close() {
+    _updateTimer.cancel();
     _prefsBlocSub.cancel();
     _saferideBlocSub.cancel();
     _saferideUpdateSubs.values.forEach((sub) => sub.cancel());
@@ -249,17 +250,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _shuttleRoutes = await shuttleRepo.getRoutes;
       _shuttleStops = await shuttleRepo.getStops;
       _shuttleUpdates = await shuttleRepo.getUpdates;
+
+      if (!shuttleRepo.isConnected) {
+        _updateTimer.cancel();
+        yield MapErrorState(message: 'NETWORK ISSUE');
+        return;
+      }
+
       prefsBloc.add(InitActiveRoutesEvent(_shuttleRoutes.values
           .toList())); // update preferences with currently active routes
     }
 
     print('got the stuff in ${stopwatch.elapsed} seconds');
-
-    // bus repo should always be connected now because firestore
-    if (!_isBus && !shuttleRepo.isConnected) {
-      yield MapErrorState(message: 'NETWORK ISSUE');
-      return;
-    }
 
     _getEnabledMarkers();
     _getEnabledPolylines();

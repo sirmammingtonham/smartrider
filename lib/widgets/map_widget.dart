@@ -29,6 +29,15 @@ class SmartriderMap extends StatelessWidget {
       {@required BuildContext context,
       @required SaferideState saferideState,
       @required MapState mapState}) {
+
+    if (mapState is MapErrorState) {
+      // TODO: make it so there is an option to switch views in case only one is broken
+      // so basically just keep the viewbutton
+      return Center(
+        child: Text('${mapState.message}'),
+      );
+    }
+
     Widget viewButton;
     Widget locationButton = Positioned(
       right: 20.0,
