@@ -25,7 +25,8 @@ class Order {
       this.updatedAt});
 
   Order.fromDocument(doc) {
-    this.id = this.status = doc['status'];
+    this.id = doc['id'];
+    this.status = doc['status'];
     this.tripId = doc['trip_id'];
     this.pickup = LocationData.fromDocument(doc['pickup']);
     this.dropoff = doc['dropoff'];
