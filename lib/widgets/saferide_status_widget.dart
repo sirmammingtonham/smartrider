@@ -69,7 +69,7 @@ class SaferideStatusWidget extends StatelessWidget {
             )),
       ));
 
-  Widget _confirmedWidget(BuildContext context, SaferideConfirmedState state) =>
+  Widget _confirmedWidget(BuildContext context, SaferideAcceptedState state) =>
       Align(
           alignment: FractionalOffset.bottomCenter,
           child: FractionallySizedBox(
@@ -87,9 +87,9 @@ class SaferideStatusWidget extends StatelessWidget {
                       SizedBox(height: 5),
                       Center(
                         child: Text(
-                          state.timeEstimate < 1
+                          state.waitEstimate < 1
                               ? 'Now!'
-                              : '${state.timeEstimate} min${state.timeEstimate != 1 ? 's' : ''} away',
+                              : '${state.waitEstimate} min${state.waitEstimate != 1 ? 's' : ''} away',
                           style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
@@ -145,9 +145,9 @@ class SaferideStatusWidget extends StatelessWidget {
           // TODO: get this to animate, with a slide up from previous state
           if (saferideState is SaferideSelectionState) {
             return _selectionWidget(context);
-          } else if (saferideState is SaferideConfirmedState) {
+          } else if (saferideState is SaferideAcceptedState) {
             return _confirmedWidget(context, saferideState);
-          }
+          } 
           return Container();
         });
   }

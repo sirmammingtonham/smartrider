@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart' show required;
 import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
 
 import '../models/saferide/driver.dart';
@@ -7,7 +9,7 @@ import '../providers/saferide_provider.dart';
 class SaferideRepository {
   final _saferideProvider = SaferideProvider();
 
-  Future<void> createOrder(Order order) async =>
+  Future<Stream<DocumentSnapshot>> createOrder({@required Order order}) async =>
       _saferideProvider.createOrder(order);
 
   Future<Map<String, Driver>> get getDrivers async =>

@@ -93,7 +93,7 @@ class _HomePageState extends State<_HomePage>
           SmartriderMap(),
           SearchBar(),
           saferideState is SaferideSelectionState ||
-                  saferideState is SaferideConfirmedState
+                  saferideState is SaferideAcceptedState
               ? SaferideStatusWidget()
               : Container()
         ]),

@@ -170,7 +170,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     _saferideBlocSub = saferideBloc.listen((saferideState) {
       if (saferideState is SaferideSelectionState) {
-        add(MapSaferideSelectionEvent(coord: saferideState.destLatLng));
+        add(MapSaferideSelectionEvent(coord: saferideState.dropLatLng));
       } else if (saferideState is SaferideNoState) {
         scrollToCurrentLocation();
         add(MapUpdateEvent(zoomLevel: _zoomLevel));
