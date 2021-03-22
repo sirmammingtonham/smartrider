@@ -290,7 +290,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 CameraPosition(target: _saferideDest, zoom: 18, tilt: 50)),
           );
         }));
-    drawToCurrentLocation(event.coord);
+    await _drawToCurrentLocation(event.coord);
 
     _currentMarkers.addAll(_saferideUpdates.values
         .map((status) => _saferideVehicleToMarker(status)));
@@ -334,21 +334,25 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   /// non-state related functions
-  void drawToCurrentLocation(LatLng saferidelocation) async {
+  Future<void> _drawToCurrentLocation(LatLng destLocation,
+      {LatLng pickupLocation}) async {
     // draw line between saferide pickup and driver location
-    LatLng currentLocation;
-    try {
-      Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-          .then((loc) {
-        currentLocation = LatLng(loc.latitude, loc.longitude);
-        List<LatLng> twoPoints = [saferidelocation, currentLocation];
-        Polyline p =
-            Polyline(polylineId: PolylineId("saferide"), points: twoPoints, color: Colors.amber);
-        _currentPolylines.add(p);
-      });
-    } on PermissionDeniedException catch (_) {
-      return;
+    if (pickupLocation == null) {
+      try {
+        Position loc = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.best);
+        pickupLocation = LatLng(loc.latitude, loc.longitude);
+      } on PermissionDeniedException catch (_) {
+        return;
+      }
     }
+    List<LatLng> twoPoints = [pickupLocation, destLocation];
+    Polyline p = Polyline(
+        polylineId: PolylineId("saferide_to_dest"),
+        points: twoPoints,
+        color: Colors.amber);
+
+    _currentPolylines.add(p);
   }
 
   void scrollToCurrentLocation() async {
