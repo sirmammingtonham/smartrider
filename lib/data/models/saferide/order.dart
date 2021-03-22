@@ -1,15 +1,17 @@
 import 'package:flutter/foundation.dart';
-import 'package:smartrider/data/models/saferide/location_data.dart';
-import 'package:smartrider/data/models/backend/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'driver.dart';
 
 class Order {
   String id;
   String status;
   String tripId;
-  LocationData pickup;
-  LocationData dropoff;
-  User rider;
-  User driver;
+  GeoPoint pickup;
+  GeoPoint dropoff;
+  String
+      rider; // currently just email, TODO: add more stuff from the user's account like phone number, name, etc
+  Driver driver;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -24,10 +26,20 @@ class Order {
       this.createdAt,
       this.updatedAt});
 
-  Order.fromDocument(doc) {
-    this.id = this.status = doc['status'];
+  Order.fromSnapshot(QueryDocumentSnapshot snap) {
+    this.id = snap.id;
+
+    final doc = snap.data();
+    this.status = doc['status'];
+
     this.tripId = doc['trip_id'];
-    this.pickup = LocationData.fromDocument(doc['pickup']);
+    this.pickup = doc['pickup'];
     this.dropoff = doc['dropoff'];
+
+    this.rider = doc['rider'];
+    this.driver = doc['driver'];
+
+    this.createdAt = doc['created_at'];
+    this.updatedAt = doc['updated_at'];
   }
 }

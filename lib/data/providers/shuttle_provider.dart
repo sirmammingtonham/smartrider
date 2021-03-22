@@ -28,6 +28,7 @@ class ShuttleProvider {
       }
     } catch (error) {
       isConnected = false;
+      print(error);
     }
     //print("App has polled $type API: $isConnected");
     return response;
@@ -57,7 +58,7 @@ class ShuttleProvider {
             key: (json) => json['name'],
             value: (json) => ShuttleRoute.fromJson(json))
         : {};
-    // routeList.removeWhere((route) => route == null);
+
     return routeMap;
   }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -7,18 +8,30 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_webservice/geocoding.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:smartrider/data/models/saferide/driver.dart';
+import 'package:smartrider/data/repository/authentication_repository.dart';
+import 'package:smartrider/data/repository/saferide_repository.dart';
 import 'package:smartrider/util/strings.dart';
+import 'package:smartrider/data/models/saferide/order.dart';
 
 part 'saferide_event.dart';
 part 'saferide_state.dart';
 
 class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   final _geocoder = GoogleMapsGeocoding(apiKey: GOOGLE_API_KEY);
-  int _queueLength =
-      3; // can use firebase to retrieve this (need listener to yield states on change!)
+  final SaferideRepository saferideRepo;
+  final AuthRepository authRepo;
   Prediction _currentPrediction;
+  LatLng _currentPickupLatLng, _currentDropoffLatLng;
+  Driver _currentDriver;
 
-  SaferideBloc() : super(SaferideInitialState());
+  SaferideBloc({@required this.saferideRepo, @required this.authRepo})
+      : super(SaferideInitialState());
+
+  @override
+  Future<void> close() {
+    return super.close();
+  }
 
   Stream<SaferideState> mapEventToState(SaferideEvent event) async* {
     if (event is SaferideNoEvent) {
@@ -29,6 +42,13 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       yield* _mapTestToState(event);
     } else if (event is SaferideConfirmedEvent) {
       yield* _mapConfirmToState(event);
+    } else if (event is SaferideAcceptedEvent) {
+      yield SaferideAcceptedState(
+        licensePlate: event.licensePlate,
+        driverName: event.driverName,
+        queuePosition: event.queuePosition,
+        waitEstimate: event.waitEstimate
+      );
     } else if (event is SaferideCancelEvent) {
       if (_cancelSaferide()) {
         yield SaferideNoState();
@@ -46,17 +66,54 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
 
   Stream<SaferideState> _mapConfirmToState(
       SaferideConfirmedEvent event) async* {
-    // hardcode for now to test ui reactions
-    yield SaferideConfirmedState(
-        licensePlate: 'H32KHS',
-        driverName: 'ya boi',
-        queuePosition: _queueLength,
-        timeEstimate: 5);
+    //create order, listen to changes in snapshot, update display vars in state
+    if (_currentPickupLatLng != null && _currentDropoffLatLng != null) {
+      yield SaferideLoadingState();
+
+      final order = await saferideRepo.createOrder(
+          order: Order(
+        status: "NEW",
+        pickup: GeoPoint(
+            _currentPickupLatLng.latitude, _currentPickupLatLng.longitude),
+        dropoff: GeoPoint(
+            _currentDropoffLatLng.latitude, _currentDropoffLatLng.longitude),
+        rider: authRepo.getUser(),
+        createdAt: DateTime.now(),
+      ));
+
+      order.listen((DocumentSnapshot update) {
+        final order = update.data();
+        _currentDriver = Driver.fromDocument(order['driver']);
+
+        add(SaferideAcceptedEvent(
+            driverName: _currentDriver.name,
+            licensePlate: _currentDriver.licensePlate,
+            queuePosition: order['queue_position'],
+            waitEstimate: order['wait_estimate']));
+
+        // need to add condition to switch state if about to get picked up,
+        // can listen to change in order status
+      });
+
+      // TODO: in backend, need to update order queue positions on order update
+      // also update wait estimate
+      // might be an expensive op? idk hopefully not
+      // im thinking at most 10 ppl will be in queue at any time, so we'd only
+      // have like 10 write ops max whenever an order gets updated which im fine with
+
+      // hardcode for now to test ui reactions
+      yield SaferideAcceptedState(
+          licensePlate: 'H32KHS',
+          driverName: 'ya boi',
+          queuePosition: 3,
+          waitEstimate: 5);
+    } else {
+      yield SaferideErrorState(message: 'bruh', status: 'bruh');
+    }
   }
 
   Stream<SaferideState> _mapTestToState(
       SaferideSelectionTestEvent event) async* {
-    LatLng _currentPickupLatLng;
     String pickupDescription;
 
     try {
@@ -72,9 +129,9 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     yield SaferideSelectionState(
         pickupLatLng: _currentPickupLatLng,
         pickupDescription: pickupDescription,
-        destLatLng: event.testCoord,
-        destAddress: event.testAdr,
-        destDescription: event.testDesc);
+        dropLatLng: event.testCoord,
+        dropAddress: event.testAdr,
+        dropDescription: event.testDesc);
   }
 
   // TODO: add logic to calculate route, we want polylines at this point!
@@ -91,8 +148,9 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       yield SaferideErrorState(
           status: responses.status, message: responses.errorMessage);
     }
-    LatLng _currentPickupLatLng = event.pickupLatLng;
+
     String pickupDescription;
+    _currentPickupLatLng = event.pickupLatLng;
     if (_currentPickupLatLng == null) {
       try {
         Position currentLocation = await Geolocator.getCurrentPosition(
@@ -107,12 +165,14 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
 
     if (responses.results.isNotEmpty) {
       GeocodingResult r = responses.results[0];
+      _currentDropoffLatLng =
+          LatLng(r.geometry.location.lat, r.geometry.location.lng);
       yield SaferideSelectionState(
           pickupLatLng: _currentPickupLatLng,
           pickupDescription: pickupDescription,
-          destLatLng: LatLng(r.geometry.location.lat, r.geometry.location.lng),
-          destAddress: r.formattedAddress,
-          destDescription: _currentPrediction.description);
+          dropLatLng: _currentDropoffLatLng,
+          dropAddress: r.formattedAddress,
+          dropDescription: _currentPrediction.description);
     }
   }
 }

@@ -30,6 +30,11 @@ void main() async {
 }
 
 class SmartRider extends StatelessWidget {
+  final AuthRepository authRepo = AuthRepository();
+  final BusRepository busRepo = BusRepository();
+  final ShuttleRepository shuttleRepo = ShuttleRepository();
+  final SaferideRepository saferideRepo = SaferideRepository();
+  
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -44,28 +49,31 @@ class SmartRider extends StatelessWidget {
         ),
         BlocProvider<AuthenticationBloc>(create: (context) {
           AuthenticationBloc aBloc =
-              AuthenticationBloc(authRepository: AuthRepository());
+              AuthenticationBloc(authRepository: authRepo);
           aBloc.add(AuthenticationStarted());
           return aBloc;
         }),
         BlocProvider<SaferideBloc>(
-          create: (context) => SaferideBloc(),
+          create: (context) => SaferideBloc(
+            saferideRepo: saferideRepo,
+            authRepo: authRepo
+          ),
         ),
         BlocProvider<MapBloc>(
             create: (context) => MapBloc(
                 saferideBloc: BlocProvider.of<SaferideBloc>(context),
                 prefsBloc: BlocProvider.of<PrefsBloc>(context),
-                busRepo: BusRepository(),
-                shuttleRepo: ShuttleRepository(),
-                saferideRepo: SaferideRepository())),
+                busRepo: busRepo,
+                shuttleRepo: shuttleRepo,
+                saferideRepo: saferideRepo)),
         BlocProvider<ScheduleBloc>(
-              create: (context) => ScheduleBloc(
-                  mapBloc: BlocProvider.of<MapBloc>(context),
-                  busRepo: BusRepository(),
-                  // panelController: _panelController,
-                  // tabController: _tabController
-                  ),
-            ),
+          create: (context) => ScheduleBloc(
+            mapBloc: BlocProvider.of<MapBloc>(context),
+            busRepo: busRepo,
+            // panelController: _panelController,
+            // tabController: _tabController
+          ),
+        ),
       ],
       child: BlocBuilder<PrefsBloc, PrefsState>(
           builder: (context, state) => _buildWithTheme(context, state)),

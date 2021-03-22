@@ -3,10 +3,10 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:smartrider/data/repository/saferide_repository.dart';
 import 'package:smartrider/util/bitmap_helpers.dart';
 
 // map imports
+import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:fluster/fluster.dart';
@@ -20,11 +20,14 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 // repository imports
 import 'package:smartrider/data/repository/bus_repository.dart';
 import 'package:smartrider/data/repository/shuttle_repository.dart';
+import 'package:smartrider/data/repository/saferide_repository.dart';
 
 // model imports
 import 'package:smartrider/data/models/shuttle/shuttle_route.dart';
 import 'package:smartrider/data/models/shuttle/shuttle_stop.dart';
 import 'package:smartrider/data/models/shuttle/shuttle_update.dart';
+
+import 'package:smartrider/data/models/saferide/driver.dart';
 
 import 'package:smartrider/data/models/bus/bus_route.dart';
 import 'package:smartrider/data/models/bus/bus_shape.dart';
@@ -33,6 +36,7 @@ import 'package:smartrider/data/models/bus/bus_vehicle_update.dart';
 part 'map_event.dart';
 part 'map_state.dart';
 
+// TODO: Document this absolute fucking unit
 class MapMarker extends Clusterable {
   String id;
   LatLng position;
@@ -97,9 +101,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final PrefsBloc prefsBloc;
   final SaferideBloc saferideBloc;
 
-  StreamSubscription _prefsStream;
-  StreamSubscription _saferideStream;
-  List<StreamSubscription> _srVehicleStreams;
+  StreamSubscription _prefsBlocSub;
+  StreamSubscription _saferideBlocSub;
   double _zoomLevel = 14.0;
   bool _isBus;
 
@@ -115,7 +118,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Map<String, ShuttleRoute> _shuttleRoutes = {};
   List<ShuttleStop> _shuttleStops = [];
   List<ShuttleUpdate> _shuttleUpdates = [];
+
   List<MapMarker> _mapMarkers = [];
+
+  Map<String, Driver> _saferideDrivers = {};
+  Map<String, MovementStatus> _saferideUpdates = {};
+  Map<String, StreamSubscription<MovementStatus>> _saferideUpdateSubs = {};
   LatLng _saferideDest;
 
   Set<Marker> _currentMarkers = <Marker>{};
@@ -148,7 +156,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _lightMapStyle = string;
     });
 
-    _prefsStream = prefsBloc.listen((prefsState) {
+    _prefsBlocSub = prefsBloc.listen((prefsState) {
       if (prefsState is PrefsLoadedState) {
         _enabledShuttles = prefsState.shuttles;
         _enabledBuses = prefsState.buses;
@@ -159,22 +167,27 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
       }
     });
-    _saferideStream = saferideBloc.listen((saferideState) {
+
+    _saferideBlocSub = saferideBloc.listen((saferideState) {
       if (saferideState is SaferideSelectionState) {
-        add(MapSaferideSelectionEvent(coord: saferideState.destLatLng));
+        add(MapSaferideSelectionEvent(coord: saferideState.dropLatLng));
       } else if (saferideState is SaferideNoState) {
         scrollToCurrentLocation();
         add(MapUpdateEvent(zoomLevel: _zoomLevel));
-        _updateTimer = Timer.periodic(_updateRefreshDelay,
-            (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+        // i think the previous timer keeps going so this is redundant
+        // but need to make sure
+        // _updateTimer = Timer.periodic(_updateRefreshDelay,
+        //     (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
       }
     });
   }
 
   @override
   Future<void> close() {
-    _prefsStream.cancel();
-    _saferideStream.cancel();
+    _updateTimer.cancel();
+    _prefsBlocSub.cancel();
+    _saferideBlocSub.cancel();
+    _saferideUpdateSubs.values.forEach((sub) => sub.cancel());
     return super.close();
   }
 
@@ -194,7 +207,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await _initMapElements();
       _updateTimer = Timer.periodic(_updateRefreshDelay,
           (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
-      _initSaferideTracking();
       yield* _mapDataRequestedToState();
     } else if (event is MapUpdateEvent) {
       _zoomLevel = event.zoomLevel;
@@ -219,6 +231,16 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     Stopwatch stopwatch = new Stopwatch()..start();
 
+    if (_saferideUpdates.isEmpty) {
+      _saferideDrivers = await saferideRepo.getDrivers;
+      // _saferideUpdates = await saferideRepo.getDriverUpdates;
+
+      saferideRepo.getDriverUpdateSubscriptions.forEach((id, status) {
+        _saferideUpdateSubs[id] =
+            status.listen((status) => _saferideUpdates[id] = status);
+      });
+    }
+
     if (_isBus) {
       _busRoutes = await busRepo.getRoutes;
       _busShapes = await busRepo.getPolylines;
@@ -228,17 +250,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _shuttleRoutes = await shuttleRepo.getRoutes;
       _shuttleStops = await shuttleRepo.getStops;
       _shuttleUpdates = await shuttleRepo.getUpdates;
+
+      if (!shuttleRepo.isConnected) {
+        _updateTimer.cancel();
+        yield MapErrorState(message: 'NETWORK ISSUE');
+        return;
+      }
+
       prefsBloc.add(InitActiveRoutesEvent(_shuttleRoutes.values
           .toList())); // update preferences with currently active routes
     }
 
     print('got the stuff in ${stopwatch.elapsed} seconds');
-
-    // bus repo should always be connected now because firestore
-    if (!_isBus && !shuttleRepo.isConnected) {
-      yield MapErrorState(message: 'NETWORK ISSUE');
-      return;
-    }
 
     _getEnabledMarkers();
     _getEnabledPolylines();
@@ -268,6 +291,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           );
         }));
     drawToCurrentLocation(event.coord);
+
+    _currentMarkers.addAll(_saferideUpdates.values
+        .map((status) => _saferideVehicleToMarker(status)));
+
     yield MapLoadedState(
         polylines: _currentPolylines, markers: _currentMarkers, isBus: false);
   }
@@ -304,17 +331,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         markers:
             _getMarkerClusters(_zoomLevel).followedBy(_currentMarkers).toSet(),
         isBus: _isBus);
-  }
-
-  void _initSaferideTracking() {
-    // TODO: pull all the active vehicles, use saferide repo to subscribe to updates,
-    //  create a listener for each subscription stream that adds a mapUpdate event
-    // to update position of safe ride vehicle markers
-
-    // TODO after: need a good way of updating active vehicles so we don't
-    // have to call this function every time a new saferide comes online
-    // maybe we can subscribe to the firestore collection and listen for changes?
-    // too many mf listeners but better than polling every 3 seconds...
   }
 
   /// non-state related functions
@@ -428,6 +444,22 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         });
   }
 
+  Marker _saferideVehicleToMarker(MovementStatus status) {
+    LatLng position =
+        LatLng(status.location.latitude, status.location.longitude);
+    return Marker(
+        icon: _shuttleStopIcon, //TODO: get icon for drivers
+        infoWindow: InfoWindow(title: 'Safe Ride'),
+        markerId: MarkerId(status.deviceId),
+        position: position,
+        onTap: () {
+          _controller.animateCamera(
+            CameraUpdate.newCameraPosition(
+                CameraPosition(target: position, zoom: 18, tilt: 50)),
+          );
+        });
+  }
+
   // Marker _busStopToMarker(BusStop stop) {
   //   return Marker(
   //       icon: busStopIcon,
@@ -502,6 +534,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             .reverseStops[update.currentStopSequence];
       }
     } catch (e) {
+      print(update.routeId);
       print(e); // need to update gtfs database
       return 0.0;
     }
@@ -574,6 +607,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
       });
     }
+
+    // idk if we want saferides to only be visible when calling a saferide
+    // map is already hella cluttered, but i think ppl will want to know the relative positions of saferides
+    _currentMarkers.addAll(_saferideUpdates.values
+        .map((status) => _saferideVehicleToMarker(status)));
 
     return _currentMarkers;
   }
