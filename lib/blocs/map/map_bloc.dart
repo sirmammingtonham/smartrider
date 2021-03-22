@@ -267,7 +267,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 CameraPosition(target: _saferideDest, zoom: 18, tilt: 50)),
           );
         }));
-
+    drawToCurrentLocation(event.coord);
     yield MapLoadedState(
         polylines: _currentPolylines, markers: _currentMarkers, isBus: false);
   }
@@ -310,7 +310,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // TODO: pull all the active vehicles, use saferide repo to subscribe to updates,
     //  create a listener for each subscription stream that adds a mapUpdate event
     // to update position of safe ride vehicle markers
-    
+
     // TODO after: need a good way of updating active vehicles so we don't
     // have to call this function every time a new saferide comes online
     // maybe we can subscribe to the firestore collection and listen for changes?
@@ -318,6 +318,23 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   /// non-state related functions
+  void drawToCurrentLocation(LatLng saferidelocation) async {
+    // draw line between saferide pickup and driver location
+    LatLng currentLocation;
+    try {
+      Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+          .then((loc) {
+        currentLocation = LatLng(loc.latitude, loc.longitude);
+        List<LatLng> twoPoints = [saferidelocation, currentLocation];
+        Polyline p =
+            Polyline(polylineId: PolylineId("saferide"), points: twoPoints, color: Colors.amber);
+        _currentPolylines.add(p);
+      });
+    } on PermissionDeniedException catch (_) {
+      return;
+    }
+  }
+
   void scrollToCurrentLocation() async {
     Position currentLocation;
     try {
