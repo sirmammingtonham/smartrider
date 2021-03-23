@@ -22,7 +22,8 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   final SaferideRepository saferideRepo;
   final AuthRepository authRepo;
   Prediction _currentPrediction;
-  LatLng _currentPickupLatLng, _currentDropoffLatLng;
+  LatLng _currentPickupLatLng,
+      _currentDropoffLatLng = const LatLng(42.729280, -73.679056);
   Driver _currentDriver;
 
   SaferideBloc({@required this.saferideRepo, @required this.authRepo})
@@ -44,11 +45,10 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       yield* _mapConfirmToState(event);
     } else if (event is SaferideAcceptedEvent) {
       yield SaferideAcceptedState(
-        licensePlate: event.licensePlate,
-        driverName: event.driverName,
-        queuePosition: event.queuePosition,
-        waitEstimate: event.waitEstimate
-      );
+          licensePlate: event.licensePlate,
+          driverName: event.driverName,
+          queuePosition: event.queuePosition,
+          waitEstimate: event.waitEstimate);
     } else if (event is SaferideCancelEvent) {
       if (_cancelSaferide()) {
         yield SaferideNoState();
@@ -83,6 +83,9 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
 
       order.listen((DocumentSnapshot update) {
         final order = update.data();
+        print(update.data()['status']);
+        if (order['status'] == 'NEW') return;
+
         _currentDriver = Driver.fromDocument(order['driver']);
 
         add(SaferideAcceptedEvent(
