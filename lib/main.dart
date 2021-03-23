@@ -54,7 +54,7 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
         // locale: DevicePreview.locale(context), // Add the locale here
         // builder: DevicePreview.appBuilder,
         theme: state.theme,
-        home: WelcomeScreen(homePage: HomePage()));
+        home: state.firstLaunch ? OnboardingScreen() : WelcomeScreen(homePage: HomePage()));
   } else {
     return MaterialApp(home: CircularProgressIndicator());
   }
