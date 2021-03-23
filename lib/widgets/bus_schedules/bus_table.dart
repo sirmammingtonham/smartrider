@@ -1,15 +1,21 @@
 // ui dependencies
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:smartrider/data/models/bus/bus_timetable.dart';
+import 'package:smartrider/data/models/bus/bus_stop.dart';
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
+import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
 import 'package:smartrider/widgets/custom_sticky_table.dart';
+//import 'package:sticky_headers/sticky_headers.dart';
+//import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class BusTable extends StatefulWidget {
-  final Function containsFilter;
-  final Function jumpMap;
-  BusTable({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
+  final Map<String, BusTimetable> timetableMap;
+  BusTable({Key key, @required this.timetableMap}) : super(key: key);
+
   @override
   BusTableState createState() => BusTableState();
 }
@@ -20,6 +26,7 @@ class BusTableState extends State<BusTable>
     Tab(text: 'Route 87'),
     Tab(text: 'Route 286'),
     Tab(text: 'Route 289'),
+    Tab(text: 'Express Shuttle'),
   ];
   TabController _tabController;
 
@@ -39,6 +46,9 @@ class BusTableState extends State<BusTable>
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       TabBar(
+        indicatorColor: Theme.of(context).buttonColor,
+
+        //_getTabColor(_tabController),
         tabs: busTabs,
         // unselectedLabelColor: Colors.white.withOpacity(0.3),
         labelColor: Theme.of(context).brightness == Brightness.light
@@ -54,106 +64,87 @@ class BusTableState extends State<BusTable>
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            busList(0, this.widget.containsFilter, this.widget.jumpMap),
-            busList(1, this.widget.containsFilter, this.widget.jumpMap),
-            busList(2, this.widget.containsFilter, this.widget.jumpMap),
+            busList('87-185'),
+            busList('286-185'),
+            busList('289-185'),
+            busList('288-185'),
           ],
         ),
       )
     ]);
   }
 
-  @override
-  bool get wantKeepAlive => true;
-}
-
-_getTimeIndex(List<String> curTimeList) {
-  // TODO: update so it works with filter
-  // List curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
-  //             busTimeLists[_tabController.index-1];
-  var now = DateTime.now();
-  var f = DateFormat('H.m');
-  double min = double.maxFinite;
-  double curTime = double.parse(f.format(now));
-  double compTime;
-  String closest;
-  curTimeList.forEach((time) {
-    var t = time.replaceAll(':', '.');
-    compTime = double.tryParse(t.substring(0, t.length - 2));
-    if (compTime == null) return;
-    if (t.endsWith('pm')) {
-      compTime += 12.0;
+  Widget busList(String routeId) {
+    if (!this.widget.timetableMap.containsKey(routeId)) {
+      return BusUnavailable();
     }
-    if ((curTime - compTime).abs() < min) {
-      min = (curTime - compTime).abs();
-      closest = time;
-    }
-  });
-  return curTimeList.indexWhere((element) => element == closest);
-}
 
-Widget busList(int idx, Function _containsFilter, Function _jumpMap) {
-  var curStopList = busStopLists[idx];
-  var curTimeList = busTimeLists[idx];
-  return
-      // CustomStickyHeadersTable(
-      //   columnsLength: busStopLists[idx].length,
-      //   rowsLength:
-      //       (busTimeLists[idx].length / busStopLists[idx].length + 1).truncate(),
-      //   columnsTitleBuilder: (i) => Text(curStopList[i % curStopList.length][0]),
-      //   //rowsTitleBuilder: (i) => Text("Times:"),
-      //   contentCellBuilder: (i, j) => Text("6:30pm"),
-      //   legendCell: Text('Bus Stops'),
-      // );
+    final BusTimetable table = this.widget.timetableMap[routeId];
 
-      Scaffold(
-          body: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                      columnSpacing: 10,
-                      columns: List<DataColumn>.generate(
-                          busStopLists[idx].length,
-                          (index) => DataColumn(
-                                label: Flexible(
-                                    child: Text(
-                                  curStopList[index % curStopList.length][0],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )),
-                              )),
-                      rows: List<DataRow>.generate(
-                          (busTimeLists[idx].length / busStopLists[idx].length +
-                                  1)
-                              .truncate(),
-                          (index) => DataRow(
-                              cells: List<DataCell>.generate(
-                                  busStopLists[idx].length,
-                                  (datIdx) => DataCell(Text('6:30pm')))))))));
+    return Scaffold(
+        body: CustomStickyHeader(
+      columnsLength: table.numColumns,
+      rowsLength: table.numRows,
 
-  //Text(curTimeList[(index * busTimeLists[idx].length) + datIdx]))
-  // return ScrollablePositionedList.builder(
-  //   itemCount: busTimeLists[idx].length,
-  //   initialScrollIndex: _getTimeIndex(busTimeLists[idx]),
-  //   itemBuilder: (context, index) {
-  //     var curStopList = busStopLists[idx];
-  //     var curTimeList = busTimeLists[idx];
-  //     // if (!_containsFilter(curStopList, curTimeList, index) ||
-  //     //     curTimeList[index] == "- - - -") {
-  //     //   return null;
-  //     // }
-  //     return Card(
-  //       child: ListTile(
-  //         leading: Icon(Icons.directions_bus),
-  //         title: Text(curStopList[index % curStopList.length][0]),
-  //         subtitle: Text(curTimeList[index]),
-  //         trailing: Icon(Icons.arrow_forward),
-  //         onTap: () {
-  //           // _jumpMap(double.parse(curStopList[index % curStopList.length][1]),
-  //           //     double.parse(curStopList[index % curStopList.length][2]));
-  //         },
-  //       ),
-  //     );
-  //   },
-  // );
+      columnsTitleBuilder: (i) => Container(
+          alignment: Alignment.center,
+          width: 100,
+          height: 50,
+          child: SizedBox(
+            child: Text(table.stops[i].stopName,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold)),
+          )),
+      contentCellBuilder: (i, j) => Text(table.getTime(i, j)),
+      cellDimensions: CellDimensions.fixed(
+          contentCellWidth: 100,
+          contentCellHeight: 50,
+          stickyLegendWidth: 100,
+          stickyLegendHeight: 50),
+      // SingleChildScrollView(
+      //     scrollDirection: Axis.horizontal,
+      //     child:
+      //         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      //       SizedBox(
+      //         height: 5,
+      //       ),
+      //       Row(
+      //         mainAxisAlignment: MainAxisAlignment.start,
+      //         children: List.generate(
+      //           stops.length,
+      //           (index) => Container(
+      //               alignment: Alignment.center,
+      //               width: 102.7,
+      //               height: 50,
+      //               child: SizedBox(
+      //   child: Text(stops[index % stops.length].stopName,
+      //       textAlign: TextAlign.center,
+      //       style: TextStyle(fontWeight: FontWeight.bold)),
+      // )),
+      //         ),
+      //       ),
+      //       Flexible(
+      //         child: SingleChildScrollView(
+      //             scrollDirection: Axis.vertical,
+      //             child: DataTable(
+      //               columnSpacing: 50,
+      //               columns: List<DataColumn>.generate(
+      //                   stops.length,
+      //                   (colIdx) => DataColumn(
+      //                           label: Flexible(
+      //                         child: Text(times[colIdx]),
+      //                       ))),
+      //               rows: List<DataRow>.generate(
+      //                 (times.length / stops.length).truncate(),
+      //                 (rowIdx) => DataRow(
+      //                     cells: List<DataCell>.generate(
+      //                         stops.length,
+      //                         (colIdx) => DataCell(Text(
+      //                             times[rowIdx + 1 * stops.length + colIdx])))),
+      //               ),
+      //             )),
+      //       ),
+      //     ]))
+    ));
+  }
 }
