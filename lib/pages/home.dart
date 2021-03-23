@@ -76,6 +76,7 @@ class _HomePageState extends State<_HomePage>
       ShowCaseWidget.of(context).startShowCase([
         showcaseMap,
         showcaseSettings,
+        showcaseSearch,
         showcaseProfile,
         showcaseViewChange,
         showcaseLocation,
