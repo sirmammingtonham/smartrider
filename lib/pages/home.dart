@@ -74,6 +74,7 @@ class _HomePageState extends State<_HomePage>
     if (prefState.prefs.getBool('firstTimeLoad') == false) {
       ShowCaseWidget.of(context).startShowCase([
         showcaseSettings,
+        showcaseSearch,
         showcaseProfile,
         showcaseViewChange,
         showcaseLocation,
