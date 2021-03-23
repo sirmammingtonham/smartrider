@@ -1,6 +1,7 @@
 import * as moment from "moment";
 // trying to convert to axios becaues requests is deprecated
 import axios from "axios";
+import * as hypertrack from "hypertrack";
 import * as config from "../setup/keys.json";
 import { Base64 } from "js-base64";
 

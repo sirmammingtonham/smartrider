@@ -23,17 +23,21 @@ export const srOnOrderUpdate = functions.firestore
     const afterStatus = change.after.data().status;
 
     if (beforeStatus === "NEW" && afterStatus === "ACCEPTED") {
-      /////
       // await hypertrack.acceptOrder(change, context);
+      // TODO: add arrival estimate to order when status changes to accepted
+      // https://hypertrack.com/docs/references/#references-apis-trips
       console.log("acceptOrder: ", change, context);
     } else if (
       beforeStatus === "REACHED_PICKUP" &&
       afterStatus === "STARTED_RIDE"
     ) {
+      // TODO: add polyline to order, display on app
       // await hypertrack.startRide(change, context);
-    } else if (beforeStatus !== "COMPLETED" && afterStatus === "COMPLETED") {
+    } else if (beforeStatus !== "REACHED_DROPOFF" && afterStatus === "REACHED_DROPOFF") {
+      await change.after.ref.delete();
       // await hypertrack.endRide(change, context);
     } else if (beforeStatus !== "CANCELLED" && afterStatus === "CANCELLED") {
+      await change.after.ref.delete();
       // await hypertrack.rejectRide(change, context);
     }
   });
@@ -50,6 +54,7 @@ export const srOnDriverUpdate = functions.firestore
 
       const earliestOrderQuery = firestore
         .collection("orders")
+        .where("status", "==", "NEW")
         .orderBy("createdAt", "asc").limit(1);
 
       // Changes status of order to accepted

@@ -81,17 +81,18 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         createdAt: DateTime.now(),
       ));
 
-      order.listen((DocumentSnapshot update) {
+      order.listen((DocumentSnapshot update) async {
         final order = update.data();
         print(update.data()['status']);
         if (order['status'] == 'NEW') return;
 
         _currentDriver = Driver.fromDocument(order['driver']);
 
+        int queuePos = await saferideRepo.getOrderPosition(order: update);
         add(SaferideAcceptedEvent(
             driverName: _currentDriver.name,
             licensePlate: _currentDriver.licensePlate,
-            queuePosition: order['queue_position'],
+            queuePosition: queuePos,
             waitEstimate: order['wait_estimate']));
 
         // need to add condition to switch state if about to get picked up,

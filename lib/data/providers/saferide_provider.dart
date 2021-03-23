@@ -73,4 +73,15 @@ class SaferideProvider {
             .subscribeToDeviceUpdates(id)
             .skipWhile((status) => status.deviceId == null));
   }
+
+  Future<int> getOrderPosition(DocumentSnapshot snap) async {
+    String id = snap.id;
+    Query orders = firestore
+        .collection('orders')
+        .where('status', isEqualTo: 'NEW')
+        .orderBy('createdAt', descending: false);
+
+    final response = await orders.get();
+    return response.docs.map((doc) => doc.id).toList().indexOf(id);
+  }
 }

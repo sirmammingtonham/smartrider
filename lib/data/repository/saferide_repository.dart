@@ -26,4 +26,7 @@ class SaferideRepository {
 
   Map<String, Stream<MovementStatus>> get getDriverUpdateSubscriptions =>
       _saferideProvider.getDriverUpdateSubscriptions();
+
+  Future<int> getOrderPosition({@required DocumentSnapshot order}) async =>
+      _saferideProvider.getOrderPosition(order);
 }
