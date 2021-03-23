@@ -5,13 +5,17 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 // bloc stuff
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
-
+import 'package:smartrider/data/models/bus/pb/gtfs-realtime.pb.dart';
+import 'package:smartrider/util/multi_bloc_builder.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 // loading custom widgets and data
 import 'package:smartrider/widgets/shuttle_schedules/shuttle_timeline.dart';
+import 'package:showcaseview/showcaseview.dart';
 // import 'package:smartrider/widgets/shuttle_schedules/shuttle_table.dart';
 import 'package:smartrider/widgets/shuttle_schedules/shuttle_unavailable.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_timeline.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
+import 'package:smartrider/pages/home.dart';
 
 class PanelPage extends StatefulWidget {
   final PanelController panelController;
@@ -34,34 +38,46 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
   Widget panelAppBar(bool isBus, PanelController panelController,
       TabController tabController, List<Widget> tabs) {
     return AppBar(
-      centerTitle: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
+        centerTitle: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20),
+          ),
         ),
-      ),
-      title: Text(isBus ? 'Bus Schedules' : 'Shuttle Schedules'),
-      leading: IconButton(
-        icon: Icon(Icons.arrow_downward),
-        onPressed: () {
-          panelController.animatePanelToPosition(0);
-        },
-      ),
-      actions: <Widget>[
-        IconButton(
+        title: Text(isBus ? 'Bus Schedules' : 'Shuttle Schedules'),
+        leading: IconButton(
           icon: Icon(Icons.arrow_downward),
           onPressed: () {
             panelController.animatePanelToPosition(0);
           },
-        )
-      ],
-      bottom: TabBar(
-        unselectedLabelColor: Colors.white.withOpacity(0.3),
-        indicatorColor: Colors.white,
-        controller: tabController,
-        tabs: tabs,
-      ),
-    );
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.arrow_downward),
+            onPressed: () {
+              panelController.animatePanelToPosition(0);
+            },
+          )
+        ],
+        bottom: PreferredSize(
+          preferredSize: MediaQuery.of(context).size * 0.05,
+          child: Showcase(
+              key: showcaseTransportTab,
+              description: 'Swipe to look around and pinch to zoom in/out',
+              child: TabBar(
+                unselectedLabelColor: Colors.white.withOpacity(0.3),
+                indicatorColor: Colors.white,
+                controller: tabController,
+                tabs: tabs,
+              )),
+        ));
+  }
+
+  void startTimelineShowcase(PrefsLoadedState prefState, context) {
+    if (prefState.prefs.getBool('firstSlideUp') == false) {
+      ShowCaseWidget.of(context).startShowCase([showcaseBusTab]);
+      prefState.prefs.setBool('firstSlideUp', false);
+    }
   }
 
   @override
@@ -70,12 +86,20 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20.0),
         ),
-        child: BlocBuilder<ScheduleBloc, ScheduleState>(
-          builder: (context, state) {
-            if (state is ScheduleTimelineState) {
+        child: MultiBlocBuilder(
+          blocs: [
+            BlocProvider.of<ScheduleBloc>(context),
+            BlocProvider.of<PrefsBloc>(context),
+          ],
+          builder: (context, states) {
+            final scheduleState = states.get<ScheduleState>();
+            final prefState = states.get<PrefsState>();
+            if (scheduleState is ScheduleTimelineState) {
+              WidgetsBinding.instance.addPostFrameCallback(
+                  (_) => startTimelineShowcase(prefState, context));
               return Scaffold(
                 appBar: panelAppBar(
-                    state.isBus,
+                    scheduleState.isBus,
                     BlocProvider.of<ScheduleBloc>(context).panelController,
                     BlocProvider.of<ScheduleBloc>(context).tabController,
                     _tabs),
@@ -86,7 +110,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                     BusTimeline(
                       panelController: BlocProvider.of<ScheduleBloc>(context)
                           .panelController,
-                      busTables: state.busTables,
+                      busTables: scheduleState.busTables,
                     ),
                     ShuttleTimeline(
                         panelController: BlocProvider.of<ScheduleBloc>(context)
@@ -103,10 +127,10 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                   },
                 ),
               );
-            } else if (state is ScheduleTableState) {
+            } else if (scheduleState is ScheduleTableState) {
               return Scaffold(
                 appBar: panelAppBar(
-                    state.isBus,
+                    scheduleState.isBus,
                     BlocProvider.of<ScheduleBloc>(context).panelController,
                     BlocProvider.of<ScheduleBloc>(context).tabController,
                     _tabs),
@@ -116,7 +140,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                   children: <Widget>[
                     // ShuttleTable(),
 
-                    BusTable(timetableMap: state.busTables),
+                    BusTable(timetableMap: scheduleState.busTables),
                     ShuttleUnavailable(),
                   ],
                 ),

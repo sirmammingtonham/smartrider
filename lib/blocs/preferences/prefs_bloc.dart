@@ -48,6 +48,9 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
       if (!_sharedPrefs.containsKey('firstTimeLoad')) {
         _sharedPrefs.setBool('firstTimeLoad', true);
       }
+      if (!_sharedPrefs.containsKey('firstSlideUp')) {
+        _sharedPrefs.setBool('firstSlideUp', true);
+      }
       if (!_sharedPrefs.containsKey('darkMode')) {
         _sharedPrefs.setBool('darkMode', false);
       }

@@ -113,9 +113,23 @@ class SmartriderMap extends StatelessWidget {
       );
     }
 
-    return Stack(
-        alignment: Alignment.topCenter,
-        children: <Widget>[map, viewButton ?? Container(), locationButton]);
+    return Stack(alignment: Alignment.topCenter, children: <Widget>[
+      map,
+      Positioned(
+        right: 180,
+        bottom: 350,
+        child: Showcase(
+            key: showcaseMap,
+            title: "This is the map!",
+            description: 'Swipe to look around and pinch to zoom in/out',
+            child: SizedBox(
+              height: 400,
+              width: 300,
+            )),
+      ),
+      viewButton ?? Container(),
+      locationButton
+    ]);
   }
 
   @override

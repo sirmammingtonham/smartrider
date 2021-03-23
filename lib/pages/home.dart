@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+
 import 'package:flutter/scheduler.dart';
 import 'package:showcaseview/showcaseview.dart';
 // bloc imports
@@ -12,7 +12,7 @@ import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/util/multi_bloc_builder.dart';
-
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 // custom widget imports
 import 'package:smartrider/widgets/map_widget.dart';
 import 'package:smartrider/widgets/search_bar.dart';
@@ -26,6 +26,7 @@ GlobalKey showcaseViewChange = GlobalKey();
 GlobalKey showcaseLocation = GlobalKey();
 GlobalKey showcaseSearch = GlobalKey();
 GlobalKey showcaseBusTab = GlobalKey();
+GlobalKey showcaseTransportTab = GlobalKey();
 GlobalKey showcaseMap = GlobalKey();
 
 /// Default page that is displayed once the user logs in.
@@ -71,8 +72,9 @@ class _HomePageState extends State<_HomePage>
   }
 
   void startShowcase(PrefsLoadedState prefState, context) {
-    if (prefState.prefs.getBool('firstTimeLoad') == false) {
+    if (prefState.prefs.getBool('firstTimeLoad') == true) {
       ShowCaseWidget.of(context).startShowCase([
+        showcaseMap,
         showcaseSettings,
         showcaseProfile,
         showcaseViewChange,
@@ -98,17 +100,7 @@ class _HomePageState extends State<_HomePage>
         ),
         collapsed: Showcase(
             key: showcaseSlidingPanel,
-            description: 'Tap this tooltip to view shuttle/bus schedules',
-            disposeOnTap: true,
-            onToolTipClick: () {
-              _panelController.open();
-            },
-            onTargetClick: () {
-              _panelController.open().then((_) => setState(() {
-                    ShowCaseWidget.of(context)
-                        .startShowCase([showcaseLocation]);
-                  }));
-            },
+            description: 'Swipe up to view shuttle/bus schedules',
             shapeBorder: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(
                 top: Radius.circular(18.0),

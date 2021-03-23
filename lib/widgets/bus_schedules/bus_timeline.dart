@@ -8,6 +8,8 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/data/models/bus/bus_shape.dart';
 import 'package:smartrider/data/models/bus/bus_timetable.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:smartrider/pages/home.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
@@ -74,18 +76,22 @@ class BusTimelineState extends State<BusTimeline>
     /// Controls the format (tabs on top, list of bus stops on bottom).
     return Column(children: <Widget>[
       /// The tab bar displayed when the bus icon is selected.
-      TabBar(
-        indicatorColor: BUS_COLORS.values.toList()[_tabController.index],
-        isScrollable: true,
-        tabs: busTabs,
-        labelColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.black
-            : null,
-        unselectedLabelColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.black
-            : null,
-        controller: _tabController,
-      ),
+      Showcase(
+          key: showcaseBusTab,
+          description: 'Click on each tab to swap between bus\'s',
+          child: TabBar(
+            indicatorColor: BUS_COLORS.values.toList()[_tabController.index],
+            isScrollable: true,
+            tabs: busTabs,
+            labelColor: Theme.of(context).brightness == Brightness.light
+                ? Colors.black
+                : null,
+            unselectedLabelColor:
+                Theme.of(context).brightness == Brightness.light
+                    ? Colors.black
+                    : null,
+            controller: _tabController,
+          )),
 
       /// The list of bus stops to be displayed.
       Container(
