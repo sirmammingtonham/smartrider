@@ -147,7 +147,7 @@ class SaferideStatusWidget extends StatelessWidget {
             return _selectionWidget(context);
           } else if (saferideState is SaferideAcceptedState) {
             return _confirmedWidget(context, saferideState);
-          } 
+          }
           return Container();
         });
   }

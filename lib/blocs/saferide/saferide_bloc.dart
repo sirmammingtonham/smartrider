@@ -84,33 +84,23 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       order.listen((DocumentSnapshot update) async {
         final order = update.data();
         print(update.data()['status']);
-        if (order['status'] == 'NEW') return;
+        // if (order['status'] == 'NEW') return;
 
-        _currentDriver = Driver.fromDocument(order['driver']);
+        // _currentDriver = Driver.fromDocument(order['driver']);
 
-        int queuePos = await saferideRepo.getOrderPosition(order: update);
+        int queuePos = update.data()['queue_position'];
+        //await saferideRepo.getOrderPosition(order: update);
         add(SaferideAcceptedEvent(
-            driverName: _currentDriver.name,
-            licensePlate: _currentDriver.licensePlate,
-            queuePosition: queuePos,
-            waitEstimate: order['wait_estimate']));
+            driverName: _currentDriver?.name ?? '',
+            licensePlate: _currentDriver?.licensePlate ?? '',
+            queuePosition: queuePos ?? -1,
+            waitEstimate: order['wait_estimate'] ?? -1));
 
         // need to add condition to switch state if about to get picked up,
         // can listen to change in order status
       });
 
-      // TODO: in backend, need to update order queue positions on order update
-      // also update wait estimate
-      // might be an expensive op? idk hopefully not
-      // im thinking at most 10 ppl will be in queue at any time, so we'd only
-      // have like 10 write ops max whenever an order gets updated which im fine with
-
-      // hardcode for now to test ui reactions
-      yield SaferideAcceptedState(
-          licensePlate: 'H32KHS',
-          driverName: 'ya boi',
-          queuePosition: 3,
-          waitEstimate: 5);
+      // TODO: add state while waiting for saferide to pickup
     } else {
       yield SaferideErrorState(message: 'bruh', status: 'bruh');
     }

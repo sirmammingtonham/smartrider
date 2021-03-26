@@ -14,6 +14,7 @@ class Order {
   Driver driver;
   DateTime createdAt;
   DateTime updatedAt;
+  int queuePos;
 
   Order(
       {this.id,
@@ -24,7 +25,8 @@ class Order {
       @required this.rider,
       this.driver,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.queuePos});
 
   Order.fromSnapshot(QueryDocumentSnapshot snap) {
     this.id = snap.id;
@@ -39,7 +41,9 @@ class Order {
     this.rider = doc['rider'];
     this.driver = doc['driver'];
 
-    this.createdAt = doc['created_at'];
-    this.updatedAt = doc['updated_at'];
+    this.createdAt = doc['createdAt'];
+    this.updatedAt = doc['updatedAt'];
+
+    this.queuePos = doc['queue_position'];
   }
 }

@@ -5,6 +5,7 @@
 import * as functions from "firebase-functions";
 import * as hypertrack from "./helpers/hypertrack_util";
 import * as admin from "firebase-admin";
+import { order } from "typesaurus";
 
 admin.initializeApp(functions.config().firebase);
 const firestore = admin.firestore();
@@ -27,6 +28,7 @@ export const srOnOrderUpdate = functions.firestore
       // TODO: add arrival estimate to order when status changes to accepted
       // https://hypertrack.com/docs/references/#references-apis-trips
       console.log("acceptOrder: ", change, context);
+      await updateOrderEstimates();
     } else if (
       beforeStatus === "REACHED_PICKUP" &&
       afterStatus === "STARTED_RIDE"
@@ -39,6 +41,23 @@ export const srOnOrderUpdate = functions.firestore
     } else if (beforeStatus !== "CANCELLED" && afterStatus === "CANCELLED") {
       await change.after.ref.delete();
       // await hypertrack.rejectRide(change, context);
+    }
+  });
+
+  const updateOrderEstimates = (async () => {
+    console.log('running expensive update order estimate op!');
+
+    const earliestOrderQuery = firestore
+      .collection("orders")
+      .where("status", "==", "NEW")
+      .orderBy("createdAt", "asc");
+    
+    const snap = await earliestOrderQuery.get();
+    for (const [index, doc] of snap.docs.entries()) {
+      await doc.ref.update({
+        queue_position: index+1,
+        wait_estimate: index+1 // try to get a good time estimate from hypertrack, needs more brainstorming! (maybe we have to create trips for every order when they come in to get a good estimate idk)
+      });
     }
   });
 
@@ -85,6 +104,8 @@ export const srOnCreate = functions.firestore
   .document("orders/{orderId}")
   .onCreate(async (snap, _) => {
     console.log(snap.data());
+    // this op might be super expensive to run but whatever for now
+    await updateOrderEstimates();
   });
 
 export const setDriver = functions
@@ -101,6 +122,7 @@ export const setDriver = functions
     res.send("changed driver!!!");
   });
 
+// kind of a worse case when 20 users try to call a saferide at the same time
 export const createTest = functions
   .runWith(runtimeOpts)
   .https.onRequest(async (req, res) => {
@@ -111,8 +133,6 @@ export const createTest = functions
     }
 
     // Add a new document in collection "orders"
-
-
     for (let i = 0; i < 20; i++) {
       await db.collection("orders").add({
         name: "ya boiIIIIiiii",
