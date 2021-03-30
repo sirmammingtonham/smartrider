@@ -60,10 +60,11 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
           )
         ],
         bottom: PreferredSize(
-          preferredSize: MediaQuery.of(context).size * 0.05,
+          preferredSize: AppBar().preferredSize,
           child: Showcase(
               key: showcaseTransportTab,
-              description: 'Swipe to look around and pinch to zoom in/out',
+              description:
+                  'Click on either tab to switch between bus/shuttle scheudles',
               child: TabBar(
                 unselectedLabelColor: Colors.white.withOpacity(0.3),
                 indicatorColor: Colors.white,

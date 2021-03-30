@@ -28,6 +28,7 @@ GlobalKey showcaseSearch = GlobalKey();
 GlobalKey showcaseBusTab = GlobalKey();
 GlobalKey showcaseTransportTab = GlobalKey();
 GlobalKey showcaseMap = GlobalKey();
+GlobalKey showcaseTimeline = GlobalKey();
 
 /// Default page that is displayed once the user logs in.
 class HomePage extends StatelessWidget {
@@ -72,7 +73,7 @@ class _HomePageState extends State<_HomePage>
   }
 
   void startShowcase(PrefsLoadedState prefState, context) {
-    if (prefState.prefs.getBool('firstTimeLoad') == false) {
+    if (prefState.prefs.getBool('firstTimeLoad') == true) {
       ShowCaseWidget.of(context).startShowCase([
         showcaseMap,
         showcaseSettings,
@@ -88,7 +89,8 @@ class _HomePageState extends State<_HomePage>
 
   void startTimelineShowcase(PrefsLoadedState prefState, context) {
     if (prefState.prefs.getBool('firstSlideUp') == false) {
-      ShowCaseWidget.of(context).startShowCase([showcaseBusTab]);
+      ShowCaseWidget.of(context).startShowCase(
+          [showcaseTransportTab, showcaseBusTab, showcaseTimeline]);
       prefState.prefs.setBool('firstSlideUp', false);
     }
   }
