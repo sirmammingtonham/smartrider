@@ -11,16 +11,16 @@ import { genShapeGeoJSON } from "../helpers/bus_util";
 import { zipObject, zip, isNumber } from "lodash";
 import * as fs from "fs";
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+// });
 
-const runtimeOpts: functions.RuntimeOptions = {
-  timeoutSeconds: 540,
-  memory: "1GB",
-};
+// const runtimeOpts: functions.RuntimeOptions = {
+//   timeoutSeconds: 540,
+//   memory: "2GB",
+// };
 
-// admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
+ admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
 
 console.log("initialized");
 
@@ -565,7 +565,6 @@ export const refreshDataBase = functions.runWith(runtimeOpts).pubsub.schedule('0
     .timeZone('America/New_York')
     .onRun((context) => {
         const db = admin.firestore();
-
         const enddates: number[] = [];
 
         db.collection("routes").get().then((querySnapshot) => {
