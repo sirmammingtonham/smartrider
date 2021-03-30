@@ -24,6 +24,16 @@ class DatabaseService {
     });
   }
 
+  Future<String> getUserRole() async{
+    DocumentSnapshot snapshot = await _userCollection.doc(usid).get();
+    if(snapshot.exists){
+      return snapshot.get('userType')?.toString();
+    }
+    else{
+      return 'No Role for user';
+    }
+  }
+
   //receive data function(s) go here
 
   // user list from snapshot

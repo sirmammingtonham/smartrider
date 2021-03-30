@@ -38,7 +38,9 @@ class AuthenticationBloc
     final isSignedIn = _authRepository.isSignedIn();
     if (isSignedIn) {
       final name = _authRepository.getUser();
-      yield AuthenticationSuccess(name, 'Student');
+      User user = _authRepository.getActualUser();
+      String role = await DatabaseService(usid: user.uid).getUserRole();
+      yield AuthenticationSuccess(name, role ?? 'Student');
     } else {
       yield AuthenticationInit();
     }
