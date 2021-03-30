@@ -1,7 +1,7 @@
 import * as moment from "moment";
 // trying to convert to axios becaues requests is deprecated
 import axios from "axios";
-import * as h from "hypertrack"
+import * as h from "hypertrack";
 import * as config from "../setup/keys.json";
 import { Base64 } from "js-base64";
 
@@ -17,7 +17,7 @@ export async function acceptOrder(change: any, _: any) {
 
   const parsedBody = await createTrip(
     afterValue.driver.device_id,
-    afterValue.pickup
+    afterValue.pickups
   );
 
   if (parsedBody["trip_id"]) {
@@ -117,30 +117,9 @@ export async function createTrip(deviceId: string, coordinates: any) {
 export async function completeTrip(tripId: string) {
   if (tripId) {
     try {
-      // const parsedBody = await request({
-      //   method: "POST",
-      //   uri: `https://v3.api.hypertrack.com/trips/${tripId}/complete`,
-      //   headers: {
-      //     Authorization: AUTHORIZATION,
-      //   },
-      //   body: null,
-      // });
-      
-      const parsedBody = (
-        await axios.post(
-          `https://v3.api.hypertrack.com/trips/${tripId}/complete`,
-          null,
-          {
-            headers: {
-              Authorization: AUTHORIZATION,
-            },
-          }
-        )
-      ).data;
-
-      console.log("completeTrip: " + JSON.stringify(parsedBody));
-
-      return parsedBody;
+      const trip = await hypertrack.trips.complete(tripId);
+      console.log("completeTrip: " + JSON.stringify(trip));
+      return trip;
     } catch (err) {
       console.error(err.message);
       console.trace();
