@@ -1,7 +1,7 @@
 import * as moment from "moment";
 // trying to convert to axios becaues requests is deprecated
 import axios from "axios";
-import * as hypertrack from "hypertrack";
+import * as h from "hypertrack"
 import * as config from "../setup/keys.json";
 import { Base64 } from "js-base64";
 
@@ -9,6 +9,7 @@ const AUTHORIZATION =
   "Basic " +
   Base64.encode(`${config.hypertrack_id}:${config.hypertrack_secret}`);
 const DATE_FORMAT = "YYYY-MM-DD[T]HH:mm:ss[Z]";
+const hypertrack = h.Hypertrack(config.hypertrack_id, config.hypertrack_secret);
 
 export async function acceptOrder(change: any, _: any) {
   // const beforeValue = change.before.data();
@@ -90,43 +91,28 @@ export async function endRide(change: any, _: any) {
 
 export async function createTrip(deviceId: string, coordinates: any) {
   try {
-    const data: any = {};
-    data["device_id"] = deviceId;
-    data["destination"] = {
-      radius: 100,
-      geometry: {
-        type: "Point",
-        coordinates: [coordinates.longitude, coordinates.latitude],
-      },
+    let tripData = {
+      "device_id": deviceId,
+      "destination": {
+        "geometry": {
+          "type": "Point",
+          "coordinates": [coordinates.longitude, coordinates.latitude]
+        },
+        "radius": 100
+      }
     };
 
-    // const parsedBody_ = await request({
-    //   method: "POST",
-    //   uri: "https://v3.api.hypertrack.com/trips/",
-    //   headers: {
-    //     Authorization: AUTHORIZATION,
-    //   },
-    //   body: data,
-    //   json: true, // Automatically stringifies the body to JSON
-    // });
+    const trip =  await hypertrack.trips.create(tripData);
+    console.log("createTrip: " + JSON.stringify(trip));
 
-    const parsedBody = (
-      await axios.post("https://v3.api.hypertrack.com/trips/", data, {
-        headers: {
-          Authorization: AUTHORIZATION,
-        },
-      })
-    ).data;
-
-    console.log("createTrip: " + JSON.stringify(parsedBody));
-    console.log("createTrip:trip_id: " + parsedBody["trip_id"]);
-
-    return parsedBody;
-  } catch (err) {
+    return trip;
+  } 
+  catch (err) {
     console.error(err.message);
     console.trace();
   }
 }
+
 
 export async function completeTrip(tripId: string) {
   if (tripId) {
@@ -161,3 +147,4 @@ export async function completeTrip(tripId: string) {
     }
   }
 }
+
