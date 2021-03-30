@@ -72,7 +72,7 @@ class _HomePageState extends State<_HomePage>
   }
 
   void startShowcase(PrefsLoadedState prefState, context) {
-    if (prefState.prefs.getBool('firstTimeLoad') == true) {
+    if (prefState.prefs.getBool('firstTimeLoad') == false) {
       ShowCaseWidget.of(context).startShowCase([
         showcaseMap,
         showcaseSettings,
@@ -86,12 +86,22 @@ class _HomePageState extends State<_HomePage>
     }
   }
 
+  void startTimelineShowcase(PrefsLoadedState prefState, context) {
+    if (prefState.prefs.getBool('firstSlideUp') == false) {
+      ShowCaseWidget.of(context).startShowCase([showcaseBusTab]);
+      prefState.prefs.setBool('firstSlideUp', false);
+    }
+  }
+
   Widget _slidingPanel(SaferideState saferideState, MapState mapState,
-          PrefsState prefsState) =>
+          PrefsState prefsState, BuildContext context) =>
       SlidingUpPanel(
         controller: _panelController,
         maxHeight: _panelHeightOpen,
         minHeight: _panelHeightClosed,
+        onPanelOpened: () {
+          startTimelineShowcase(prefsState, context);
+        },
         parallaxEnabled: true,
         renderPanelSheet: false,
         backdropEnabled: true,
@@ -165,7 +175,7 @@ class _HomePageState extends State<_HomePage>
           } else if (prefState is PrefsLoadedState) {
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => startShowcase(prefState, context));
-            return _slidingPanel(saferideState, mapState, prefState);
+            return _slidingPanel(saferideState, mapState, prefState, context);
           } else if (prefState is PrefsSavingState) {
             return Center(child: CircularProgressIndicator());
           } else {

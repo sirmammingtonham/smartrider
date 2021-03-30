@@ -73,13 +73,6 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
         ));
   }
 
-  void startTimelineShowcase(PrefsLoadedState prefState, context) {
-    if (prefState.prefs.getBool('firstSlideUp') == false) {
-      ShowCaseWidget.of(context).startShowCase([showcaseBusTab]);
-      prefState.prefs.setBool('firstSlideUp', false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -95,8 +88,6 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
             final scheduleState = states.get<ScheduleState>();
             final prefState = states.get<PrefsState>();
             if (scheduleState is ScheduleTimelineState) {
-              WidgetsBinding.instance.addPostFrameCallback(
-                  (_) => startTimelineShowcase(prefState, context));
               return Scaffold(
                 appBar: panelAppBar(
                     scheduleState.isBus,
