@@ -1,7 +1,7 @@
 // https://gist.github.com/yongjun21/ec0ea757b9dcbf972a351453755cadcb
 export const map = async (iterable: any, mapper: any, options?: any) => {
-  options = options || {};
-  let concurrency = options.concurrency || Infinity;
+  const ops = options || {};
+  let concurrency = ops.concurrency || Infinity;
 
   let index = 0;
   const results: any[] = [];
