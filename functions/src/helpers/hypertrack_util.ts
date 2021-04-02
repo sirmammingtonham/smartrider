@@ -89,6 +89,11 @@ export async function endRide(change: any, _: any) {
   );
 }
 
+//Creates a trip using the hypertrack api trip object
+/* @param String deviceId, Any coordinates
+*  @modifies none
+*  @effects Creates a trip object with the specified data
+*/
 export async function createTrip(deviceId: string, coordinates: any) {
   try {
     let tripData = {
@@ -113,7 +118,11 @@ export async function createTrip(deviceId: string, coordinates: any) {
   }
 }
 
-
+//If the trip exists and was completed, the hypertrack trip will be switched to completed
+/* @param String tripId
+*  @modifies If the tripId exists, the trip is changed to completed, and also changes the order that
+*  the trip was associated with to completed
+*/
 export async function completeTrip(tripId: string) {
   if (tripId) {
     try {
