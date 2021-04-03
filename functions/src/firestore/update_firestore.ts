@@ -4,23 +4,51 @@ import * as gtfs from "gtfs";
 import * as gtfs_timetable from "gtfs-to-html";
 import * as models from "./firestore_types";
 import * as Promise from "../helpers/async_util";
-import * as config from "../setup/gtfs_config.json";
+// import * as config from "../setup/gtfs_config.json";
 import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
 import { collection, subcollection, set, all, remove } from "typesaurus";
 import { genShapeGeoJSON } from "../helpers/bus_util";
 import { zipObject, zip, isNumber } from "lodash";
 import * as fs from "fs";
+import * as os from "os";
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-// });
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+});
 
-// const runtimeOpts: functions.RuntimeOptions = {
-//   timeoutSeconds: 540,
-//   memory: "2GB",
-// };
+const config = {
+  "agencies": [
+    {
+      "agency_key": "cdta",
+      "url": "https://www.cdta.org/schedules/google_transit.zip",
+      "exclude": []
+    }
+  ],
+  "sqlitePath": os.tmpdir + '/gtfs.db',
+  "csvOptions": {
+    "skip_lines_with_error": true
+  },
+  "coordinatePrecision": 5,
+  "showMap": false
+};
+const runtimeOpts: functions.RuntimeOptions = {
+  timeoutSeconds: 540,
+  memory: "2GB",
+};
 
- admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
+const createDbFile = (filePath: string) => {
+
+  fs.appendFile(filePath, '', function (err) {
+    if (err) {
+      console.log('error occured while creating gtfs db file')
+    }
+
+    else {
+      console.log('gtfs db file created!');
+    }
+  });
+}
+// admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
 
 console.log("initialized");
 
@@ -562,40 +590,50 @@ const generateDB = async () => {
 
 
 export const refreshDataBase = functions.runWith(runtimeOpts).pubsub.schedule('0 3 * * *')  // run at 3:00 am everyday eastern time
-    .timeZone('America/New_York')
-    .onRun((context) => {
-        const db = admin.firestore();
-        const enddates: number[] = [];
+  .timeZone('America/New_York')
+  .onRun((context) => {
+    const db = admin.firestore();
+    const enddates: number[] = [];
 
-        db.collection("routes").get().then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                const end_date = doc.get('end_date');
-                if (isNumber(end_date)) {
-                    enddates.push(end_date);
-                }
-                else {
-                    console.log("error bruh");
-                }
-            });
+    db.collection("routes").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const end_date = doc.get('end_date');
+        if (isNumber(end_date)) {
+          enddates.push(end_date);
+        }
+        else {
+          console.log("error bruh");
+        }
+      });
 
-            enddates.sort();
+      enddates.sort();
 
-            const currentDate = new Date();
-            const dd = String(currentDate.getDate()).padStart(2, '0');
-            const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const yyyy = currentDate.getFullYear();
-            const today: number = +(yyyy + mm + dd);
+      const currentDate = new Date();
+      const dd = String(currentDate.getDate()).padStart(2, '0');
+      const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const yyyy = currentDate.getFullYear();
+      const today: number = +(yyyy + mm + dd);
 
-            if (enddates[0] <= today) { //update needed
-                generateDB().then(() => console.log("update successful")).catch((error) => {
-                    console.log(error);
-                });   
-            }
-            else {  //update not needed
-                console.log("no update needed");
-            }
-        }).catch((error) => console.log(error));
-    });
+      if (enddates[0] <= today) { //update needed
+        const dbPath = os.tmpdir() + '/gtfs.db';
+        createDbFile(dbPath);
+        generateDB().then(() => {
+          try {
+            fs.unlinkSync(dbPath)
+            console.log("update successful")
+          }
+          catch (error) {
+            console.log("error deleting tmp file");
+          }
+        }).catch((error) => {
+          console.log(error);
+        });
+      }
+      else {  //update not needed
+        console.log("no update needed");
+      }
+    }).catch((error) => console.log(error));
+  });
 
 // console.time("generateDB");
 // generateDB()
