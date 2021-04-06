@@ -591,53 +591,47 @@ const generateDB = async () => {
 
 export const refreshDataBase = functions.runWith(runtimeOpts).pubsub.schedule('0 3 * * *')  // run at 3:00 am everyday eastern time
   .timeZone('America/New_York')
-  .onRun((context) => {
+  .onRun(async (context) => {
     const db = admin.firestore();
     const enddates: number[] = [];
-
-    db.collection("routes").get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        const end_date = doc.get('end_date');
-        if (isNumber(end_date)) {
-          enddates.push(end_date);
-        }
-        else {
-          console.log("error bruh");
-        }
-      });
-
-      enddates.sort();
-
-      const currentDate = new Date();
-      const dd = String(currentDate.getDate()).padStart(2, '0');
-      const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
-      const yyyy = currentDate.getFullYear();
-      const today: number = +(yyyy + mm + dd);
-
-      if (enddates[0] <= today) { //update needed
-        const dbPath = os.tmpdir() + '/gtfs.db';
-        createDbFile(dbPath);
-        generateDB().then(() => {
-          try {
-            fs.unlinkSync(dbPath)
-            console.log("update successful")
-          }
-          catch (error) {
-            console.log("error deleting tmp file");
-          }
-        }).catch((error) => {
-          console.log(error);
-        });
+    const querySnapshot = await db.collection("routes").get();
+    querySnapshot.forEach((doc) => {
+      const end_date = doc.get('end_date');
+      if (isNumber(end_date)) {
+        enddates.push(end_date);
       }
-      else {  //update not needed
-        console.log("no update needed");
+      else {
+        console.log("error bruh");
       }
-    }).catch((error) => console.log(error));
+    });
+
+    enddates.sort();
+
+    const currentDate = new Date();
+    const dd = String(currentDate.getDate()).padStart(2, '0');
+    const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const yyyy = currentDate.getFullYear();
+    const today: number = +(yyyy + mm + dd);
+
+    if (enddates[0] <= today) { //update needed
+      console.log("refresh started");
+      const dbPath = os.tmpdir() + '/gtfs.db';
+      createDbFile(dbPath);
+      try {
+        await generateDB();
+        fs.unlinkSync(dbPath)
+        console.log("update successful")
+        return 0;
+      }
+      catch (error) {
+        console.log("error deleting tmp file");
+        return 0;
+      }
+    }
+    else {  //update not needed
+      console.log("no update needed");
+      return 0;
+    }
   });
 
-// console.time("generateDB");
-// generateDB()
-//   .then(() => {
-//     console.timeEnd("generateDB");
-//   })
-//   .catch((error) => console.error(error));
+
