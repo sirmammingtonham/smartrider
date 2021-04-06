@@ -2,6 +2,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:humanize/humanize.dart' as humanize;
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +13,7 @@ import 'package:smartrider/util/multi_bloc_builder.dart';
 class SaferideStatusWidget extends StatelessWidget {
   const SaferideStatusWidget();
 
-  Widget _selectionWidget(BuildContext context) => Align(
+  Widget _selectionWidget(BuildContext context, SaferideSelectionState state) => Align(
       alignment: FractionalOffset.bottomCenter,
       child: FractionallySizedBox(
         heightFactor: 0.2,
@@ -29,7 +30,7 @@ class SaferideStatusWidget extends StatelessWidget {
                   SizedBox(height: 5),
                   Center(
                     child: Text(
-                      'Estimated Wait: 10 mins',
+                      'Estimated Wait: ${state.waitEstimate}',
                       style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -39,7 +40,7 @@ class SaferideStatusWidget extends StatelessWidget {
                   SizedBox(height: 5),
                   Center(
                     child: Text(
-                      '2nd in Queue',
+                      '${humanize.ordinal(state.queuePos)} in Queue',
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w300,
@@ -144,7 +145,7 @@ class SaferideStatusWidget extends StatelessWidget {
           // final mapState = states.get<MapState>();
           // TODO: get this to animate, with a slide up from previous state
           if (saferideState is SaferideSelectionState) {
-            return _selectionWidget(context);
+            return _selectionWidget(context, saferideState);
           } else if (saferideState is SaferideAcceptedState) {
             return _confirmedWidget(context, saferideState);
           }

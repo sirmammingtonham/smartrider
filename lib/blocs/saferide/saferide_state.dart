@@ -20,13 +20,17 @@ class SaferideSelectionState extends SaferideState {
   final String dropAddress;
   final String pickupDescription;
   final String dropDescription;
+  final int queuePos;
+  final int waitEstimate;
 
   const SaferideSelectionState(
       {@required this.pickupLatLng,
       @required this.pickupDescription,
       @required this.dropLatLng,
       @required this.dropAddress,
-      @required this.dropDescription});
+      @required this.dropDescription,
+      @required this.queuePos,
+      @required this.waitEstimate});
 
   @override
   List<Object> get props => [
@@ -48,12 +52,12 @@ class SaferideAcceptedState extends SaferideState {
   const SaferideAcceptedState(
       {@required this.driverName,
       @required this.licensePlate,
-      @required this.queuePosition, @required this.waitEstimate});
+      @required this.queuePosition,
+      @required this.waitEstimate});
 
   @override
   List<Object> get props => [driverName, licensePlate, queuePosition];
 }
-
 
 class SaferideErrorState extends SaferideState {
   final String status;

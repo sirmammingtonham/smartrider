@@ -84,4 +84,10 @@ class SaferideProvider {
     final response = await orders.get();
     return response.docs.map((doc) => doc.id).toList().indexOf(id);
   }
+
+  Future<int> getQueueSize() async {
+    Query orders =
+        firestore.collection('orders').where('status', isEqualTo: 'NEW');
+    return (await orders.get()).size;
+  }
 }
