@@ -125,7 +125,9 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         pickupDescription: pickupDescription,
         dropLatLng: event.testCoord,
         dropAddress: event.testAdr,
-        dropDescription: event.testDesc);
+        dropDescription: event.testDesc,
+        queuePos: await saferideRepo.getQueueSize,
+        waitEstimate: 22);
   }
 
   // TODO: add logic to calculate route, we want polylines at this point!

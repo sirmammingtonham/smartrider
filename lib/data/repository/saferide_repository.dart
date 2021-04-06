@@ -23,6 +23,9 @@ class SaferideRepository {
 
   Future<Map<String, MovementStatus>> get getDriverUpdates async =>
       _saferideProvider.getDriverUpdates();
+  
+  Future<int> get getQueueSize async =>
+      _saferideProvider.getQueueSize();
 
   Map<String, Stream<MovementStatus>> get getDriverUpdateSubscriptions =>
       _saferideProvider.getDriverUpdateSubscriptions();
