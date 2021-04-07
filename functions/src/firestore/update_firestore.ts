@@ -563,6 +563,8 @@ const createIndexes = async (db: any) => {
     db.run(`CREATE INDEX s_id2 ON stops(stop_id)`),
     db.run(`CREATE INDEX sr_id ON calendar(service_id)`),
     db.run(`CREATE INDEX sr_id2 ON trips(service_id)`),
+    db.run(`DELETE FROM routes WHERE route_short_name NOT IN ('87','289','288','286')`),
+    db.run(`DELETE FROM trips WHERE route_id NOT IN ('87%','289%','288%','286%')`),
   ]).then(() => console.timeEnd("index"));
 };
 
