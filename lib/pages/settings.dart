@@ -9,6 +9,10 @@ import 'package:smartrider/data/repository/authentication_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
+//showcase stuff
+import 'package:smartrider/pages/home.dart';
+import 'package:showcaseview/showcaseview.dart';
+
 class SettingsPage extends StatefulWidget {
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -40,6 +44,13 @@ class _SettingsPageState extends State<SettingsPage> {
         );
       } else if (state is PrefsLoadedState) {
         // var prefs = state.prefs.getMapping;
+        if (state.prefs.getBool('firstSettingAccess') == false) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            ShowCaseWidget.of(context).startShowCase([]);
+          });
+          state.prefs.setBool('firstSettingAccess', false);
+        }
+
         return SettingsWidget(
             state: state, auth: auth, setState: () => setState(() {}));
       } else if (state is PrefsSavingState) {
@@ -108,121 +119,122 @@ class SettingsWidget extends StatelessWidget {
             ),
           ],
         ),
-        body:ListView(children: <Widget>[
-              // GENERAL SETTINGS
-              Container(
-                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-                child: Center(
-                  child: Text(
-                    'General',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                  ),
-                ),
+        body: ListView(children: <Widget>[
+          // GENERAL SETTINGS
+          Container(
+            margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+            child: Center(
+              child: Text(
+                'General',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               ),
-              cardBuilder([
-                SwitchListTile(
-                  title: Text('Push Notifications'),
-                  value: state.prefs.getBool('pushNotifications'),
-                  onChanged: (bool value) {
-                    state.prefs.setBool('pushNotifications', value);
-                    setState();
-                  },
-                  secondary: const Icon(Icons.notifications),
-                ),
-                Builder(
-                    builder: (context) => SwitchListTile(
-                          title: Text('Lights Out'),
-                          value: state.prefs.getBool('darkMode'),
-                          onChanged: (bool value) {
-                            state.prefs.setBool('darkMode', value);
-                            BlocProvider.of<PrefsBloc>(context)
-                                .add(ThemeChangedEvent(value));
-                            setState();
-                          },
-                          secondary: const Icon(Icons.lightbulb_outline),
-                        ))
-              ]),
-              // SHUTTLE SETTINGS
-              Container(
-                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-                child: Center(
-                  child: Text(
-                    'Shuttle Settings',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                  ),
-                ),
+            ),
+          ),
+          cardBuilder([
+            SwitchListTile(
+              title: Text('Push Notifications'),
+              value: state.prefs.getBool('pushNotifications'),
+              onChanged: (bool value) {
+                state.prefs.setBool('pushNotifications', value);
+                setState();
+              },
+              secondary: const Icon(Icons.notifications),
+            ),
+            Builder(
+                builder: (context) => SwitchListTile(
+                      title: Text('Lights Out'),
+                      value: state.prefs.getBool('darkMode'),
+                      onChanged: (bool value) {
+                        state.prefs.setBool('darkMode', value);
+                        BlocProvider.of<PrefsBloc>(context)
+                            .add(ThemeChangedEvent(value));
+                        setState();
+                      },
+                      secondary: const Icon(Icons.lightbulb_outline),
+                    ))
+          ]),
+          // SHUTTLE SETTINGS
+          // Showcase(key: showcaseShuttleToggle, description: null, child: )
+          Container(
+            margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+            child: Center(
+              child: Text(
+                'Shuttle Settings',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               ),
-              cardBuilder(state.shuttles.keys
-                  .map((key) => SwitchListTile(
-                        title: Text(key),
-                        value: state.shuttles[key],
-                        onChanged: (bool value) {
-                          state.shuttles[key] = value;
-                          BlocProvider.of<PrefsBloc>(context)
-                              .add(SavePrefsEvent(key, value));
-                          setState();
-                        },
-                        secondary: const Icon(Icons.directions_bus),
-                      ))
-                  .toList()),
+            ),
+          ),
+          cardBuilder(state.shuttles.keys
+              .map((key) => SwitchListTile(
+                    title: Text(key),
+                    value: state.shuttles[key],
+                    onChanged: (bool value) {
+                      state.shuttles[key] = value;
+                      BlocProvider.of<PrefsBloc>(context)
+                          .add(SavePrefsEvent(key, value));
+                      setState();
+                    },
+                    secondary: const Icon(Icons.airport_shuttle),
+                  ))
+              .toList()),
 
-              // BUS SETTINGS
-              Container(
-                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-                child: Center(
-                  child: Text(
-                    'Bus Settings',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                  ),
-                ),
+          // BUS SETTINGS
+          Container(
+            margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+            child: Center(
+              child: Text(
+                'Bus Settings',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               ),
-              cardBuilder(state.buses.keys
-                  .map((key) => SwitchListTile(
-                        title: Text(PrefsBloc.busIdMap[key]),
-                        value: state.buses[key],
-                        onChanged: (bool value) {
-                          state.buses[key] = value;
-                          BlocProvider.of<PrefsBloc>(context)
-                              .add(SavePrefsEvent(key, value));
-                          setState();
-                        },
-                        secondary: const Icon(Icons.directions_bus),
-                      ))
-                  .toList()),
+            ),
+          ),
+          cardBuilder(state.buses.keys
+              .map((key) => SwitchListTile(
+                    title: Text(PrefsBloc.busIdMap[key]),
+                    value: state.buses[key],
+                    onChanged: (bool value) {
+                      state.buses[key] = value;
+                      BlocProvider.of<PrefsBloc>(context)
+                          .add(SavePrefsEvent(key, value));
+                      setState();
+                    },
+                    secondary: const Icon(Icons.directions_bus),
+                  ))
+              .toList()),
 
-              // SAFE RIDE SETTINGS
-              Container(
-                margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-                child: Center(
-                  child: Text(
-                    'Safe Ride Settings',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                  ),
-                ),
+          // SAFE RIDE SETTINGS
+          Container(
+            margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+            child: Center(
+              child: Text(
+                'Safe Ride Settings',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               ),
-              SizedBox(
-                child: Stack(
-                  alignment: AlignmentDirectional.bottomCenter,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: RaisedButton(
-                          child: Text(
-                            'SIGN OUT',
-                            style: Theme.of(context).textTheme.button,
-                          ),
-                          onPressed: () {
-                            BlocProvider.of<AuthenticationBloc>(context).add(
-                              AuthenticationLoggedOut(),
-                            );
-                            Navigator.pop(context);
-                          },
-                          shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(20.0))),
-                    ),
-                  ],
+            ),
+          ),
+          SizedBox(
+            child: Stack(
+              alignment: AlignmentDirectional.bottomCenter,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: RaisedButton(
+                      child: Text(
+                        'SIGN OUT',
+                        style: Theme.of(context).textTheme.button,
+                      ),
+                      onPressed: () {
+                        BlocProvider.of<AuthenticationBloc>(context).add(
+                          AuthenticationLoggedOut(),
+                        );
+                        Navigator.pop(context);
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(20.0))),
                 ),
-              )
-            ]));
+              ],
+            ),
+          )
+        ]));
   }
 }

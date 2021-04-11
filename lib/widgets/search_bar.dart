@@ -1,6 +1,7 @@
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/util/multi_bloc_builder.dart';
 
@@ -81,11 +82,13 @@ class SearchBarState extends State<SearchBar> {
     return MultiBlocBuilder(
       blocs: [
         BlocProvider.of<SaferideBloc>(context),
-        BlocProvider.of<AuthenticationBloc>(context)
+        BlocProvider.of<AuthenticationBloc>(context),
+        BlocProvider.of<PrefsBloc>(context),
       ],
       builder: (context, states) {
         final saferideState = states.get<SaferideState>();
         final authState = states.get<AuthenticationState>();
+        final prefState = states.get<PrefsState>();
 
         name = authState is AuthenticationSuccess ? authState.displayName : '';
         role = authState is AuthenticationSuccess ? authState.role : '';
@@ -132,13 +135,13 @@ class SearchBarState extends State<SearchBar> {
           return Container();
         } else {
           // print("something's wrong with auth bloc");
-          return searchBar();
+          return searchBar(prefState);
         }
       },
     );
   }
 
-  Widget searchBar() => Positioned(
+  Widget searchBar(PrefsState prefsState) => Positioned(
         top: topBarDist,
         right: 15,
         left: 15,

@@ -20,6 +20,8 @@ import 'package:smartrider/widgets/saferide_status_widget.dart';
 import 'package:smartrider/pages/sliding_panel_page.dart';
 
 GlobalKey showcaseSettings = GlobalKey();
+GlobalKey showcaseShuttleToggle = GlobalKey();
+
 GlobalKey showcaseProfile = GlobalKey();
 GlobalKey showcaseSlidingPanel = GlobalKey();
 GlobalKey showcaseViewChange = GlobalKey();
