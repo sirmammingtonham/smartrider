@@ -462,10 +462,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     //TODO: get bus direction id
     try {
       try {
-        stop = _busRoutes[update.routeId + '-185']
+        stop = _busRoutes[update.routeId + '-187']
             .forwardStops[update.currentStopSequence];
       } catch (error) {
-        stop = _busRoutes[update.routeId + '-185']
+        stop = _busRoutes[update.routeId + '-187']
             .reverseStops[update.currentStopSequence];
       }
     } catch (e) {
@@ -494,7 +494,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     if (_isBus) {
       _enabledBuses.forEach((id, enabled) {
         if (enabled) {
-          _currentPolylines.addAll(_busShapes[id].getPolylines);
+          if (_busShapes[id] != null) {
+            _currentPolylines.addAll(_busShapes[id].getPolylines);
+          }
         }
       });
     } else {
@@ -519,9 +521,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
       _enabledBuses.forEach((route, enabled) {
         if (enabled) {
-          _busRoutes[route]
-              .stops
-              .forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
+          if (_busRoutes[route] != null) {
+            _busRoutes[route]
+                .stops
+                .forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
+          }
         }
       });
     } else {

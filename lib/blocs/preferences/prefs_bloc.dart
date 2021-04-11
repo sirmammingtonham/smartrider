@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:smartrider/data/models/themes.dart';
 
 import 'package:equatable/equatable.dart';
@@ -60,6 +61,9 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
       if (!_sharedPrefs.containsKey('pushNotifications')) {
         _sharedPrefs.setBool('pushNotifications', true);
       }
+      if (!_sharedPrefs.containsKey('firstLaunch')) {
+        _sharedPrefs.setBool('firstLaunch', true);
+      }
       // modify active routes on app launch
       yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
     } else if (event is SavePrefsEvent) {
@@ -82,7 +86,10 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
     } else if (event is ThemeChangedEvent) {
       yield PrefsChangedState();
       yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
-    } else {
+    } else if (event is OnboardingComplete){
+      _sharedPrefs.setBool('firstLaunch', false);
+      yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
+    }else {
       yield PrefsErrorState(message: "something wrong with prefs_bloc");
     }
   }

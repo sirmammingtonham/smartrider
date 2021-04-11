@@ -73,6 +73,7 @@ flutter:
 
   assets:
     - assets/app_icons/logo_v1.png
+    - assets/app_icons/logo_v2.png
 # jsons
     - assets/map_styles/light.json
     - assets/map_styles/aubergine.json
@@ -84,6 +85,17 @@ flutter:
 #notification
     - assets/Notification_Icons/app_logo.png
 
+#onboarding 
+    - assets/onboarding_images/rpi_stock_photo.png
+    - assets/onboarding_images/onboarding_page2_1.png
+    - assets/onboarding_images/onboarding_page2_2.png
+    - assets/onboarding_images/onboarding_page3_1.png
+    - assets/onboarding_images/onboarding_page3_2.png
+    - assets/onboarding_images/onboarding_page4_1.png
+    - assets/onboarding_images/interactive_map.png
+    - assets/onboarding_images/comprehensive_scheduling.png
+    - assets/onboarding_images/customizable_view.png
+    - assets/onboarding_images/request_transportation.png
   fonts:
     - family: SR_Icons
       fonts:

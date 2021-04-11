@@ -18,6 +18,7 @@ import 'package:smartrider/widgets/map_widget.dart';
 import 'package:smartrider/widgets/search_bar.dart';
 import 'package:smartrider/widgets/saferide_status_widget.dart';
 import 'package:smartrider/pages/sliding_panel_page.dart';
+import 'package:smartrider/main.dart';
 
 GlobalKey showcaseSettings = GlobalKey();
 GlobalKey showcaseShuttleToggle = GlobalKey();
@@ -90,9 +91,9 @@ class _HomePageState extends State<_HomePage>
   }
 
   void startTimelineShowcase(PrefsLoadedState prefState, context) {
-    if (prefState.prefs.getBool('firstSlideUp') == false) {
-      ShowCaseWidget.of(context).startShowCase(
-          [showcaseTransportTab, showcaseBusTab, showcaseTimeline]);
+    if (prefState.prefs.getBool('firstSlideUp') == true) {
+      ShowCaseWidget.of(context)
+          .startShowCase([showcaseBusTab, showcaseTimeline]);
       prefState.prefs.setBool('firstSlideUp', false);
     }
   }

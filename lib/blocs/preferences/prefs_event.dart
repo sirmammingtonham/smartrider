@@ -44,3 +44,10 @@ class ThemeChangedEvent extends PrefsEvent {
   @override
   List<Object> get props => [this.isDark];
 }
+
+class OnboardingComplete extends PrefsEvent {
+  const OnboardingComplete();
+
+  @override 
+  List<Object> get props => [];
+}
