@@ -47,8 +47,7 @@ final ThemeData darkTheme = ThemeData(
     splashColor: Color(0x1fffffff),
     focusColor: Color(0x1fffffff),
     hoverColor: Color(0x0affffff),
-    colorScheme: ColorScheme(
-      // all new
+    colorScheme: ColorScheme( // all new
       primary: Color(0xff181C5A),
       primaryVariant: Color(0xff181C73),
       secondary: Color(0xffffffff),
@@ -484,6 +483,7 @@ final ThemeData darkTheme = ThemeData(
 );
 
 final ThemeData lightTheme = ThemeData(
+  
   primarySwatch: Colors.purple,
   brightness: Brightness.light,
   primaryColor: Color(0xffffffff),
@@ -491,7 +491,7 @@ final ThemeData lightTheme = ThemeData(
   primaryColorLight: Color(0xffF5F5F5),
   primaryColorDark: Color(0xffA0A0A0),
   accentColor: Color(0xff181C5A),
-  accentColorBrightness: Brightness.dark,
+  accentColorBrightness: Brightness.dark, 
   canvasColor: Color(0xfffafafa),
   scaffoldBackgroundColor: Color(0xfffafafa),
   bottomAppBarColor: Color(0xff181C41),

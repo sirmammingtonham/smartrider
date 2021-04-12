@@ -100,18 +100,30 @@ class _HomePageState extends State<_HomePage>
                 top: Radius.circular(20.0),
               ),
               collapsed: AppBar(
+                backgroundColor: Theme.of(context).bottomAppBarColor,
                 centerTitle: true,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(18.0),
                   ),
                 ),
-                leading: Icon(Icons.arrow_upward),
-                title: Text(_isShuttle ? 'Shuttle Schedules' : 'Bus Schedules'),
+                leading: Padding(
+                    padding: const EdgeInsets.only(left: 40.0, bottom: 35),
+                    child: Icon(Icons.keyboard_arrow_up,
+                        color: Theme.of(context).primaryColor)),
+                title: Padding(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: Text(
+                        _isShuttle ? 'Shuttle Schedules' : 'Bus Schedules',
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25))),
                 actions: <Widget>[
                   Padding(
-                      padding: const EdgeInsets.only(right: 12.0),
-                      child: Icon(Icons.arrow_upward))
+                      padding: const EdgeInsets.only(right: 45.0, bottom: 35),
+                      child: Icon(Icons.keyboard_arrow_up,
+                          color: Theme.of(context).primaryColor))
                 ],
               ),
               // stack the search bar widget over the map ui
