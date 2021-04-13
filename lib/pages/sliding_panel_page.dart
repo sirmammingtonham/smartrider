@@ -59,20 +59,18 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
             },
           )
         ],
-        bottom:
-            // PreferredSize(
-            //   preferredSize: AppBar().preferredSize,
-            //   child: Showcase(
-            //       key: showcaseTransportTab,
-            //       description:
-            //           'Click on either tab to switch between bus/shuttle scheudles',
-            //       child:
-            TabBar(
-          unselectedLabelColor: Colors.white.withOpacity(0.3),
-          indicatorColor: Colors.white,
-          controller: tabController,
-          tabs: tabs,
-          // )),
+        bottom: PreferredSize(
+          preferredSize: AppBar().preferredSize,
+          child: Showcase(
+              key: showcaseTransportTab,
+              description:
+                  'Click on either tab to switch between bus/shuttle scheudles',
+              child: TabBar(
+                unselectedLabelColor: Colors.white.withOpacity(0.3),
+                indicatorColor: Colors.white,
+                controller: tabController,
+                tabs: tabs,
+              )),
         ));
   }
 

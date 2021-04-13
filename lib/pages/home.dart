@@ -92,8 +92,8 @@ class _HomePageState extends State<_HomePage>
 
   void startTimelineShowcase(PrefsLoadedState prefState, context) {
     if (prefState.prefs.getBool('firstSlideUp') == true) {
-      ShowCaseWidget.of(context)
-          .startShowCase([showcaseBusTab, showcaseTimeline]);
+      ShowCaseWidget.of(context).startShowCase(
+          [showcaseTransportTab, showcaseBusTab, showcaseTimeline]);
       prefState.prefs.setBool('firstSlideUp', false);
     }
   }
