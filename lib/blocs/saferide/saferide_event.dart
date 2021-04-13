@@ -36,6 +36,17 @@ class SaferideConfirmedEvent extends SaferideEvent {
   List<Object> get props => [];
 }
 
+class SaferideWaitUpdateEvent extends SaferideEvent {
+  final int queuePosition;
+  final int waitEstimate;
+
+  const SaferideWaitUpdateEvent(
+      {@required this.queuePosition, @required this.waitEstimate});
+
+  @override
+  List<Object> get props => [queuePosition, waitEstimate];
+}
+
 class SaferideAcceptedEvent extends SaferideEvent {
   final String licensePlate;
   final String driverName;

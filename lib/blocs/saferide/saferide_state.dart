@@ -20,7 +20,7 @@ class SaferideSelectionState extends SaferideState {
   final String dropAddress;
   final String pickupDescription;
   final String dropDescription;
-  final int queuePos;
+  final int queuePosition;
   final int waitEstimate;
 
   const SaferideSelectionState(
@@ -29,7 +29,7 @@ class SaferideSelectionState extends SaferideState {
       @required this.dropLatLng,
       @required this.dropAddress,
       @required this.dropDescription,
-      @required this.queuePos,
+      @required this.queuePosition,
       @required this.waitEstimate});
 
   @override
@@ -40,6 +40,17 @@ class SaferideSelectionState extends SaferideState {
         dropAddress,
         dropDescription
       ];
+}
+
+class SaferideWaitingState extends SaferideState {
+  final int queuePosition;
+  final int waitEstimate;
+
+  const SaferideWaitingState(
+      {@required this.queuePosition, @required this.waitEstimate});
+
+  @override
+  List<Object> get props => [queuePosition, waitEstimate];
 }
 
 class SaferideAcceptedState extends SaferideState {

@@ -28,13 +28,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // String host = defaultTargetPlatform == TargetPlatform.android
-  //     ? '10.0.2.2:8080'
-  //     : 'localhost:8080';
+  String host = defaultTargetPlatform == TargetPlatform.android
+      ? '10.0.2.2:8080'
+      : 'localhost:8080';
 
   await Firebase.initializeApp();
 
-  // FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
+  FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
 
   runApp(
     SmartRider(

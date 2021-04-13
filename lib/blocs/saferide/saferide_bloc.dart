@@ -43,6 +43,9 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       yield* _mapTestToState(event);
     } else if (event is SaferideConfirmedEvent) {
       yield* _mapConfirmToState(event);
+    } else if (event is SaferideWaitUpdateEvent) {
+      yield SaferideWaitingState(
+          queuePosition: event.queuePosition, waitEstimate: event.waitEstimate);
     } else if (event is SaferideAcceptedEvent) {
       yield SaferideAcceptedState(
           licensePlate: event.licensePlate,
@@ -64,6 +67,36 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     return true;
   }
 
+  /// listens to the order status and creates events accordingly
+  Future<void> orderListener(DocumentSnapshot update) async {
+    final order = update.data();
+
+    switch (order['status']) {
+      case 'NEW':
+        {
+          add(SaferideWaitUpdateEvent(
+              queuePosition: order['queue_position'] ?? -1,
+              waitEstimate: order['wait_estimate'] ?? -1));
+        }
+        break;
+      case 'ACCEPTED':
+        {
+          _currentDriver = Driver.fromDocument(order['driver']);
+          add(SaferideAcceptedEvent(
+              driverName: _currentDriver.name,
+              licensePlate: _currentDriver.licensePlate,
+              queuePosition: order['queue_position'] ?? -1,
+              waitEstimate: order['wait_estimate'] ?? -1));
+        }
+        break;
+      default:
+        break;
+    }
+
+    // need to add condition to switch state if about to get picked up,
+    // can listen to change in order status
+  }
+
   Stream<SaferideState> _mapConfirmToState(
       SaferideConfirmedEvent event) async* {
     //create order, listen to changes in snapshot, update display vars in state
@@ -81,24 +114,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         createdAt: DateTime.now(),
       ));
 
-      order.listen((DocumentSnapshot update) async {
-        final order = update.data();
-        print(update.data()['status']);
-        // if (order['status'] == 'NEW') return;
-
-        // _currentDriver = Driver.fromDocument(order['driver']);
-
-        int queuePos = update.data()['queue_position'];
-        //await saferideRepo.getOrderPosition(order: update);
-        add(SaferideAcceptedEvent(
-            driverName: _currentDriver?.name ?? '',
-            licensePlate: _currentDriver?.licensePlate ?? '',
-            queuePosition: queuePos ?? -1,
-            waitEstimate: order['wait_estimate'] ?? -1));
-
-        // need to add condition to switch state if about to get picked up,
-        // can listen to change in order status
-      });
+      order.listen(orderListener);
 
       // TODO: add state while waiting for saferide to pickup
     } else {
@@ -126,7 +142,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         dropLatLng: event.testCoord,
         dropAddress: event.testAdr,
         dropDescription: event.testDesc,
-        queuePos: await saferideRepo.getQueueSize,
+        queuePosition: await saferideRepo.getQueueSize,
         waitEstimate: 22);
   }
 
@@ -169,7 +185,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         dropLatLng: _currentDropoffLatLng,
         dropAddress: r.formattedAddress,
         dropDescription: _currentPrediction.description,
-        queuePos: 0,
+        queuePosition: 0,
         waitEstimate: 0,
       );
     }
