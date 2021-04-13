@@ -80,14 +80,8 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20.0),
         ),
-        child: MultiBlocBuilder(
-          blocs: [
-            BlocProvider.of<ScheduleBloc>(context),
-            BlocProvider.of<PrefsBloc>(context),
-          ],
-          builder: (context, states) {
-            final scheduleState = states.get<ScheduleState>();
-            final prefState = states.get<PrefsState>();
+        child: BlocBuilder<ScheduleBloc, ScheduleState>(
+          builder: (context, scheduleState) {
             if (scheduleState is ScheduleTimelineState) {
               return Scaffold(
                 appBar: panelAppBar(
