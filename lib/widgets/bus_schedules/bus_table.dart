@@ -64,10 +64,10 @@ class BusTableState extends State<BusTable>
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            busList('87-185'),
-            busList('286-185'),
-            busList('289-185'),
-            busList('288-185'),
+            busList('87'),
+            busList('286'),
+            busList('289'),
+            busList('288'),
           ],
         ),
       )

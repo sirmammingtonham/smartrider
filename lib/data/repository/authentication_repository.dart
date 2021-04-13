@@ -1,51 +1,27 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:smartrider/data/providers/authentication_provider.dart';
 
 class AuthRepository {
-  final FirebaseAuth _firebaseAuth;
+  final AuthProvider _authProvider = AuthProvider();
 
-  AuthRepository({FirebaseAuth firebaseAuth})
-      : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+  AuthRepository.create();
 
   Future signInWithCredentials(String email, String password) async {
-    try {
-      return await _firebaseAuth.signInWithEmailAndPassword(
-        email: email.trim(),
-        password: password,
-      );
-    } on PlatformException catch (e) {
-      print(e);
-      return e;
-    }
+    return _authProvider.signInWithCredentials(email, password);
   }
 
   Future signUp(String email, String password) async {
-    try {
-      return await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
-      );
-    } on PlatformException catch (e) {
-      print(e);
-      return e;
-    }
+    return _authProvider.signUp(email, password);
   }
 
   Future<void> signOut() async {
-    return _firebaseAuth.signOut();
+    return _authProvider.signOut();
   }
 
-  bool isSignedIn() {
-    final currentUser = _firebaseAuth.currentUser;
-    return currentUser != null;
-  }
+  bool get isSignedIn => _authProvider.isSignedIn();
 
-  String getUser() {
-    return _firebaseAuth.currentUser.email;
-  }
+  String get getUser => _authProvider.getUser();
 
-  User getActualUser() {
-    return _firebaseAuth.currentUser;
-  }
+  User get getActualUser => _authProvider.getActualUser();
 }

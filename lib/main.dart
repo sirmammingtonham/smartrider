@@ -28,24 +28,35 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  String host = defaultTargetPlatform == TargetPlatform.android
-      ? '10.0.2.2:8080'
-      : 'localhost:8080';
+  // String host = defaultTargetPlatform == TargetPlatform.android
+  //     ? '10.0.2.2:8080'
+  //     : 'localhost:8080';
 
   await Firebase.initializeApp();
 
-  FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
+  // FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
 
   runApp(
-    SmartRider(), // Wrap your app
+    SmartRider(
+        authRepo: AuthRepository.create(),
+        busRepo: await BusRepository.create(),
+        shuttleRepo: ShuttleRepository.create(),
+        saferideRepo: SaferideRepository.create()),
   );
 }
 
 class SmartRider extends StatelessWidget {
-  final AuthRepository authRepo = AuthRepository();
-  final BusRepository busRepo = BusRepository();
-  final ShuttleRepository shuttleRepo = ShuttleRepository();
-  final SaferideRepository saferideRepo = SaferideRepository();
+  final AuthRepository authRepo;
+  final BusRepository busRepo;
+  final ShuttleRepository shuttleRepo;
+  final SaferideRepository saferideRepo;
+
+  SmartRider({
+    @required this.authRepo,
+    @required this.busRepo,
+    @required this.shuttleRepo,
+    @required this.saferideRepo,
+  });
 
   // This widget is the root of your application.
   @override
@@ -80,8 +91,6 @@ class SmartRider extends StatelessWidget {
           create: (context) => ScheduleBloc(
             mapBloc: BlocProvider.of<MapBloc>(context),
             busRepo: busRepo,
-            // panelController: _panelController,
-            // tabController: _tabController
           ),
         ),
       ],

@@ -424,7 +424,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     [87, 286, 289, 288].forEach((id) async {
       _updateIcons[id] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
           'assets/bus_icons/update_marker.svg',
-          color: BUS_COLORS['$id-185'].lighten(0.15),
+          color: BUS_COLORS[id.toString()].lighten(0.15),
           size: vehicleUpdateSize);
     });
 
@@ -528,19 +528,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   double _calculateBusHeading(BusVehicleUpdate update) {
     BusStopSimplified stop;
+
     //TODO: get bus direction id
     try {
       try {
-        stop = _busRoutes[update.routeId + '-185']
-            .forwardStops[update.currentStopSequence];
+        stop =
+            _busRoutes[update.routeId].forwardStops[update.currentStopSequence];
       } catch (error) {
-        stop = _busRoutes[update.routeId + '-185']
-            .reverseStops[update.currentStopSequence];
-      }
-    } catch (e) {
+        stop =
+            _busRoutes[update.routeId].reverseStops[update.currentStopSequence];
+      } // we should really handle this better
+    } catch (error) {
+      print(error);
       print(update.routeId);
-      print(e); // need to update gtfs database
-      return 0.0;
     }
 
     double lat1 = stop.stopLat;

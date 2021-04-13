@@ -9,6 +9,8 @@ import '../providers/saferide_provider.dart';
 class SaferideRepository {
   final _saferideProvider = SaferideProvider();
 
+  SaferideRepository.create();
+
   Future<Stream<DocumentSnapshot>> createOrder({@required Order order}) async =>
       _saferideProvider.createOrder(order);
 
@@ -23,9 +25,8 @@ class SaferideRepository {
 
   Future<Map<String, MovementStatus>> get getDriverUpdates async =>
       _saferideProvider.getDriverUpdates();
-  
-  Future<int> get getQueueSize async =>
-      _saferideProvider.getQueueSize();
+
+  Future<int> get getQueueSize async => _saferideProvider.getQueueSize();
 
   Map<String, Stream<MovementStatus>> get getDriverUpdateSubscriptions =>
       _saferideProvider.getDriverUpdateSubscriptions();

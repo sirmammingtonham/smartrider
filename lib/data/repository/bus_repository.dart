@@ -1,4 +1,3 @@
-
 import '../models/bus/bus_route.dart';
 import '../models/bus/bus_shape.dart';
 import '../models/bus/bus_stop.dart';
@@ -11,8 +10,22 @@ import '../providers/bus_provider.dart';
 /// Repo class that retrieves data from provider class methods and
 /// distributes the data to BLoC pattern
 class BusRepository {
-  final _busProvider = BusProvider();
-  List<String> get defaultRoutes => BusProvider.defaultRoutes;
+  BusProvider _busProvider;
+
+  /// Private constructor
+  BusRepository._create() {
+    _busProvider = BusProvider();
+  }
+
+  /// Public factory
+  static Future<BusRepository> create() async {
+    BusRepository self = BusRepository._create();
+    await self._busProvider.waitForLoad;
+    return self;
+  }
+
+
+  Map<String, String> get routeMap => _busProvider.routeMapping;
 
   Future<Map<String, BusRoute>> get getRoutes async => _busProvider.getRoutes();
 

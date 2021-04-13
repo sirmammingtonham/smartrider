@@ -35,10 +35,10 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _mapAuthenticationStartedToState() async* {
-    final isSignedIn = _authRepository.isSignedIn();
+    final isSignedIn = _authRepository.isSignedIn;
     if (isSignedIn) {
-      final name = _authRepository.getUser();
-      User user = _authRepository.getActualUser();
+      final name = _authRepository.getUser;
+      User user = _authRepository.getActualUser;
       String role = await DatabaseService(usid: user.uid).getUserRole();
       yield AuthenticationSuccess(name, role ?? 'Student');
     } else {
@@ -53,7 +53,7 @@ class AuthenticationBloc
 
     if (result is UserCredential) {
       //if signing in user is successful
-      User user = _authRepository.getActualUser();
+      User user = _authRepository.getActualUser;
       if (user.emailVerified) {
         yield AuthenticationSuccess(e, role);
       } else {

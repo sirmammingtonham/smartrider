@@ -21,10 +21,10 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   Map<String, bool> _buses;
 
   static const Map<String, String> busIdMap = {
-    '87-185': 'Route 87',
-    '286-185': 'Route 286',
-    '289-185': 'Route 289',
-    '288-185': 'CDTA Express Shuttle',
+    '87': 'Route 87',
+    '286': 'Route 286',
+    '289': 'Route 289',
+    '288': 'CDTA Express Shuttle',
   };
 
   PrefsBloc() : super(PrefsLoadingState());
@@ -37,10 +37,10 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
 
       // placeholders for now
       _buses = {
-        '87-185': true,
-        '286-185': true,
-        '289-185': true,
-        '288-185': true,
+        '87': true,
+        '286': true,
+        '289': true,
+        '288': true,
       };
       _sharedPrefs = await SharedPreferences.getInstance();
 

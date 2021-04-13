@@ -77,7 +77,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
             _currentPickupLatLng.latitude, _currentPickupLatLng.longitude),
         dropoff: GeoPoint(
             _currentDropoffLatLng.latitude, _currentDropoffLatLng.longitude),
-        rider: authRepo.getUser(),
+        rider: authRepo.getUser,
         createdAt: DateTime.now(),
       ));
 
@@ -164,11 +164,14 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       _currentDropoffLatLng =
           LatLng(r.geometry.location.lat, r.geometry.location.lng);
       yield SaferideSelectionState(
-          pickupLatLng: _currentPickupLatLng,
-          pickupDescription: pickupDescription,
-          dropLatLng: _currentDropoffLatLng,
-          dropAddress: r.formattedAddress,
-          dropDescription: _currentPrediction.description);
+        pickupLatLng: _currentPickupLatLng,
+        pickupDescription: pickupDescription,
+        dropLatLng: _currentDropoffLatLng,
+        dropAddress: r.formattedAddress,
+        dropDescription: _currentPrediction.description,
+        queuePos: 0,
+        waitEstimate: 0,
+      );
     }
   }
 }

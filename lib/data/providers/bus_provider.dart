@@ -24,21 +24,45 @@ import '../models/bus/bus_vehicle_update.dart';
 /// Each member function queries the firestore and returns
 /// a map containing route names and their relevent bus data object.
 class BusProvider {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  static const defaultRoutes = [
-    '87-185',
-    '286-185',
-    '289-185',
-    '288-185', // cdta express shuttle
+  Map<String, String> routeMapping;
+
+  List<String> _defaultRoutes;
+  Future _providerHasLoaded;
+
+  static const shortRouteIds = [
+    '87',
+    '286',
+    '289',
+    '288', // cdta express shuttle
   ];
+
+  BusProvider() {
+    _providerHasLoaded = _init();
+  }
+
+  // we need to await in the constructor, so doing it like this allows for the factory to wait for initialization
+  Future<void> _init() async {
+    var routes = await _firestore
+        .collection('routes')
+        .where('route_short_name', whereIn: shortRouteIds)
+        .get();
+
+    routeMapping = Map.fromIterable(routes.docs,
+        key: (doc) => doc['route_id'], value: (doc) => doc['route_short_name']);
+
+    _defaultRoutes = routeMapping.keys.toList();
+  }
+
+  Future get waitForLoad => _providerHasLoaded;
 
   /// Fetchs data from the JSON API and returns a decoded JSON.
   Future<QuerySnapshot> fetch(String collection,
-      {String idField = 'route_id', List routes = defaultRoutes}) async {
-    return firestore
+      {List routes, String idField = 'route_id'}) async {
+    return _firestore
         .collection(collection)
-        .where(idField, whereIn: routes)
+        .where(idField, whereIn: _defaultRoutes)
         .get();
   }
 
@@ -48,30 +72,31 @@ class BusProvider {
   /// Returns a [Map] of <[BusRoute.routeShortName], [BusRoute]>  pairs.
   Future<Map<String, BusRoute>> getRoutes() async {
     QuerySnapshot response =
-        await fetch('routes', idField: 'route_id', routes: defaultRoutes);
+        await fetch('routes', idField: 'route_id', routes: _defaultRoutes);
 
     Map<String, BusRoute> routeMap = Map.fromIterable(response.docs,
-        key: (doc) => doc['route_id'],
+        key: (doc) => doc['route_short_name'],
         value: (doc) => BusRoute.fromJson(doc.data()));
+
     return routeMap;
   }
 
   /// Returns a [Map] of [BusShape] objects.
   Future<Map<String, BusShape>> getPolylines() async {
     QuerySnapshot response =
-        await fetch('polylines', idField: 'route_id', routes: defaultRoutes);
+        await fetch('polylines', idField: 'route_id', routes: _defaultRoutes);
 
     Map<String, BusShape> shapesMap = Map.fromIterable(response.docs,
-        key: (doc) => doc['route_id'],
+        key: (doc) => routeMapping[doc['route_id']],
         value: (doc) => BusShape.fromJson(json.decode(doc['geoJSON'])));
     return shapesMap;
   }
 
   /// Returns a [Map] of [BusStop] objects.
   Future<Map<String, BusStop>> getStops() async {
-    QuerySnapshot response = await firestore
+    QuerySnapshot response = await _firestore
         .collection('stops')
-        .where('route_ids', arrayContainsAny: defaultRoutes)
+        .where('route_ids', arrayContainsAny: _defaultRoutes)
         .get();
 
     Map<String, BusStop> stopsMap = Map.fromIterable(response.docs,
@@ -84,10 +109,10 @@ class BusProvider {
   /// Returns a [List] of [BusTrip] objects.
   Future<Map<String, BusTrip>> getTrips() async {
     QuerySnapshot response =
-        await fetch('trips', idField: 'route_id', routes: defaultRoutes);
+        await fetch('trips', idField: 'route_id', routes: _defaultRoutes);
 
     Map<String, BusTrip> tripList = Map.fromIterable(response.docs,
-        key: (doc) => doc['route_id'],
+        key: (doc) => routeMapping[doc['route_id']],
         value: (doc) => BusTrip.fromJson(doc.data()));
 
     return tripList;
@@ -119,7 +144,7 @@ class BusProvider {
         ? FeedMessage.fromBuffer(response.bodyBytes)
             .entity
             .map((entity) => BusVehicleUpdate.fromPBEntity(entity))
-            .where((update) => defaultRoutes
+            .where((update) => _defaultRoutes
                 .map((str) => str.split('-')[0])
                 .contains(update.routeId))
             .toList()
@@ -134,9 +159,9 @@ class BusProvider {
     if (weekdays.contains(day)) {
       day = "weekday";
     }
-    QuerySnapshot response = await firestore
+    QuerySnapshot response = await _firestore
         .collection('timetables')
-        .where('route_id', whereIn: defaultRoutes)
+        .where('route_id', whereIn: _defaultRoutes)
         .get();
 
     Map<String, BusTimetable> timetableMap = {};
@@ -146,9 +171,9 @@ class BusProvider {
           await route.reference.collection(day.toLowerCase()).doc('0').get();
 
       if (table.data() != null) {
-        timetableMap[route.data()['route_id']] =
+        timetableMap[routeMapping[route.data()['route_id']]] =
             BusTimetable.fromJson(table.data());
-      } 
+      }
     }
 
     return timetableMap;

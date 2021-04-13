@@ -2,27 +2,28 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 
 const BUS_COLORS = {
-  '87-185': Colors.purple,
-  '286-185': Colors.deepOrange,
-  '289-185': Colors.lightBlue,
-  '288-185': Colors.green,
+  '87': Colors.purple,
+  '286': Colors.deepOrange,
+  '289': Colors.lightBlue,
+  '288': Colors.green,
 };
 
 const BUS_WIDTHS = {
-  '87-185': 6,
-  '286-185': 5,
-  '289-185': 4,
-  '288-185': 3,
+  '87': 6,
+  '286': 5,
+  '289': 4,
+  '288': 3,
 };
 const BUS_INDICIES = {
-  '87-185': 0,
-  '286-185': 1,
-  '289-185': 2,
-  '288-185': 3,
+  '87': 0,
+  '286': 1,
+  '289': 2,
+  '288': 3,
 };
 
 class BusShape {
   String routeId;
+  String routeShortName;
   List<List<LatLng>> coordinates;
 
   BusShape({this.routeId, this.coordinates});
@@ -32,16 +33,17 @@ class BusShape {
     return coordinates
         .map((linestring) => Polyline(
             polylineId: PolylineId('${this.routeId}${i++}'),
-            color: BUS_COLORS[this.routeId].withAlpha(255),
-            width: BUS_WIDTHS[this.routeId],
-            zIndex: BUS_INDICIES[this.routeId],
+            color: BUS_COLORS[this.routeShortName].withAlpha(255),
+            width: BUS_WIDTHS[this.routeShortName],
+            zIndex: BUS_INDICIES[this.routeShortName],
             // patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
             points: linestring))
         .toList();
   }
-  
+
   BusShape.fromJson(Map<String, dynamic> json) {
     this.routeId = json['properties']['route_id'];
+    this.routeShortName = routeId.substring(0, routeId.indexOf('-'));
     this.coordinates = [];
 
     // check if single linestring or multi-linestring and handle differently
