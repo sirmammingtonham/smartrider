@@ -12,9 +12,9 @@ import { zipObject, zip, isNumber } from "lodash";
 import * as fs from "fs";
 import * as os from "os";
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+// });
 
 const config = {
   "agencies": [
@@ -31,6 +31,7 @@ const config = {
   "coordinatePrecision": 5,
   "showMap": false
 };
+
 const runtimeOpts: functions.RuntimeOptions = {
   timeoutSeconds: 540,
   memory: "2GB",
