@@ -169,16 +169,20 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     });
 
     _saferideBlocSub = saferideBloc.listen((saferideState) {
-      if (saferideState is SaferideSelectionState) {
-        add(MapSaferideSelectionEvent(coord: saferideState.dropLatLng));
-      } else if (saferideState is SaferideNoState) {
-        scrollToCurrentLocation();
-        add(MapUpdateEvent(zoomLevel: _zoomLevel));
-        // i think the previous timer keeps going so this is redundant
-        // but need to make sure
-        // _updateTimer = Timer.periodic(_updateRefreshDelay,
-        //     (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
-      }
+      switch (saferideState.runtimeType) {
+        case SaferideSelectionState:
+          add(MapSaferideSelectionEvent(coord: (saferideState as SaferideSelectionState).dropLatLng));
+          break;
+        case SaferideNoState: {
+          scrollToCurrentLocation();
+          add(MapUpdateEvent(zoomLevel: _zoomLevel));
+
+          // i think the previous timer keeps going so this is redundant
+          // but need to make sure
+          // _updateTimer = Timer.periodic(_updateRefreshDelay,
+          //     (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+        }
+      } 
     });
   }
 
@@ -203,26 +207,37 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   /// bloc functions
   @override
   Stream<MapState> mapEventToState(MapEvent event) async* {
-    if (event is MapInitEvent) {
-      await _initMapElements();
-      _updateTimer = Timer.periodic(_updateRefreshDelay,
-          (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
-      yield* _mapDataRequestedToState();
-    } else if (event is MapUpdateEvent) {
-      _zoomLevel = event.zoomLevel;
-      yield* _mapUpdateRequestedToState();
-    } else if (event is MapTypeChangeEvent) {
-      _isBus = !_isBus;
-      yield* _mapUpdateRequestedToState();
-    } else if (event is MapSaferideSelectionEvent) {
-      _saferideDest = event.coord;
-      scrollToLocation(_saferideDest);
-      yield* _mapSaferideSelectionToState(event);
-    } else if (event is MapMoveEvent) {
-      _zoomLevel = event.zoomLevel;
-      yield* _mapMoveToState();
-    } else {
-      yield MapErrorState();
+    switch (event.runtimeType) {
+      case MapInitEvent: {
+        await _initMapElements();
+        _updateTimer = Timer.periodic(_updateRefreshDelay,
+        (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+        yield* _mapDataRequestedToState();
+      }
+      break;
+      case MapUpdateEvent: {
+        _zoomLevel = (event as MapUpdateEvent).zoomLevel;
+        yield* _mapUpdateRequestedToState();
+      }
+      break;
+      case MapTypeChangeEvent: {
+        _isBus = !_isBus;
+        yield* _mapUpdateRequestedToState();
+      }
+      break;
+      case MapSaferideSelectionEvent: {
+        _saferideDest = (event as MapSaferideSelectionEvent).coord;
+        scrollToLocation(_saferideDest);
+        yield* _mapSaferideSelectionToState(event);
+      }
+      break;
+      case MapMoveEvent: {
+        _zoomLevel = (event as MapMoveEvent).zoomLevel;
+        yield* _mapMoveToState();
+      }
+      break;
+      default:
+        yield MapErrorState();
     }
   }
 

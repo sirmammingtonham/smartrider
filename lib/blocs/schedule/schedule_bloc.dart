@@ -103,31 +103,38 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   }
 
   Stream<ScheduleState> mapEventToState(ScheduleEvent event) async* {
-    if (event is ScheduleInitEvent) {
-      _tabController = event.tabController..addListener(_handleTabSelection);
-      _panelController = event.panelController;
-      // busRoutes = await busRepo.getRoutes;
-      busTables = await busRepo.getTimetables;
-      yield* _mapScheduleTimelineToState();
-    } else if (event is ScheduleViewChangeEvent) {
-      _isTimeline = event.isTimeline;
-      if (event.isTimeline) {
+    switch (event.runtimeType) {
+      case ScheduleInitEvent: {
+        _tabController = (event as ScheduleInitEvent).tabController..addListener(_handleTabSelection);
+        _panelController = (event as ScheduleInitEvent).panelController;
+        // busRoutes = await busRepo.getRoutes;
+        busTables = await busRepo.getTimetables;
         yield* _mapScheduleTimelineToState();
-      } else {
-        yield* _mapScheduleTableToState();
       }
-    } else if (event is ScheduleTypeChangeEvent) {
-      _isChanging = true;
-      _tabController.animateTo(_isBus ? 1 : 0);
-      _isChanging = false;
-      _isBus = !_isBus;
-      if (_isTimeline) {
-        yield* _mapScheduleTimelineToState();
-      } else {
-        yield* _mapScheduleTableToState();
+      break;
+      case ScheduleViewChangeEvent: {
+        _isTimeline = (event as ScheduleViewChangeEvent).isTimeline;
+        if ((event as ScheduleViewChangeEvent).isTimeline) {
+          yield* _mapScheduleTimelineToState();
+        } else {
+          yield* _mapScheduleTableToState();
+        }
       }
-    } else {
-      print('error in schedule bloc');
+      break;
+      case ScheduleTypeChangeEvent: {
+        _isChanging = true;
+        _tabController.animateTo(_isBus ? 1 : 0);
+        _isChanging = false;
+        _isBus = !_isBus;
+        if (_isTimeline) {
+          yield* _mapScheduleTimelineToState();
+        } else {
+          yield* _mapScheduleTableToState();
+        }
+      }
+      break;
+      default:
+        print('error in schedule bloc');
     }
   }
 
