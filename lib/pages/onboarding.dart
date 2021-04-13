@@ -370,7 +370,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               );
       }),
-      bottomSheet: _currentPage == _numPages - 1
+      bottomSheet: !onboardDone
           ? Container(
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
@@ -382,12 +382,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: GestureDetector(
                 onTap: () {
                   BlocProvider.of<PrefsBloc>(context).add(OnboardingComplete());
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            WelcomeScreen(homePage: HomePage())),
-                  );
+                  setState(() {
+                    onboardDone = true;
+                  });
                 },
                 child: Center(
                   child: Padding(
