@@ -1,13 +1,14 @@
 import * as moment from "moment";
 // trying to convert to axios becaues requests is deprecated
-import axios from "axios";
+// import axios from "axios";
 import * as h from "hypertrack";
 import * as config from "../setup/keys.json";
-import { Base64 } from "js-base64";
+// import { Base64 } from "js-base64";
 
-const AUTHORIZATION =
-  "Basic " +
-  Base64.encode(`${config.hypertrack_id}:${config.hypertrack_secret}`);
+// const AUTHORIZATION =
+//   "Basic " +
+//   Base64.encode(`${config.hypertrack_id}:${config.hypertrack_secret}`);
+
 const DATE_FORMAT = "YYYY-MM-DD[T]HH:mm:ss[Z]";
 const hypertrack = h.Hypertrack(config.hypertrack_id, config.hypertrack_secret);
 

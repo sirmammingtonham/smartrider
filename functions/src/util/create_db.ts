@@ -6,8 +6,13 @@ export function createDb() {
   gtfs.import(config).then(() => {
     gtfs.openDb(config).then(() => {
       gtfs.closeDb().then(() => {
-        console.log("finished");
+        console.log("finished creating db");
       });
     });
   });
+}
+
+// basically if __name__ == "__main__":
+if (typeof require !== 'undefined' && require.main === module) {
+  createDb();
 }

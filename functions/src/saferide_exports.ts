@@ -3,7 +3,7 @@
 //////////////////////////////////////////////
 
 import * as functions from "firebase-functions";
-import * as hypertrack from "./helpers/hypertrack_util";
+import * as hypertrack from "./util/hypertrack_util";
 import * as admin from "firebase-admin";
 import { order } from "typesaurus";
 
