@@ -29,13 +29,38 @@ class SaferideSelectionTestEvent extends SaferideEvent {
   List<Object> get props => [];
 }
 
-// not sure what fields to add to this yet
-// probably should add some data class to store recent selection fields
 class SaferideConfirmedEvent extends SaferideEvent {
   const SaferideConfirmedEvent();
 
   @override
   List<Object> get props => [];
+}
+
+class SaferideWaitUpdateEvent extends SaferideEvent {
+  final int queuePosition;
+  final int waitEstimate;
+
+  const SaferideWaitUpdateEvent(
+      {@required this.queuePosition, @required this.waitEstimate});
+
+  @override
+  List<Object> get props => [queuePosition, waitEstimate];
+}
+
+class SaferideAcceptedEvent extends SaferideEvent {
+  final String licensePlate;
+  final String driverName;
+  final int queuePosition;
+  final int waitEstimate;
+  const SaferideAcceptedEvent(
+      {this.licensePlate,
+      this.driverName,
+      this.queuePosition,
+      this.waitEstimate});
+
+  @override
+  List<Object> get props =>
+      [licensePlate, driverName, queuePosition, waitEstimate];
 }
 
 class SaferideCancelEvent extends SaferideEvent {

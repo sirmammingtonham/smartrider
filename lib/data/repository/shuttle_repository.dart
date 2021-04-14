@@ -12,6 +12,8 @@ import '../providers/shuttle_provider.dart';
 class ShuttleRepository {
   final _shuttleProvider = ShuttleProvider();
 
+  ShuttleRepository.create();
+
 //  void get openSocket => _shuttleProvider.openSocket();
   Future<Map<String, ShuttleRoute>> get getRoutes async =>
       _shuttleProvider.getRoutes();

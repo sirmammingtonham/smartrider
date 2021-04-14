@@ -2,6 +2,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:humanize/humanize.dart' as humanize;
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,64 +13,115 @@ import 'package:smartrider/util/multi_bloc_builder.dart';
 class SaferideStatusWidget extends StatelessWidget {
   const SaferideStatusWidget();
 
-  Widget _selectionWidget(BuildContext context) => Align(
-      alignment: FractionalOffset.bottomCenter,
-      child: FractionallySizedBox(
-        heightFactor: 0.2,
-        child: Container(
-            decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(18.0),
-                )),
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: 5),
-                  Center(
-                    child: Text(
-                      'Estimated Wait: 10 mins',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Center(
-                    child: Text(
-                      '2nd in Queue',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white60),
-                    ),
-                  ),
-                  SizedBox(height: 14),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Theme.of(context).buttonColor)),
-                    child: FractionallySizedBox(
-                      widthFactor: 0.6,
-                      child: Text(
-                        'CONFIRM PICKUP',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 15),
+  Widget _selectionWidget(BuildContext context, SaferideSelectionState state) =>
+      Align(
+          alignment: FractionalOffset.bottomCenter,
+          child: FractionallySizedBox(
+            heightFactor: 0.2,
+            child: Container(
+                decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(18.0),
+                    )),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 5),
+                      Center(
+                        child: Text(
+                          'Estimated Wait: ${state.waitEstimate}',
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
                       ),
-                    ),
-                    onPressed: () {
-                      BlocProvider.of<SaferideBloc>(context)
-                          .add(SaferideConfirmedEvent());
-                    },
-                  )
-                ],
-              ),
-            )),
-      ));
+                      SizedBox(height: 5),
+                      Center(
+                        child: Text(
+                          '${humanize.ordinal(state.queuePosition)} in line',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white60),
+                        ),
+                      ),
+                      SizedBox(height: 14),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Theme.of(context).buttonColor)),
+                        child: FractionallySizedBox(
+                          widthFactor: 0.6,
+                          child: Text(
+                            'CONFIRM PICKUP',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                        onPressed: () {
+                          BlocProvider.of<SaferideBloc>(context)
+                              .add(SaferideConfirmedEvent());
+                        },
+                      )
+                    ],
+                  ),
+                )),
+          ));
 
-  Widget _confirmedWidget(BuildContext context, SaferideConfirmedState state) =>
+  Widget _waitingWidget(BuildContext context, SaferideWaitingState state) =>
+      Align(
+          alignment: FractionalOffset.bottomCenter,
+          child: FractionallySizedBox(
+            heightFactor: 0.22,
+            child: Container(
+                decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(18.0),
+                    )),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 5),
+                      Center(
+                        child: Text('${state.waitEstimate} min${state.waitEstimate != 1 ? 's' : ''}',
+                          style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.hourglass_top),
+                        title: Text('${humanize.ordinal(state.queuePosition)} in line'),
+                      ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Theme.of(context).accentColor)),
+                        child: FractionallySizedBox(
+                          widthFactor: 0.6,
+                          child: Text(
+                            'CANCEL',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                        onPressed: () {
+                          BlocProvider.of<SaferideBloc>(context)
+                              .add(SaferideCancelEvent());
+                        },
+                      )
+                    ],
+                  ),
+                )),
+          ));
+
+  Widget _confirmedWidget(BuildContext context, SaferideAcceptedState state) =>
       Align(
           alignment: FractionalOffset.bottomCenter,
           child: FractionallySizedBox(
@@ -87,9 +139,9 @@ class SaferideStatusWidget extends StatelessWidget {
                       SizedBox(height: 5),
                       Center(
                         child: Text(
-                          state.timeEstimate < 1
+                          state.waitEstimate < 1
                               ? 'Now!'
-                              : '${state.timeEstimate} min${state.timeEstimate != 1 ? 's' : ''} away',
+                              : '${state.waitEstimate} min${state.waitEstimate != 1 ? 's' : ''} away',
                           style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
@@ -142,13 +194,26 @@ class SaferideStatusWidget extends StatelessWidget {
         builder: (context, states) {
           final saferideState = states.get<SaferideState>();
           // final mapState = states.get<MapState>();
+
           // TODO: get this to animate, with a slide up from previous state
-          if (saferideState is SaferideSelectionState) {
-            return _selectionWidget(context);
-          } else if (saferideState is SaferideConfirmedState) {
-            return _confirmedWidget(context, saferideState);
+          switch (saferideState.runtimeType) {
+            case SaferideSelectionState:
+              return _selectionWidget(context, saferideState);
+            case SaferideWaitingState:
+              return _waitingWidget(context, saferideState);
+            case SaferideAcceptedState:
+              return _confirmedWidget(context, saferideState);
+            default:
+              return Container();
           }
-          return Container();
+          // if (saferideState is SaferideSelectionState) {
+          //   return _selectionWidget(context, saferideState);
+          // } else if (saferideState is SaferideWaitingState) {
+          //   return _waitingWidget(context, saferideState);
+          // } else if (saferideState is SaferideAcceptedState) {
+          //   return _confirmedWidget(context, saferideState);
+          // }
+          // return Container();
         });
   }
 }

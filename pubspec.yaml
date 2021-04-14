@@ -38,7 +38,7 @@ dependencies:
   protobuf: ^1.0.1
 
   #saferide dependencies
-  hypertrack_views_flutter: ^0.1.0
+  hypertrack_views_flutter: ^0.1.1
 
   #notication dependencies
   flutter_local_notifications: ^1.4.4+2
@@ -54,6 +54,7 @@ dependencies:
   table_sticky_headers: ^1.2.0
   showcaseview: 
   feature_discovery: ^0.13.0+2
+  humanize: ^0.3.0
 
   #state management
   flutter_bloc: ^6.0.1

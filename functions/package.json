@@ -17,7 +17,7 @@
     "@turf/turf": "^5.1.6",
     "axios": "^0.21.0",
     "firebase-admin": "^9.3.0",
-    "firebase-functions": "^3.11.0",
+    "firebase-functions": "^3.13.2",
     "geojson": "^0.5.0",
     "geojson-dissolve": "^3.1.0",
     "gtfs": "^2.0.5",
@@ -25,15 +25,17 @@
     "js-base64": "^3.5.2",
     "laneify": "^0.3.1",
     "lodash": "^4.17.20",
+    "moment": "^2.29.1",
     "typesaurus": "^6.2.0"
   },
   "devDependencies": {
-    "@types/node": "^14.11.5",
+    "@types/node": "^14.14.37",
     "@typescript-eslint/eslint-plugin": "^3.9.1",
     "@typescript-eslint/parser": "^3.8.0",
     "eslint": "^7.6.0",
     "eslint-plugin-import": "^2.22.0",
     "firebase-functions-test": "^0.2.0",
+    "hypertrack": "^3.2.1",
     "ts-migrate": "^0.1.9",
     "typescript": "^3.9.7"
   },

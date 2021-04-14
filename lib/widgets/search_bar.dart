@@ -117,7 +117,7 @@ class SearchBarState extends State<SearchBar> {
                           leading: Container(
                               height: double.infinity,
                               child: Icon(Icons.place)),
-                          title: Text(saferideState.destDescription),
+                          title: Text(saferideState.dropDescription),
                           subtitle: const Text('Dropoff location'),
                           trailing: IconButton(
                             icon: Icon(Icons.cancel),
@@ -131,7 +131,7 @@ class SearchBarState extends State<SearchBar> {
                           },
                         )
                       ]))));
-        } else if (saferideState is SaferideConfirmedState) {
+        } else if (saferideState is SaferideAcceptedState) {
           return Container();
         } else {
           // print("something's wrong with auth bloc");

@@ -22,7 +22,7 @@ class _SettingsPageState extends State<SettingsPage> {
   // adding placeholder vars for now, replace these with sharedprefs!
   Map<String, bool> prefsData;
 
-  AuthRepository auth = AuthRepository();
+  AuthRepository auth = AuthRepository.create();
 
   @override
   void initState() {

@@ -23,74 +23,75 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   Map<String, bool> _buses;
 
   static const Map<String, String> busIdMap = {
-    '87-185': 'Route 87',
-    '286-185': 'Route 286',
-    '289-185': 'Route 289',
-    '288-185': 'CDTA Express Shuttle',
+    '87': 'Route 87',
+    '286': 'Route 286',
+    '289': 'Route 289',
+    '288': 'CDTA Express Shuttle',
   };
 
   PrefsBloc() : super(PrefsLoadingState());
 
   @override
   Stream<PrefsState> mapEventToState(PrefsEvent event) async* {
-    if (event is LoadPrefsEvent) {
-      hideInactiveRoutes = true;
-      _shuttles = {};
+    switch (event.runtimeType) {
+      case LoadPrefsEvent:
+        {
+          hideInactiveRoutes = true;
+          _shuttles = {};
 
-      // placeholders for now
-      _buses = {
-        '87-185': true,
-        '286-185': true,
-        '289-185': true,
-        '288-185': true,
-      };
-      _sharedPrefs = await SharedPreferences.getInstance();
+          // placeholders for now
+          _buses = {
+            '87': true,
+            '286': true,
+            '289': true,
+            '288': true,
+          };
+          _sharedPrefs = await SharedPreferences.getInstance();
 
-      if (!_sharedPrefs.containsKey('firstTimeLoad')) {
-        _sharedPrefs.setBool('firstTimeLoad', true);
-      }
-      if (!_sharedPrefs.containsKey('firstSlideUp')) {
-        _sharedPrefs.setBool('firstSlideUp', true);
-      }
-      if (!_sharedPrefs.containsKey('firstSettingAccess')) {
-        _sharedPrefs.setBool('firstSettingAccess', false);
-      }
-      if (!_sharedPrefs.containsKey('darkMode')) {
-        _sharedPrefs.setBool('darkMode', false);
-      }
-      if (!_sharedPrefs.containsKey('pushNotifications')) {
-        _sharedPrefs.setBool('pushNotifications', true);
-      }
-      if (!_sharedPrefs.containsKey('firstLaunch')) {
-        _sharedPrefs.setBool('firstLaunch', true);
-      }
-      // modify active routes on app launch
-      yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
-    } else if (event is SavePrefsEvent) {
-      yield PrefsSavingState();
-      _sharedPrefs.setBool(event.name, event.val);
-      yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
-    } else if (event is PrefsUpdateEvent) {
-      yield PrefsChangedState();
-      yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
-    } else if (event is InitActiveRoutesEvent) {
-      // hide all inactive routes if first time launching app today
-      if (hideInactiveRoutes) {
-        hideInactiveRoutes = false;
-        event.routes.forEach((route) {
-          _shuttles[route.name] = route.active;
-        });
-      }
-      yield PrefsChangedState();
-      yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
-    } else if (event is ThemeChangedEvent) {
-      yield PrefsChangedState();
-      yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
-    } else if (event is OnboardingComplete){
-      _sharedPrefs.setBool('firstLaunch', false);
-      yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
-    }else {
-      yield PrefsErrorState(message: "something wrong with prefs_bloc");
+          if (!_sharedPrefs.containsKey('darkMode')) {
+            _sharedPrefs.setBool('darkMode', false);
+          }
+          if (!_sharedPrefs.containsKey('pushNotifications')) {
+            _sharedPrefs.setBool('pushNotifications', true);
+          }
+          // modify active routes on app launch
+          yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
+        }
+        break;
+      case SavePrefsEvent:
+        {
+          yield PrefsSavingState();
+          _sharedPrefs.setBool(
+              (event as SavePrefsEvent).name, (event as SavePrefsEvent).val);
+          yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
+        }
+        break;
+      case PrefsUpdateEvent:
+        {
+          yield PrefsChangedState();
+          yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
+        }
+        break;
+      case InitActiveRoutesEvent:
+        {
+          if (hideInactiveRoutes) {
+            hideInactiveRoutes = false;
+            (event as InitActiveRoutesEvent).routes.forEach((route) {
+              _shuttles[route.name] = route.active;
+            });
+          }
+          yield PrefsChangedState();
+          yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
+        }
+        break;
+      case ThemeChangedEvent:
+        {
+          yield PrefsChangedState();
+          yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
+        }
+        break;
+      default:
+        yield PrefsErrorState(message: "something wrong with prefs_bloc");
     }
   }
 }

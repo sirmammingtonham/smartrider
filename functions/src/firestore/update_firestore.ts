@@ -1,20 +1,54 @@
 import * as admin from "firebase-admin";
+import * as functions from "firebase-functions";
 import * as gtfs from "gtfs";
 import * as gtfs_timetable from "gtfs-to-html";
 import * as models from "./firestore_types";
-import * as Promise from "../helpers/async_util";
-import * as config from "../setup/gtfs_config.json";
+import * as Promise from "../util/async_util";
+// import * as config from "../setup/gtfs_config.json";
 import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
 import { collection, subcollection, set, all, remove } from "typesaurus";
-import { genShapeGeoJSON } from "../helpers/bus_util";
-import { zipObject, zip } from "lodash";
-
+import { genShapeGeoJSON } from "../util/bus_util";
+import { zipObject, zip, isNumber } from "lodash";
 import * as fs from "fs";
+import * as os from "os";
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+// });
 
+const config = {
+  "agencies": [
+    {
+      "agency_key": "cdta",
+      "url": "https://www.cdta.org/schedules/google_transit.zip",
+      "exclude": []
+    }
+  ],
+  "sqlitePath": os.tmpdir + '/gtfs.db',
+  "csvOptions": {
+    "skip_lines_with_error": true
+  },
+  "coordinatePrecision": 5,
+  "showMap": false
+};
+
+const runtimeOpts: functions.RuntimeOptions = {
+  timeoutSeconds: 540,
+  memory: "2GB",
+};
+
+const createDbFile = (filePath: string) => {
+
+  fs.appendFile(filePath, '', function (err) {
+    if (err) {
+      console.log('error occured while creating gtfs db file')
+    }
+
+    else {
+      console.log('gtfs db file created!');
+    }
+  });
+}
 // admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
 
 console.log("initialized");
@@ -103,10 +137,10 @@ const parseRoutes = async (db: any) => {
   const stops = await await db.all(`SELECT * FROM stops;`);
 
   function multiDimensionalUnique(arr: any[]) {
-    var uniques = [];
-    var itemsFound: models.Map<boolean> = {};
-    for (var i = 0, l = arr.length; i < l; i++) {
-      var stringified = JSON.stringify(arr[i]);
+    const uniques = [];
+    const itemsFound: models.Map<boolean> = {};
+    for (let i = 0, l = arr.length; i < l; i++) {
+      const stringified = JSON.stringify(arr[i]);
       if (itemsFound[stringified]) {
         continue;
       }
@@ -301,8 +335,8 @@ const flattenTimetable = async (table: any) => {
   const timestamp_list: number[] = [];
   // flatten the object in column major style
   for (let i = 0; i < table.stops[0].trips.length; i++) {
-    for (let j = 0; j < table.stops.length; j++) {
-      const stop = table.stops[j].trips[i];
+    for (const entry of table.stops) {
+      const stop = entry.trips[i];
       // stop_list.push({
       //   arrival_time: stop.arrival_timestamp,
       //   stop_id: stop.stop_id,
@@ -513,7 +547,7 @@ const clearFirestore = async () => {
       (doc: any) => {
         return remove(coll, doc.ref.id);
       },
-      { concurrency: 1000 }
+      { concurrency: 500 }
     );
   }
   console.timeEnd("clearFirestore");
@@ -530,6 +564,8 @@ const createIndexes = async (db: any) => {
     db.run(`CREATE INDEX s_id2 ON stops(stop_id)`),
     db.run(`CREATE INDEX sr_id ON calendar(service_id)`),
     db.run(`CREATE INDEX sr_id2 ON trips(service_id)`),
+    db.run(`DELETE FROM routes WHERE route_short_name NOT IN ('87','289','288','286')`),
+    db.run(`DELETE FROM trips WHERE route_id LIKE '87%' OR route_id LIKE '289%' OR route_id LIKE '288%' OR route_id LIKE '286%'`),
   ]).then(() => console.timeEnd("index"));
 };
 
@@ -555,9 +591,50 @@ const generateDB = async () => {
   ]);
 };
 
-console.time("generateDB");
-generateDB()
-  .then(() => {
-    console.timeEnd("generateDB");
-  })
-  .catch((error) => console.error(error));
+
+export const refreshDataBase = functions.runWith(runtimeOpts).pubsub.schedule('0 3 * * *')  // run at 3:00 am everyday eastern time
+  .timeZone('America/New_York')
+  .onRun(async (context) => {
+    const db = admin.firestore();
+    const enddates: number[] = [];
+    const querySnapshot = await db.collection("routes").get();
+    querySnapshot.forEach((doc) => {
+      const end_date = doc.get('end_date');
+      if (isNumber(end_date)) {
+        enddates.push(end_date);
+      }
+      else {
+        console.log("error bruh");
+      }
+    });
+
+    enddates.sort();
+
+    const currentDate = new Date();
+    const dd = String(currentDate.getDate()).padStart(2, '0');
+    const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const yyyy = currentDate.getFullYear();
+    const today: number = +(yyyy + mm + dd);
+
+    if (enddates[0] <= today) { //update needed
+      console.log("refresh started");
+      const dbPath = os.tmpdir() + '/gtfs.db';
+      createDbFile(dbPath);
+      try {
+        await generateDB();
+        fs.unlinkSync(dbPath)
+        console.log("update successful")
+        return 0;
+      }
+      catch (error) {
+        console.log("error deleting tmp file");
+        return 0;
+      }
+    }
+    else {  //update not needed
+      console.log("no update needed");
+      return 0;
+    }
+  });
+
+

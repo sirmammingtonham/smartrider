@@ -26,7 +26,7 @@ class FeedMessage extends $pb.GeneratedMessage {
   factory FeedMessage.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory FeedMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   FeedMessage clone() => FeedMessage()..mergeFromMessage(this);
-  FeedMessage copyWith(void Function(FeedMessage) updates) => super.copyWith((message) => updates(message as FeedMessage));
+  // FeedMessage copyWith(void Function(FeedMessage) updates) => super.copyWith((message) => updates(message as FeedMessage));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static FeedMessage create() => FeedMessage._();
@@ -64,7 +64,7 @@ class FeedHeader extends $pb.GeneratedMessage {
   factory FeedHeader.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory FeedHeader.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   FeedHeader clone() => FeedHeader()..mergeFromMessage(this);
-  FeedHeader copyWith(void Function(FeedHeader) updates) => super.copyWith((message) => updates(message as FeedHeader));
+  // // FeedHeader copyWith(void Function(FeedHeader) updates) => super.copyWith((message) => updates(message as FeedHeader));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static FeedHeader create() => FeedHeader._();
@@ -117,7 +117,7 @@ class FeedEntity extends $pb.GeneratedMessage {
   factory FeedEntity.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory FeedEntity.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   FeedEntity clone() => FeedEntity()..mergeFromMessage(this);
-  FeedEntity copyWith(void Function(FeedEntity) updates) => super.copyWith((message) => updates(message as FeedEntity));
+  // // FeedEntity copyWith(void Function(FeedEntity) updates) => super.copyWith((message) => updates(message as FeedEntity));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static FeedEntity create() => FeedEntity._();
@@ -192,7 +192,7 @@ class TripUpdate_StopTimeEvent extends $pb.GeneratedMessage {
   factory TripUpdate_StopTimeEvent.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory TripUpdate_StopTimeEvent.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   TripUpdate_StopTimeEvent clone() => TripUpdate_StopTimeEvent()..mergeFromMessage(this);
-  TripUpdate_StopTimeEvent copyWith(void Function(TripUpdate_StopTimeEvent) updates) => super.copyWith((message) => updates(message as TripUpdate_StopTimeEvent));
+  // // TripUpdate_StopTimeEvent copyWith(void Function(TripUpdate_StopTimeEvent) updates) => super.copyWith((message) => updates(message as TripUpdate_StopTimeEvent));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static TripUpdate_StopTimeEvent create() => TripUpdate_StopTimeEvent._();
@@ -245,7 +245,7 @@ class TripUpdate_StopTimeUpdate extends $pb.GeneratedMessage {
   factory TripUpdate_StopTimeUpdate.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory TripUpdate_StopTimeUpdate.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   TripUpdate_StopTimeUpdate clone() => TripUpdate_StopTimeUpdate()..mergeFromMessage(this);
-  TripUpdate_StopTimeUpdate copyWith(void Function(TripUpdate_StopTimeUpdate) updates) => super.copyWith((message) => updates(message as TripUpdate_StopTimeUpdate));
+  // // TripUpdate_StopTimeUpdate copyWith(void Function(TripUpdate_StopTimeUpdate) updates) => super.copyWith((message) => updates(message as TripUpdate_StopTimeUpdate));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static TripUpdate_StopTimeUpdate create() => TripUpdate_StopTimeUpdate._();
@@ -320,7 +320,7 @@ class TripUpdate extends $pb.GeneratedMessage {
   factory TripUpdate.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory TripUpdate.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   TripUpdate clone() => TripUpdate()..mergeFromMessage(this);
-  TripUpdate copyWith(void Function(TripUpdate) updates) => super.copyWith((message) => updates(message as TripUpdate));
+  // // TripUpdate copyWith(void Function(TripUpdate) updates) => super.copyWith((message) => updates(message as TripUpdate));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static TripUpdate create() => TripUpdate._();
@@ -393,7 +393,7 @@ class VehiclePosition extends $pb.GeneratedMessage {
   factory VehiclePosition.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory VehiclePosition.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   VehiclePosition clone() => VehiclePosition()..mergeFromMessage(this);
-  VehiclePosition copyWith(void Function(VehiclePosition) updates) => super.copyWith((message) => updates(message as VehiclePosition));
+  // // VehiclePosition copyWith(void Function(VehiclePosition) updates) => super.copyWith((message) => updates(message as VehiclePosition));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static VehiclePosition create() => VehiclePosition._();
@@ -511,7 +511,7 @@ class Alert extends $pb.GeneratedMessage {
   factory Alert.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory Alert.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   Alert clone() => Alert()..mergeFromMessage(this);
-  Alert copyWith(void Function(Alert) updates) => super.copyWith((message) => updates(message as Alert));
+  // // Alert copyWith(void Function(Alert) updates) => super.copyWith((message) => updates(message as Alert));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static Alert create() => Alert._();
@@ -622,7 +622,7 @@ class TimeRange extends $pb.GeneratedMessage {
   factory TimeRange.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory TimeRange.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   TimeRange clone() => TimeRange()..mergeFromMessage(this);
-  TimeRange copyWith(void Function(TimeRange) updates) => super.copyWith((message) => updates(message as TimeRange));
+  // // TimeRange copyWith(void Function(TimeRange) updates) => super.copyWith((message) => updates(message as TimeRange));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static TimeRange create() => TimeRange._();
@@ -666,7 +666,7 @@ class Position extends $pb.GeneratedMessage {
   factory Position.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory Position.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   Position clone() => Position()..mergeFromMessage(this);
-  Position copyWith(void Function(Position) updates) => super.copyWith((message) => updates(message as Position));
+  // // Position copyWith(void Function(Position) updates) => super.copyWith((message) => updates(message as Position));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static Position create() => Position._();
@@ -738,7 +738,7 @@ class TripDescriptor extends $pb.GeneratedMessage {
   factory TripDescriptor.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory TripDescriptor.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   TripDescriptor clone() => TripDescriptor()..mergeFromMessage(this);
-  TripDescriptor copyWith(void Function(TripDescriptor) updates) => super.copyWith((message) => updates(message as TripDescriptor));
+  // // TripDescriptor copyWith(void Function(TripDescriptor) updates) => super.copyWith((message) => updates(message as TripDescriptor));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static TripDescriptor create() => TripDescriptor._();
@@ -816,7 +816,7 @@ class VehicleDescriptor extends $pb.GeneratedMessage {
   factory VehicleDescriptor.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory VehicleDescriptor.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   VehicleDescriptor clone() => VehicleDescriptor()..mergeFromMessage(this);
-  VehicleDescriptor copyWith(void Function(VehicleDescriptor) updates) => super.copyWith((message) => updates(message as VehicleDescriptor));
+  // // VehicleDescriptor copyWith(void Function(VehicleDescriptor) updates) => super.copyWith((message) => updates(message as VehicleDescriptor));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static VehicleDescriptor create() => VehicleDescriptor._();
@@ -869,7 +869,7 @@ class EntitySelector extends $pb.GeneratedMessage {
   factory EntitySelector.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory EntitySelector.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   EntitySelector clone() => EntitySelector()..mergeFromMessage(this);
-  EntitySelector copyWith(void Function(EntitySelector) updates) => super.copyWith((message) => updates(message as EntitySelector));
+  // // EntitySelector copyWith(void Function(EntitySelector) updates) => super.copyWith((message) => updates(message as EntitySelector));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static EntitySelector create() => EntitySelector._();
@@ -939,7 +939,7 @@ class TranslatedString_Translation extends $pb.GeneratedMessage {
   factory TranslatedString_Translation.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory TranslatedString_Translation.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   TranslatedString_Translation clone() => TranslatedString_Translation()..mergeFromMessage(this);
-  TranslatedString_Translation copyWith(void Function(TranslatedString_Translation) updates) => super.copyWith((message) => updates(message as TranslatedString_Translation));
+  // // TranslatedString_Translation copyWith(void Function(TranslatedString_Translation) updates) => super.copyWith((message) => updates(message as TranslatedString_Translation));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static TranslatedString_Translation create() => TranslatedString_Translation._();
@@ -979,7 +979,7 @@ class TranslatedString extends $pb.GeneratedMessage {
   factory TranslatedString.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory TranslatedString.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   TranslatedString clone() => TranslatedString()..mergeFromMessage(this);
-  TranslatedString copyWith(void Function(TranslatedString) updates) => super.copyWith((message) => updates(message as TranslatedString));
+  // // TranslatedString copyWith(void Function(TranslatedString) updates) => super.copyWith((message) => updates(message as TranslatedString));
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static TranslatedString create() => TranslatedString._();

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:smartrider/util/bitmap_helpers.dart';
 
 // map imports
+import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:fluster/fluster.dart';
@@ -19,11 +20,14 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 // repository imports
 import 'package:smartrider/data/repository/bus_repository.dart';
 import 'package:smartrider/data/repository/shuttle_repository.dart';
+import 'package:smartrider/data/repository/saferide_repository.dart';
 
 // model imports
 import 'package:smartrider/data/models/shuttle/shuttle_route.dart';
 import 'package:smartrider/data/models/shuttle/shuttle_stop.dart';
 import 'package:smartrider/data/models/shuttle/shuttle_update.dart';
+
+import 'package:smartrider/data/models/saferide/driver.dart';
 
 import 'package:smartrider/data/models/bus/bus_route.dart';
 import 'package:smartrider/data/models/bus/bus_shape.dart';
@@ -32,6 +36,7 @@ import 'package:smartrider/data/models/bus/bus_vehicle_update.dart';
 part 'map_event.dart';
 part 'map_state.dart';
 
+// TODO: Document this absolute fucking unit
 class MapMarker extends Clusterable {
   String id;
   LatLng position;
@@ -92,11 +97,12 @@ final LatLngBounds rpiBounds = LatLngBounds(
 class MapBloc extends Bloc<MapEvent, MapState> {
   final ShuttleRepository shuttleRepo;
   final BusRepository busRepo;
+  final SaferideRepository saferideRepo;
   final PrefsBloc prefsBloc;
   final SaferideBloc saferideBloc;
 
-  StreamSubscription _prefsStream;
-  StreamSubscription _saferideStream;
+  StreamSubscription _prefsBlocSub;
+  StreamSubscription _saferideBlocSub;
   double _zoomLevel = 14.0;
   bool _isBus;
 
@@ -112,7 +118,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Map<String, ShuttleRoute> _shuttleRoutes = {};
   List<ShuttleStop> _shuttleStops = [];
   List<ShuttleUpdate> _shuttleUpdates = [];
+
   List<MapMarker> _mapMarkers = [];
+
+  Map<String, Driver> _saferideDrivers = {};
+  Map<String, MovementStatus> _saferideUpdates = {};
+  Map<String, StreamSubscription<MovementStatus>> _saferideUpdateSubs = {};
   LatLng _saferideDest;
 
   Set<Marker> _currentMarkers = <Marker>{};
@@ -132,6 +143,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   MapBloc(
       {@required this.shuttleRepo,
       @required this.busRepo,
+      @required this.saferideRepo,
       @required this.saferideBloc,
       @required this.prefsBloc})
       : super(MapLoadingState()) {
@@ -144,7 +156,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _lightMapStyle = string;
     });
 
-    _prefsStream = prefsBloc.listen((prefsState) {
+    _prefsBlocSub = prefsBloc.listen((prefsState) {
       if (prefsState is PrefsLoadedState) {
         _enabledShuttles = prefsState.shuttles;
         _enabledBuses = prefsState.buses;
@@ -155,22 +167,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
       }
     });
-    _saferideStream = saferideBloc.listen((saferideState) {
-      if (saferideState is SaferideSelectionState) {
-        add(MapSaferideSelectionEvent(coord: saferideState.destLatLng));
-      } else if (saferideState is SaferideNoState) {
-        scrollToCurrentLocation();
-        add(MapUpdateEvent(zoomLevel: _zoomLevel));
-        _updateTimer = Timer.periodic(_updateRefreshDelay,
-            (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+
+    _saferideBlocSub = saferideBloc.listen((saferideState) {
+      switch (saferideState.runtimeType) {
+        case SaferideSelectionState:
+          add(MapSaferideSelectionEvent(
+              coord: (saferideState as SaferideSelectionState).dropLatLng));
+          break;
+        case SaferideNoState:
+          {
+            scrollToCurrentLocation();
+            add(MapUpdateEvent(zoomLevel: _zoomLevel));
+
+            // i think the previous timer keeps going so this is redundant
+            // but need to make sure
+            // _updateTimer = Timer.periodic(_updateRefreshDelay,
+            //     (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+          }
       }
     });
   }
 
   @override
   Future<void> close() {
-    _prefsStream.cancel();
-    _saferideStream.cancel();
+    _updateTimer.cancel();
+    _prefsBlocSub.cancel();
+    _saferideBlocSub.cancel();
+    _saferideUpdateSubs.values.forEach((sub) => sub.cancel());
     return super.close();
   }
 
@@ -186,26 +209,42 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   /// bloc functions
   @override
   Stream<MapState> mapEventToState(MapEvent event) async* {
-    if (event is MapInitEvent) {
-      await _initMapElements();
-      _updateTimer = Timer.periodic(_updateRefreshDelay,
-          (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
-      yield* _mapDataRequestedToState();
-    } else if (event is MapUpdateEvent) {
-      _zoomLevel = event.zoomLevel;
-      yield* _mapUpdateRequestedToState();
-    } else if (event is MapTypeChangeEvent) {
-      _isBus = !_isBus;
-      yield* _mapUpdateRequestedToState();
-    } else if (event is MapSaferideSelectionEvent) {
-      _saferideDest = event.coord;
-      scrollToLocation(_saferideDest);
-      yield* _mapSaferideSelectionToState(event);
-    } else if (event is MapMoveEvent) {
-      _zoomLevel = event.zoomLevel;
-      yield* _mapMoveToState();
-    } else {
-      yield MapErrorState();
+    switch (event.runtimeType) {
+      case MapInitEvent:
+        {
+          await _initMapElements();
+          _updateTimer = Timer.periodic(_updateRefreshDelay,
+              (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+          yield* _mapDataRequestedToState();
+        }
+        break;
+      case MapUpdateEvent:
+        {
+          _zoomLevel = (event as MapUpdateEvent).zoomLevel;
+          yield* _mapUpdateRequestedToState();
+        }
+        break;
+      case MapTypeChangeEvent:
+        {
+          _isBus = !_isBus;
+          yield* _mapUpdateRequestedToState();
+        }
+        break;
+      case MapSaferideSelectionEvent:
+        {
+          _saferideDest = (event as MapSaferideSelectionEvent).coord;
+          scrollToLocation(_saferideDest);
+          yield* _mapSaferideSelectionToState(event);
+        }
+        break;
+      case MapMoveEvent:
+        {
+          _zoomLevel = (event as MapMoveEvent).zoomLevel;
+          yield* _mapMoveToState();
+        }
+        break;
+      default:
+        yield MapErrorState();
     }
   }
 
@@ -213,6 +252,16 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     yield MapLoadingState();
 
     Stopwatch stopwatch = new Stopwatch()..start();
+
+    if (_saferideUpdates.isEmpty) {
+      _saferideDrivers = await saferideRepo.getDrivers;
+      // _saferideUpdates = await saferideRepo.getDriverUpdates;
+
+      saferideRepo.getDriverUpdateSubscriptions.forEach((id, status) {
+        _saferideUpdateSubs[id] =
+            status.listen((status) => _saferideUpdates[id] = status);
+      });
+    }
 
     if (_isBus) {
       _busRoutes = await busRepo.getRoutes;
@@ -223,17 +272,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _shuttleRoutes = await shuttleRepo.getRoutes;
       _shuttleStops = await shuttleRepo.getStops;
       _shuttleUpdates = await shuttleRepo.getUpdates;
+
+      if (!shuttleRepo.isConnected) {
+        _updateTimer.cancel();
+        yield MapErrorState(message: 'NETWORK ISSUE');
+        return;
+      }
+
       prefsBloc.add(InitActiveRoutesEvent(_shuttleRoutes.values
           .toList())); // update preferences with currently active routes
     }
 
     print('got the stuff in ${stopwatch.elapsed} seconds');
-
-    // bus repo should always be connected now because firestore
-    if (!_isBus && !shuttleRepo.isConnected) {
-      yield MapErrorState(message: 'NETWORK ISSUE');
-      return;
-    }
 
     _getEnabledMarkers();
     _getEnabledPolylines();
@@ -262,6 +312,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 CameraPosition(target: _saferideDest, zoom: 18, tilt: 50)),
           );
         }));
+    await _drawToCurrentLocation(event.coord);
+
+    _currentMarkers.addAll(_saferideUpdates.values
+        .map((status) => _saferideVehicleToMarker(status)));
 
     yield MapLoadedState(
         polylines: _currentPolylines, markers: _currentMarkers, isBus: false);
@@ -302,6 +356,27 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   /// non-state related functions
+  Future<void> _drawToCurrentLocation(LatLng destLocation,
+      {LatLng pickupLocation}) async {
+    // draw line between saferide pickup and driver location
+    if (pickupLocation == null) {
+      try {
+        Position loc = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.best);
+        pickupLocation = LatLng(loc.latitude, loc.longitude);
+      } on PermissionDeniedException catch (_) {
+        return;
+      }
+    }
+    List<LatLng> twoPoints = [pickupLocation, destLocation];
+    Polyline p = Polyline(
+        polylineId: PolylineId("saferide_to_dest"),
+        points: twoPoints,
+        color: Colors.amber);
+
+    _currentPolylines.add(p);
+  }
+
   void scrollToCurrentLocation() async {
     Position currentLocation;
     try {
@@ -371,7 +446,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     [87, 286, 289, 288].forEach((id) async {
       _updateIcons[id] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
           'assets/bus_icons/update_marker.svg',
-          color: BUS_COLORS['$id-185'].lighten(0.15),
+          color: BUS_COLORS[id.toString()].lighten(0.15),
           size: vehicleUpdateSize);
     });
 
@@ -391,6 +466,22 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _controller.animateCamera(
             CameraUpdate.newCameraPosition(
                 CameraPosition(target: stop.getLatLng, zoom: 18, tilt: 50)),
+          );
+        });
+  }
+
+  Marker _saferideVehicleToMarker(MovementStatus status) {
+    LatLng position =
+        LatLng(status.location.latitude, status.location.longitude);
+    return Marker(
+        icon: _shuttleStopIcon, //TODO: get icon for drivers
+        infoWindow: InfoWindow(title: 'Safe Ride'),
+        markerId: MarkerId(status.deviceId),
+        position: position,
+        onTap: () {
+          _controller.animateCamera(
+            CameraUpdate.newCameraPosition(
+                CameraPosition(target: position, zoom: 18, tilt: 50)),
           );
         });
   }
@@ -459,18 +550,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   double _calculateBusHeading(BusVehicleUpdate update) {
     BusStopSimplified stop;
+
     //TODO: get bus direction id
     try {
       try {
-        stop = _busRoutes[update.routeId + '-187']
-            .forwardStops[update.currentStopSequence];
+        stop =
+            _busRoutes[update.routeId].forwardStops[update.currentStopSequence];
       } catch (error) {
-        stop = _busRoutes[update.routeId + '-187']
-            .reverseStops[update.currentStopSequence];
-      }
-    } catch (e) {
-      print(e); // need to update gtfs database
-      return 0.0;
+        stop =
+            _busRoutes[update.routeId].reverseStops[update.currentStopSequence];
+      } // we should really handle this better
+    } catch (error) {
+      print(error);
+      print(update.routeId);
     }
 
     double lat1 = stop.stopLat;
@@ -545,6 +637,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
       });
     }
+
+    // idk if we want saferides to only be visible when calling a saferide
+    // map is already hella cluttered, but i think ppl will want to know the relative positions of saferides
+    _currentMarkers.addAll(_saferideUpdates.values
+        .map((status) => _saferideVehicleToMarker(status)));
 
     return _currentMarkers;
   }
