@@ -15,11 +15,11 @@ class Driver {
       this.licensePlate});
 
   Driver.fromDocument(doc) {
-    this.deviceId = doc['device_id'];
+    this.deviceId = doc['deviceId'];
     this.name = doc['name'];
     this.email = doc['email'];
     this.phone = doc['phone'];
     this.available = doc['available'];
-    this.licensePlate = doc['license_plate'];
+    this.licensePlate = doc['licensePlate'];
   }
 }

@@ -35,7 +35,7 @@ class SaferideProvider {
     QuerySnapshot response = await firestore.collection('drivers').get();
 
     _driversMap = Map.fromIterable(response.docs,
-        key: (doc) => doc['device_id'],
+        key: (doc) => doc['deviceId'],
         value: (doc) => Driver.fromDocument(doc.data()));
     return _driversMap;
   }

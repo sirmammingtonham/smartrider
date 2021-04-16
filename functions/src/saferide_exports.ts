@@ -5,6 +5,7 @@
 import * as functions from "firebase-functions";
 import * as hypertrack from "./util/hypertrack_util";
 import * as admin from "firebase-admin";
+import {julian} from "./setup/keys.json";
 // import { order } from "typesaurus";
 
 // admin.initializeApp(functions.config().firebase);
@@ -21,13 +22,14 @@ const runtimeOpts: functions.RuntimeOptions = {
 export const srOnOrderUpdate = functions.firestore
   .document("orders/{orderId}")
   .onUpdate(async (change, context) => {
+    console.log("srOnOrderUpdate was called");
     console.log("before: " + JSON.stringify(change.before.data()));
     console.log("after: " + JSON.stringify(change.after.data()));
     const beforeStatus = change.before.data().status;
     const afterStatus = change.after.data().status;
 
     if (beforeStatus === "NEW" && afterStatus === "ACCEPTED") {
-      await hypertrack.acceptOrder(change, context);
+      // await hypertrack.acceptOrder(change, context);
       // TODO: add arrival estimate to order when status changes to accepted
       // https://hypertrack.com/docs/references/#references-apis-trips
       console.log("acceptOrder: ", change, context);
@@ -37,14 +39,14 @@ export const srOnOrderUpdate = functions.firestore
       afterStatus === "STARTED_RIDE"
     ) {
       // TODO: add polyline to order, display on app
-      await hypertrack.startRide(change, context);
+      // await hypertrack.startRide(change, context);
     } else if (
       beforeStatus !== "REACHED_DROPOFF" &&
       afterStatus === "REACHED_DROPOFF"
     ) {
-      await hypertrack.endRide(change, context);
+      // await hypertrack.endRide(change, context);
     } else if (beforeStatus !== "CANCELLED" && afterStatus === "CANCELLED") {
-      await hypertrack.rejectRide(change, context);
+      // await hypertrack.rejectRide(change, context);
     }
   });
 
@@ -71,9 +73,9 @@ export const srOnDriverUpdate = functions.firestore
   .onUpdate(async (change, _context) => {
     const before = change.before.data();
     const after = change.after.data();
-
+    console.log("srOnDriverUpdate was called");
     if (before.available === false && after.available === true) {
-      console.log("Driver: " + after.device_id + " is now available");
+      console.log("Driver: " + after.deviceId + " is now available");
 
       const earliestOrderQuery = firestore
         .collection("orders")
@@ -84,6 +86,7 @@ export const srOnDriverUpdate = functions.firestore
       // Changes status of order to accepted
       // status = "accepted"
       // driver = after
+      // updatedAt = new Date() (current time)
       const snap = await earliestOrderQuery.get();
       if (snap.docs.length > 0) {
         const earliestOrderPath = snap.docs[0].ref.path;
@@ -92,7 +95,7 @@ export const srOnDriverUpdate = functions.firestore
         await firestore.doc(driverPath).update({ available: false });
         await firestore
           .doc(earliestOrderPath)
-          .update({ status: "ACCEPTED", driver: after });
+          .update({ status: "ACCEPTED", driver: after, updatedAt: new Date()});
       }
     }
   });
@@ -103,13 +106,25 @@ export const srOnDelete = functions.firestore
   .onDelete(async (snap, _) => {
     // Get an object representing the document prior to deletion
     const deletedValue = snap.data();
-    await hypertrack.completeTrip(deletedValue.trip_id);
+    // await hypertrack.completeTrip(deletedValue.trip_id);
   });
 
-export const srOnCreate = functions.firestore
+//Updates drivers and orders, when order is added to queue
+export const srOnOrderCreate = functions.firestore
   .document("orders/{orderId}")
-  .onCreate(async (snap, _) => {
-    console.log(snap.data());
+  .onCreate(async (orderSnap, _) => {
+    console.log("srOnOrderCreate was called");
+    console.log(orderSnap.data());
+
+    const docs = await firestore.collection("drivers").listDocuments();
+    for (let driver of docs) {
+      const driverData = await driver.get();
+      if (driverData.data()?.available) {
+        orderSnap.ref.update({status: "ACCEPTED"});
+        driver.update({available: false});
+      }
+    }
+
     // this op might be super expensive to run but whatever for now
     await updateOrderEstimates();
   });
@@ -201,13 +216,23 @@ export const srOnTripUpdate = functions
     res.send("I ♥ HyperTrack");
   });
 
-export const createOrder = functions
+export const addTestDriver = functions
   .runWith(runtimeOpts)
   .https.onRequest(async (req, res) => {
-    // return error status if method isn't GET
     if (req.method !== "GET") {
       console.log("Invalid request!");
       res.status(400);
       return;
     }
+
+    await firestore.collection("drivers").add({
+      deviceId: julian,
+      name: "Julian",
+      phone: "8888888888",
+      email: "lioanj@rpi.edu",
+      available: true,
+      licensePlate: "XYZ-1234"
+    });
+
+    res.send("test ting");
   });
