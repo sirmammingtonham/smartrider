@@ -115,13 +115,13 @@ export const srOnOrderCreate = functions.firestore
   .onCreate(async (orderSnap, _) => {
     console.log("srOnOrderCreate was called");
     console.log(orderSnap.data());
-
+//We changed if statement to negative and update available to true, should change back
     const docs = await firestore.collection("drivers").listDocuments();
     for (let driver of docs) {
       const driverData = await driver.get();
-      if (driverData.data()?.available) {
-        orderSnap.ref.update({status: "ACCEPTED"});
-        driver.update({available: false});
+      if (!driverData.data()?.available) {
+        //orderSnap.ref.update({status: "ACCEPTED"});
+        driver.update({available: true});
       }
     }
 
@@ -230,7 +230,7 @@ export const addTestDriver = functions
       name: "Julian",
       phone: "8888888888",
       email: "lioanj@rpi.edu",
-      available: true,
+      available: false,
       licensePlate: "XYZ-1234"
     });
 
