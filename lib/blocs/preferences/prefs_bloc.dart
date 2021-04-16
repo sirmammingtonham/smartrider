@@ -47,7 +47,15 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
             '288': true,
           };
           _sharedPrefs = await SharedPreferences.getInstance();
-
+          if (!_sharedPrefs.containsKey('firstTimeLoad')) {
+            _sharedPrefs.setBool('firstTimeLoad', true);
+          }
+          if (!_sharedPrefs.containsKey('firstSlideUp')) {
+            _sharedPrefs.setBool('firstSlideUp', true);
+          }
+          if (!_sharedPrefs.containsKey('firstLaunch')) {
+            _sharedPrefs.setBool('firstLaunch', true);
+          }
           if (!_sharedPrefs.containsKey('darkMode')) {
             _sharedPrefs.setBool('darkMode', false);
           }
@@ -81,6 +89,12 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
             });
           }
           yield PrefsChangedState();
+          yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
+        }
+        break;
+      case OnboardingComplete:
+        {
+          _sharedPrefs.setBool('firstLaunch', false);
           yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
         }
         break;

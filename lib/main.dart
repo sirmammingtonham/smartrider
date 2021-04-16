@@ -35,7 +35,7 @@ void main() async {
 
   await Firebase.initializeApp();
 
-  FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
+  //FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
 
   runApp(
     SmartRider(
