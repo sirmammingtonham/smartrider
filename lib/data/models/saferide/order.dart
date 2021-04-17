@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'driver.dart';
+import 'estimate.dart';
 
 class Order {
   String id;
@@ -14,7 +15,8 @@ class Order {
   Driver driver;
   DateTime createdAt;
   DateTime updatedAt;
-  int queuePos;
+  int queuePosition;
+  Estimate estimate;
 
   Order(
       {this.id,
@@ -26,7 +28,7 @@ class Order {
       this.driver,
       this.createdAt,
       this.updatedAt,
-      this.queuePos});
+      this.queuePosition});
 
   Order.fromSnapshot(QueryDocumentSnapshot snap) {
     this.id = snap.id;
@@ -41,9 +43,10 @@ class Order {
     this.rider = doc['rider'];
     this.driver = doc['driver'];
 
-    this.createdAt = doc['createdAt'];
-    this.updatedAt = doc['updatedAt'];
+    this.createdAt = doc['created_at'];
+    this.updatedAt = doc['updated_at'];
 
-    this.queuePos = doc['queue_position'];
+    this.queuePosition = doc['queue_position'];
+    this.estimate = Estimate.fromDocument(doc['estimate']);
   }
 }

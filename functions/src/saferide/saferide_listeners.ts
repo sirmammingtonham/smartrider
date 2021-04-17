@@ -7,7 +7,6 @@ import * as hypertrack from "./saferide_util";
 import * as firebase from "firebase-admin";
 import { DocumentSnapshot } from "@google-cloud/firestore";
 import { Status, User, Driver } from "./saferide_types";
-// import { order } from "typesaurus";
 
 // admin.initializeApp(functions.config().firebase);
 
@@ -133,27 +132,45 @@ async function rejectRide(order: DocumentSnapshot) {
 
 /**
  * This function updates all the orders by counting their position in queue and setting it
+ * Possible future idea: add every order as point on trip when they come in to get a good estimate
+ * ALso might be better to only run this when an order is deleted. 
+ * We can store metadata about this in a different document for when an order is created.
+ * 
+ * @effects
  */
 async function updateOrderEstimates() {
   console.log("running expensive update order estimate op!");
+  // run in transaction to prevent concurrent calls from changing results
+  return firestore.runTransaction(async (transaction) => {
+    const runningOrderQuery = firestore
+      .collection("orders")
+      .where("status", "not-in", ["NEW", "ACCEPTED", "CANCELLED"]);
 
-  const earliestOrderQuery = firestore
-    .collection("orders")
-    .where("status", "==", "NEW")
-    .orderBy("createdAt", "asc");
+    const runningOrders = await transaction.get(runningOrderQuery);
 
-  const snap = await earliestOrderQuery.get();
-  for (const [index, doc] of snap.docs.entries()) {
-    await doc.ref.update({
-      queue_position: index + 1,
-      wait_estimate: index + 1, // try to get a good time estimate from hypertrack, needs more brainstorming! (maybe we have to create trips for every order when they come in to get a good estimate idk)
-    });
-  }
+    let waitEstimateTotal = 0;
+    for (const doc of runningOrders.docs) {
+      waitEstimateTotal += doc.data()["estimate"]["remaining_duration"] ?? 0;
+    } // we should really determine the avg of the waitEstimate (gonna just say it's 5 for now)
+
+    const earliestOrderQuery = firestore
+      .collection("orders")
+      .where("status", "==", "NEW")
+      .orderBy("created_at", "asc");
+
+    const earliestOrders = await transaction.get(earliestOrderQuery);
+    for (const [index, doc] of earliestOrders.docs.entries()) {
+      transaction.update(doc.ref, {
+        queue_position: index + 1,
+        wait_estimate: waitEstimateTotal + index * 5,
+      });
+    }
+  });
 }
 
 export const onOrderUpdate = functions
   .runWith(runtimeOpts)
-  .firestore.document("orders/{orderId}")
+  .firestore.document("orders/{order_id}")
   .onWrite(async (change, _context) => {
     console.log("before: " + JSON.stringify(change.before.data()));
     console.log("after: " + JSON.stringify(change.after.data()));
@@ -169,9 +186,7 @@ export const onOrderUpdate = functions
         }
       }
     } else if (beforeStatus === "NEW" && afterStatus === "ACCEPTED") {
-      /// order status changed to accepted (Probably before it would just call hypertrack and change status to picking up so not really a point. Unless we want custom logic...)
-      // await hypertrack.acceptOrder(change, context);
-      // await updateOrderEstimates();
+      /// order status changed to accepted (before it would just call hypertrack and change status to picking_up so not really a point anymore. Unless we want custom logic...)
     } else if (
       beforeStatus === "REACHED_PICKUP" &&
       afterStatus === "STARTED_RIDE"
@@ -190,23 +205,28 @@ export const onOrderUpdate = functions
     } else if (beforeStatus && !afterStatus) {
       /// order was deleted (don't want this to do anything rn because it gets called after completeRide and rejectRide)
     }
+
+    // i'm nervous about putting this here because it will run A LOT (we should really limit the size of the orders queue!)
+    await updateOrderEstimates();
   });
 
 // Updates earliest order to accepted if a driver is available
 export const onDriverUpdate = functions
   .runWith(runtimeOpts)
-  .firestore.document("drivers/{driverId}")
+  .firestore.document("drivers/{driver_id}")
   .onUpdate(async (change, _context) => {
+    console.log("srOnDriverUpdate was called");
+
     const before = change.before.data();
     const after = change.after.data();
-    console.log("srOnDriverUpdate was called");
+
     if (before.available === false && after.available === true) {
       console.log("Driver: " + after.deviceId + " is now available");
 
       const earliestOrderQuery = firestore
         .collection("orders")
         .where("status", "==", "NEW")
-        .orderBy("createdAt", "asc")
+        .orderBy("created_at", "asc")
         .limit(1);
 
       const snap = await earliestOrderQuery.get();

@@ -39,7 +39,6 @@
     "firebase-functions-test": "^0.2.0",
     "hypertrack": "^3.2.1",
     "rimraf": "^3.0.2",
-    "ts-migrate": "^0.1.9",
     "typescript": "^3.9.7"
   },
   "private": true

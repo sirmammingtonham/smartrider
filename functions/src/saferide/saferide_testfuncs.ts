@@ -21,12 +21,12 @@ export const addTestDriver = functions
     }
 
     await firestore.collection("drivers").add({
-      deviceId: julian,
+      device_id: julian,
       name: "Julian",
       phone: "8888888888",
       email: "lioanj@rpi.edu",
       available: false,
-      licensePlate: "XYZ-1234"
+      license_plate: "XYZ-1234"
     });
 
     res.send("test ting");
@@ -47,7 +47,7 @@ export const createTest = functions
 	await firestore.collection("orders").add({
 	  name: "ya boiIIIIiiii",
 	  vehicle: "Tesla Cybertruck",
-	  createdAt: new Date(1975 + 2 * i, i % 12, 28 - i),
+	  created_at: new Date(1975 + 2 * i, i % 12, 28 - i),
 	  status: "NEW",
 	});
   }
