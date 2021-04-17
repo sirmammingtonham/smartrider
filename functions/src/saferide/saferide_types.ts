@@ -9,12 +9,26 @@ export interface User {
 }
 
 export interface Driver {
+	ref: firestore.DocumentReference;
 	device_id: string;
 	name: string;
 	email: string;
 	phone: string;
 	available: string;
 	license_plate: string;
+}
+
+export interface Estimate {
+	arrive_at: string;
+	route: {
+		distance: number;
+		duration: number;
+		remaining_duration: number;
+		start_place: string;
+		end_place: string;
+		polyline: any; //GeoJSON object
+	};
+
 }
 
 export interface Order {
@@ -27,7 +41,7 @@ export interface Order {
 	created_at: firestore.Timestamp;
 	updated_at: firestore.Timestamp;
 	queue_position: number;
-	wait_estimate: number;
+	estimate: Estimate;
 }
 
 export interface Trip {}

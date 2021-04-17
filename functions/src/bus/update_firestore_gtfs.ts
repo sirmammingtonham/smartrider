@@ -2,7 +2,7 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as gtfs from "gtfs";
 import * as gtfs_timetable from "gtfs-to-html";
-import * as models from "./types";
+import * as models from "./bus_types";
 import * as Promise from "../util/async_util";
 // import * as config from "../setup/gtfs_config.json";
 import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";

@@ -1,6 +1,6 @@
 // import * as admin from 'firebase-admin';
-import * as saferide from "./saferide/saferide_functions";
-import * as saferide_tests from "./saferide/test";
+import * as saferide from "./saferide/saferide_listeners";
+import * as saferide_tests from "./saferide/saferide_testfuncs";
 
 // admin.initializeApp();
 
