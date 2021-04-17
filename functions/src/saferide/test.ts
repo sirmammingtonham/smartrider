@@ -1,0 +1,62 @@
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
+import {julian} from "../setup/keys.json";
+
+// admin.initializeApp();
+
+const firestore = admin.firestore();
+
+const runtimeOpts: functions.RuntimeOptions = {
+  timeoutSeconds: 3, // timeout function after 2 secs
+  memory: "256MB", // allocate 256MB of mem per function
+};
+
+export const addTestDriver = functions
+  .runWith(runtimeOpts)
+  .https.onRequest(async (req, res) => {
+    if (req.method !== "GET") {
+      console.log("Invalid request!");
+      res.status(400);
+      return;
+    }
+
+    await firestore.collection("drivers").add({
+      deviceId: julian,
+      name: "Julian",
+      phone: "8888888888",
+      email: "lioanj@rpi.edu",
+      available: false,
+      licensePlate: "XYZ-1234"
+    });
+
+    res.send("test ting");
+  });
+
+  // kind of a worse case when 20 users try to call a saferide at the same time
+export const createTest = functions
+.runWith(runtimeOpts)
+.https.onRequest(async (req, res) => {
+  if (req.method !== "GET") {
+	console.log("Invalid request!");
+	res.status(400);
+	return;
+  }
+
+  // Add a new document in collection "orders"
+  for (let i = 0; i < 20; i++) {
+	await firestore.collection("orders").add({
+	  name: "ya boiIIIIiiii",
+	  vehicle: "Tesla Cybertruck",
+	  createdAt: new Date(1975 + 2 * i, i % 12, 28 - i),
+	  status: "NEW",
+	});
+  }
+  for (let i = 0; i < 3; i++) {
+	await firestore.collection("drivers").add({
+	  id: `${145 * i + 234}`,
+	  email: "joe@mama.org",
+	  available: false,
+	});
+  }
+  res.send("teststest");
+});

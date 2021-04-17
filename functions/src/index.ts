@@ -1,7 +1,6 @@
-import * as admin from "firebase-admin";
-import * as functions from "firebase-functions";
-import * as saferide from "./saferide_exports";
-import * as db from "./firestore/update_firestore";
+// import * as admin from 'firebase-admin';
+import * as saferide from "./saferide/saferide_functions";
+import * as saferide_tests from "./saferide/test";
 
 // admin.initializeApp();
 
@@ -11,10 +10,8 @@ import * as db from "./firestore/update_firestore";
 // saferide functions
 // export const srUpdateOrderStatus = saferide.srUpdateOrderStatus;
 // export const srDelOrder = saferide.srDelOrder;
-export const srOnTripUpdate = saferide.srOnTripUpdate;
-export const srOnOrderCreate = saferide.srOnOrderCreate;
-export const srOnOrderUpdate = saferide.srOnOrderUpdate;
-export const srOnDriverUpdate = saferide.srOnDriverUpdate;
-export const setDriver = saferide.setDriver;
-export const createTest = saferide.createTest;
-export const addTestDriver = saferide.addTestDriver;
+// export const srOnTripUpdate = saferide.srOnTripUpdate;
+export const srOnOrderUpdate = saferide.onOrderUpdate;
+export const srOnDriverUpdate = saferide.onDriverUpdate;
+export const createTest = saferide_tests.createTest;
+export const addTestDriver = saferide_tests.addTestDriver;

@@ -1,7 +1,7 @@
 // import * as moment from "moment";
-import * as h from "hypertrack";
+import * as Hypertrack from "hypertrack";
 import * as keys from "../setup/keys.json";
-import { QueryDocumentSnapshot } from "firebase-functions/lib/providers/firestore";
+import { DocumentSnapshot } from "@google-cloud/firestore";
 import { Change, EventContext } from "firebase-functions";
 // import { Base64 } from "js-base64";
 
@@ -10,14 +10,16 @@ import { Change, EventContext } from "firebase-functions";
 //   Base64.encode(`${keys.hypertrack_id}:${keys.hypertrack_secret}`);
 
 // const DATE_FORMAT = "YYYY-MM-DD[T]HH:mm:ss[Z]";
-const hypertrack = h.Hypertrack(keys.hypertrack_id, keys.hypertrack_secret);
+const hypertrack = Hypertrack(keys.hypertrack_id, keys.hypertrack_secret);
 
 export async function acceptOrder(
-  change: Change<QueryDocumentSnapshot>,
+  change: Change<DocumentSnapshot>,
   _context: EventContext
 ) {
   // const beforeValue = change.before.data();
   const afterValue = change.after.data();
+
+  if (!afterValue) return;
 
   const parsedBody = await createTrip(
     afterValue.driver.device_id,
@@ -42,11 +44,13 @@ export async function acceptOrder(
 
 // updateOrderStatus(require('./testData.json').startRide)
 export async function startRide(
-  change: Change<QueryDocumentSnapshot>,
+  change: Change<DocumentSnapshot>,
   _context: EventContext
 ) {
   const beforeValue = change.before.data();
   const afterValue = change.after.data();
+
+  if (!beforeValue || !afterValue) return;
 
   await completeTrip(beforeValue.trip_id);
   const parsedBody = await createTrip(
@@ -72,10 +76,11 @@ export async function startRide(
 
 // updateOrderStatus(require('./testData.json').rejectRide)
 export async function rejectRide(
-  change: Change<QueryDocumentSnapshot>,
+  change: Change<DocumentSnapshot>,
   _context: EventContext
 ) {
   const beforeValue = change.before.data();
+  if (!beforeValue) return;
 
   await completeTrip(beforeValue.trip_id);
 
@@ -85,10 +90,11 @@ export async function rejectRide(
 
 // updateOrderStatus(require('./testData.json').endRide)
 export async function endRide(
-  change: Change<QueryDocumentSnapshot>,
+  change: Change<DocumentSnapshot>,
   _context: EventContext
 ) {
   const beforeValue = change.before.data();
+  if (!beforeValue) return;
 
   await completeTrip(beforeValue.trip_id);
 
