@@ -3,18 +3,21 @@ import 'package:flutter/services.dart';
 import 'package:smartrider/pages/welcome.dart';
 import 'package:smartrider/pages/home.dart';
 
+// prefs bloc
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 final kTitleStyle = TextStyle(
   color: Colors.white,
-  fontFamily: 'CM Sans Serif',
-  fontSize: 36.0,
+  fontFamily: 'Helvetica',
+  fontSize: 30.0,
   height: 1.5,
 );
 
 final kSubtitleStyle = TextStyle(
   color: Colors.white,
-  fontSize: 28.0,
-  height: 1.2,
+  fontSize: 22.0,
+  height: 1.3,
 );
 
 class OnboardingScreen extends StatefulWidget {
@@ -23,7 +26,7 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final int _numPages = 3;
+  final int _numPages = 5;
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
 
@@ -42,7 +45,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       height: 8.0,
       width: isActive ? 24.0 : 16.0,
       decoration: BoxDecoration(
-        color: isActive ? Colors.white : Color(0xFF7B51D3),
+        color: isActive ? Colors.black : Color(0xFF181c5b),
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
     );
@@ -54,21 +57,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0.1, 0.4, 0.7, 0.9],
-              colors: [
-                Color(0xFF3594DD),
-                Color(0xFF4563DB),
-                Color(0xFF5036D5),
-                Color(0xFF5B16D0),
-              ],
-            ),
-          ),
+          decoration: BoxDecoration(color: Colors.white),
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 40.0),
+            padding: EdgeInsets.symmetric(vertical: 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
@@ -76,18 +67,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   alignment: Alignment.centerRight,
                   child: FlatButton(
                     onPressed: () {
-                      print('Skip');
+                      BlocProvider.of<PrefsBloc>(context)
+                          .add(OnboardingComplete());
                       Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WelcomeScreen(homePage: HomePage())),
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                WelcomeScreen(homePage: HomePage())),
                       );
                     },
                     child: Text(
                       'Skip',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1b1d5c),
                         fontSize: 20.0,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -108,16 +102,42 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            SizedBox(height: 30.0),
-                            Text(
-                              'Welcome to SmartRider!',
-                              style: kTitleStyle,
+                            Center(
+                              child: Image(
+                                image:
+                                    AssetImage("assets/app_icons/logo_v2.png"),
+                                height: 300.0,
+                                width: 300.0,
+                              ),
+                            ),
+                            SizedBox(height: 50.0),
+                            Center(
+                              child: Text(
+                                'Welcome to Smartrider!',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF181c5b),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 26.0,
+                                  height: 1.5,
+                                ),
+                              ),
                             ),
                             SizedBox(height: 15.0),
-                            Text(
-                              'The transportation tool that will allow you to travel around campus in an efficient and safe manner',
-                              style: kSubtitleStyle,
-                            ),
+                            Center(
+                              child: Text(
+                                  'All of your RPI transportation needs in one place, instantly accessible.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xFF181c5b),
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.5,
+                                  )),
+                            )
+                            //  Image(
+                            //    image: AssetImage('assets/onboarding_images/rpi_stock_photo.jpg'),
+                            // ),
                           ],
                         ),
                       ),
@@ -126,16 +146,40 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            SizedBox(height: 30.0),
-                            Text(
-                              'Navigation',
-                              style: kTitleStyle,
+                            Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Image(
+                                      image: AssetImage(
+                                          "assets/onboarding_images/interactive_map.png"),
+                                      height: 300.0,
+                                      width: 300.0),
+                                ]),
+                            SizedBox(height: 50.0),
+                            Center(
+                              child: Text(
+                                'Interactive Map',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF181c5b),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 26.0,
+                                  height: 1.5,
+                                ),
+                              ),
                             ),
                             SizedBox(height: 15.0),
-                            Text(
-                              'SubText 2',
-                              style: kSubtitleStyle,
-                            ),
+                            Center(
+                              child: Text(
+                                  'Switch between live bus/shuttle routes and set reminders for upcoming arrivals.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xFF181c5b),
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.5,
+                                  )),
+                            )
                           ],
                         ),
                       ),
@@ -144,16 +188,132 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            SizedBox(height: 30.0),
-                            Text(
-                              'SafeRide',
-                              style: kTitleStyle,
+                            Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Image(
+                                    image: AssetImage(
+                                        "assets/onboarding_images/comprehensive_scheduling.png"),
+                                    height: 300.0,
+                                    width: 300.0,
+                                  ),
+                                ]),
+                            SizedBox(height: 50.0),
+                            Center(
+                              child: Text(
+                                'Comprehensive Scheduling',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF181c5b),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22.0,
+                                  height: 1.5,
+                                ),
+                              ),
                             ),
                             SizedBox(height: 15.0),
-                            Text(
-                              'SubText 3',
-                              style: kSubtitleStyle,
+                            Center(
+                              child: Text(
+                                  "Access transportation route arrival times throughout the day and schedule reminders for specific stops.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xFF181c5b),
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.5,
+                                  )),
+                            )
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(40.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Container(
+                                      child: Center(
+                                        child: Image.asset(
+                                          "assets/onboarding_images/request_transportation.png",
+                                          height: 300.0,
+                                          width: 310.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                            SizedBox(height: 30.0),
+                            Center(
+                              child: Text(
+                                'Request Transportation',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF181c5b),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22.0,
+                                  height: 1.5,
+                                ),
+                              ),
                             ),
+                            SizedBox(height: 15.0),
+                            Center(
+                                child: Text(
+                                    'Quickly request a vehicle to transport you safely around the campus (7 p.m - 12 a.m).',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Color(0xFF181c5b),
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.5,
+                                    ))),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(40.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Image(
+                                    image: AssetImage(
+                                        "assets/onboarding_images/customizable_view.png"),
+                                    height: 340.0,
+                                    width: 300.0,
+                                  ),
+                                ]),
+                            SizedBox(height: 50.0),
+                            Center(
+                              child: Text(
+                                'Cuztomizable View',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF181c5b),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 26.0,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 15.0),
+                            Center(
+                              child: Text(
+                                  "Conveniently choose which routes and stops are displayed on the map.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xFF181c5b),
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.5,
+                                  )),
+                            )
                           ],
                         ),
                       ),
@@ -182,14 +342,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 Text(
                                   'Next',
                                   style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22.0,
+                                    color: Color(0xFF181c5b),
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 SizedBox(width: 10.0),
                                 Icon(
                                   Icons.arrow_forward,
-                                  color: Colors.white,
+                                  color: Color(0xFF181c5b),
                                   size: 30.0,
                                 ),
                               ],
@@ -205,27 +366,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
       bottomSheet: _currentPage == _numPages - 1
           ? Container(
-              height: 100.0,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(18.0),
+                  ),
+                  color: Color(0xFF181c5b)),
+              height: 75,
               width: double.infinity,
-              color: Colors.white,
               child: GestureDetector(
                 onTap: () {
-                  print('Get Started');
+                  BlocProvider.of<PrefsBloc>(context).add(OnboardingComplete());
                   Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => WelcomeScreen(homePage: HomePage())),
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            WelcomeScreen(homePage: HomePage())),
                   );
                 },
                 child: Center(
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: 30.0),
+                    padding: EdgeInsets.only(bottom: 10),
                     child: Text(
-                      'Get started',
+                      'Get Started',
                       style: TextStyle(
-                        color: Color(0xFF5B16D0),
+                        color: Colors.white,
                         fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),

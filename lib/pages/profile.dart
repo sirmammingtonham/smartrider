@@ -1,20 +1,21 @@
-import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+// import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+// import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:smartrider/widgets/search_bar.dart';
 
-import 'package:firebase_storage/firebase_storage.dart'; // For File Upload To Firestore
-import 'package:image_picker/image_picker.dart'; // For Image Picker
-import 'package:path/path.dart' as Path;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:firebase_storage/firebase_storage.dart'; // For File Upload To Firestore
+// import 'package:image_picker/image_picker.dart'; // For Image Picker
+// import 'package:path/path.dart' as Path;
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
-import 'dart:io';
+// import 'dart:io';
 import 'package:smartrider/pages/issue_request.dart';
 
+/// Used to display the profile options.
 abstract class ListItem {
   Widget buildTitle(BuildContext context);
 
@@ -38,6 +39,7 @@ class ProfilePage extends StatefulWidget {
   _ProfilePageState createState() => new _ProfilePageState();
 }
 
+/// Represents the current state of the Profile Page
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {

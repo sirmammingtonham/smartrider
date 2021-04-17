@@ -52,6 +52,8 @@ class BusTripUpdate {
     startDate = entity.tripUpdate.trip.startDate;
     routeId = entity.tripUpdate.trip.routeId;
 
+    stopTimeUpdate = [];
+
     entity.tripUpdate.stopTimeUpdate.forEach((entity) {
       stopTimeUpdate.add(StopTimeUpdate.fromPBEntity(entity));
     });
@@ -59,9 +61,17 @@ class BusTripUpdate {
     vehicleId = entity.tripUpdate.vehicle.id;
   }
 
-  // TODO
   Map<String, dynamic> toJson() {
-    return Map();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['is_deleted'] = this.isDeleted;
+    data['trip_id'] = this.tripId;
+    data['start_time'] = this.startTime;
+    data['start_date'] = this.startDate;
+    data['route_id'] = this.routeId;
+    data['stop_time_update'] = this.stopTimeUpdate;
+    data['vehicle_id'] = this.vehicleId;
+    return data;
   }
 
   // TODO
@@ -101,9 +111,14 @@ class StopTimeUpdate {
     scheduleRelationship = entity.scheduleRelationship;
   }
 
-  // TODO
   Map<String, dynamic> toJson() {
-    return Map();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['stop_sequence'] = this.stopSequence;
+    data['arrival_time'] = this.arrivalTime;
+    data['departure_time'] = this.departureTime;
+    data['stop_id'] = this.stopId;
+
+    return data;
   }
 
   // TODO

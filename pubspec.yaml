@@ -14,32 +14,26 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
   #firebase dependencies
-  firebase_core: ^0.4.0+9
-  firebase_analytics: ^5.0.2
-  firebase_auth: ^0.15.0+1s
-  cloud_firestore: ^0.12.9+5
-  image_picker: 
-  firebase_storage: 
+  firebase_core: ^0.5.2
+  firebase_analytics: ^6.2.0
+  firebase_auth: ^0.18.3
+  cloud_firestore: ^0.14.3
 
   #map dependencies
-  google_maps_flutter: ^0.5.24+1
+  google_maps_flutter: ^1.0.6
   polyline: ^1.0.2
   geolocator: ^6.1.4
-
   google_maps_webservice: ^0.0.16
   http: ^0.12.0+4
   rxdart: ^0.23.1
   fluster: ^1.1.2
-  geojson: ^0.9.1
-
-
   protobuf: ^1.0.1
 
   #notication dependencies
@@ -50,22 +44,17 @@ dependencies:
 
   #ui dependencies
   sliding_up_panel: ^1.0.1
-  scrollable_positioned_list: ^0.1.2
+  scrollable_positioned_list: ^0.1.8
   google_fonts: ^0.3.9
   cupertino_icons: ^0.1.2
-  day_night_switch: ^0.0.2+1
   intl: ^0.16.1
-  day_night_switcher: ^0.1.1
   flutter_svg: ^0.19.1
-  circular_profile_avatar: ^1.0.8
-
-  dio: ^3.0.9
-  flutter_archive: ^1.0.2
+  modal_progress_hud: ^0.1.3
+  table_sticky_headers: ^1.2.0
 
   #state management
   flutter_bloc: ^6.0.1
   equatable: ^1.2.3
-  provider: ^4.1.3
   shared_preferences: ^0.5.3+4
 
 dev_dependencies:
@@ -80,11 +69,8 @@ flutter:
   uses-material-design: true
 
   assets:
-# app icons
-    - assets/app_icons/app_icon_v2.png
-    - assets/app_icons/app_icon_star.png
-    - assets/app_icons/app_icon_word_light_mode.png
-    - assets/app_icons/app_icon_word_dark_mode.png
+    - assets/app_icons/logo_v1.png
+    - assets/app_icons/logo_v2.png
 # jsons
     - assets/map_styles/light.json
     - assets/map_styles/aubergine.json
@@ -96,6 +82,17 @@ flutter:
 #notification
     - assets/Notification_Icons/app_logo.png
 
+#onboarding 
+    - assets/onboarding_images/rpi_stock_photo.png
+    - assets/onboarding_images/onboarding_page2_1.png
+    - assets/onboarding_images/onboarding_page2_2.png
+    - assets/onboarding_images/onboarding_page3_1.png
+    - assets/onboarding_images/onboarding_page3_2.png
+    - assets/onboarding_images/onboarding_page4_1.png
+    - assets/onboarding_images/interactive_map.png
+    - assets/onboarding_images/comprehensive_scheduling.png
+    - assets/onboarding_images/customizable_view.png
+    - assets/onboarding_images/request_transportation.png
   fonts:
     - family: SR_Icons
       fonts:

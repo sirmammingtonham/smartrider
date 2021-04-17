@@ -120,16 +120,7 @@ class SettingsWidget extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor, fontSize: 32),
           ),
         ),
-        body: NotificationListener<OverscrollNotification>(
-            onNotification: (t) {
-              if (t.overscroll < -15) {
-                Navigator.pop(context);
-                return true;
-              }
-              return false;
-            },
-            child: ListView(children: <Widget>[
-              
+        body:ListView(children: <Widget>[
               // GENERAL SETTINGS
               Container(
                 margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
@@ -204,8 +195,7 @@ class SettingsWidget extends StatelessWidget {
               ),
               cardBuilder(state.buses.keys
                   .map((key) => SwitchListTile(
-                      activeColor: Theme.of(context).toggleableActiveColor,
-                        title: Text(key),
+                        title: Text(PrefsBloc.busIdMap[key]),
                         value: state.buses[key],
                         onChanged: (bool value) {
                           state.buses[key] = value;
@@ -227,7 +217,6 @@ class SettingsWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              /*
               SizedBox(
                 child: Stack(
                   alignment: AlignmentDirectional.bottomCenter,
@@ -250,7 +239,7 @@ class SettingsWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-              )*/
-            ])));
+              )
+            ]));
   }
 }

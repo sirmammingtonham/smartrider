@@ -33,22 +33,20 @@ class AuthRepository {
   }
 
   Future<void> signOut() async {
-    return Future.wait([
-      _firebaseAuth.signOut(),
-    ]);
+    return _firebaseAuth.signOut();
   }
 
-  Future<bool> isSignedIn() async {
-    final currentUser = await _firebaseAuth.currentUser();
+  bool isSignedIn() {
+    final currentUser = _firebaseAuth.currentUser;
     return currentUser != null;
   }
 
-  Future<String> getUser() async {
-    return (await _firebaseAuth.currentUser()).email;
+  String getUser() {
+    return _firebaseAuth.currentUser.email;
   }
 
-  Future<FirebaseUser> getActualUser() async {
-    return await _firebaseAuth.currentUser();
+  User getActualUser() {
+    return _firebaseAuth.currentUser;
   }
 
   ///Takes in an email and sends an email to reset password

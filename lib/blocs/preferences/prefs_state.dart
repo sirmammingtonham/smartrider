@@ -28,13 +28,16 @@ class PrefsLoadedState extends PrefsState {
 
   ThemeData get theme => prefs.getBool('darkMode') ? darkTheme : lightTheme;
 
+  bool get firstLaunch => prefs.getBool('firstLaunch');
+
   @override
   List<Object> get props => [
         this.shuttles,
         this.buses,
         this.modifyActiveRoutes,
         this.prefs.getBool('pushNotifications'),
-        this.prefs.getBool('darkMode')
+        this.prefs.getBool('darkMode'),
+        this.prefs.getBool('firstLaunch')
       ];
 }
 
