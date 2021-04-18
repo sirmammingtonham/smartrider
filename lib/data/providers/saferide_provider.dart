@@ -18,16 +18,7 @@ class SaferideProvider {
   //fill in the fields specified in order.dart with the orders collection in the firebase
   Future<Stream<DocumentSnapshot>> createOrder(Order order) async {
     CollectionReference orders = firestore.collection('orders');
-    final ref = await orders.add({
-      'status': order.status,
-      'tripId': order.tripId,
-      'pickup': order.pickup,
-      'dropoff': order.dropoff,
-      'rider': order.rider,
-      'driver': order.driver,
-      'createdAt': order.createdAt,
-      'updatedAt': order.updatedAt
-    });
+    final ref = await orders.add(order.toJSON());
     return ref.snapshots();
   }
 

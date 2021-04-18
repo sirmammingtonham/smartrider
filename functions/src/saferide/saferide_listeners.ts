@@ -8,10 +8,6 @@ import * as firebase from "firebase-admin";
 import { DocumentSnapshot } from "@google-cloud/firestore";
 import { Status, User, Driver } from "./saferide_types";
 
-// admin.initializeApp(functions.config().firebase);
-
-firebase.initializeApp();
-
 const firestore = firebase.firestore();
 
 const runtimeOpts: functions.RuntimeOptions = {
@@ -131,7 +127,7 @@ async function rejectRide(order: DocumentSnapshot) {
 }
 
 /**
- * This function updates all the orders by counting their position in queue and setting it
+ * This function updates all the orders by counting their position in queue and setting it (expensive)
  * Possible future idea: add every order as point on trip when they come in to get a good estimate
  * ALso might be better to only run this when an order is deleted. 
  * We can store metadata about this in a different document for when an order is created.

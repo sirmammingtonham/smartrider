@@ -2,8 +2,6 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import {julian} from "../setup/keys.json";
 
-// admin.initializeApp();
-
 const firestore = admin.firestore();
 
 const runtimeOpts: functions.RuntimeOptions = {

@@ -69,24 +69,24 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
 
   /// listens to the order status and creates events accordingly
   Future<void> orderListener(DocumentSnapshot update) async {
-    final order = update.data();
+    final order = Order.fromSnapshot(update);
 
-    switch (order['status']) {
-      case 'NEW':
+    switch (order.status) {
+      case TripStatus.NEW:
         {
           add(SaferideWaitUpdateEvent(
-              queuePosition: order['queue_position'] ?? -1,
-              waitEstimate: order['wait_estimate'] ?? -1));
+              queuePosition: order.queuePosition ?? -1,
+              waitEstimate: order.waitEstimate ?? -1));
         }
         break;
-      case 'ACCEPTED':
+      case TripStatus.STARTED_RIDE:
         {
-          _currentDriver = Driver.fromDocument(order['driver']);
+          _currentDriver = order.driver;
           add(SaferideAcceptedEvent(
               driverName: _currentDriver.name,
               licensePlate: _currentDriver.licensePlate,
-              queuePosition: order['queue_position'] ?? -1,
-              waitEstimate: order['wait_estimate'] ?? -1));
+              queuePosition: order.queuePosition ?? -1,
+              waitEstimate: order.estimate.remainingDuration ?? -1));
         }
         break;
       default:
@@ -105,7 +105,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
 
       final order = await saferideRepo.createOrder(
           order: Order(
-        status: "NEW",
+        status: TripStatus.NEW,
         pickup: GeoPoint(
             _currentPickupLatLng.latitude, _currentPickupLatLng.longitude),
         dropoff: GeoPoint(
