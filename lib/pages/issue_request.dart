@@ -64,8 +64,10 @@ class IssueRequest extends StatefulWidget {
 /// Represents the current state of the Issue Request Page.
 class _IssueRequestState extends State<IssueRequest> {
   bool valuefirst = false; // for checkbox
-  String dropdownValue = ""; // for dropdown
+  String dropdownValue = "Bug"; // for dropdown
   Future post; // http post held in here.
+  String title = "";
+  String description = "";
 
   // Below is the POST URL, which links the POST message to the smartrider
   // GitHub Repository.
@@ -134,6 +136,10 @@ class _IssueRequestState extends State<IssueRequest> {
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 0, horizontal: 5),
               ),
+              style: TextStyle(color: Colors.white),
+              onSubmitted: (value){
+                title = value;
+              }
             )),
         Row(
           children: [
@@ -167,6 +173,10 @@ class _IssueRequestState extends State<IssueRequest> {
                     EdgeInsets.symmetric(vertical: 0, horizontal: 5),
               ),
               maxLines: null,
+              style: TextStyle(color: Colors.white),
+              onChanged: (value){
+                description = value;
+              }
             )),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 3.0),
@@ -176,12 +186,13 @@ class _IssueRequestState extends State<IssueRequest> {
         // FUTURE: Make the selection prettier, maybe checkboxes or stylish tags?
         new DropdownButton<String>(
             value: dropdownValue,
-            items: <String>['', 'Bug', 'Feature', 'Other'].map((String value) {
+            items: <String>['Bug', 'Feature', 'Other'].map((String value) {
               return new DropdownMenuItem<String>(
                 value: value,
                 child: new Text(value),
               );
             }).toList(),
+            style: TextStyle(color: Colors.white),
             // Changes the Dropdown appearance to display the user's choice.
             onChanged: (String newValue) {
               setState(() {
@@ -231,7 +242,7 @@ class _IssueRequestState extends State<IssueRequest> {
               // FUTURE: These values should be changed to include the information from
               // the front-end.
               Post newPost = new Post(
-                  title: "123", body: "test", labels: ["hello"].toString());
+                  title: title, body: description, labels: dropdownValue);
               Post p = await createPost(postUrl, body: newPost.toMap());
               print(p.title);
             },
