@@ -25,6 +25,7 @@ const runtimeOpts: functions.RuntimeOptions = {
  * @returns A promise of the update result, or undefined (so we can track if it was successful)
  */
 async function acceptOrder(order: DocumentSnapshot, driver: DocumentSnapshot) {
+  console.log('acceptOrder called');
   const orderData = order.data();
   const driverData = driver.data();
   if (!orderData || !driverData) return;
@@ -42,13 +43,15 @@ async function acceptOrder(order: DocumentSnapshot, driver: DocumentSnapshot) {
     orderData["pickup"]
   );
 
+  console.log(parsedBody);
+
   if (parsedBody["trip_id"]) {
     return order.ref.set(
       {
         updated_at: firebase.firestore.FieldValue.serverTimestamp(),
         status: "PICKING_UP",
         trip_id: parsedBody["trip_id"],
-        estimate: parsedBody["estimate"],
+        estimate: parsedBody["estimate"] ?? null,
       },
       { merge: true }
     );
@@ -67,6 +70,7 @@ async function acceptOrder(order: DocumentSnapshot, driver: DocumentSnapshot) {
  * @returns A promise of the update result, or undefined (so we can track if it was successful)
  */
 async function startRide(order: DocumentSnapshot) {
+  console.log('startRide called');
   const orderData = order.data();
   if (!orderData) return;
 
@@ -101,6 +105,7 @@ async function startRide(order: DocumentSnapshot) {
  * @returns A promise of the driver update or undefined
  */
 async function completeRide(order: DocumentSnapshot) {
+  console.log('completeRide called');
   const orderData = order.data();
   if (!orderData) return;
 
@@ -118,6 +123,7 @@ async function completeRide(order: DocumentSnapshot) {
  * @returns A promise of the driver update or undefined
  */
 async function rejectRide(order: DocumentSnapshot) {
+  console.log('rejectRide called');
   const orderData = order.data();
   if (!orderData) return;
 
@@ -135,18 +141,18 @@ async function rejectRide(order: DocumentSnapshot) {
  * @effects
  */
 async function updateOrderEstimates() {
-  console.log("running expensive update order estimate op!");
+  console.log("running expensive update order estimate!");
   // run in transaction to prevent concurrent calls from changing results
   return firestore.runTransaction(async (transaction) => {
     const runningOrderQuery = firestore
       .collection("orders")
-      .where("status", "not-in", ["NEW", "ACCEPTED", "CANCELLED"]);
+      .where("status", "in", ["PICKING_UP", "REACHED_PICKUP", "DROPPING_OFF"]);
 
     const runningOrders = await transaction.get(runningOrderQuery);
 
     let waitEstimateTotal = 0;
     for (const doc of runningOrders.docs) {
-      waitEstimateTotal += doc.data()["estimate"]["remaining_duration"] ?? 0;
+      waitEstimateTotal += doc.data()["estimate"]?.["remaining_duration"] ?? 0;
     } // we should really determine the avg of the waitEstimate (gonna just say it's 5 for now)
 
     const earliestOrderQuery = firestore
@@ -181,11 +187,11 @@ export const onOrderUpdate = functions
           await acceptOrder(change.after, driver);
         }
       }
-    } else if (beforeStatus === "NEW" && afterStatus === "ACCEPTED") {
+    } else if (beforeStatus === "NEW" && afterStatus === "PICKING_UP") {
       /// order status changed to accepted (before it would just call hypertrack and change status to picking_up so not really a point anymore. Unless we want custom logic...)
     } else if (
-      beforeStatus === "REACHED_PICKUP" &&
-      afterStatus === "STARTED_RIDE"
+      beforeStatus !== "REACHED_PICKUP" &&
+      afterStatus === "REACHED_PICKUP"
     ) {
       /// driver reached user, ride started
       await startRide(change.after);

@@ -79,17 +79,18 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
               waitEstimate: order.waitEstimate ?? -1));
         }
         break;
-      case TripStatus.STARTED_RIDE:
+      case TripStatus.PICKING_UP:
         {
           _currentDriver = order.driver;
           add(SaferideAcceptedEvent(
               driverName: _currentDriver.name,
               licensePlate: _currentDriver.licensePlate,
               queuePosition: order.queuePosition ?? -1,
-              waitEstimate: order.estimate.remainingDuration ?? -1));
+              waitEstimate: order.estimate?.remainingDuration ?? -1));
         }
         break;
       default:
+        print(order.status);
         break;
     }
 
@@ -111,7 +112,6 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         dropoff: GeoPoint(
             _currentDropoffLatLng.latitude, _currentDropoffLatLng.longitude),
         rider: authRepo.getUser,
-        createdAt: DateTime.now(),
       ));
 
       order.listen(orderListener);

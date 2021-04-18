@@ -18,7 +18,8 @@ class SaferideProvider {
   //fill in the fields specified in order.dart with the orders collection in the firebase
   Future<Stream<DocumentSnapshot>> createOrder(Order order) async {
     CollectionReference orders = firestore.collection('orders');
-    final ref = await orders.add(order.toJSON());
+    final ref = await orders
+        .add({...order.toJSON(), 'created_at': FieldValue.serverTimestamp()});
     return ref.snapshots();
   }
 

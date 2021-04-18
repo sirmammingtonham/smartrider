@@ -6,9 +6,9 @@ import 'estimate.dart';
 
 enum TripStatus {
   NEW,
-  ACCEPTED,
+  PICKING_UP,
   REACHED_PICKUP,
-  STARTED_RIDE,
+  DROPPING_OFF,
   REACHED_DROPOFF,
   CANCELLED,
   UNDEFINED
@@ -23,8 +23,8 @@ class Order {
   String
       rider; // currently just email, TODO: add more stuff from the user's account like phone number, name, etc
   Driver driver;
-  DateTime createdAt;
-  DateTime updatedAt;
+  Timestamp createdAt;
+  Timestamp updatedAt;
   int queuePosition;
   int waitEstimate;
   Estimate estimate;
@@ -43,32 +43,35 @@ class Order {
       this.waitEstimate,
       this.estimate});
 
-  Order.fromSnapshot(QueryDocumentSnapshot snap) {
+  Order.fromSnapshot(DocumentSnapshot snap) {
     this.id = snap.id;
 
     final doc = snap.data();
     this.status = TripStatus.values.firstWhere(
-        (value) => value.toString() == 'TripStatus.' + doc['status']);
+        (value) => value.toString() == 'TripStatus.' + doc['status'],
+        orElse: () => TripStatus.UNDEFINED);
 
     this.tripId = doc['trip_id'];
     this.pickup = doc['pickup'];
     this.dropoff = doc['dropoff'];
 
     this.rider = doc['rider'];
-    this.driver = Driver.fromDocument(doc['driver']);
+
+    if (doc['driver'] != null) this.driver = Driver.fromDocument(doc['driver']);
 
     this.createdAt = doc['created_at'];
     this.updatedAt = doc['updated_at'];
 
     this.queuePosition = doc['queue_position'];
-    this.estimate = Estimate.fromDocument(doc['estimate']);
+    if (doc['estimate'] != null)
+      this.estimate = Estimate.fromDocument(doc['estimate']);
 
     this.waitEstimate = doc['wait_estimate'];
   }
 
   Map<String, dynamic> toJSON() {
     return {
-      'status': this.status.toString(),
+      'status': this.status.toString().substring(11),
       'trip_id': this.tripId,
       'pickup': this.pickup,
       'dropoff': this.dropoff,
