@@ -135,15 +135,12 @@ class MapUI extends StatelessWidget {
         right: 20.0,
         bottom: 190.0,
         child: FloatingActionButton(
+          splashColor: Theme.of(context).primaryColorDark,
+          backgroundColor: Theme.of(context).accentColor,
           child: Icon(
             isBus ? Icons.airport_shuttle : Icons.directions_bus,
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.black87
-                : Theme.of(context).accentColor,
+            color: Theme.of(context).primaryColor,
           ),
-          backgroundColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : Colors.white70,
           onPressed: () {
             BlocProvider.of<MapBloc>(context)
                 .add(MapTypeChangeEvent(zoomLevel: currentZoom));
@@ -159,15 +156,13 @@ class MapUI extends StatelessWidget {
         right: 20.0,
         bottom: 120.0,
         child: FloatingActionButton(
+          splashColor: Theme.of(context).primaryColorDark,
+          backgroundColor: Theme.of(context).accentColor,
           child: Icon(
-            Icons.gps_fixed,
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.black87
-                : Colors.white70,
+            Icons.near_me,
+             size: 25.0,
+             color: Theme.of(context).primaryColor,
           ),
-          backgroundColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : null,
           onPressed: () {
             BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
           },
