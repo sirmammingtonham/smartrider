@@ -38,6 +38,25 @@ class Post {
 /// Contains the HTTP POST request, given our URL and the Map, which represents
 /// the contents within the POST request.
 Future createPost(String url, {Map body}) async {
+  //Instantiate the GitHub client
+OAuth2Client client = GitHubOAuth2Client(
+    //Corresponds to the android:scheme attribute
+    customUriScheme: 'smartrider.app',
+    //The scheme must match the customUriScheme parameter!
+    redirectUri: 'smartrider.app://oauth2redirect'
+);
+
+//Require an Access Token with the Authorization Code grant
+AccessTokenResponse tknResp = await client.getTokenWithAuthCodeFlow(
+    clientId: 'be5f78f24f2b3ede9699', 
+    clientSecret: '3aa9cbefaa679024014822c9b06614e17de13876',
+    scopes: ['repo']);
+
+//From now on you can perform authenticated HTTP requests
+httpClient = http.Client()
+http.Response resp = await httpClient.post(url,
+    headers: {'Authorization': 'Bearer ' + tknResp.accessToken});
+
   return http.post(url, body: body).then((http.Response response) {
     final int statusCode = response.statusCode;
 
@@ -72,7 +91,7 @@ class _IssueRequestState extends State<IssueRequest> {
   // Below is the POST URL, which links the POST message to the smartrider
   // GitHub Repository.
   String postUrl =
-      "https://github.com/repos/:sirmammingtonham/:smartrider/issues";
+      "https://api.github.com/repos/:sirmammingtonham/:smartrider/issues";
 
   @override
   Widget build(BuildContext context) {
