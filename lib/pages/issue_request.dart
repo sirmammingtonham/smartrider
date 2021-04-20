@@ -4,17 +4,24 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-/// Represents an HTTP POST to send to GitHub
-class Post {
-  final String title; // Title of the issue.
-  final String body; // Issue description.
-  final String
-      labels; // Tags for the issue (should make it userBug or userFeature). NEEDS TO BE A LIST
+import 'package:oauth2_client/oauth2_helper.dart';
+import 'package:oauth2_client/github_oauth2_client.dart';
 
-  /// Constructor.
+/// Represents an HTTP POST, structures to send the info needed 
+/// to create a GitHub API Post Request to create an issue.
+class Post {
+  /// Title of the issue.
+  final String title; 
+  /// Description of the issue.
+  final String body; 
+  /// Tags for the issue (should make it userBug or userFeature).
+  final String labels; 
+
+  /// Creates a Post Request, represented as an object.
   Post({this.title, this.body, this.labels});
 
-  /// Translates json post from JSON-format to dart object Post (above)
+  /// Creates a Post Object, given the title, body, and label structured as 
+  /// a map (or a JSON format).
   factory Post.fromJson(Map json) {
     return Post(
       title: json['title'],
@@ -23,49 +30,45 @@ class Post {
     );
   }
 
-  /// Translates POST object to Map, which is the data structure needed to make
-  /// the HTTP POST request.
+  /// Returns a new Map object using values in this Post object.
   Map toMap() {
-    var map = new Map();
+    Map map = new Map();
     map["title"] = title;
     map["body"] = body;
     map["labels"] = labels;
-
     return map;
   }
 }
 
-/// Contains the HTTP POST request, given our URL and the Map, which represents
-/// the contents within the POST request.
+/// Creates an HTTP Post Request, given the POST url and a JSON-organized file.
 Future createPost(String url, {Map body}) async {
-  //Instantiate the GitHub client
-OAuth2Client client = GitHubOAuth2Client(
-    //Corresponds to the android:scheme attribute
-    customUriScheme: 'smartrider.app',
-    //The scheme must match the customUriScheme parameter!
-    redirectUri: 'smartrider.app://oauth2redirect'
-);
 
-//Require an Access Token with the Authorization Code grant
-AccessTokenResponse tknResp = await client.getTokenWithAuthCodeFlow(
+  /// Creates the GitHub OAuth2Client provided by Flutter's OAuth2 library
+  var client = OAuth2Helper(GitHubOAuth2Client(
+    // Corresponds with the Android Scheme (located in AndroidManifest.xml)
+    customUriScheme: 'smartrider.app',
+    // Handles redirect URI after authorization
+    redirectUri: 'smartrider.app://oauth2redirect'
+  ));
+
+  /// Gets the response from authenticating the request.
+  client.setAuthorizationParams(
+    grantType: OAuth2Helper.AUTHORIZATION_CODE,
+    // FUTURE: Should find a way to securely store these. 
     clientId: 'be5f78f24f2b3ede9699', 
     clientSecret: '3aa9cbefaa679024014822c9b06614e17de13876',
-    scopes: ['repo']);
+    scopes: ['repo']
+  );
 
-//From now on you can perform authenticated HTTP requests
-httpClient = http.Client()
-http.Response resp = await httpClient.post(url,
-    headers: {'Authorization': 'Bearer ' + tknResp.accessToken});
-
-  return http.post(url, body: body).then((http.Response response) {
+  /// The client used to submit the authenticated HTTP Post Request.
+  Future resp = client.post(url, body: body).then((http.Response response) {
     final int statusCode = response.statusCode;
-
-    if (statusCode < 200 || statusCode > 400 || json == null) {
+    if(statusCode < 200 || statusCode > 400 || json == null){
       print(statusCode);
-      throw new Exception("Error while fetching data");
     }
-    return Post.fromJson(json.decode(response.body));
   });
+  
+  return resp;
 }
 
 /// The IssueRequest page lets the user enter a bug/feature request through the
@@ -82,22 +85,30 @@ class IssueRequest extends StatefulWidget {
 
 /// Represents the current state of the Issue Request Page.
 class _IssueRequestState extends State<IssueRequest> {
-  bool valuefirst = false; // for checkbox
-  String dropdownValue = "Bug"; // for dropdown
-  Future post; // http post held in here.
+  /// Value of the review checkbox
+  bool valuefirst = false;
+  /// Value of the type-of-request dropdown
+  String dropdownValue = "Bug";
+  /// HTTP Post created once one is created.
+  Future post;
+  /// Value of the title TextField. Represents the title of the bug/feature
+  /// that the user is requesting.
   String title = "";
+  /// Value of the description TextField. Represents the description of the 
+  /// bug/feature that the user is requesting.
   String description = "";
 
-  // Below is the POST URL, which links the POST message to the smartrider
-  // GitHub Repository.
+  // The POST URL that the GitHub API submits to.
   String postUrl =
       "https://api.github.com/repos/:sirmammingtonham/:smartrider/issues";
 
+  /// Builds the IssueRequest page.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-      backgroundColor: Colors.grey[800], // Background color of app.
+          // Background color of app.
+      backgroundColor: Colors.grey[800], 
       body: SingleChildScrollView(
           child: Column(children: [
         new Padding(

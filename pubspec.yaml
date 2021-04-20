@@ -53,7 +53,7 @@ dependencies:
   table_sticky_headers: ^1.2.0
 
   #issue request dependencies
-  oauth2_client: ^1.0.0
+  oauth2_client: ^1.5.0
 
   #state management
   flutter_bloc: ^6.0.1
