@@ -370,7 +370,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               );
       }),
-      bottomSheet: !onboardDone
+      bottomSheet: _currentPage == _numPages - 1 && !onboardDone 
           ? Container(
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
@@ -402,6 +402,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             )
           : Text(''),
-    );
+    );  
   }
 }

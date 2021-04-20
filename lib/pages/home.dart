@@ -1,5 +1,4 @@
 // ui imports
-import 'dart:html';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -117,12 +116,7 @@ class _HomePageState extends State<_HomePage>
         ),
         collapsed: Showcase(
             key: showcaseSlidingPanel,
-            description: 'Swipe up to view shuttle/bus schedules',
-            shapeBorder: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(18.0),
-              ),
-            ),
+            description: "Swipe up to view the shuttle/bus times",
             child: AppBar(
               centerTitle: true,
               shape: RoundedRectangleBorder(

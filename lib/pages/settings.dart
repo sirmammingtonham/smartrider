@@ -43,14 +43,6 @@ class _SettingsPageState extends State<SettingsPage> {
           body: Center(child: CircularProgressIndicator()),
         );
       } else if (state is PrefsLoadedState) {
-        // var prefs = state.prefs.getMapping;
-        if (state.prefs.getBool('firstSettingAccess') == false) {
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            ShowCaseWidget.of(context).startShowCase([]);
-          });
-          state.prefs.setBool('firstSettingAccess', false);
-        }
-
         return SettingsWidget(
             state: state, auth: auth, setState: () => setState(() {}));
       } else if (state is PrefsSavingState) {
@@ -72,6 +64,10 @@ class SettingsWidget extends StatelessWidget {
   final AuthRepository auth;
   final VoidCallback setState;
 
+  /*
+  A function that builds a rounded box that contains a list of
+  keys from a given map to change a boolean variable.
+  */
   Widget cardBuilder(switchList) {
     return Container(
       margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
@@ -93,6 +89,7 @@ class SettingsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        // The top of the settings page contains in order: an arrow the title and another arrow
         appBar: AppBar(
           centerTitle: true,
           // first down arrow
@@ -154,7 +151,6 @@ class SettingsWidget extends StatelessWidget {
                     ))
           ]),
           // SHUTTLE SETTINGS
-          // Showcase(key: showcaseShuttleToggle, description: null, child: )
           Container(
             margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
             child: Center(
@@ -164,6 +160,26 @@ class SettingsWidget extends StatelessWidget {
               ),
             ),
           ),
+          if (state.shuttles.keys.isEmpty)
+            Container(
+              margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+              child: Material(
+                elevation: 5,
+                borderRadius: BorderRadius.circular(20.0),
+                child: Container(
+                  padding: EdgeInsets.only(right: 10, left: 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  child: Center(
+                    child: Text(
+                      'Shuttles are not loaded, try switching views to load',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           cardBuilder(state.shuttles.keys
               .map((key) => SwitchListTile(
                     title: Text(key),
