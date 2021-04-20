@@ -53,18 +53,15 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
           queuePosition: event.queuePosition,
           waitEstimate: event.waitEstimate);
     } else if (event is SaferideCancelEvent) {
-      if (_cancelSaferide()) {
-        yield SaferideNoState();
-      } else {
-        yield SaferideErrorState(status: 'FAIL', message: 'Couldn\'t cancel');
-      }
+      yield* _mapCancelToState(event);
     }
   }
 
   /// attempts to cancel saferide
   /// true if successful, false if fail
-  bool _cancelSaferide() {
-    return true;
+  Stream<SaferideState> _mapCancelToState(SaferideCancelEvent event) async* {
+    await saferideRepo.cancelOrder();
+    yield SaferideNoState();
   }
 
   /// listens to the order status and creates events accordingly
@@ -104,8 +101,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     if (_currentPickupLatLng != null && _currentDropoffLatLng != null) {
       yield SaferideLoadingState();
 
-      final order = await saferideRepo.createOrder(
-          order: Order(
+      final order = await saferideRepo.createOrder(Order(
         status: TripStatus.NEW,
         pickup: GeoPoint(
             _currentPickupLatLng.latitude, _currentPickupLatLng.longitude),

@@ -13,14 +13,26 @@ class SaferideProvider {
   final HypertrackViewsFlutter hypertrack =
       HypertrackViewsFlutter(PUBLISHABLE_KEY);
 
+  String orderId;
+
   Map<String, Driver> _driversMap;
 
   //fill in the fields specified in order.dart with the orders collection in the firebase
   Future<Stream<DocumentSnapshot>> createOrder(Order order) async {
     CollectionReference orders = firestore.collection('orders');
-    final ref = await orders
-        .add({...order.toJSON(), 'created_at': FieldValue.serverTimestamp()});
+    final ref = await orders.add({
+      ...order.toJSON(),
+      'created_at': FieldValue.serverTimestamp()
+    }); // spread syntax
+    orderId = ref.id;
     return ref.snapshots();
+  }
+
+  Future<void> cancelOrder() async {
+    if (this.orderId != null) {
+      DocumentReference orders = firestore.collection('orders').doc(this.orderId);
+      await orders.delete();
+    }
   }
 
   Future<Map<String, Driver>> getDrivers() async {

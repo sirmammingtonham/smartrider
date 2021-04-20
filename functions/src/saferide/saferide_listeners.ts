@@ -11,8 +11,7 @@ import { Status, User, Driver } from "./saferide_types";
 const firestore = firebase.firestore();
 
 const runtimeOpts: functions.RuntimeOptions = {
-  timeoutSeconds: 3, // timeout function after 2 secs
-  memory: "256MB", // allocate 256MB of mem per function
+  timeoutSeconds: 10, // timeout function after 2 secs
 };
 
 /**
@@ -25,7 +24,7 @@ const runtimeOpts: functions.RuntimeOptions = {
  * @returns A promise of the update result, or undefined (so we can track if it was successful)
  */
 async function acceptOrder(order: DocumentSnapshot, driver: DocumentSnapshot) {
-  console.log('acceptOrder called');
+  console.log("acceptOrder called");
   const orderData = order.data();
   const driverData = driver.data();
   if (!orderData || !driverData) return;
@@ -46,15 +45,22 @@ async function acceptOrder(order: DocumentSnapshot, driver: DocumentSnapshot) {
   console.log(parsedBody);
 
   if (parsedBody["trip_id"]) {
-    return order.ref.set(
-      {
-        updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-        status: "PICKING_UP",
-        trip_id: parsedBody["trip_id"],
-        estimate: parsedBody["estimate"] ?? null,
-      },
-      { merge: true }
-    );
+    let estimate = parsedBody["estimate"];
+    if (estimate) {
+      estimate = {
+        ...estimate,
+        route: {
+          ...estimate.route,
+          polyline: JSON.stringify(estimate.route.polyline),
+        },
+      };
+    }
+    return order.ref.update({
+      updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+      status: "PICKING_UP",
+      trip_id: parsedBody["trip_id"],
+      estimate,
+    });
   } else {
     console.error(`malformed request: ${parsedBody}`);
     return;
@@ -70,7 +76,7 @@ async function acceptOrder(order: DocumentSnapshot, driver: DocumentSnapshot) {
  * @returns A promise of the update result, or undefined (so we can track if it was successful)
  */
 async function startRide(order: DocumentSnapshot) {
-  console.log('startRide called');
+  console.log("startRide called");
   const orderData = order.data();
   if (!orderData) return;
 
@@ -81,16 +87,15 @@ async function startRide(order: DocumentSnapshot) {
     orderData["dropoff"]
   );
 
+  console.log(parsedBody);
+
   if (parsedBody["trip_id"]) {
-    return order.ref.set(
-      {
-        updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-        status: "DROPPING_OFF",
-        trip_id: parsedBody["trip_id"],
-        estimate: parsedBody["estimate"],
-      },
-      { merge: true }
-    );
+    return order.ref.update({
+      updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+      status: "DROPPING_OFF",
+      trip_id: parsedBody["trip_id"],
+      estimate: parsedBody["estimate"],
+    });
   } else {
     console.error(`malformed request: ${parsedBody}`);
     return;
@@ -105,7 +110,7 @@ async function startRide(order: DocumentSnapshot) {
  * @returns A promise of the driver update or undefined
  */
 async function completeRide(order: DocumentSnapshot) {
-  console.log('completeRide called');
+  console.log("completeRide called");
   const orderData = order.data();
   if (!orderData) return;
 
@@ -123,7 +128,7 @@ async function completeRide(order: DocumentSnapshot) {
  * @returns A promise of the driver update or undefined
  */
 async function rejectRide(order: DocumentSnapshot) {
-  console.log('rejectRide called');
+  console.log("rejectRide called");
   const orderData = order.data();
   if (!orderData) return;
 
@@ -135,9 +140,9 @@ async function rejectRide(order: DocumentSnapshot) {
 /**
  * This function updates all the orders by counting their position in queue and setting it (expensive)
  * Possible future idea: add every order as point on trip when they come in to get a good estimate
- * ALso might be better to only run this when an order is deleted. 
+ * ALso might be better to only run this when an order is deleted.
  * We can store metadata about this in a different document for when an order is created.
- * 
+ *
  * @effects
  */
 async function updateOrderEstimates() {
@@ -188,7 +193,7 @@ export const onOrderUpdate = functions
         }
       }
     } else if (beforeStatus === "NEW" && afterStatus === "PICKING_UP") {
-      /// order status changed to accepted (before it would just call hypertrack and change status to picking_up so not really a point anymore. Unless we want custom logic...)
+      /// driver finished previous trip, is now picking up user
     } else if (
       beforeStatus !== "REACHED_PICKUP" &&
       afterStatus === "REACHED_PICKUP"

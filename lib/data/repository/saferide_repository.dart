@@ -11,8 +11,11 @@ class SaferideRepository {
 
   SaferideRepository.create();
 
-  Future<Stream<DocumentSnapshot>> createOrder({@required Order order}) async =>
+  Future<Stream<DocumentSnapshot>> createOrder(Order order) async =>
       _saferideProvider.createOrder(order);
+  
+  Future<void> cancelOrder() async =>
+      _saferideProvider.cancelOrder();
 
   Future<Map<String, Driver>> get getDrivers async =>
       _saferideProvider.getDrivers();
