@@ -6,21 +6,24 @@ import 'package:http/http.dart' as http;
 
 import 'package:oauth2_client/oauth2_helper.dart';
 import 'package:oauth2_client/github_oauth2_client.dart';
+import 'package:smartrider/util/strings.dart';
 
-/// Represents an HTTP POST, structures to send the info needed 
+/// Represents an HTTP POST, structures to send the info needed
 /// to create a GitHub API Post Request to create an issue.
 class Post {
   /// Title of the issue.
-  final String title; 
+  final String title;
+
   /// Description of the issue.
-  final String body; 
+  final String body;
+
   /// Tags for the issue (should make it userBug or userFeature).
-  final String labels; 
+  final String labels;
 
   /// Creates a Post Request, represented as an object.
   Post({this.title, this.body, this.labels});
 
-  /// Creates a Post Object, given the title, body, and label structured as 
+  /// Creates a Post Object, given the title, body, and label structured as
   /// a map (or a JSON format).
   factory Post.fromJson(Map json) {
     return Post(
@@ -42,32 +45,24 @@ class Post {
 
 /// Creates an HTTP Post Request, given the POST url and a JSON-organized file.
 Future createPost(String url, {Map body}) async {
-
   /// Creates the GitHub OAuth2Client provided by Flutter's OAuth2 library
   var client = OAuth2Helper(GitHubOAuth2Client(
-    // Corresponds with the Android Scheme (located in AndroidManifest.xml)
-    customUriScheme: 'smartrider.app',
-    // Handles redirect URI after authorization
-    redirectUri: 'smartrider.app://oauth2redirect'
-  ));
+      // Corresponds with the Android Scheme (located in AndroidManifest.xml)
+      customUriScheme: 'smartrider.app',
+      // Handles redirect URI after authorization
+      redirectUri: 'smartrider.app://oauth2redirect'));
 
   /// Gets the response from authenticating the request.
   client.setAuthorizationParams(
-    grantType: OAuth2Helper.AUTHORIZATION_CODE,
-    // FUTURE: Should find a way to securely store these. 
-    clientId: 'be5f78f24f2b3ede9699', 
-    clientSecret: '3aa9cbefaa679024014822c9b06614e17de13876',
-    scopes: ['repo']
-  );
+      grantType: OAuth2Helper.AUTHORIZATION_CODE,
+      clientId: 'be5f78f24f2b3ede9699',
+      clientSecret: github_api_secret,
+      scopes: ['repo']);
 
   /// The client used to submit the authenticated HTTP Post Request.
-  Future resp = client.post(url, body: body).then((http.Response response) {
-    final int statusCode = response.statusCode;
-    if(statusCode < 200 || statusCode > 400 || json == null){
-      print(statusCode);
-    }
-  });
-  
+  Future resp = client.post(url, body: body);
+  resp.then((value) => print(value));
+
   return resp;
 }
 
@@ -87,28 +82,32 @@ class IssueRequest extends StatefulWidget {
 class _IssueRequestState extends State<IssueRequest> {
   /// Value of the review checkbox
   bool valuefirst = false;
+
   /// Value of the type-of-request dropdown
   String dropdownValue = "Bug";
+
   /// HTTP Post created once one is created.
   Future post;
+
   /// Value of the title TextField. Represents the title of the bug/feature
   /// that the user is requesting.
   String title = "";
-  /// Value of the description TextField. Represents the description of the 
+
+  /// Value of the description TextField. Represents the description of the
   /// bug/feature that the user is requesting.
   String description = "";
 
   // The POST URL that the GitHub API submits to.
   String postUrl =
-      "https://api.github.com/repos/:sirmammingtonham/:smartrider/issues";
+      "https://api.github.com/repos/sirmammingtonham/smartrider/issues";
 
   /// Builds the IssueRequest page.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-          // Background color of app.
-      backgroundColor: Colors.grey[800], 
+      // Background color of app.
+      backgroundColor: Colors.grey[800],
       body: SingleChildScrollView(
           child: Column(children: [
         new Padding(
@@ -159,18 +158,17 @@ class _IssueRequestState extends State<IssueRequest> {
             width: 330.0,
             height: 50.0,
             child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Title",
-                hintStyle: TextStyle(color: Colors.grey[400]),
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-              ),
-              style: TextStyle(color: Colors.white),
-              onSubmitted: (value){
-                title = value;
-              }
-            )),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Title",
+                  hintStyle: TextStyle(color: Colors.grey[400]),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                ),
+                style: TextStyle(color: Colors.white),
+                onSubmitted: (value) {
+                  title = value;
+                })),
         Row(
           children: [
             new Padding(
@@ -195,19 +193,18 @@ class _IssueRequestState extends State<IssueRequest> {
         Container(
             width: 330.0,
             child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Description",
-                hintStyle: TextStyle(color: Colors.grey[400]),
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-              ),
-              maxLines: null,
-              style: TextStyle(color: Colors.white),
-              onChanged: (value){
-                description = value;
-              }
-            )),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Description",
+                  hintStyle: TextStyle(color: Colors.grey[400]),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                ),
+                maxLines: null,
+                style: TextStyle(color: Colors.white),
+                onChanged: (value) {
+                  description = value;
+                })),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 3.0),
         ),
