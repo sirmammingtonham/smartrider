@@ -5,7 +5,7 @@ module.exports = {
     node: true,
   },
   extends: ["plugin:import/errors", "plugin:import/warnings"],
-  files: ['*.ts', '*.tsx'],
+  // files: ['*.ts', '*.tsx'],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: "tsconfig.json",

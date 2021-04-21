@@ -12,9 +12,10 @@ import { zipObject, zip, isNumber } from "lodash";
 import * as fs from "fs";
 import * as os from "os";
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-// });
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+});
+const busroutes = ['87', '286', '289', '288'];
 
 const config = {
   "agencies": [
@@ -362,7 +363,7 @@ const flattenTimetable = async (table: any) => {
   return { formatted: formatted_list, timestamps: timestamp_list };
 };
 
-const parseTest = async () => {
+export const parseTest = async () => {
   const timetable_config = gtfs_timetable.setDefaultConfig(config);
 
   const table_f = (
@@ -372,46 +373,44 @@ const parseTest = async () => {
     )
   )[0];
 
-  const flat = await flattenTimetable(table_f);
+   const flat = await flattenTimetable(table_f);
+  // fs.writeFileSync(
+  //   "out.json",
+  //   JSON.stringify({
+  //     route_id: table_f.route_ids[0],
+  //     direction_id: table_f.direction_id,
+  //     direction_name: table_f.direction_name,
+  //     label: table_f.timetable_label,
+  //     start_date: table_f.start_date,
+  //     end_date: table_f.end_date,
 
-  fs.writeFileSync(
-    "out.json",
-    JSON.stringify({
-      route_id: table_f.route_ids[0],
-      direction_id: table_f.direction_id,
-      direction_name: table_f.direction_name,
-      label: table_f.timetable_label,
-      start_date: table_f.start_date,
-      end_date: table_f.end_date,
+  //     service_id: table_f.service_ids[0],
+  //     include_dates: table_f.calendarDates.includedDates,
+  //     exclude_dates: table_f.calendarDates.excludedDates,
 
-      service_id: table_f.service_ids[0],
-      include_dates: table_f.calendarDates.includedDates,
-      exclude_dates: table_f.calendarDates.excludedDates,
-
-      stops: table_f.stops.map((stop: any) => {
-        return {
-          stop_id: stop.stop_id,
-          stop_name: stop.stop_name,
-          stop_lat: stop.stop_lat,
-          stop_lon: stop.stop_lon,
-        };
-      }),
-      timetable: flat,
-    })
-  );
+  //     stops: table_f.stops.map((stop: any) => {
+  //       return {
+  //         stop_id: stop.stop_id,
+  //         stop_name: stop.stop_name,
+  //         stop_lat: stop.stop_lat,
+  //         stop_lon: stop.stop_lon,
+  //       };
+  //     }),
+  //     timetable: flat,
+  //   })
+  // );
 };
 
-const parseTimetables = async () => {
+const parseTimetables = async (db: any) => {
   console.log("started parsing Timetables");
   console.time("parseTimetables");
 
   const timetable_config = gtfs_timetable.setDefaultConfig(config);
-
   // get list of all routes
   const routes = (await gtfs.getRoutes({}, [], [])).map(
     (route: any) => route.route_id
   );
-
+ 
   const activity_map: models.Map<string> = {
     weekday: "1111100",
     saturday: "0000010",
@@ -421,8 +420,10 @@ const parseTimetables = async () => {
   // setup firestore collection
   type TableRoute = { route_id: string };
   const timetables_root = collection<TableRoute>("timetables");
-
+  
   const promises = [];
+
+
 
   // iterate through routes and the different days
   for (const route of routes) {
@@ -553,8 +554,19 @@ const clearFirestore = async () => {
   console.timeEnd("clearFirestore");
 };
 
-const createIndexes = async (db: any) => {
+export const createIndexes = async (db: any) => {
   console.time("index");
+  let buses = "\'" + busroutes[0] + "\'";
+  let busesregex = `route_id LIKE \'${busroutes[0]}%\'`;
+  busroutes.forEach( (busroute: string) =>{
+    if (busroute !== busroutes[0]){
+      buses += ",\'" + busroute + "\'";
+      busesregex += ` OR route_id LIKE \'${busroute}%\'`;
+    }
+       
+  }
+  );
+
   return Promise.all([
     db.run(`CREATE INDEX r_id ON routes(route_id)`),
     db.run(`CREATE INDEX r_id2 ON trips(route_id)`),
@@ -564,8 +576,8 @@ const createIndexes = async (db: any) => {
     db.run(`CREATE INDEX s_id2 ON stops(stop_id)`),
     db.run(`CREATE INDEX sr_id ON calendar(service_id)`),
     db.run(`CREATE INDEX sr_id2 ON trips(service_id)`),
-    db.run(`DELETE FROM routes WHERE route_short_name NOT IN ('87','289','288','286')`),
-    db.run(`DELETE FROM trips WHERE route_id LIKE '87%' OR route_id LIKE '289%' OR route_id LIKE '288%' OR route_id LIKE '286%'`),
+    db.run(`DELETE FROM routes WHERE route_short_name NOT IN (${buses})`),
+    db.run(`DELETE FROM trips WHERE ${busesregex}`),
   ]).then(() => console.timeEnd("index"));
 };
 
@@ -586,7 +598,7 @@ const generateDB = async () => {
     parsePolylines(),
     parseShapes(db),
     parseTrips(db),
-    parseTimetables(),
+    parseTimetables(db),
     // parseTest(),
   ]);
 };
