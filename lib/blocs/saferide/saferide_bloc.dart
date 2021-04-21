@@ -53,43 +53,41 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
           queuePosition: event.queuePosition,
           waitEstimate: event.waitEstimate);
     } else if (event is SaferideCancelEvent) {
-      if (_cancelSaferide()) {
-        yield SaferideNoState();
-      } else {
-        yield SaferideErrorState(status: 'FAIL', message: 'Couldn\'t cancel');
-      }
+      yield* _mapCancelToState(event);
     }
   }
 
   /// attempts to cancel saferide
   /// true if successful, false if fail
-  bool _cancelSaferide() {
-    return true;
+  Stream<SaferideState> _mapCancelToState(SaferideCancelEvent event) async* {
+    await saferideRepo.cancelOrder();
+    yield SaferideNoState();
   }
 
   /// listens to the order status and creates events accordingly
   Future<void> orderListener(DocumentSnapshot update) async {
-    final order = update.data();
+    final order = Order.fromSnapshot(update);
 
-    switch (order['status']) {
-      case 'NEW':
+    switch (order.status) {
+      case TripStatus.NEW:
         {
           add(SaferideWaitUpdateEvent(
-              queuePosition: order['queue_position'] ?? -1,
-              waitEstimate: order['wait_estimate'] ?? -1));
+              queuePosition: order.queuePosition ?? -1,
+              waitEstimate: order.waitEstimate ?? -1));
         }
         break;
-      case 'ACCEPTED':
+      case TripStatus.PICKING_UP:
         {
-          _currentDriver = Driver.fromDocument(order['driver']);
+          _currentDriver = order.driver;
           add(SaferideAcceptedEvent(
               driverName: _currentDriver.name,
               licensePlate: _currentDriver.licensePlate,
-              queuePosition: order['queue_position'] ?? -1,
-              waitEstimate: order['wait_estimate'] ?? -1));
+              queuePosition: order.queuePosition ?? -1,
+              waitEstimate: order.estimate?.remainingDuration ?? -1));
         }
         break;
       default:
+        print(order.status);
         break;
     }
 
@@ -103,15 +101,13 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     if (_currentPickupLatLng != null && _currentDropoffLatLng != null) {
       yield SaferideLoadingState();
 
-      final order = await saferideRepo.createOrder(
-          order: Order(
-        status: "NEW",
+      final order = await saferideRepo.createOrder(Order(
+        status: TripStatus.NEW,
         pickup: GeoPoint(
             _currentPickupLatLng.latitude, _currentPickupLatLng.longitude),
         dropoff: GeoPoint(
             _currentDropoffLatLng.latitude, _currentDropoffLatLng.longitude),
         rider: authRepo.getUser,
-        createdAt: DateTime.now(),
       ));
 
       order.listen(orderListener);

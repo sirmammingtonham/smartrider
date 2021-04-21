@@ -1,19 +1,19 @@
-import * as admin from "firebase-admin";
-import * as functions from "firebase-functions";
-import * as saferide from "./saferide_exports";
-import * as db from "./firestore/update_firestore";
+import * as admin from 'firebase-admin';
+admin.initializeApp(); // needs to go before other imports: https://github.com/firebase/firebase-functions-test/issues/6#issuecomment-496021884
 
-// admin.initializeApp();
+import * as db from './bus/update_firestore_gtfs';
+import * as saferide from "./saferide/saferide_listeners";
+import * as saferide_tests from "./saferide/saferide_testfuncs";
+import * as saferide_webhooks from "./saferide/saferide_webhooks";
 
 // util functions
- export const refreshDataBase = db.refreshDataBase;
+// export const refreshDataBase = db.refreshDataBase;
 
 // saferide functions
-// export const srUpdateOrderStatus = saferide.srUpdateOrderStatus;
-// export const srDelOrder = saferide.srDelOrder;
-// export const srOnTripUpdate = saferide.srOnTripUpdate;
-// export const srOnCreate = saferide.srOnCreate;
-// export const srOnOrderUpdate = saferide.srOnOrderUpdate;
-// export const srOnDriverUpdate = saferide.srOnDriverUpdate;
-// export const setDriver = saferide.setDriver;
-// export const createTest = saferide.createTest;
+export const saferideOnOrderUpdate = saferide.onOrderUpdate;
+export const saferideOnDriverUpdate = saferide.onDriverUpdate;
+
+export const hypertrackTripWebhook = saferide_webhooks.hypertrackTripWebhook;
+
+export const createTest = saferide_tests.createTest;
+export const addTestDriver = saferide_tests.addTestDriver;

@@ -2,12 +2,14 @@
   "name": "functions",
   "scripts": {
     "lint": "eslint \"src/**/*\"",
+    "clean": "rimraf ./lib",
     "build": "tsc",
-    "serve": "npm run build && firebase emulators:start --only functions",
+    "serve": "npm run build && firebase emulators:start",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "test": "npm run build && node -e 'require(\"./lib/saferide/test\").addTestDriver()' "
   },
   "engines": {
     "node": "10"
@@ -36,7 +38,7 @@
     "eslint-plugin-import": "^2.22.0",
     "firebase-functions-test": "^0.2.0",
     "hypertrack": "^3.2.1",
-    "ts-migrate": "^0.1.9",
+    "rimraf": "^3.0.2",
     "typescript": "^3.9.7"
   },
   "private": true

@@ -2,19 +2,18 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as gtfs from "gtfs";
 import * as gtfs_timetable from "gtfs-to-html";
-import * as models from "./firestore_types";
+import * as models from "./bus_types";
 import * as Promise from "../util/async_util";
-// import * as config from "../setup/gtfs_config.json";
-import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
 import { collection, subcollection, set, all, remove } from "typesaurus";
-import { genShapeGeoJSON } from "../util/bus_util";
+import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
+import { genShapeGeoJSON } from "./bus_util";
 import { zipObject, zip, isNumber } from "lodash";
 import * as fs from "fs";
 import * as os from "os";
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+// });
 const busroutes = ['87', '286', '289', '288'];
 
 const config = {
@@ -50,7 +49,6 @@ const createDbFile = (filePath: string) => {
     }
   });
 }
-// admin.initializeApp({ projectId: "smartrider-4e9e8" }); // uncomment to test in emulator
 
 console.log("initialized");
 

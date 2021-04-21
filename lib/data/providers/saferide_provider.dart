@@ -13,29 +13,33 @@ class SaferideProvider {
   final HypertrackViewsFlutter hypertrack =
       HypertrackViewsFlutter(PUBLISHABLE_KEY);
 
+  String orderId;
+
   Map<String, Driver> _driversMap;
 
   //fill in the fields specified in order.dart with the orders collection in the firebase
   Future<Stream<DocumentSnapshot>> createOrder(Order order) async {
     CollectionReference orders = firestore.collection('orders');
     final ref = await orders.add({
-      'status': order.status,
-      'tripId': order.tripId,
-      'pickup': order.pickup,
-      'dropoff': order.dropoff,
-      'rider': order.rider,
-      'driver': order.driver,
-      'createdAt': order.createdAt,
-      'updatedAt': order.updatedAt
-    });
+      ...order.toJSON(),
+      'created_at': FieldValue.serverTimestamp()
+    }); // spread syntax
+    orderId = ref.id;
     return ref.snapshots();
+  }
+
+  Future<void> cancelOrder() async {
+    if (this.orderId != null) {
+      DocumentReference orders = firestore.collection('orders').doc(this.orderId);
+      await orders.delete();
+    }
   }
 
   Future<Map<String, Driver>> getDrivers() async {
     QuerySnapshot response = await firestore.collection('drivers').get();
 
     _driversMap = Map.fromIterable(response.docs,
-        key: (doc) => doc['device_id'],
+        key: (doc) => doc['deviceId'],
         value: (doc) => Driver.fromDocument(doc.data()));
     return _driversMap;
   }
