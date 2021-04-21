@@ -22,7 +22,7 @@
     "firebase-functions": "^3.13.2",
     "geojson": "^0.5.0",
     "geojson-dissolve": "^3.1.0",
-    "gtfs": "^2.0.5",
+    "gtfs": "^2.4.3",
     "gtfs-to-html": "git+https://github.com/sirmammingtonham/gtfs-to-html.git",
     "js-base64": "^3.5.2",
     "laneify": "^0.3.1",

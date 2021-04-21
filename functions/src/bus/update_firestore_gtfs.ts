@@ -4,69 +4,45 @@ import * as gtfs from "gtfs";
 import * as gtfs_timetable from "gtfs-to-html";
 import * as models from "./bus_types";
 import * as Promise from "../util/async_util";
-import { collection, subcollection, set, all, remove } from "typesaurus";
-import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
+import * as firestore from "typesaurus";
 import { genShapeGeoJSON } from "./bus_util";
 import { zipObject, zip, isNumber } from "lodash";
 import * as fs from "fs";
 import * as os from "os";
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-// });
-const busroutes = ['87', '286', '289', '288'];
+const ACTIVE_ROUTES = ["87", "286", "289", "288"];
 
 const config = {
-  "agencies": [
+  agencies: [
     {
-      "agency_key": "cdta",
-      "url": "https://www.cdta.org/schedules/google_transit.zip",
-      "exclude": []
-    }
+      agency_key: "cdta",
+      url: "https://www.cdta.org/schedules/google_transit.zip",
+      exclude: [],
+    },
   ],
-  "sqlitePath": os.tmpdir + '/gtfs.db',
-  "csvOptions": {
-    "skip_lines_with_error": true
+  sqlitePath: os.tmpdir() + "/gtfs.db",
+  csvOptions: {
+    skip_lines_with_error: true,
   },
-  "coordinatePrecision": 5,
-  "showMap": false
+  coordinatePrecision: 5,
+  showMap: false,
 };
 
 const runtimeOpts: functions.RuntimeOptions = {
   timeoutSeconds: 540,
-  memory: "2GB",
+  memory: "1GB",
 };
-
-const createDbFile = (filePath: string) => {
-
-  fs.appendFile(filePath, '', function (err) {
-    if (err) {
-      console.log('error occured while creating gtfs db file')
-    }
-
-    else {
-      console.log('gtfs db file created!');
-    }
-  });
-}
 
 console.log("initialized");
 
 const parseAgency = async (db: any) => {
   console.log("started parsing Agency");
   console.time("parseAgency");
-  const agency = collection<models.Agency>("agency");
+  const agency = firestore.collection<models.Agency>("agency");
   const query_res = await db.all(`SELECT * FROM agency`);
   return Promise.map(query_res, (query: any) => {
-    return set(agency, query.agency_id, {
-      agency_id: query.agency_id,
-      agency_name: query.agency_name,
-      agency_url: query.agency_url,
-      agency_timezone: query.agency_timezone,
-      agency_lang: query.agency_lang,
-      agency_phone: query.agency_phone,
-      agency_fare_url: query.agency_fare_url,
-      agency_email: query.agency_email,
+    return firestore.set(agency, query.agency_id, {
+      ...query,
     });
   }).then(() => console.timeEnd("parseAgency"));
 };
@@ -74,7 +50,7 @@ const parseAgency = async (db: any) => {
 const parseCalendar = async (db: any) => {
   console.log("started parsing Calendar");
   console.time("parseCalendar");
-  const calendar = collection<models.Calendar>("calendar");
+  const calendar = firestore.collection<models.Calendar>("calendar");
   const query_res = await db.all(`
   SELECT c.*, 
     Group_concat(cd.date)           AS exception_dates, 
@@ -86,7 +62,7 @@ const parseCalendar = async (db: any) => {
   `);
 
   return Promise.map(query_res, (query: any) => {
-    return set(calendar, query.service_id, {
+    return firestore.set(calendar, query.service_id, {
       service_id: query.service_id,
       active_days: {
         monday: !!query.monday,
@@ -111,7 +87,7 @@ const parseCalendar = async (db: any) => {
 const parseRoutes = async (db: any) => {
   console.log("started parsing Routes");
   console.time("parseRoutes");
-  const routes = collection<models.Route>("routes");
+  const routes = firestore.collection<models.Route>("routes");
   const query_res = await db.all(`
   SELECT r.*, 
   Group_concat(c.start_date) AS start_dates,
@@ -176,20 +152,9 @@ const parseRoutes = async (db: any) => {
       return map;
     }, {});
 
-    return set(routes, query.route_id, {
-      route_id: query.route_id,
-      agency_id: query.agency_id,
-      route_short_name: query.route_short_name,
-      route_long_name: query.route_long_name,
-      route_desc: query.route_desc,
+    return firestore.set(routes, query.route_id, {
+      ...query,
       route_type: +query.route_type,
-      route_url: query.route_url,
-      route_color: query.route_color,
-      route_text_color: query.route_text_color,
-      route_sort_order: +query.route_sort_order,
-      continuous_pickup: query.continuous_pickup,
-      continuous_drop_off: query.continuous_drop_off,
-
       start_date: Math.min(
         ...query.start_dates.split(",").map((x: string) => +x)
       ),
@@ -203,10 +168,7 @@ const parseRoutes = async (db: any) => {
           (element: any) => element.stop_id === stop_id
         );
         return {
-          stop_id: curStop.stop_id,
-          stop_name: curStop.stop_name,
-          stop_lat: curStop.stop_lat,
-          stop_lon: curStop.stop_lon,
+          ...curStop,
           stop_sequence_0: +stop_info[stop_id].forward,
           stop_sequence_1: +stop_info[stop_id].backward,
         };
@@ -218,7 +180,7 @@ const parseRoutes = async (db: any) => {
 const parseShapes = async (db: any) => {
   console.log("started parsing Shapes");
   console.time("parseShapes");
-  const shapes = collection<models.Shape>("shapes");
+  const shapes = firestore.collection<models.Shape>("shapes");
   const query_res = await db.all(`
   SELECT s.shape_id, 
       Group_concat(s.shape_pt_lat)        AS shape_pt_lat, 
@@ -229,7 +191,7 @@ const parseShapes = async (db: any) => {
   GROUP  BY s.shape_id 
   `);
   return Promise.map(query_res, (query: any) => {
-    return set(shapes, query.shape_id, {
+    return firestore.set(shapes, query.shape_id, {
       shape_id: query.shape_id,
       shape_pt_lat: query.shape_pt_lat.split(",").map((x: string) => +x),
       shape_pt_lon: query.shape_pt_lon.split(",").map((x: string) => +x),
@@ -244,7 +206,7 @@ const parseShapes = async (db: any) => {
 const parseStops = async (db: any) => {
   console.log("started parsing Stops");
   console.time("parseStops");
-  const stops = collection<models.Stop>("stops");
+  const stops = firestore.collection<models.Stop>("stops");
   const query_res = await db.all(`
   SELECT s.*, 
        Group_concat(st.stop_sequence)       AS stop_sequence, 
@@ -264,21 +226,8 @@ const parseStops = async (db: any) => {
   `);
 
   return Promise.map(query_res, (query: any) => {
-    return set(stops, query.stop_id, {
-      stop_id: query.stop_id,
-      stop_code: query.stop_code,
-      stop_name: query.stop_name,
-      stop_desc: query.stop_desc,
-      stop_lat: query.stop_lat,
-      stop_lon: query.stop_lon,
-      zone_id: query.zone_id,
-      stop_url: query.stop_url,
-      location_type: query.location_type,
-      parent_station: query.parent_station,
-      stop_timezone: query.stop_timezone,
-      wheelchair_boarding: query.wheelchair_boarding,
-      leved_id: query.leved_id,
-      platform_code: query.platform_code,
+    return firestore.set(stops, query.stop_id, {
+      ...query,
       stop_sequence: query.stop_sequence.split(",").map((x: string) => +x),
       arrival_times: query.arrival_times.split(",").map((x: string) => +x),
       departure_times: query.departure_times.split(",").map((x: string) => +x),
@@ -292,23 +241,14 @@ const parseStops = async (db: any) => {
 const parseTrips = async (db: any) => {
   console.log("started parsing Trips");
   console.time("parseTrips");
-  const trips = collection<models.Trip>("trips");
+  const trips = firestore.collection<models.Trip>("trips");
   const query_res = await db.all(`SELECT * FROM trips`);
 
   return Promise.map(
     query_res,
     (query: any) => {
-      return set(trips, query.trip_id, {
-        trip_id: query.trip_id,
-        route_id: query.route_id,
-        service_id: query.service_id,
-        trip_headsign: query.trip_headsign,
-        trip_short_name: query.trip_short_name,
-        direction_id: query.direction_id,
-        block_id: query.block_id,
-        shape_id: query.shape_id,
-        wheelchair_accessible: query.wheelchair_accessible,
-        bikes_allowed: query.bikes_allowed,
+      return firestore.set(trips, query.trip_id, {
+        ...query,
       });
     },
     { concurrency: 5000 }
@@ -318,10 +258,10 @@ const parseTrips = async (db: any) => {
 const parsePolylines = async () => {
   console.log("started parsing Polylines");
   console.time("parsePolylines");
-  const polylines = collection<models.Polyline>("polylines");
+  const polylines = firestore.collection<models.Polyline>("polylines");
   const query_res = await genShapeGeoJSON({}, [], []);
   return Promise.map(query_res, (query: any) => {
-    return set(polylines, query.properties.route_id, {
+    return firestore.set(polylines, query.properties.route_id, {
       route_id: query.properties.route_id,
       type: query.type,
       geoJSON: JSON.stringify(query),
@@ -336,15 +276,6 @@ const flattenTimetable = async (table: any) => {
   for (let i = 0; i < table.stops[0].trips.length; i++) {
     for (const entry of table.stops) {
       const stop = entry.trips[i];
-      // stop_list.push({
-      //   arrival_time: stop.arrival_timestamp,
-      //   stop_id: stop.stop_id,
-      //   formatted_time: stop.formatted_time,
-      //   stop_sequence: stop.stop_sequence,
-
-      //   interpolated: stop.interpolated ? stop.interpolated : false,
-      //   skipped: stop.skipped ? stop.skipped : false,
-      // });
       if (stop.skipped === true) {
         formatted_list.push(` — `);
         timestamp_list.push(-1);
@@ -361,45 +292,7 @@ const flattenTimetable = async (table: any) => {
   return { formatted: formatted_list, timestamps: timestamp_list };
 };
 
-export const parseTest = async () => {
-  const timetable_config = gtfs_timetable.setDefaultConfig(config);
-
-  const table_f = (
-    await gtfs_timetable.getFormattedTimetablePage(
-      `87-185|1111100|0`,
-      timetable_config
-    )
-  )[0];
-
-   const flat = await flattenTimetable(table_f);
-  // fs.writeFileSync(
-  //   "out.json",
-  //   JSON.stringify({
-  //     route_id: table_f.route_ids[0],
-  //     direction_id: table_f.direction_id,
-  //     direction_name: table_f.direction_name,
-  //     label: table_f.timetable_label,
-  //     start_date: table_f.start_date,
-  //     end_date: table_f.end_date,
-
-  //     service_id: table_f.service_ids[0],
-  //     include_dates: table_f.calendarDates.includedDates,
-  //     exclude_dates: table_f.calendarDates.excludedDates,
-
-  //     stops: table_f.stops.map((stop: any) => {
-  //       return {
-  //         stop_id: stop.stop_id,
-  //         stop_name: stop.stop_name,
-  //         stop_lat: stop.stop_lat,
-  //         stop_lon: stop.stop_lon,
-  //       };
-  //     }),
-  //     timetable: flat,
-  //   })
-  // );
-};
-
-const parseTimetables = async (db: any) => {
+const parseTimetables = async () => {
   console.log("started parsing Timetables");
   console.time("parseTimetables");
 
@@ -408,7 +301,7 @@ const parseTimetables = async (db: any) => {
   const routes = (await gtfs.getRoutes({}, [], [])).map(
     (route: any) => route.route_id
   );
- 
+
   const activity_map: models.Map<string> = {
     weekday: "1111100",
     saturday: "0000010",
@@ -417,107 +310,69 @@ const parseTimetables = async (db: any) => {
 
   // setup firestore collection
   type TableRoute = { route_id: string };
-  const timetables_root = collection<TableRoute>("timetables");
-  
-  const promises = [];
+  const timetables_root = firestore.collection<TableRoute>("timetables");
 
-
+  const promises: Promise<any>[] = [];
 
   // iterate through routes and the different days
   for (const route of routes) {
     for (const active_days in activity_map) {
       // get forward and backward timetables
-      let table_f: any;
-      let table_b: any;
-      await set(timetables_root, route, { route_id: route });
+      await firestore.set(timetables_root, route, { route_id: route });
 
-      const timetables = subcollection<models.Timetable, TableRoute>(
+      const timetables = firestore.subcollection<models.Timetable, TableRoute>(
         active_days,
         timetables_root
       );
 
-      try {
-        table_f = (
+      const pushTable = async (
+        routeId: string,
+        day: string,
+        direction: 0 | 1
+      ) => {
+        const timetable = (
           await gtfs_timetable.getFormattedTimetablePage(
-            `${route}|${activity_map[active_days]}|0`,
+            `${routeId}|${day}|${direction}`,
             timetable_config
           )
         )[0];
 
-        const f_timetables = await flattenTimetable(table_f);
-        promises.push(
-          set(timetables(route), `${table_f.direction_id}`, {
-            route_id: table_f.route_ids[0],
-            direction_id: table_f.direction_id,
-            direction_name: table_f.direction_name,
-            label: table_f.timetable_label,
-            start_date: table_f.start_date,
-            end_date: table_f.end_date,
+        if (timetable) {
+          const flattened = await flattenTimetable(timetable);
+          promises.push(
+            firestore.set(timetables(routeId), `${timetable.direction_id}`, {
+              ...timetable,
+              route_id: timetable.route_ids[0],
+              service_id: timetable.service_ids[0],
+              stops: timetable.stops.map((stop: any) => {
+                return {
+                  stop_id: stop.stop_id,
+                  stop_name: stop.stop_name,
+                  stop_lat: stop.stop_lat,
+                  stop_lon: stop.stop_lon,
+                };
+              }),
+              formatted: flattened.formatted,
+              timestamps: flattened.timestamps,
+            })
+          );
+        }
+      };
 
-            service_id: table_f.service_ids[0],
-            include_dates: table_f.calendarDates.includedDates,
-            exclude_dates: table_f.calendarDates.excludedDates,
-
-            stops: table_f.stops.map((stop: any) => {
-              return {
-                stop_id: stop.stop_id,
-                stop_name: stop.stop_name,
-                stop_lat: stop.stop_lat,
-                stop_lon: stop.stop_lon,
-              };
-            }),
-
-            formatted: f_timetables.formatted,
-            timestamps: f_timetables.timestamps,
-          })
-        );
+      try {
+        await pushTable(route, activity_map[active_days], 0);
       } catch (error) {
-        // console.log(error);
-        console.log(`NO TRIPS FOR: ${route}|${activity_map[active_days]}|0`);
+        if (!error.message.includes("trips")) {
+          throw error;
+        }
       }
       try {
-        table_b = (
-          await gtfs_timetable.getFormattedTimetablePage(
-            `${route}|${activity_map[active_days]}|1`,
-            timetable_config
-          )
-        )[0];
-
-        const b_timetables = await flattenTimetable(table_b);
-        promises.push(
-          set(timetables(route), `${table_b.direction_id}`, {
-            route_id: table_b.route_ids[0],
-            direction_id: table_b.direction_id,
-            direction_name: table_b.direction_name,
-            label: table_b.timetable_label,
-            start_date: table_b.start_date,
-            end_date: table_b.end_date,
-
-            service_id: table_b.service_ids[0],
-            include_dates: table_b.calendarDates.includedDates,
-            exclude_dates: table_b.calendarDates.excludedDates,
-
-            stops: table_f.stops.map((stop: any) => {
-              return {
-                stop_id: stop.stop_id,
-                stop_name: stop.stop_name,
-                stop_lat: stop.stop_lat,
-                stop_lon: stop.stop_lon,
-              };
-            }),
-
-            formatted: b_timetables.formatted,
-            timestamps: b_timetables.timestamps,
-          })
-        );
+        await pushTable(route, activity_map[active_days], 1);
       } catch (error) {
-        console.log(`NO TRIPS FOR: ${route}|${activity_map[active_days]}|1`);
+        if (!error.message.includes("trips")) {
+          throw error;
+        }
       }
-
-      // if (table_f === undefined || table_b === undefined) {
-      //   console.log(`NO TRIPS FOR: ${route}|${activity_map[active_days]}`);
-      //   continue;
-      // }
     }
   }
 
@@ -539,12 +394,12 @@ const clearFirestore = async () => {
   ];
 
   for (const ref of refs) {
-    const coll = collection(ref);
-    const docs = await all(coll);
+    const coll = firestore.collection(ref);
+    const docs = await firestore.all(coll);
     await Promise.map(
       docs,
       (doc: any) => {
-        return remove(coll, doc.ref.id);
+        return firestore.remove(coll, doc.ref.id);
       },
       { concurrency: 500 }
     );
@@ -554,32 +409,22 @@ const clearFirestore = async () => {
 
 export const createIndexes = async (db: any) => {
   console.time("index");
-  let buses = "\'" + busroutes[0] + "\'";
-  let busesregex = `route_id LIKE \'${busroutes[0]}%\'`;
-  busroutes.forEach( (busroute: string) =>{
-    if (busroute !== busroutes[0]){
-      buses += ",\'" + busroute + "\'";
-      busesregex += ` OR route_id LIKE \'${busroute}%\'`;
-    }
-       
-  }
-  );
 
   return Promise.all([
-    db.run(`CREATE INDEX r_id ON routes(route_id)`),
-    db.run(`CREATE INDEX r_id2 ON trips(route_id)`),
-    db.run(`CREATE INDEX t_id ON trips(trip_id)`),
-    db.run(`CREATE INDEX t_id2 on stop_times(trip_id)`),
-    db.run(`CREATE INDEX s_id ON stop_times(stop_id)`),
-    db.run(`CREATE INDEX s_id2 ON stops(stop_id)`),
-    db.run(`CREATE INDEX sr_id ON calendar(service_id)`),
-    db.run(`CREATE INDEX sr_id2 ON trips(service_id)`),
-    db.run(`DELETE FROM routes WHERE route_short_name NOT IN (${buses})`),
-    db.run(`DELETE FROM trips WHERE ${busesregex}`),
+    db.run(
+      `DELETE FROM routes WHERE route_short_name NOT IN ("${ACTIVE_ROUTES.join(
+        '","'
+      )}")`
+    ), //("87","286","289","288")
+    db.run(
+      `DELETE FROM trips WHERE route_id NOT LIKE "${ACTIVE_ROUTES.join(
+        '%" AND route_id NOT LIKE "'
+      )}%"`
+    ), //"87%" AND route_id NOT LIKE "286%" AND route_id NOT...
   ]).then(() => console.timeEnd("index"));
 };
 
-const generateDB = async () => {
+export const generateDB = async () => {
   // setup sqlite middle man
   await gtfs.import(config);
   await gtfs.openDb(config);
@@ -594,57 +439,48 @@ const generateDB = async () => {
     parseRoutes(db),
     parseStops(db),
     parsePolylines(),
-    parseShapes(db),
-    parseTrips(db),
-    parseTimetables(db),
-    // parseTest(),
+    // parseShapes(db), // unecessary because we have polylines already
+    // parseTrips(db),
+    parseTimetables(),
   ]);
 };
 
-
-export const refreshDataBase = functions.runWith(runtimeOpts).pubsub.schedule('0 3 * * *')  // run at 3:00 am everyday eastern time
-  .timeZone('America/New_York')
-  .onRun(async (context) => {
+/** function that runs periodically to refresh our database with the latest gtfs data
+ * checks if the current date is past what we have data for, then calls [generateDB] if true
+ * @effects
+ */
+export const refreshDataBase = functions
+  .runWith(runtimeOpts)
+  .pubsub.schedule("0 3 * * *") // run at 3:00 am everyday eastern time
+  .timeZone("America/New_York")
+  .onRun(async (_context) => {
     const db = admin.firestore();
-    const enddates: number[] = [];
+    const endDates: number[] = [];
     const querySnapshot = await db.collection("routes").get();
     querySnapshot.forEach((doc) => {
-      const end_date = doc.get('end_date');
+      const end_date = doc.get("end_date");
       if (isNumber(end_date)) {
-        enddates.push(end_date);
-      }
-      else {
+        endDates.push(end_date);
+      } else {
         console.log("error bruh");
       }
     });
 
-    enddates.sort();
+    endDates.sort();
 
     const currentDate = new Date();
-    const dd = String(currentDate.getDate()).padStart(2, '0');
-    const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(currentDate.getDate()).padStart(2, "0");
+    const mm = String(currentDate.getMonth() + 1).padStart(2, "0");
     const yyyy = currentDate.getFullYear();
     const today: number = +(yyyy + mm + dd);
 
-    if (enddates[0] <= today) { //update needed
-      console.log("refresh started");
-      const dbPath = os.tmpdir() + '/gtfs.db';
-      createDbFile(dbPath);
-      try {
-        await generateDB();
-        fs.unlinkSync(dbPath)
-        console.log("update successful")
-        return 0;
-      }
-      catch (error) {
-        console.log("error deleting tmp file");
-        return 0;
-      }
-    }
-    else {  //update not needed
-      console.log("no update needed");
+    if (endDates[0] <= today) {
+      //update needed
+      await generateDB();
+      fs.unlinkSync(config.sqlitePath);
+      console.log("update successful");
       return 0;
     }
+
+    return 0;
   });
-
-
