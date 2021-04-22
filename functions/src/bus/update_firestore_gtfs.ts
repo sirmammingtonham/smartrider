@@ -5,6 +5,7 @@ import * as gtfs_timetable from "gtfs-to-html";
 import * as models from "./bus_types";
 import * as Promise from "../util/async_util";
 import * as firestore from "typesaurus";
+import * as serviceAccount from "../setup/smartrider-4e9e8-service.json";
 import { genShapeGeoJSON } from "./bus_util";
 import { zipObject, zip, isNumber } from "lodash";
 import * as fs from "fs";
@@ -341,9 +342,17 @@ const parseTimetables = async () => {
           const flattened = await flattenTimetable(timetable);
           promises.push(
             firestore.set(timetables(routeId), `${timetable.direction_id}`, {
-              ...timetable,
               route_id: timetable.route_ids[0],
+              direction_id: timetable.direction_id,
+              direction_name: timetable.direction_name,
+              label: timetable.timetable_label,
+              start_date: timetable.start_date,
+              end_date: timetable.end_date,
+
               service_id: timetable.service_ids[0],
+              include_dates: timetable.calendarDates.includedDates,
+              exclude_dates: timetable.calendarDates.excludedDates,
+
               stops: timetable.stops.map((stop: any) => {
                 return {
                   stop_id: stop.stop_id,
@@ -484,3 +493,13 @@ export const refreshDataBase = functions
 
     return 0;
   });
+
+// if __name__ == '__main__':
+if (require.main === module) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+  });
+  generateDB()
+    .then(() => console.log("finished updating db"))
+    .catch((error) => console.log(error));
+}

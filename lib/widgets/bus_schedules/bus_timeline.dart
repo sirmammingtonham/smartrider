@@ -177,6 +177,10 @@ class BusTimelineState extends State<BusTimeline>
                           itemCount: stopTimes.length,
                           itemExtent: 50,
                           itemBuilder: (BuildContext context, int timeIndex) {
+                            if (stopTimes[timeIndex][0] == '-') {
+                              return Container(); // return empty container if stop not available
+                            }
+
                             String subText;
                             if (stopTimes[timeIndex][1] / 3600 > 1) {
                               var time =

@@ -3,6 +3,10 @@ import * as turf from "@turf/turf";
 import * as dissolve from "geojson-dissolve";
 import { uniqBy } from "lodash";
 
+export const camelToUnderscore = (key: string) => {
+  return key.replace( /([A-Z])/g, "_$1").toLowerCase();
+}
+
 const fetchGeoJSON = async (routeId: string, directionId: string) => {
   const query: any = {};
 

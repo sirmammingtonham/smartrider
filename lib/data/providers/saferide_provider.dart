@@ -37,9 +37,8 @@ class SaferideProvider {
 
   Future<Map<String, Driver>> getDrivers() async {
     QuerySnapshot response = await firestore.collection('drivers').get();
-
     _driversMap = Map.fromIterable(response.docs,
-        key: (doc) => doc['deviceId'],
+        key: (doc) => doc['device_id'],
         value: (doc) => Driver.fromDocument(doc.data()));
     return _driversMap;
   }
@@ -83,7 +82,7 @@ class SaferideProvider {
     Query orders = firestore
         .collection('orders')
         .where('status', isEqualTo: 'NEW')
-        .orderBy('createdAt', descending: false);
+        .orderBy('created_at', descending: false);
 
     final response = await orders.get();
     return response.docs.map((doc) => doc.id).toList().indexOf(id);
