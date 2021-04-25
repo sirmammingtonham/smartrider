@@ -118,7 +118,7 @@ class _HomePageState extends State<_HomePage>
                         style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 25))),
+                            fontSize: 20))),
                 actions: <Widget>[
                   Padding(
                       padding: const EdgeInsets.only(right: 45.0, bottom: 35),

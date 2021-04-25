@@ -336,10 +336,12 @@ class _SignupUIState extends State<SignupUI> {
       return null;
   }
 
+  //     === DEPRECIATED ===
   String _rinValidation(String val) {
-    if (val.trim().length != 9 || !val.startsWith("66")) {
+    /*if (val.trim().length != 9 || !val.startsWith("66")) {
       return 'Please enter a valid RIN';
     }
+    */
     return null;
   }
 

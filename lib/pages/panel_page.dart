@@ -72,7 +72,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                 ),
                 floatingActionButton: FloatingActionButton(
                   heroTag: "Filter",
-                  child: Icon(Icons.toc),
+                  child: Icon(Icons.toc, color: Theme.of(context).primaryColor),
                   elevation: 5.0,
                   onPressed: () {
                     BlocProvider.of<ScheduleBloc>(context)
@@ -95,7 +95,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                 ),
                 floatingActionButton: FloatingActionButton(
                   heroTag: "Filter",
-                  child: Icon(Icons.timeline),
+                  child: Icon(Icons.timeline, color: Theme.of(context).primaryColor),
                   elevation: 5.0,
                   onPressed: () {
                     BlocProvider.of<ScheduleBloc>(context)
@@ -133,7 +133,7 @@ Widget panelAppBar(bool isBus, PanelController panelController,
     ),
      title: Padding(
        padding: const EdgeInsets.only(bottom: 15),
-       child: Text(isBus ? 'Bus Schedules' : 'Shuttle Schedules', style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 25) ) ),
+       child: Text(isBus ? 'Bus Schedules' : 'Shuttle Schedules', style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 25) ) ),
 
  actions: <Widget>[
    Padding(
@@ -147,10 +147,11 @@ Widget panelAppBar(bool isBus, PanelController panelController,
        )
      ],
     bottom: TabBar(
-      unselectedLabelColor: Colors.white.withOpacity(0.3),
-      indicatorColor: Colors.white,
+      unselectedLabelColor: Theme.of(context).disabledColor,
+       indicatorColor: Theme.of(context).indicatorColor,
       controller: tabController,
       tabs: tabs,
+      labelColor: Theme.of(context).primaryColor,
     ),
   );
 }
