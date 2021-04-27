@@ -134,7 +134,6 @@ class SearchBarState extends State<SearchBar> {
         } else if (saferideState is SaferideAcceptedState) {
           return Container();
         } else {
-          // print("something's wrong with auth bloc");
           return searchBar(prefState);
         }
       },
@@ -162,7 +161,6 @@ class SearchBarState extends State<SearchBar> {
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          // BlocProvider.of<PrefsBloc>(context).add(LoadPrefsEvent());
                           return SettingsPage();
                         }));
                       },
@@ -210,7 +208,6 @@ class SearchBarState extends State<SearchBar> {
                                     )));
                       },
                     ),
-                    //Text('JS', style: TextStyle(color: Colors.white70)),
                   ),
                 )
               ],

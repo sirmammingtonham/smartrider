@@ -35,7 +35,7 @@ void main() async {
 
   await Firebase.initializeApp();
 
-  //FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
+  FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
 
   runApp(
     SmartRider(
@@ -106,8 +106,6 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'smartrider Prototype',
-      // locale: DevicePreview.locale(context), // Add the locale here
-      // builder: DevicePreview.appBuilder,
       theme: state.theme,
       home: ShowCaseWidget(
         builder: Builder(

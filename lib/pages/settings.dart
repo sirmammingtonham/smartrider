@@ -37,7 +37,6 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PrefsBloc, PrefsState>(builder: (context, state) {
-      // print(state);
       if (state is PrefsLoadingState) {
         return Scaffold(
           body: Center(child: CircularProgressIndicator()),
