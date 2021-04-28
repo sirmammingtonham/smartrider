@@ -107,7 +107,7 @@ class _IssueRequestState extends State<IssueRequest> {
     return MaterialApp(
         home: Scaffold(
       // Background color of app.
-      backgroundColor: Colors.grey[800],
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SingleChildScrollView(
           child: Column(children: [
         new Padding(
@@ -120,15 +120,12 @@ class _IssueRequestState extends State<IssueRequest> {
               padding: const EdgeInsets.symmetric(horizontal: 5.0),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              // Style should be replaced with theme.
-              child: Text('< BACK', style: TextStyle(color: Colors.white)),
-              style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.purple[600])),
-            )
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                // Style should be replaced with theme.
+                child:
+                    Text('< BACK', style: Theme.of(context).textTheme.button)),
           ],
         ),
         Row(
@@ -137,7 +134,7 @@ class _IssueRequestState extends State<IssueRequest> {
               /// WARNING: padding should be fixed to adjust to screen width.
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
             ),
-            Text("Title:", style: TextStyle(fontSize: 20, color: Colors.white)),
+            Text("Title:", style: Theme.of(context).textTheme.headline6),
           ],
         ),
         Row(
@@ -147,7 +144,7 @@ class _IssueRequestState extends State<IssueRequest> {
               padding: const EdgeInsets.symmetric(horizontal: 11.0),
             ),
             Text("Enter a brief description of your request.",
-                style: TextStyle(fontSize: 15.0, color: Colors.white)),
+                style: Theme.of(context).textTheme.bodyText1),
           ],
         ),
         Padding(
@@ -161,11 +158,12 @@ class _IssueRequestState extends State<IssueRequest> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Title",
-                  hintStyle: TextStyle(color: Colors.grey[400]),
+                  hintStyle: TextStyle(color: Colors.grey[600]),
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                 ),
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                    color: Theme.of(context).accentTextTheme.bodyText1.color),
                 onSubmitted: (value) {
                   title = value;
                 })),
@@ -175,8 +173,10 @@ class _IssueRequestState extends State<IssueRequest> {
               /// WARNING: padding should be fixed to adjust to screen width.
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
             ),
-            Text("Description:",
-                style: TextStyle(fontSize: 20, color: Colors.white)),
+            Text(
+              "Description:",
+              style: Theme.of(context).textTheme.headline6,
+            )
           ],
         ),
         Row(
@@ -186,7 +186,7 @@ class _IssueRequestState extends State<IssueRequest> {
               padding: const EdgeInsets.symmetric(horizontal: 11.0),
             ),
             Text("Summarize your request.",
-                style: TextStyle(color: Colors.white)),
+                style: Theme.of(context).textTheme.bodyText2),
           ],
         ),
         // Contains TextField and styling for the issue title.
@@ -196,19 +196,22 @@ class _IssueRequestState extends State<IssueRequest> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Description",
-                  hintStyle: TextStyle(color: Colors.grey[400]),
+                  hintStyle: TextStyle(color: Colors.grey[600]),
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                 ),
                 maxLines: null,
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                    color: Theme.of(context).accentTextTheme.bodyText1.color),
                 onChanged: (value) {
                   description = value;
                 })),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 3.0),
         ),
-        Text("This is a:", style: TextStyle(color: Colors.white)),
+        Text("This is a:",
+            style:
+                TextStyle(color: Theme.of(context).textTheme.bodyText1.color)),
         // Represents the labels for the issue.
         // FUTURE: Make the selection prettier, maybe checkboxes or stylish tags?
         new DropdownButton<String>(
@@ -219,7 +222,8 @@ class _IssueRequestState extends State<IssueRequest> {
                 child: new Text(value),
               );
             }).toList(),
-            style: TextStyle(color: Colors.white),
+            style:
+                TextStyle(color: Theme.of(context).textTheme.bodyText1.color),
             // Changes the Dropdown appearance to display the user's choice.
             onChanged: (String newValue) {
               setState(() {
@@ -238,13 +242,13 @@ class _IssueRequestState extends State<IssueRequest> {
                     ' permission to contact you using your entered email address if a follow-up ' +
                     'is necessary. Any other identifying information is to remain' +
                     ' anonymous.',
-                style: TextStyle(fontSize: 17.0, color: Colors.white),
+                style: Theme.of(context).textTheme.bodyText1,
               ),
             ),
             Checkbox(
-              checkColor: Colors.purple[400],
-              activeColor: Colors.grey[500],
-              focusColor: Colors.grey[500],
+              checkColor: Theme.of(context).buttonColor,
+              activeColor: Theme.of(context).focusColor,
+              focusColor: Theme.of(context).focusColor,
               value: valuefirst,
               onChanged: (bool value) {
                 setState(() {
@@ -257,12 +261,9 @@ class _IssueRequestState extends State<IssueRequest> {
         Container(
           width: 350.0,
           child: ElevatedButton(
-            style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.purple[600])),
             child: Text(
               'SUBMIT REQUEST',
-              style: TextStyle(color: Colors.white),
+              style: Theme.of(context).textTheme.button,
             ),
             // Submits the POST request to the GitHub repository to form an issue.
             onPressed: () async {
@@ -271,6 +272,7 @@ class _IssueRequestState extends State<IssueRequest> {
               Post newPost = new Post(
                   title: title, body: description, labels: dropdownValue);
               Post p = await createPost(postUrl, body: newPost.toMap());
+
               print(p.title);
             },
           ),

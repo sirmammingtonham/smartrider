@@ -145,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: <Widget>[
                   // Profile Header
                   Container(
-                      color: Theme.of(context).buttonColor,
+                      color: Theme.of(context).hoverColor,
                       width: double.infinity,
                       height: 175.0,
                       child: Column(
@@ -158,8 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Center(
                               child: Text(
                             'Hello, ' + widget.role,
-                            style:
-                                TextStyle(color: Colors.grey[50], fontSize: 50),
+                            style: Theme.of(context).textTheme.headline3,
                           )),
                         ],
                       )),
@@ -171,13 +170,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     // Profile picture.
                     child: CircleAvatar(
                         radius: 60,
-                        backgroundColor: Colors.purple,
-                        // backgroundImage: should be the person's profile pic.
+                        backgroundColor: Theme.of(context).backgroundColor,
                         backgroundImage: NetworkImage(_profilePic),
                         child: (_profilePic == '')
                             ? Text(username,
                                 style: TextStyle(
-                                    fontSize: 60, color: Colors.white))
+                                    fontSize: 60,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headline1
+                                        .color))
                             : null),
                   ),
                 ],
