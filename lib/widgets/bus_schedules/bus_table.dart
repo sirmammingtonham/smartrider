@@ -9,7 +9,6 @@ import 'package:smartrider/data/models/bus/bus_stop.dart';
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
 import 'package:smartrider/widgets/custom_sticky_table.dart';
-import 'package:smartrider/widgets/bus_schedules/checkExclusive.dart';
 //import 'package:sticky_headers/sticky_headers.dart';
 //import 'package:table_sticky_headers/table_sticky_headers.dart';
 
@@ -76,7 +75,7 @@ class BusTableState extends State<BusTable>
   }
 
   Widget busList(String routeId) {
-    if (!this.widget.timetableMap.containsKey(routeId) || checkExclusiveDates(this.widget.timetableMap[routeId])) {
+    if (!this.widget.timetableMap.containsKey(routeId)) {
       return BusUnavailable();
     }
 

@@ -171,8 +171,37 @@ class BusProvider {
           await route.reference.collection(day.toLowerCase()).doc('0').get();
 
       if (table.data() != null) {
-        timetableMap[routeMapping[route.data()['route_id']]] =
-            BusTimetable.fromJson(table.data());
+        var entry = BusTimetable.fromJson(table.data());
+        // check if today is in exclusive dates
+        final DateTime now = DateTime.now();
+        final DateFormat formatter = DateFormat.yMMMMd('en_US');
+        final String today = formatter.format(now);
+        if (entry.excludeDates.contains(today)) {
+          // special case: today is excluded
+          // search through other possible days for inclusive dates that contains today
+          var possibleDays = ['weekday', 'saturday', 'sunday'];
+          for (String d in possibleDays) {
+            if (d != day) {
+              table = await route.reference
+                  .collection(d.toLowerCase())
+                  .doc('0')
+                  .get();
+              if (table.data() != null) {
+                var temp = BusTimetable.fromJson(table.data());
+                if (temp.includeDates.contains(today) &&
+                    !temp.excludeDates.contains(today)) {
+                  // check for exclusive just in case
+                  // replace today's schedule with another day's (e.g: today is a weekday, but uses sunday schedule)
+                  timetableMap[routeMapping[route.data()['route_id']]] = temp;
+                  break;
+                }
+              }
+            }
+          }
+        } else {
+          // normal case: today not in exclude dates
+          timetableMap[routeMapping[route.data()['route_id']]] = entry;
+        }
       }
     }
 

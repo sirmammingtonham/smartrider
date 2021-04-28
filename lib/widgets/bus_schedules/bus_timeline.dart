@@ -8,7 +8,6 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/data/models/bus/bus_shape.dart';
 import 'package:smartrider/data/models/bus/bus_timetable.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
-import 'package:smartrider/widgets/bus_schedules/checkExclusive.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
@@ -108,7 +107,7 @@ class BusTimelineState extends State<BusTimeline>
   /// useful user information like the next arrival.
   Widget busList(String routeId) {
     // check if schedule is unavailable
-    if (!widget.busTables.containsKey(routeId) || checkExclusiveDates(widget.busTables[routeId])) {
+    if (!widget.busTables.containsKey(routeId)) {
       return BusUnavailable();
     }
     var busStops = widget.busTables[routeId]
