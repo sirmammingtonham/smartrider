@@ -8,8 +8,8 @@ import 'package:oauth2_client/oauth2_helper.dart';
 import 'package:oauth2_client/github_oauth2_client.dart';
 import 'package:smartrider/util/strings.dart';
 
-/// Represents an HTTP POST, structures to send the info needed
-/// to create a GitHub API Post Request to create an issue.
+/// Represents an HTTP POST, structure implemented to send the info needed
+/// to create a GitHub API Post Request, to create an issue on the Github repository.
 class Post {
   /// Title of the issue.
   final String title;
@@ -17,7 +17,7 @@ class Post {
   /// Description of the issue.
   final String body;
 
-  /// Tags for the issue (should make it userBug or userFeature).
+  /// Tags for the issue (either userBug or userFeature).
   final String labels;
 
   /// Creates a Post Request, represented as an object.
@@ -33,7 +33,7 @@ class Post {
     );
   }
 
-  /// Returns a new Map object using values in this Post object.
+  /// Returns a new Map object using values from this Post object.
   Map toMap() {
     Map map = new Map();
     map["title"] = title;
@@ -104,57 +104,74 @@ class _IssueRequestState extends State<IssueRequest> {
   /// Builds the IssueRequest page.
   @override
   Widget build(BuildContext context) {
+    // The body of the Issue Request page form
     return MaterialApp(
         home: Scaffold(
-      // Background color of app.
+      // Controls the background color of the graph
       backgroundColor: Theme.of(context).backgroundColor,
+
       body: SingleChildScrollView(
+          // Contains all of the elements within our Issue Request form, organized
+          // in a column for layout purposes.
           child: Column(children: [
+        // Vertical margin for elements.
         new Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
-        ), // adds space between button and lower bezel
+        ),
+        // Organizes back button in a Row layout.
         Row(
           children: [
+            // Horizonal left margin between screen and back button.
             new Padding(
-              /// WARNING: padding should be fixed to adjust to screen width.
               padding: const EdgeInsets.symmetric(horizontal: 5.0),
             ),
+            // Back button
             ElevatedButton(
+                // Navigates back to profile page when clicked
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                // Style should be replaced with theme.
+                // The appearance of the back button.
                 child:
                     Text('< BACK', style: Theme.of(context).textTheme.button)),
           ],
         ),
+        // Container for the title label, used for layout purposes
         Row(
           children: [
+            // Left margin between screen and Title label.
             new Padding(
-              /// WARNING: padding should be fixed to adjust to screen width.
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
             ),
+            // Controls appearance of the title label.
             Text("Title:", style: Theme.of(context).textTheme.headline6),
           ],
         ),
+        // Container for the title description label, used for layout purposes.
         Row(
           children: [
+            // Left margin between screen and title description.
             new Padding(
-              /// WARNING: padding should be fixed to adjust to screen width.
               padding: const EdgeInsets.symmetric(horizontal: 11.0),
             ),
+            // Controls appearance of the title description label.
             Text("Enter a brief description of your request.",
                 style: Theme.of(context).textTheme.bodyText1),
           ],
         ),
+        // Vertical margin between title description label and input field.
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 3.0),
         ),
-        // Contains TextField and styling for the issue title.
+        // Container for the title TextField, in which the user enters a title.
         Container(
+            // Proportions of the text field
             width: 330.0,
             height: 50.0,
+            // Text Field object: user enters the title for their request. Will
+            // eventually be mapped to the title entry in the HTTP POST request
             child: TextField(
+                // Controls appearance of title TextField.
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Title",
@@ -164,33 +181,46 @@ class _IssueRequestState extends State<IssueRequest> {
                 ),
                 style: TextStyle(
                     color: Theme.of(context).accentTextTheme.bodyText1.color),
-                onSubmitted: (value) {
+                // When changed, the TextField will store the current TextField
+                // value to our title variable (which will eventually be sent
+                // as the issue title.)
+                onChanged: (value) {
                   title = value;
                 })),
+        // Container for Description title, for layout purposes.
         Row(
           children: [
+            // Left margin between edge of screen and description title.
             new Padding(
-              /// WARNING: padding should be fixed to adjust to screen width.
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
             ),
+            // The actual description title label
             Text(
               "Description:",
               style: Theme.of(context).textTheme.headline6,
             )
           ],
         ),
+        // Container for the Description label's description. Created for layout
+        // purposes.
         Row(
           children: [
+            // Left margin between edge of screen and the Description label's
+            // description.
             new Padding(
-              /// WARNING: padding should be fixed to adjust to screen width.
               padding: const EdgeInsets.symmetric(horizontal: 11.0),
             ),
+            // The actual description for the description
             Text("Summarize your request.",
                 style: Theme.of(context).textTheme.bodyText2),
           ],
         ),
-        // Contains TextField and styling for the issue title.
+        // Container for the description textfield
         Container(
+            // Dimensions of the description textfield. No height specified since
+            // the description textfield is multi-line, and will adjust for the
+            // user to see everything they type. If the textbox extends the screen,
+            // it will become scrollable.
             width: 330.0,
             child: TextField(
                 decoration: InputDecoration(
