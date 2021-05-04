@@ -222,7 +222,11 @@ class _IssueRequestState extends State<IssueRequest> {
             // user to see everything they type. If the textbox extends the screen,
             // it will become scrollable.
             width: 330.0,
+            // TextField object: User enters the description of their bug/feature, which
+            // will eventually be sent as the description when that issue is created on
+            // GitHub.
             child: TextField(
+                // Controls the appearance of the description textfield.
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Description",
@@ -230,20 +234,25 @@ class _IssueRequestState extends State<IssueRequest> {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                 ),
+                // Box will expand to accomodate the user's response (if it's multi-line).
                 maxLines: null,
+                // Also controls the appearance of the description textfield.
                 style: TextStyle(
                     color: Theme.of(context).accentTextTheme.bodyText1.color),
+                // When the user makes an edit to the description textfield, the value
+                // that they type will be stored in our description string.
                 onChanged: (value) {
                   description = value;
                 })),
+        // Vertical margin between the description textfield and the dropdown prompt.
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 3.0),
         ),
+        // Prompts the user to select Bug/Feature/Other option in their dropdown.
         Text("This is a:",
             style:
                 TextStyle(color: Theme.of(context).textTheme.bodyText1.color)),
-        // Represents the labels for the issue.
-        // FUTURE: Make the selection prettier, maybe checkboxes or stylish tags?
+        // Dropdown for the user to select the type of issue request they are making
         new DropdownButton<String>(
             value: dropdownValue,
             items: <String>['Bug', 'Feature', 'Other'].map((String value) {
@@ -252,6 +261,7 @@ class _IssueRequestState extends State<IssueRequest> {
                 child: new Text(value),
               );
             }).toList(),
+            // Controls what the dropdown looks like.
             style:
                 TextStyle(color: Theme.of(context).textTheme.bodyText1.color),
             // Changes the Dropdown appearance to display the user's choice.
@@ -260,11 +270,16 @@ class _IssueRequestState extends State<IssueRequest> {
                 dropdownValue = newValue;
               });
             }),
+        // For layout purposes, contains the text and the checkbox used to make sure
+        // the user is okay with us reaching out to them to explain more of the issue.
         Row(
           children: <Widget>[
+            // Left margin from edge to the text.
             SizedBox(
               width: 10,
             ),
+            // Contains the text that gives us consent to contact them if we have
+            // any questions about their request.
             Container(
               width: 300.0,
               child: Text(
@@ -275,6 +290,7 @@ class _IssueRequestState extends State<IssueRequest> {
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ),
+            // The checkbox next to the statement.
             Checkbox(
               checkColor: Theme.of(context).buttonColor,
               activeColor: Theme.of(context).focusColor,
@@ -288,8 +304,11 @@ class _IssueRequestState extends State<IssueRequest> {
             ),
           ],
         ),
+        // Container for the submit request button.
         Container(
+          // Contains the button in a box.
           width: 350.0,
+          // The submit request button itself.
           child: ElevatedButton(
             child: Text(
               'SUBMIT REQUEST',
