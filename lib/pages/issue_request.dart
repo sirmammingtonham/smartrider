@@ -44,6 +44,7 @@ class Post {
 }
 
 /// Creates an HTTP Post Request, given the POST url and a JSON-organized file.
+/// TODO: Make the POST request work with the GitHub API.
 Future createPost(String url, {Map body}) async {
   /// Creates the GitHub OAuth2Client provided by Flutter's OAuth2 library
   var client = OAuth2Helper(GitHubOAuth2Client(
@@ -316,13 +317,13 @@ class _IssueRequestState extends State<IssueRequest> {
             ),
             // Submits the POST request to the GitHub repository to form an issue.
             onPressed: () async {
-              // FUTURE: These values should be changed to include the information from
-              // the front-end.
               Post newPost = new Post(
                   title: title, body: description, labels: dropdownValue);
+              // Sends the POST request to GitHub API:
               Post p = await createPost(postUrl, body: newPost.toMap());
 
-              print(p.title);
+              // Once the POST is submitted, we can leave the Issue Request page.
+              Navigator.pop(context);
             },
           ),
         )
