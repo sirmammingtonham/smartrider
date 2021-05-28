@@ -43,6 +43,9 @@ dependencies:
   #notication dependencies
   flutter_local_notifications: ^1.4.4+2
 
+  #url_launcher
+  url_launcher: ^5.7.10
+
   #ui dependencies
   sliding_up_panel: ^1.0.2
   scrollable_positioned_list: ^0.1.8
@@ -55,6 +58,9 @@ dependencies:
   showcaseview: 
   feature_discovery: ^0.13.0+2
   humanize: ^0.3.0
+
+  #issue request dependencies
+  oauth2_client: ^1.5.0
 
   #state management
   flutter_bloc: ^6.0.1

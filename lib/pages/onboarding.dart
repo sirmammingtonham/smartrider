@@ -390,7 +390,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
-                      'Get started',
+                      'Get Started',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20.0,

@@ -40,6 +40,9 @@ class SearchBar extends StatefulWidget {
   State<StatefulWidget> createState() => SearchBarState();
 }
 
+String username;
+String email;
+
 class SearchBarState extends State<SearchBar> {
   double
       topBarDist; // Distance between top of phone bezel & top search bar //TODO: use fraction instead of hard coded value

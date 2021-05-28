@@ -10,6 +10,8 @@ abstract class AuthenticationEvent extends Equatable {
 
 class AuthenticationStarted extends AuthenticationEvent {}
 
+class AuthenticationDelete extends AuthenticationEvent {}
+
 class AuthenticationLoggedIn extends AuthenticationEvent {
   final String email, pass, role;
   const AuthenticationLoggedIn(this.email, this.pass, this.role);
@@ -27,4 +29,9 @@ class AuthenticationSignUp extends AuthenticationEvent {
   final String email, name, pass, rin, role;
   const AuthenticationSignUp(
       this.email, this.name, this.pass, this.rin, this.role);
+}
+
+class AuthentificationResetPass extends AuthenticationEvent {
+  final String email;
+  const AuthentificationResetPass(this.email);
 }

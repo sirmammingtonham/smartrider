@@ -318,13 +318,12 @@ class _SignupUIState extends State<SignupUI> {
   }
 
   String _emailValidation(String value) {
-    if (value.isEmpty) {
+    if (value.isEmpty)
       return 'Enter an email';
-    } else if (!value.contains("@rpi.edu")) {
-      return "Please enter a valid rpi email";
-    } else {
+    else if (!value.contains("@rpi.edu"))
+      return "You must enter a valid RPI email.";
+    else
       return null;
-    }
   }
 
   String _passValidation(String value) {
@@ -346,9 +345,8 @@ class _SignupUIState extends State<SignupUI> {
   }
 
   String _nameValidation(String val) {
-    if (val.trim().length == 0) {
-      return "Please don't leave the name field blank";
-    }
+    if (val.trim().isEmpty) return "Please don't leave the name field blank";
+
     return null;
   }
 
