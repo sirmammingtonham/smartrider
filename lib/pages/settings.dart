@@ -88,45 +88,28 @@ class SettingsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // CupertinoNavigationBar(brightness: Theme.of(context).brightness);
     return Scaffold(
-        backgroundColor:
-            Theme.of(context).primaryColorLight, //background of entire sheet
         appBar: AppBar(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(15.0),
             ),
           ),
-          backgroundColor: Theme.of(context).bottomAppBarColor,
           centerTitle: true,
           // first down arrow
           leading: Padding(
               padding: const EdgeInsets.only(bottom: 15),
               child: IconButton(
                 icon: Icon(Icons.arrow_back_ios),
-                color: Theme.of(context).primaryColor,
                 tooltip: 'Go back',
                 onPressed: () {
                   Navigator.pop(context);
                 },
               )),
-
-          /*IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            color: Theme.of(context).primaryColor,
-            tooltip: 'Go back',
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),*/
           // title
           title: Text(
             'Settings',
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
-                fontSize: 32),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
           ),
         ),
         body: ListView(children: <Widget>[
@@ -138,16 +121,12 @@ class SettingsWidget extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 25),
                   child: Text(
                     'General',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).accentColor,
-                        fontSize: 24),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                   )),
             ),
           ),
           cardBuilder([
             SwitchListTile(
-              activeColor: Theme.of(context).toggleableActiveColor,
               title: Text('Push Notifications'),
               value: state.prefs.getBool('pushNotifications'),
               onChanged: (bool value) {
@@ -202,7 +181,6 @@ class SettingsWidget extends StatelessWidget {
             ),
           cardBuilder(state.shuttles.keys
               .map((key) => SwitchListTile(
-                    activeColor: Theme.of(context).toggleableActiveColor,
                     title: Text(key),
                     value: state.shuttles[key],
                     onChanged: (bool value) {
