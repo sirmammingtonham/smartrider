@@ -93,18 +93,20 @@ class _SignupUIState extends State<SignupUI> {
         alignment: Alignment.center,
       ),
     );
-    Padding(padding: EdgeInsets.only(top: 15),
-    child: Align(
-      child: Text( // THIS TEXT IS NOT APPEARING FOR SOME REASON
-        "SMARTRIDER",
-        style: TextStyle(
-          fontSize: 100,
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).unselectedWidgetColor,
-        ),
-      ),
-      alignment: Alignment.center,
-    ));
+    Padding(
+        padding: EdgeInsets.only(top: 15),
+        child: Align(
+          child: Text(
+            // THIS TEXT IS NOT APPEARING FOR SOME REASON
+            "SMARTRIDER",
+            style: TextStyle(
+              fontSize: 100,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).unselectedWidgetColor,
+            ),
+          ),
+          alignment: Alignment.center,
+        ));
   }
 
   /*

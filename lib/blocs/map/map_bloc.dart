@@ -171,18 +171,20 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _saferideBlocSub = saferideBloc.listen((saferideState) {
       switch (saferideState.runtimeType) {
         case SaferideSelectionState:
-          add(MapSaferideSelectionEvent(coord: (saferideState as SaferideSelectionState).dropLatLng));
+          add(MapSaferideSelectionEvent(
+              coord: (saferideState as SaferideSelectionState).dropLatLng));
           break;
-        case SaferideNoState: {
-          scrollToCurrentLocation();
-          add(MapUpdateEvent(zoomLevel: _zoomLevel));
+        case SaferideNoState:
+          {
+            scrollToCurrentLocation();
+            add(MapUpdateEvent(zoomLevel: _zoomLevel));
 
-          // i think the previous timer keeps going so this is redundant
-          // but need to make sure
-          // _updateTimer = Timer.periodic(_updateRefreshDelay,
-          //     (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
-        }
-      } 
+            // i think the previous timer keeps going so this is redundant
+            // but need to make sure
+            // _updateTimer = Timer.periodic(_updateRefreshDelay,
+            //     (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+          }
+      }
     });
   }
 
@@ -208,34 +210,39 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   @override
   Stream<MapState> mapEventToState(MapEvent event) async* {
     switch (event.runtimeType) {
-      case MapInitEvent: {
-        await _initMapElements();
-        _updateTimer = Timer.periodic(_updateRefreshDelay,
-        (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
-        yield* _mapDataRequestedToState();
-      }
-      break;
-      case MapUpdateEvent: {
-        _zoomLevel = (event as MapUpdateEvent).zoomLevel;
-        yield* _mapUpdateRequestedToState();
-      }
-      break;
-      case MapTypeChangeEvent: {
-        _isBus = !_isBus;
-        yield* _mapUpdateRequestedToState();
-      }
-      break;
-      case MapSaferideSelectionEvent: {
-        _saferideDest = (event as MapSaferideSelectionEvent).coord;
-        scrollToLocation(_saferideDest);
-        yield* _mapSaferideSelectionToState(event);
-      }
-      break;
-      case MapMoveEvent: {
-        _zoomLevel = (event as MapMoveEvent).zoomLevel;
-        yield* _mapMoveToState();
-      }
-      break;
+      case MapInitEvent:
+        {
+          await _initMapElements();
+          _updateTimer = Timer.periodic(_updateRefreshDelay,
+              (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+          yield* _mapDataRequestedToState();
+        }
+        break;
+      case MapUpdateEvent:
+        {
+          _zoomLevel = (event as MapUpdateEvent).zoomLevel;
+          yield* _mapUpdateRequestedToState();
+        }
+        break;
+      case MapTypeChangeEvent:
+        {
+          _isBus = !_isBus;
+          yield* _mapUpdateRequestedToState();
+        }
+        break;
+      case MapSaferideSelectionEvent:
+        {
+          _saferideDest = (event as MapSaferideSelectionEvent).coord;
+          scrollToLocation(_saferideDest);
+          yield* _mapSaferideSelectionToState(event);
+        }
+        break;
+      case MapMoveEvent:
+        {
+          _zoomLevel = (event as MapMoveEvent).zoomLevel;
+          yield* _mapMoveToState();
+        }
+        break;
       default:
         yield MapErrorState();
     }
@@ -579,7 +586,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     if (_isBus) {
       _enabledBuses.forEach((id, enabled) {
         if (enabled) {
-          _currentPolylines.addAll(_busShapes[id].getPolylines);
+          if (_busShapes[id] != null) {
+            _currentPolylines.addAll(_busShapes[id].getPolylines);
+          }
         }
       });
     } else {
@@ -604,9 +613,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
       _enabledBuses.forEach((route, enabled) {
         if (enabled) {
-          _busRoutes[route]
-              .stops
-              .forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
+          if (_busRoutes[route] != null) {
+            _busRoutes[route]
+                .stops
+                .forEach((stop) => _mapMarkers.add(_busStopToMapMarker(stop)));
+          }
         }
       });
     } else {

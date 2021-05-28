@@ -85,7 +85,6 @@ class BusTableState extends State<BusTable>
         body: CustomStickyHeader(
       columnsLength: table.numColumns,
       rowsLength: table.numRows,
-
       columnsTitleBuilder: (i) => Container(
           alignment: Alignment.center,
           width: 100,
@@ -101,50 +100,6 @@ class BusTableState extends State<BusTable>
           contentCellHeight: 50,
           stickyLegendWidth: 100,
           stickyLegendHeight: 50),
-      // SingleChildScrollView(
-      //     scrollDirection: Axis.horizontal,
-      //     child:
-      //         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      //       SizedBox(
-      //         height: 5,
-      //       ),
-      //       Row(
-      //         mainAxisAlignment: MainAxisAlignment.start,
-      //         children: List.generate(
-      //           stops.length,
-      //           (index) => Container(
-      //               alignment: Alignment.center,
-      //               width: 102.7,
-      //               height: 50,
-      //               child: SizedBox(
-      //   child: Text(stops[index % stops.length].stopName,
-      //       textAlign: TextAlign.center,
-      //       style: TextStyle(fontWeight: FontWeight.bold)),
-      // )),
-      //         ),
-      //       ),
-      //       Flexible(
-      //         child: SingleChildScrollView(
-      //             scrollDirection: Axis.vertical,
-      //             child: DataTable(
-      //               columnSpacing: 50,
-      //               columns: List<DataColumn>.generate(
-      //                   stops.length,
-      //                   (colIdx) => DataColumn(
-      //                           label: Flexible(
-      //                         child: Text(times[colIdx]),
-      //                       ))),
-      //               rows: List<DataRow>.generate(
-      //                 (times.length / stops.length).truncate(),
-      //                 (rowIdx) => DataRow(
-      //                     cells: List<DataCell>.generate(
-      //                         stops.length,
-      //                         (colIdx) => DataCell(Text(
-      //                             times[rowIdx + 1 * stops.length + colIdx])))),
-      //               ),
-      //             )),
-      //       ),
-      //     ]))
     ));
   }
 }

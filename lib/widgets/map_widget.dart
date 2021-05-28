@@ -12,6 +12,9 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/util/multi_bloc_builder.dart';
 
+import 'package:smartrider/pages/home.dart';
+import 'package:showcaseview/showcaseview.dart';
+
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
   northeast: const LatLng(42.751583, -73.616713),
@@ -42,21 +45,25 @@ class SmartriderMap extends StatelessWidget {
     Widget locationButton = Positioned(
       right: 20.0,
       bottom: saferideState is SaferideSelectionState ? 160.0 : 120.0,
-      child: FloatingActionButton(
-        child: Icon(
-          Icons.gps_fixed,
-          color: Theme.of(context).brightness == Brightness.light
-              ? Colors.black87
-              : Colors.white70,
-        ),
-        backgroundColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.white
-            : null,
-        onPressed: () {
-          BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
-        },
-        heroTag: "scrollToLocButton",
-      ),
+      child: Showcase(
+          key: showcaseLocation,
+          description: 'Tap to see your location',
+          shapeBorder: CircleBorder(),
+          child: FloatingActionButton(
+            child: Icon(
+              Icons.gps_fixed,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.black87
+                  : Colors.white70,
+            ),
+            backgroundColor: Theme.of(context).brightness == Brightness.light
+                ? Colors.white
+                : null,
+            onPressed: () {
+              BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
+            },
+            heroTag: "scrollToLocButton",
+          )),
     );
     GoogleMap map = GoogleMap(
       onMapCreated: (controller) {
@@ -89,31 +96,49 @@ class SmartriderMap extends StatelessWidget {
       viewButton = Positioned(
         right: 20.0,
         bottom: 190.0,
-        child: FloatingActionButton(
-          child: Icon(
-            mapState is MapLoadedState && mapState.isBus
-                ? Icons.airport_shuttle
-                : Icons.directions_bus,
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.black87
-                : Theme.of(context).accentColor,
-          ),
-          backgroundColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : Colors.white70,
-          onPressed: () {
-            BlocProvider.of<MapBloc>(context).add(MapTypeChangeEvent());
-            BlocProvider.of<ScheduleBloc>(context)
-                .add(ScheduleTypeChangeEvent());
-          },
-          heroTag: "mapViewChangeButton",
-        ),
+        child: Showcase(
+            key: showcaseViewChange,
+            description: 'Tap to see shuttles or buses',
+            shapeBorder: CircleBorder(),
+            child: FloatingActionButton(
+              child: Icon(
+                mapState is MapLoadedState && mapState.isBus
+                    ? Icons.airport_shuttle
+                    : Icons.directions_bus,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black87
+                    : Theme.of(context).accentColor,
+              ),
+              backgroundColor: Theme.of(context).brightness == Brightness.light
+                  ? Colors.white
+                  : Colors.white70,
+              onPressed: () {
+                BlocProvider.of<MapBloc>(context).add(MapTypeChangeEvent());
+                BlocProvider.of<ScheduleBloc>(context)
+                    .add(ScheduleTypeChangeEvent());
+              },
+              heroTag: "mapViewChangeButton",
+            )),
       );
     }
 
-    return Stack(
-        alignment: Alignment.topCenter,
-        children: <Widget>[map, viewButton ?? Container(), locationButton]);
+    return Stack(alignment: Alignment.topCenter, children: <Widget>[
+      map,
+      Positioned(
+        right: 180,
+        bottom: 350,
+        child: Showcase(
+            key: showcaseMap,
+            title: "This is the map!",
+            description: 'Swipe to look around and pinch to zoom in/out',
+            child: SizedBox(
+              height: 400,
+              width: 300,
+            )),
+      ),
+      viewButton ?? Container(),
+      locationButton
+    ]);
   }
 
   @override

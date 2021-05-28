@@ -1,6 +1,7 @@
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/util/multi_bloc_builder.dart';
 
@@ -21,6 +22,8 @@ import 'package:smartrider/widgets/destination_autocomplete.dart';
 
 // import 'dart:io';
 import 'package:smartrider/util/strings.dart';
+import 'package:smartrider/pages/home.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 String computeUsername(String name) {
   //compute initials to be displayed on search bar
@@ -79,11 +82,13 @@ class SearchBarState extends State<SearchBar> {
     return MultiBlocBuilder(
       blocs: [
         BlocProvider.of<SaferideBloc>(context),
-        BlocProvider.of<AuthenticationBloc>(context)
+        BlocProvider.of<AuthenticationBloc>(context),
+        BlocProvider.of<PrefsBloc>(context),
       ],
       builder: (context, states) {
         final saferideState = states.get<SaferideState>();
         final authState = states.get<AuthenticationState>();
+        final prefState = states.get<PrefsState>();
 
         name = authState is AuthenticationSuccess ? authState.displayName : '';
         role = authState is AuthenticationSuccess ? authState.role : '';
@@ -129,14 +134,13 @@ class SearchBarState extends State<SearchBar> {
         } else if (saferideState is SaferideAcceptedState) {
           return Container();
         } else {
-          // print("something's wrong with auth bloc");
-          return searchBar();
+          return searchBar(prefState);
         }
       },
     );
   }
 
-  Widget searchBar() => Positioned(
+  Widget searchBar(PrefsState prefsState) => Positioned(
         top: topBarDist,
         right: 15,
         left: 15,
@@ -148,38 +152,44 @@ class SearchBarState extends State<SearchBar> {
             elevation: 6.0,
             child: Row(
               children: <Widget>[
-                IconButton(
-                  icon: Icon(SR_Icons.Settings),
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      // BlocProvider.of<PrefsBloc>(context).add(LoadPrefsEvent());
-                      return SettingsPage();
-                    }));
-                  },
-                ),
-                Expanded(
-                    child: ListTile(
-                        title: const Text('Test saferide call to union'),
-                        onTap: () => BlocProvider.of<SaferideBloc>(context)
-                            .add(SaferideSelectionTestEvent()))),
-                // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
-                //     PlacesAutocompleteField(
-                //   apiKey:
-                //       GOOGLE_API_KEY, //Platform.environment['MAPS_API_KEY'],
-                //   hint: "Need a Safe Ride?",
-                //   location: Location(
-                //       42.729980, -73.676682), // location of union as center
-                //   radius:
-                //       1000, // 1km from union seems to be a good estimate of the bounds on safe ride's website
-                //   language: "en",
-                //   components: [Component(Component.country, "us")],
-                //   strictbounds: true,
-                //   inputDecoration: null,
-                //   onSelected: onAutocompleteSelect,
-                // )),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
+                Showcase(
+                    key: showcaseSettings,
+                    description: 'Tap to see settings',
+                    shapeBorder: RoundedRectangleBorder(),
+                    child: IconButton(
+                      icon: Icon(SR_Icons.Settings),
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return SettingsPage();
+                        }));
+                      },
+                    )),
+                Showcase(
+                    key: showcaseSearch,
+                    description: 'Tap to search a location',
+                    shapeBorder: RoundedRectangleBorder(),
+                    child: Container(
+                        height: 55,
+                        width: 250,
+                        // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
+                        child: PlacesAutocompleteField(
+                          apiKey: Platform.environment['MAPS_API_KEY'],
+                          hint: "Need a Safe Ride?",
+                          location: Location(42.729980,
+                              -73.676682), // location of union as center
+                          radius:
+                              1000, // 1km from union seems to be a good estimate of the bounds on safe ride's website
+                          language: "en",
+                          components: [Component(Component.country, "us")],
+                          strictbounds: true,
+                          sessionToken: Uuid().generateV4(),
+                          inputDecoration: null,
+                        ))),
+                Showcase(
+                  key: showcaseProfile,
+                  description: 'Tap to see your profile',
+                  shapeBorder: CircleBorder(),
                   child: CircleAvatar(
                     backgroundColor: Theme.of(context).buttonColor,
                     child: IconButton(
@@ -198,9 +208,8 @@ class SearchBarState extends State<SearchBar> {
                                     )));
                       },
                     ),
-                    //Text('JS', style: TextStyle(color: Colors.white70)),
                   ),
-                ),
+                )
               ],
             ),
           ),

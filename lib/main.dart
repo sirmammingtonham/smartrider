@@ -20,7 +20,8 @@ import 'package:smartrider/data/repository/shuttle_repository.dart';
 // page imports
 import 'package:smartrider/pages/welcome.dart';
 import 'package:smartrider/pages/home.dart';
-// import 'package:smartrider/pages/onboarding.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:smartrider/pages/onboarding.dart';
 
 // test imports
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -102,12 +103,18 @@ class SmartRider extends StatelessWidget {
 Widget _buildWithTheme(BuildContext context, PrefsState state) {
   if (state is PrefsLoadedState) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'smartrider Prototype',
-        // locale: DevicePreview.locale(context), // Add the locale here
-        // builder: DevicePreview.appBuilder,
-        theme: state.theme,
-        home: WelcomeScreen(homePage: HomePage()));
+      debugShowCheckedModeBanner: false,
+      title: 'smartrider Prototype',
+      theme: state.theme,
+      home: ShowCaseWidget(
+        builder: Builder(
+            builder: (context) => state.firstLaunch
+                ? OnboardingScreen()
+                : WelcomeScreen(homePage: HomePage())),
+        autoPlay: true,
+        autoPlayDelay: Duration(seconds: 10),
+      ),
+    );
   } else {
     return MaterialApp(home: CircularProgressIndicator());
   }

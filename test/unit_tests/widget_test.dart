@@ -9,22 +9,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:smartrider/main.dart';
+import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/pages/sliding_panel_page.dart';
+import 'package:smartrider/widgets/map_widget.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Test build properly', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    // await tester.pumpWidget(SmartRider());
+    await tester.pumpWidget(SmartRider());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that we compiled sucessfully
+    expect(find.text('oh poops'), findsNothing);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+  testWidgets('Tap shuttle change button', (WidgetTester tester) async {
+    await tester.pumpWidget(SmartRider());
+
+    // Verify that we compiled sucessfully
+    expect(find.text('oh poops'), findsNothing);
+
+    // Tap the shuttle button to switch
+    await tester.tap(find.byIcon(Icons.directions_bus));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the button change the sliding panel text
+    expect(find.text('Bus Schedules'), findsOneWidget);
   });
 }

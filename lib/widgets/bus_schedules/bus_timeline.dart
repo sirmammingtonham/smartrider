@@ -8,6 +8,8 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/data/models/bus/bus_shape.dart';
 import 'package:smartrider/data/models/bus/bus_timetable.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:smartrider/pages/home.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/widgets/custom_expansion_tile.dart';
@@ -74,18 +76,22 @@ class BusTimelineState extends State<BusTimeline>
     /// Controls the format (tabs on top, list of bus stops on bottom).
     return Column(children: <Widget>[
       /// The tab bar displayed when the bus icon is selected.
-      TabBar(
-        indicatorColor: BUS_COLORS.values.toList()[_tabController.index],
-        isScrollable: true,
-        tabs: busTabs,
-        labelColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.black
-            : null,
-        unselectedLabelColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.black
-            : null,
-        controller: _tabController,
-      ),
+      Showcase(
+          key: showcaseBusTab,
+          description: 'Click on each tab to swap between bus\'s',
+          child: TabBar(
+            indicatorColor: BUS_COLORS.values.toList()[_tabController.index],
+            isScrollable: true,
+            tabs: busTabs,
+            labelColor: Theme.of(context).brightness == Brightness.light
+                ? Colors.black
+                : null,
+            unselectedLabelColor:
+                Theme.of(context).brightness == Brightness.light
+                    ? Colors.black
+                    : null,
+            controller: _tabController,
+          )),
 
       /// The list of bus stops to be displayed.
       Container(
@@ -101,6 +107,92 @@ class BusTimelineState extends State<BusTimeline>
         ),
       )
     ]);
+  }
+
+  Widget busExpansionTile(index, busStops, stopTimes, routeId) {
+    return CustomExpansionTile(
+      title: Text(busStops[index].stopName),
+      subtitle: Text('Next Arrival: ${stopTimes[0][0]}'),
+      tilePadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+
+      /// Controls the leading circle icon in front of each bus stop.
+      leading: CustomPaint(
+          painter: FillPainter(
+              circleColor: BUS_COLORS[routeId],
+              lineColor: Theme.of(context).primaryColorLight,
+              first: index == 0,
+              last: index == busStops.length - 1),
+          child: Container(
+            height: 50,
+            width: 45,
+          )),
+      trailing: isExpandedList[index]
+          ? Text('Hide Arrivals -')
+          : Text('Show Arrivals +'),
+      onExpansionChanged: (value) {
+        setState(() {
+          isExpandedList[index] = value;
+        });
+      },
+
+      /// Contains everything below the ExpansionTile when it is expanded.
+      children: [
+        CustomPaint(
+            painter: StrokePainter(
+              circleColor: Theme.of(context).buttonColor,
+              lineColor: Theme.of(context).primaryColorLight,
+              last: index == busStops.length - 1,
+            ),
+
+            /// A list item for every arrival time for the selected bus stop.
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Container(
+                margin: const EdgeInsets.only(left: 34.5),
+                constraints: BoxConstraints.expand(width: 8),
+              ),
+              title: Container(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: stopTimes.length,
+                  itemExtent: 50,
+                  itemBuilder: (BuildContext context, int timeIndex) {
+                    if (stopTimes[timeIndex][0] == '-') {
+                      return Container(); // return empty container if stop not available
+                    }
+
+                    String subText;
+                    if (stopTimes[timeIndex][1] / 3600 > 1) {
+                      var time = (stopTimes[timeIndex][1] / 3600).truncate();
+                      subText = "In $time ${time > 1 ? 'hours' : 'hour'}";
+                    } else {
+                      var time = (stopTimes[timeIndex][1] / 60).truncate();
+                      subText = "In $time ${time > 1 ? 'minutes' : 'minute'}";
+                    }
+
+                    /// The container in which the bus stop arrival times are displayed.
+                    return ListTile(
+                      dense: true,
+                      leading: Icon(Icons.access_time, size: 20),
+                      title: Text(
+                        stopTimes[timeIndex][0],
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      subtitle: Text(subText),
+                      trailing: PopupMenuButton<String>(
+                          onSelected: (choice) => _handlePopupSelection(
+                              choice, busStops[index], stopTimes[timeIndex]),
+                          itemBuilder: (BuildContext context) => choices
+                              .map((choice) => PopupMenuItem<String>(
+                                  value: choice, child: Text(choice)))
+                              .toList()),
+                    );
+                  },
+                ),
+              ),
+            )),
+      ],
+    );
   }
 
   /// Builds the buslist widget which contains all the stops and
@@ -127,98 +219,13 @@ class BusTimelineState extends State<BusTimeline>
                 .getClosestTimes(index)
                 .where((stopPair) => stopPair[1] != -1)
                 .toList();
-
-            /// Contains our Expansion Tile to control how the user views each bus stop.
-            return CustomExpansionTile(
-              title: Text(busStops[index].stopName),
-              subtitle: Text('Next Arrival: ${stopTimes[0][0]}'),
-              tilePadding:
-                  EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-
-              /// Controls the leading circle icon in front of each bus stop.
-              leading: CustomPaint(
-                  painter: FillPainter(
-                      circleColor: BUS_COLORS[routeId],
-                      lineColor: Theme.of(context).primaryColorLight,
-                      first: index == 0,
-                      last: index == busStops.length - 1),
-                  child: Container(
-                    height: 50,
-                    width: 45,
-                  )),
-              trailing: isExpandedList[index]
-                  ? Text('Hide Arrivals -')
-                  : Text('Show Arrivals +'),
-              onExpansionChanged: (value) {
-                setState(() {
-                  isExpandedList[index] = value;
-                });
-              },
-
-              /// Contains everything below the ExpansionTile when it is expanded.
-              children: [
-                CustomPaint(
-                    painter: StrokePainter(
-                      circleColor: Theme.of(context).buttonColor,
-                      lineColor: Theme.of(context).primaryColorLight,
-                      last: index == busStops.length - 1,
-                    ),
-
-                    /// A list item for every arrival time for the selected bus stop.
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Container(
-                        margin: const EdgeInsets.only(left: 34.5),
-                        constraints: BoxConstraints.expand(width: 8),
-                      ),
-                      title: Container(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: stopTimes.length,
-                          itemExtent: 50,
-                          itemBuilder: (BuildContext context, int timeIndex) {
-                            if (stopTimes[timeIndex][0] == '-') {
-                              return Container(); // return empty container if stop not available
-                            }
-
-                            String subText;
-                            if (stopTimes[timeIndex][1] / 3600 > 1) {
-                              var time =
-                                  (stopTimes[timeIndex][1] / 3600).truncate();
-                              subText =
-                                  "In $time ${time > 1 ? 'hours' : 'hour'}";
-                            } else {
-                              var time =
-                                  (stopTimes[timeIndex][1] / 60).truncate();
-                              subText =
-                                  "In $time ${time > 1 ? 'minutes' : 'minute'}";
-                            }
-
-                            /// The container in which the bus stop arrival times are displayed.
-                            return ListTile(
-                              dense: true,
-                              leading: Icon(Icons.access_time, size: 20),
-                              title: Text(
-                                stopTimes[timeIndex][0],
-                                style: TextStyle(fontSize: 15),
-                              ),
-                              subtitle: Text(subText),
-                              trailing: PopupMenuButton<String>(
-                                  onSelected: (choice) => _handlePopupSelection(
-                                      choice,
-                                      busStops[index],
-                                      stopTimes[timeIndex]),
-                                  itemBuilder: (BuildContext context) => choices
-                                      .map((choice) => PopupMenuItem<String>(
-                                          value: choice, child: Text(choice)))
-                                      .toList()),
-                            );
-                          },
-                        ),
-                      ),
-                    )),
-              ],
-            );
+            return index == 0
+                ? Showcase(
+                    key: showcaseTimeline,
+                    description: 'This tile shows the stop and arrival time.',
+                    child:
+                        busExpansionTile(index, busStops, stopTimes, routeId))
+                : busExpansionTile(index, busStops, stopTimes, routeId);
           },
         ));
   }
