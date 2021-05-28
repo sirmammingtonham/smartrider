@@ -631,7 +631,7 @@ class _SignupUIState extends State<SignupUI> {
 
     primary = Theme.of(context).primaryColor;
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
         key: _scaffoldKey,
         backgroundColor: Theme.of(context).primaryColor,
         body: Column(
