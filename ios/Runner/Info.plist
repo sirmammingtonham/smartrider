@@ -45,5 +45,7 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+ 	<string>Smartrider needs this access to pinpoint your current location on the map.</string>
 </dict>
 </plist>
