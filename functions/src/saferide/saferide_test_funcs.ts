@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import {dean} from "../setup/keys.json";
+// import {dean} from "../setup/keys.json";
+import {ethan} from "../setup/keys.json";
 
 const firestore = admin.firestore();
 
@@ -18,9 +19,17 @@ export const addTestDriver = functions
       return;
     }
 
+    // await firestore.collection("drivers").add({
+    //   device_id: dean,
+    //   name: "Dean",
+    //   phone: "8888888888",
+    //   email: "lioanj@rpi.edu",
+    //   available: true,
+    //   license_plate: "XYZ-1234"
+    // });
     await firestore.collection("drivers").add({
-      device_id: dean,
-      name: "Dean",
+      device_id: ethan,
+      name: "Ethan",
       phone: "8888888888",
       email: "lioanj@rpi.edu",
       available: true,

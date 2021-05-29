@@ -14,8 +14,8 @@ export const refreshDataBase = db.refreshDataBase;
 // export const hypertrackTripWebhook = saferide_webhooks.hypertrackTripWebhook;
 
 /// test functions
-// import * as db_tests from './bus/bus_test_funcs';
-// import * as saferide_tests from "./saferide/saferide_test_funcs";
-// export const createTest = saferide_tests.createTest;
-// export const addTestDriver = saferide_tests.addTestDriver;
-// export const testDB = db_tests.testDB;
+import * as db_tests from './bus/bus_test_funcs';
+import * as saferide_tests from "./saferide/saferide_test_funcs";
+export const createTest = saferide_tests.createTest;
+export const addTestDriver = saferide_tests.addTestDriver;
+export const testDB = db_tests.testDB;
