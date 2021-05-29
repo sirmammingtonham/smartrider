@@ -169,26 +169,34 @@ class SearchBarState extends State<SearchBar> {
                       },
                     )),
                 Showcase(
-                    key: showcaseSearch,
-                    description: 'Tap to search a location',
-                    shapeBorder: RoundedRectangleBorder(),
-                    child: Container(
-                        height: 55,
-                        width: 250,
-                        // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
-                        child: PlacesAutocompleteField(
-                          apiKey: Platform.environment['MAPS_API_KEY'],
-                          hint: "Need a Safe Ride?",
-                          location: Location(42.729980,
-                              -73.676682), // location of union as center
-                          radius:
-                              1000, // 1km from union seems to be a good estimate of the bounds on safe ride's website
-                          language: "en",
-                          components: [Component(Component.country, "us")],
-                          strictbounds: true,
-                          sessionToken: Uuid().generateV4(),
-                          inputDecoration: null,
-                        ))),
+                  key: showcaseSearch,
+                  description: 'Tap to search a location',
+                  shapeBorder: RoundedRectangleBorder(),
+                  child: Container(
+                      width: 256,
+                      // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
+                      child: Expanded(
+                          child: ListTile(
+                              title: const Text('Test saferide call to union'),
+                              onTap: () =>
+                                  BlocProvider.of<SaferideBloc>(context)
+                                      .add(SaferideSelectionTestEvent())))),
+                  // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
+                  //     PlacesAutocompleteField(
+                  //   apiKey:
+                  //       GOOGLE_API_KEY, //Platform.environment['MAPS_API_KEY'],
+                  //   hint: "Need a Safe Ride?",
+                  //   location: Location(
+                  //       42.729980, -73.676682), // location of union as center
+                  //   radius:
+                  //       1000, // 1km from union seems to be a good estimate of the bounds on safe ride's website
+                  //   language: "en",
+                  //   components: [Component(Component.country, "us")],
+                  //   strictbounds: true,
+                  //   inputDecoration: null,
+                  //   onSelected: onAutocompleteSelect,
+                  // )),
+                ),
                 Showcase(
                   key: showcaseProfile,
                   description: 'Tap to see your profile',

@@ -12,7 +12,7 @@ import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/pages/home.dart';
 
 // loading custom widgets and data
-import 'package:smartrider/widgets/custom_expansion_tile.dart';
+import 'package:smartrider/widgets/custom_widgets/custom_expansion_tile.dart';
 
 const List<String> choices = [
   'Set reminder',

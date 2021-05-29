@@ -267,15 +267,16 @@ class _SignupUIState extends State<SignupUI> {
       Color fillColor, Color textColor, void function()) {
     return RaisedButton(
       highlightElevation: 0.0,
-      splashColor: splashColor,
-      highlightColor: highlightColor,
+      // splashColor: splashColor,
+      // highlightColor: highlightColor,
       elevation: 0.0,
       color: fillColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       child: Text(
         text,
         style: TextStyle(
-            fontWeight: FontWeight.bold, color: textColor, fontSize: 20),
+            fontWeight: FontWeight.bold, color: Colors.white, 
+            fontSize: 20),
       ),
       onPressed: () {
         function();
@@ -374,8 +375,8 @@ class _SignupUIState extends State<SignupUI> {
                                 icon: Icon(
                                   Icons.keyboard_arrow_down,
                                   size: 40.0,
-                                  color: Theme.of(context)
-                                      .accentColor, // back (X) icon color
+                                  // color: Theme.of(context)
+                                  //     .accentColor, // back (X) icon color
                                 ),
                               ),
                               alignment: Alignment.center))
@@ -417,8 +418,7 @@ class _SignupUIState extends State<SignupUI> {
                                     style: TextStyle(
                                       fontSize: 60,
                                       fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .accentColor, // LOGIN word color
+                                       // LOGIN word color
                                     ),
                                   ),
                                 ),
@@ -467,8 +467,7 @@ class _SignupUIState extends State<SignupUI> {
             ),
             height: MediaQuery.of(context).size.height / 1.1,
             width: MediaQuery.of(context).size.width,
-            color:
-                Theme.of(context).primaryColorLight, // entire login sheet color
+            color: Colors.white, // entire login sheet color
           ),
         ),
       );
@@ -479,8 +478,6 @@ class _SignupUIState extends State<SignupUI> {
     _sheetController =
         _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
       return Container(
-        color: Theme.of(context)
-            .primaryColor, // color of "invisible" edge rounding of register sheet
         child: ClipRRect(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(40.0), topRight: Radius.circular(40.0)),
@@ -546,7 +543,7 @@ class _SignupUIState extends State<SignupUI> {
                                   style: TextStyle(
                                     fontSize: 60,
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).accentColor,
+                                    // color: Theme.of(context).accentColor,
                                   ),
                                 ),
                               ),
@@ -629,8 +626,7 @@ class _SignupUIState extends State<SignupUI> {
             ),
             height: MediaQuery.of(context).size.height / 1.1,
             width: MediaQuery.of(context).size.width,
-            color: Theme.of(context)
-                .primaryColorLight, // entire register sheet color
+            color: Colors.white, // entire register sheet color
           ),
         ),
       );
@@ -655,8 +651,8 @@ class _SignupUIState extends State<SignupUI> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         key: _scaffoldKey,
-        backgroundColor:
-            Theme.of(context).primaryColor, // main welcome screen color
+        // backgroundColor:
+        //     Theme.of(context).primaryColor, // main welcome screen color
         body: Column(
           children: <Widget>[
             logo(),

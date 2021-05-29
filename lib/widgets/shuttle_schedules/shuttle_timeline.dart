@@ -13,7 +13,7 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
-import 'package:smartrider/widgets/custom_expansion_tile.dart';
+import 'package:smartrider/widgets/custom_widgets/custom_expansion_tile.dart';
 
 const List<String> choices = [
   'Set Reminder',

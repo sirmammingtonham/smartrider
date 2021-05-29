@@ -32,15 +32,7 @@ class SmartriderMap extends StatelessWidget {
       {@required BuildContext context,
       @required SaferideState saferideState,
       @required MapState mapState}) {
-
-    if (mapState is MapErrorState) {
-      // TODO: make it so there is an option to switch views in case only one is broken
-      // so basically just keep the viewbutton
-      return Center(
-        child: Text('${mapState.message}'),
-      );
-    }
-
+    Widget map;
     Widget viewButton;
     Widget locationButton = Positioned(
       right: 20.0,
@@ -65,32 +57,40 @@ class SmartriderMap extends StatelessWidget {
             heroTag: "scrollToLocButton",
           )),
     );
-    GoogleMap map = GoogleMap(
-      onMapCreated: (controller) {
-        BlocProvider.of<MapBloc>(context).updateController(context, controller);
-      },
-      initialCameraPosition: kInitialPosition,
-      compassEnabled: false,
-      mapToolbarEnabled: false,
-      cameraTargetBounds: CameraTargetBounds(rpiBounds),
-      minMaxZoomPreference: MinMaxZoomPreference(14.0, 18.0),
-      rotateGesturesEnabled: true,
-      scrollGesturesEnabled: true,
-      tiltGesturesEnabled: true,
-      zoomGesturesEnabled: true,
-      indoorViewEnabled: true,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      trafficEnabled: false,
-      polylines: mapState is MapLoadedState ? mapState.polylines : {},
-      markers: mapState is MapLoadedState ? mapState.markers : {},
-      zoomControlsEnabled: false,
-      onCameraMove: (position) {
-        BlocProvider.of<MapBloc>(context)
-            .add(MapMoveEvent(zoomLevel: position.zoom));
-      },
-      mapType: MapType.normal,
-    );
+
+    if (mapState is MapErrorState) {
+      map = Center(
+        child: Text('${mapState.message}'),
+      );
+    } else {
+      map = GoogleMap(
+        onMapCreated: (controller) {
+          BlocProvider.of<MapBloc>(context)
+              .updateController(context, controller);
+        },
+        initialCameraPosition: kInitialPosition,
+        compassEnabled: false,
+        mapToolbarEnabled: false,
+        cameraTargetBounds: CameraTargetBounds(rpiBounds),
+        minMaxZoomPreference: MinMaxZoomPreference(14.0, 18.0),
+        rotateGesturesEnabled: true,
+        scrollGesturesEnabled: true,
+        tiltGesturesEnabled: true,
+        zoomGesturesEnabled: true,
+        indoorViewEnabled: true,
+        myLocationEnabled: true,
+        myLocationButtonEnabled: false,
+        trafficEnabled: false,
+        polylines: mapState is MapLoadedState ? mapState.polylines : {},
+        markers: mapState is MapLoadedState ? mapState.markers : {},
+        zoomControlsEnabled: false,
+        onCameraMove: (position) {
+          BlocProvider.of<MapBloc>(context)
+              .add(MapMoveEvent(zoomLevel: position.zoom));
+        },
+        mapType: MapType.normal,
+      );
+    }
     if (saferideState is SaferideInitialState ||
         saferideState is SaferideNoState) {
       viewButton = Positioned(

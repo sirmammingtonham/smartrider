@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:smartrider/util/bitmap_helpers.dart';
+import 'package:smartrider/util/messages.dart';
 
 // map imports
 import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
@@ -275,7 +276,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
       if (!shuttleRepo.isConnected) {
         _updateTimer.cancel();
-        yield MapErrorState(message: 'NETWORK ISSUE');
+        yield MapErrorState(message: NETWORK_ERROR_MESSAGE);
         return;
       }
 
@@ -333,7 +334,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
 
     if (!_isBus && !shuttleRepo.isConnected) {
-      yield MapErrorState(message: 'NETWORK ISSUE');
+      yield MapErrorState(message: NETWORK_ERROR_MESSAGE);
       return;
     }
 

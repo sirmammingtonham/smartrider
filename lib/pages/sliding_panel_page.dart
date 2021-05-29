@@ -5,12 +5,10 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 // bloc stuff
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
-import 'package:smartrider/data/models/bus/pb/gtfs-realtime.pb.dart';
-import 'package:smartrider/util/multi_bloc_builder.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+
 // loading custom widgets and data
-import 'package:smartrider/widgets/shuttle_schedules/shuttle_timeline.dart';
 import 'package:showcaseview/showcaseview.dart';
+// import 'package:smartrider/widgets/shuttle_schedules/shuttle_timeline.dart';
 // import 'package:smartrider/widgets/shuttle_schedules/shuttle_table.dart';
 import 'package:smartrider/widgets/shuttle_schedules/shuttle_unavailable.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_timeline.dart';
@@ -98,9 +96,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                           .panelController,
                       busTables: scheduleState.busTables,
                     ),
-                    ShuttleTimeline(
-                        panelController: BlocProvider.of<ScheduleBloc>(context)
-                            .panelController),
+                    ShuttleUnavailable(),
                   ],
                 ),
                 floatingActionButton: FloatingActionButton(
