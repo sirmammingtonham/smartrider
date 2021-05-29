@@ -3,7 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
-import 'package:smartrider/data/repository/authentication_repository.dart';
+import 'package:smartrider/data/repositories/authentication_repository.dart';
 import 'package:smartrider/data/providers/database.dart';
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -22,19 +22,25 @@ class AuthenticationBloc
     AuthenticationEvent event,
   ) async* {
     switch (event.runtimeType) {
-      case AuthenticationStarted: 
+      case AuthenticationStarted:
         yield* _mapAuthenticationStartedToState();
         break;
       case AuthenticationLoggedIn:
         yield* _mapAuthenticationLoggedInToState(
-          (event as AuthenticationLoggedIn).email, (event as AuthenticationLoggedIn).pass, (event as AuthenticationLoggedIn).role);
+            (event as AuthenticationLoggedIn).email,
+            (event as AuthenticationLoggedIn).pass,
+            (event as AuthenticationLoggedIn).role);
         break;
       case AuthenticationLoggedOut:
         yield* _mapAuthenticationLoggedOutToState();
         break;
       case AuthenticationSignUp:
         yield* _mapAuthenticationSignUpToState(
-          (event as AuthenticationSignUp).email, (event as AuthenticationSignUp).name, (event as AuthenticationSignUp).pass, (event as AuthenticationSignUp).rin, (event as AuthenticationSignUp).role);
+            (event as AuthenticationSignUp).email,
+            (event as AuthenticationSignUp).name,
+            (event as AuthenticationSignUp).pass,
+            (event as AuthenticationSignUp).rin,
+            (event as AuthenticationSignUp).role);
     }
   }
 
@@ -56,18 +62,19 @@ class AuthenticationBloc
         e, p); //attempt to signin user
 
     switch (result.runtimeType) {
-      case UserCredential: {
-        //if signing in user is successful
-        User user = _authRepository.getActualUser;
-        if (user.emailVerified) {
-          yield AuthenticationSuccess(e, role);
-        } else {
-          user.sendEmailVerification();
-          yield AwaitEmailVerify();
+      case UserCredential:
+        {
+          //if signing in user is successful
+          User user = _authRepository.getActualUser;
+          if (user.emailVerified) {
+            yield AuthenticationSuccess(e, role);
+          } else {
+            user.sendEmailVerification();
+            yield AwaitEmailVerify();
+          }
         }
-      }
-      break;
-      default: 
+        break;
+      default:
         yield AuthenticationFailure("Email or Password is Incorrect");
     }
   }
@@ -82,14 +89,16 @@ class AuthenticationBloc
     var result = await _authRepository.signUp(e, p);
 
     switch (result.runtimeType) {
-      case UserCredential: {
-        User user = result.user;
-        await DatabaseService(usid: user.uid).updateUserData(user.email, role,
-            rin: r, name: n); // usertype will be student for now, modify later
-        user.sendEmailVerification();
-        yield AwaitEmailVerify();
-      }
-      break;
+      case UserCredential:
+        {
+          User user = result.user;
+          await DatabaseService(usid: user.uid).updateUserData(user.email, role,
+              rin: r,
+              name: n); // usertype will be student for now, modify later
+          user.sendEmailVerification();
+          yield AwaitEmailVerify();
+        }
+        break;
       default:
         yield AuthenticationFailure(result.message);
     }

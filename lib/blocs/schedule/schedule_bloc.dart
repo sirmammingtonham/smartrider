@@ -10,7 +10,7 @@ import 'package:smartrider/data/models/shuttle/shuttle_stop.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 
 import 'package:smartrider/data/models/bus/bus_timetable.dart';
-import 'package:smartrider/data/repository/bus_repository.dart';
+import 'package:smartrider/data/repositories/bus_repository.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -104,35 +104,39 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
 
   Stream<ScheduleState> mapEventToState(ScheduleEvent event) async* {
     switch (event.runtimeType) {
-      case ScheduleInitEvent: {
-        _tabController = (event as ScheduleInitEvent).tabController..addListener(_handleTabSelection);
-        _panelController = (event as ScheduleInitEvent).panelController;
-        // busRoutes = await busRepo.getRoutes;
-        busTables = await busRepo.getTimetables;
-        yield* _mapScheduleTimelineToState();
-      }
-      break;
-      case ScheduleViewChangeEvent: {
-        _isTimeline = (event as ScheduleViewChangeEvent).isTimeline;
-        if ((event as ScheduleViewChangeEvent).isTimeline) {
+      case ScheduleInitEvent:
+        {
+          _tabController = (event as ScheduleInitEvent).tabController
+            ..addListener(_handleTabSelection);
+          _panelController = (event as ScheduleInitEvent).panelController;
+          // busRoutes = await busRepo.getRoutes;
+          busTables = await busRepo.getTimetables;
           yield* _mapScheduleTimelineToState();
-        } else {
-          yield* _mapScheduleTableToState();
         }
-      }
-      break;
-      case ScheduleTypeChangeEvent: {
-        _isChanging = true;
-        _tabController.animateTo(_isBus ? 1 : 0);
-        _isChanging = false;
-        _isBus = !_isBus;
-        if (_isTimeline) {
-          yield* _mapScheduleTimelineToState();
-        } else {
-          yield* _mapScheduleTableToState();
+        break;
+      case ScheduleViewChangeEvent:
+        {
+          _isTimeline = (event as ScheduleViewChangeEvent).isTimeline;
+          if ((event as ScheduleViewChangeEvent).isTimeline) {
+            yield* _mapScheduleTimelineToState();
+          } else {
+            yield* _mapScheduleTableToState();
+          }
         }
-      }
-      break;
+        break;
+      case ScheduleTypeChangeEvent:
+        {
+          _isChanging = true;
+          _tabController.animateTo(_isBus ? 1 : 0);
+          _isChanging = false;
+          _isBus = !_isBus;
+          if (_isTimeline) {
+            yield* _mapScheduleTimelineToState();
+          } else {
+            yield* _mapScheduleTableToState();
+          }
+        }
+        break;
       default:
         print('error in schedule bloc');
     }

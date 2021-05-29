@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 
 // settings and login stuff
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
-import 'package:smartrider/data/repository/authentication_repository.dart';
+import 'package:smartrider/data/repositories/authentication_repository.dart';
 
 // bloc stuff
 import 'package:flutter_bloc/flutter_bloc.dart';

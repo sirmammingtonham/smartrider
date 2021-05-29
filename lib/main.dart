@@ -12,10 +12,10 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
 // data repository imports
-import 'package:smartrider/data/repository/authentication_repository.dart';
-import 'package:smartrider/data/repository/bus_repository.dart';
-import 'package:smartrider/data/repository/saferide_repository.dart';
-import 'package:smartrider/data/repository/shuttle_repository.dart';
+import 'package:smartrider/data/repositories/authentication_repository.dart';
+import 'package:smartrider/data/repositories/bus_repository.dart';
+import 'package:smartrider/data/repositories/saferide_repository.dart';
+import 'package:smartrider/data/repositories/shuttle_repository.dart';
 
 // page imports
 import 'package:smartrider/pages/welcome.dart';

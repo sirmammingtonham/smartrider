@@ -9,8 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_webservice/geocoding.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:smartrider/data/models/saferide/driver.dart';
-import 'package:smartrider/data/repository/authentication_repository.dart';
-import 'package:smartrider/data/repository/saferide_repository.dart';
+import 'package:smartrider/data/repositories/authentication_repository.dart';
+import 'package:smartrider/data/repositories/saferide_repository.dart';
 import 'package:smartrider/util/strings.dart';
 import 'package:smartrider/data/models/saferide/order.dart';
 

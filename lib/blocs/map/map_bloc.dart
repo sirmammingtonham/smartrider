@@ -19,9 +19,9 @@ import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 
 // repository imports
-import 'package:smartrider/data/repository/bus_repository.dart';
-import 'package:smartrider/data/repository/shuttle_repository.dart';
-import 'package:smartrider/data/repository/saferide_repository.dart';
+import 'package:smartrider/data/repositories/bus_repository.dart';
+import 'package:smartrider/data/repositories/shuttle_repository.dart';
+import 'package:smartrider/data/repositories/saferide_repository.dart';
 
 // model imports
 import 'package:smartrider/data/models/shuttle/shuttle_route.dart';
