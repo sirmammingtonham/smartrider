@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
+import 'package:smartrider/util/messages.dart';
 import 'package:smartrider/util/multi_bloc_builder.dart';
 
 import 'package:smartrider/pages/profile.dart';
@@ -157,7 +158,7 @@ class SearchBarState extends State<SearchBar> {
               children: <Widget>[
                 Showcase(
                     key: showcaseSettings,
-                    description: 'Tap to see settings',
+                    description: SETTINGS_SHOWCASE_MESSAGE,
                     shapeBorder: RoundedRectangleBorder(),
                     child: IconButton(
                       icon: Icon(SR_Icons.Settings),
@@ -170,7 +171,7 @@ class SearchBarState extends State<SearchBar> {
                     )),
                 Showcase(
                   key: showcaseSearch,
-                  description: 'Tap to search a location',
+                  description: SEARCHBAR_SHOWCASE_MESSAGE,
                   shapeBorder: RoundedRectangleBorder(),
                   child: Container(
                       width: 256,
@@ -199,7 +200,7 @@ class SearchBarState extends State<SearchBar> {
                 ),
                 Showcase(
                   key: showcaseProfile,
-                  description: 'Tap to see your profile',
+                  description: PROFILE_SHOWCASE_MESSAGE,
                   shapeBorder: CircleBorder(),
                   child: CircleAvatar(
                     backgroundColor: Theme.of(context).buttonColor,

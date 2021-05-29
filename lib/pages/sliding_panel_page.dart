@@ -8,6 +8,7 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
 // loading custom widgets and data
 import 'package:showcaseview/showcaseview.dart';
+import 'package:smartrider/util/messages.dart';
 // import 'package:smartrider/widgets/shuttle_schedules/shuttle_timeline.dart';
 // import 'package:smartrider/widgets/shuttle_schedules/shuttle_table.dart';
 import 'package:smartrider/widgets/shuttle_schedules/shuttle_unavailable.dart';
@@ -61,8 +62,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
           preferredSize: AppBar().preferredSize,
           child: Showcase(
               key: showcaseTransportTab,
-              description:
-                  'Click on either tab to switch between bus/shuttle scheudles',
+              description: SLIDING_PAGE_TAB_SHOWCASE_MESSAGE,
               child: TabBar(
                 unselectedLabelColor: Colors.white.withOpacity(0.3),
                 indicatorColor: Colors.white,

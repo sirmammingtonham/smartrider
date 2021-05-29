@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
+import 'package:smartrider/util/messages.dart';
 import 'package:smartrider/util/multi_bloc_builder.dart';
 
 import 'package:smartrider/pages/home.dart';
@@ -39,7 +40,7 @@ class SmartriderMap extends StatelessWidget {
       bottom: saferideState is SaferideSelectionState ? 160.0 : 120.0,
       child: Showcase(
           key: showcaseLocation,
-          description: 'Tap to see your location',
+          description: LOCATION_BUTTON_SHOWCASE_MESSAGE,
           shapeBorder: CircleBorder(),
           child: FloatingActionButton(
             child: Icon(
@@ -98,7 +99,7 @@ class SmartriderMap extends StatelessWidget {
         bottom: 190.0,
         child: Showcase(
             key: showcaseViewChange,
-            description: 'Tap to see shuttles or buses',
+            description: VIEW_CHANGE_BUTTON_SHOWCASE_MESSAGE,
             shapeBorder: CircleBorder(),
             child: FloatingActionButton(
               child: Icon(
@@ -129,8 +130,8 @@ class SmartriderMap extends StatelessWidget {
         bottom: 350,
         child: Showcase(
             key: showcaseMap,
-            title: "This is the map!",
-            description: 'Swipe to look around and pinch to zoom in/out',
+            title: MAP_SHOWCASE_TITLE,
+            description: MAP_SHOWCASE_MESSAGE,
             child: SizedBox(
               height: 400,
               width: 300,

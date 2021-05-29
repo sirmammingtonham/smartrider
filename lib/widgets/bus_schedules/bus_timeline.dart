@@ -7,6 +7,7 @@ import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/data/models/bus/bus_shape.dart';
 import 'package:smartrider/data/models/bus/bus_timetable.dart';
+import 'package:smartrider/util/messages.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/pages/home.dart';
@@ -78,7 +79,7 @@ class BusTimelineState extends State<BusTimeline>
       /// The tab bar displayed when the bus icon is selected.
       Showcase(
           key: showcaseBusTab,
-          description: 'Click on each tab to swap between bus\'s',
+          description: BUS_TAB_SHOWCASE_MESSAGE,
           child: TabBar(
             indicatorColor: BUS_COLORS.values.toList()[_tabController.index],
             isScrollable: true,
@@ -222,7 +223,7 @@ class BusTimelineState extends State<BusTimeline>
             return index == 0
                 ? Showcase(
                     key: showcaseTimeline,
-                    description: 'This tile shows the stop and arrival time.',
+                    description: TIMELINE_ITEM_SHOWCASE_MESSAGE,
                     child:
                         busExpansionTile(index, busStops, stopTimes, routeId))
                 : busExpansionTile(index, busStops, stopTimes, routeId);

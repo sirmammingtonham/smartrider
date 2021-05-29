@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import 'package:flutter/scheduler.dart';
+import 'package:smartrider/util/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
@@ -116,7 +116,7 @@ class _HomePageState extends State<_HomePage>
         ),
         collapsed: Showcase(
             key: showcaseSlidingPanel,
-            description: "Swipe up to view the shuttle/bus times",
+            description: SLIDING_PANEL_SHOWCASE_MESSAGE,
             child: AppBar(
               centerTitle: true,
               shape: RoundedRectangleBorder(
