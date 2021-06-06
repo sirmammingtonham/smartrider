@@ -36,7 +36,7 @@ dependencies:
   protobuf: ^2.0.0
 
   #saferide dependencies
-  hypertrack_views_flutter: ^0.1.1
+  # hypertrack_views_flutter: ^0.1.1
 
   #notication dependencies
   flutter_local_notifications: ^6.0.0
@@ -51,11 +51,11 @@ dependencies:
   # cupertino_icons: ^1.0.3
   intl: ^0.17.0
   flutter_svg: ^0.22.0
-  modal_progress_hud: ^0.1.3
+  # modal_progress_hud: ^0.1.3
   table_sticky_headers: ^2.0.0
   showcaseview: ^1.0.0 
   # feature_discovery: ^0.14.0
-  humanize: ^0.3.0
+  # humanize: ^0.3.0
 
   #issue request dependencies
   oauth2_client: ^2.2.0

@@ -7,7 +7,7 @@ import 'package:smartrider/util/bitmap_helpers.dart';
 import 'package:smartrider/util/messages.dart';
 
 // map imports
-import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
+// import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:fluster/fluster.dart';
@@ -123,8 +123,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   List<MapMarker> _mapMarkers = [];
 
   Map<String?, Driver>? _saferideDrivers = {};
-  Map<String?, MovementStatus> _saferideUpdates = {};
-  Map<String?, StreamSubscription<MovementStatus>> _saferideUpdateSubs = {};
+  // Map<String?, MovementStatus> _saferideUpdates = {};
+  // Map<String?, StreamSubscription<MovementStatus>> _saferideUpdateSubs = {};
   LatLng? _saferideDest;
 
   Set<Marker?> _currentMarkers = <Marker?>{};
@@ -194,7 +194,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _updateTimer.cancel();
     _prefsBlocSub.cancel();
     _saferideBlocSub.cancel();
-    _saferideUpdateSubs.values.forEach((sub) => sub.cancel());
+    // _saferideUpdateSubs.values.forEach((sub) => sub.cancel());
     return super.close();
   }
 
@@ -254,15 +254,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     Stopwatch stopwatch = new Stopwatch()..start();
 
-    if (_saferideUpdates.isEmpty) {
-      _saferideDrivers = await saferideRepo.getDrivers;
-      // _saferideUpdates = await saferideRepo.getDriverUpdates;
+    // if (_saferideUpdates.isEmpty) {
+    //   _saferideDrivers = await saferideRepo.getDrivers;
+    //   // _saferideUpdates = await saferideRepo.getDriverUpdates;
 
-      saferideRepo.getDriverUpdateSubscriptions.forEach((id, status) {
-        _saferideUpdateSubs[id] =
-            status.listen((status) => _saferideUpdates[id] = status);
-      });
-    }
+    //   saferideRepo.getDriverUpdateSubscriptions.forEach((id, status) {
+    //     _saferideUpdateSubs[id] =
+    //         status.listen((status) => _saferideUpdates[id] = status);
+    //   });
+    // }
 
     if (_isBus!) {
       _busRoutes = await busRepo.getRoutes;
@@ -315,8 +315,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }));
     await _drawToCurrentLocation(event.coord);
 
-    _currentMarkers.addAll(_saferideUpdates.values
-        .map((status) => _saferideVehicleToMarker(status)));
+    // _currentMarkers.addAll(_saferideUpdates.values
+    //     .map((status) => _saferideVehicleToMarker(status)));
 
     yield MapLoadedState(
         polylines: _currentPolylines, markers: _currentMarkers, isBus: false);
@@ -471,21 +471,21 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         });
   }
 
-  Marker _saferideVehicleToMarker(MovementStatus status) {
-    LatLng position =
-        LatLng(status.location.latitude, status.location.longitude);
-    return Marker(
-        icon: _shuttleStopIcon!, //TODO: get icon for drivers
-        infoWindow: InfoWindow(title: 'Safe Ride'),
-        markerId: MarkerId(status.deviceId),
-        position: position,
-        onTap: () {
-          _controller!.animateCamera(
-            CameraUpdate.newCameraPosition(
-                CameraPosition(target: position, zoom: 18, tilt: 50)),
-          );
-        });
-  }
+  // Marker _saferideVehicleToMarker(MovementStatus status) {
+  //   LatLng position =
+  //       LatLng(status.location.latitude, status.location.longitude);
+  //   return Marker(
+  //       icon: _shuttleStopIcon!, //TODO: get icon for drivers
+  //       infoWindow: InfoWindow(title: 'Safe Ride'),
+  //       markerId: MarkerId(status.deviceId),
+  //       position: position,
+  //       onTap: () {
+  //         _controller!.animateCamera(
+  //           CameraUpdate.newCameraPosition(
+  //               CameraPosition(target: position, zoom: 18, tilt: 50)),
+  //         );
+  //       });
+  // }
 
   // Marker _busStopToMarker(BusStop stop) {
   //   return Marker(
@@ -641,8 +641,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     // idk if we want saferides to only be visible when calling a saferide
     // map is already hella cluttered, but i think ppl will want to know the relative positions of saferides
-    _currentMarkers.addAll(_saferideUpdates.values
-        .map((status) => _saferideVehicleToMarker(status)));
+    // _currentMarkers.addAll(_saferideUpdates.values
+    //     .map((status) => _saferideVehicleToMarker(status)));
 
     return _currentMarkers;
   }

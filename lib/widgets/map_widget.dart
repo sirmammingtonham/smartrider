@@ -1,6 +1,6 @@
 // ui imports
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
+// import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 // map imports
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -83,7 +83,8 @@ class SmartriderMap extends StatelessWidget {
         myLocationButtonEnabled: false,
         trafficEnabled: false,
         polylines: mapState is MapLoadedState ? mapState.polylines : {},
-        markers: mapState is MapLoadedState ? mapState.markers as Set<Marker> : {},
+        markers:
+            mapState is MapLoadedState ? mapState.markers as Set<Marker> : {},
         zoomControlsEnabled: false,
         onCameraMove: (position) {
           BlocProvider.of<MapBloc>(context)
@@ -152,16 +153,17 @@ class SmartriderMap extends StatelessWidget {
         builder: (context, states) {
           final saferideState = states.get<SaferideState>();
           final mapState = states.get<MapState>();
-          return ModalProgressHUD(
-            inAsyncCall: mapState is MapLoadingState,
-            progressIndicator: CircularProgressIndicator(),
-            color: Theme.of(context).backgroundColor,
-            opacity: 0.7,
-            child: mapUI(
-                context: context,
-                saferideState: saferideState,
-                mapState: mapState),
-          );
+          // return ModalProgressHUD(
+          //   inAsyncCall: mapState is MapLoadingState,
+          //   progressIndicator: CircularProgressIndicator(),
+          //   color: Theme.of(context).backgroundColor,
+          //   opacity: 0.7,
+          //   child:
+          return mapUI(
+              context: context,
+              saferideState: saferideState,
+              mapState: mapState);
+          // );
         });
   }
 }

@@ -2,7 +2,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:humanize/humanize.dart' as humanize;
+// import 'package:humanize/humanize.dart' as humanize;
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,7 +41,7 @@ class SaferideStatusWidget extends StatelessWidget {
                       SizedBox(height: 5),
                       Center(
                         child: Text(
-                          '${humanize.ordinal(state.queuePosition)} in line',
+                          '${state.queuePosition} in line',
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w300,
@@ -97,7 +97,7 @@ class SaferideStatusWidget extends StatelessWidget {
                       ),
                       ListTile(
                         leading: Icon(Icons.hourglass_top),
-                        title: Text('${humanize.ordinal(state.queuePosition)} in line'),
+                        title: Text('${state.queuePosition} in line'),
                       ),
                       ElevatedButton(
                         style: ButtonStyle(
