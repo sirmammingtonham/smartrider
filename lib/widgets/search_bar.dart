@@ -161,7 +161,7 @@ class SearchBarState extends State<SearchBar> {
                     description: SETTINGS_SHOWCASE_MESSAGE,
                     shapeBorder: RoundedRectangleBorder(),
                     child: IconButton(
-                      icon: Icon(SR_Icons.Settings),
+                      icon: Icon(SmartriderIcons.Settings),
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {

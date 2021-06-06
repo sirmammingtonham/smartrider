@@ -157,7 +157,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _lightMapStyle = string;
     });
 
-    _prefsBlocSub = prefsBloc.listen((prefsState) {
+    _prefsBlocSub = prefsBloc.stream.listen((prefsState) {
       if (prefsState is PrefsLoadedState) {
         _enabledShuttles = prefsState.shuttles;
         _enabledBuses = prefsState.buses;
@@ -169,7 +169,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
     });
 
-    _saferideBlocSub = saferideBloc.listen((saferideState) {
+    _saferideBlocSub = saferideBloc.stream.listen((saferideState) {
       switch (saferideState.runtimeType) {
         case SaferideSelectionState:
           add(MapSaferideSelectionEvent(

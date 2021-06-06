@@ -19,7 +19,7 @@ class AuthenticationLoggedIn extends AuthenticationEvent {
   String get getemail => email;
   @override
   String get getpass => pass;
-  @override
+
   String get getrole => role;
 }
 

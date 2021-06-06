@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:meta/meta.dart';
 import 'package:smartrider/data/repositories/authentication_repository.dart';
 import 'package:smartrider/data/providers/database.dart';
 part 'authentication_event.dart';
@@ -13,7 +12,7 @@ class AuthenticationBloc
   final AuthRepository _authRepository;
 
   AuthenticationBloc({required AuthRepository authRepository})
-      : assert(authRepository != null),
+      : 
         _authRepository = authRepository,
         super(AuthenticationInit());
 

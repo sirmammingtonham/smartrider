@@ -38,11 +38,6 @@ class CustomStickyHeader extends StatefulWidget {
     /// Type of fit for content
     this.cellFit = BoxFit.scaleDown,
   }) : super(key: key) {
-    assert(columnsLength != null);
-    assert(rowsLength != null);
-    assert(columnsTitleBuilder != null);
-    //assert(rowsTitleBuilder != null);
-    assert(contentCellBuilder != null);
     assert(cellDimensions.contentCellWidth != null ||
         cellDimensions.columnWidths != null);
     assert(cellDimensions.contentCellHeight != null ||
@@ -61,7 +56,6 @@ class CustomStickyHeader extends StatefulWidget {
         cellAlignments.stickyColumnAlignments != null);
     assert(cellAlignments.stickyRowAlignment != null ||
         cellAlignments.stickyRowAlignments != null);
-    assert(cellAlignments.stickyLegendAlignment != null);
     if (cellAlignments.columnAlignments != null) {
       assert(cellAlignments.columnAlignments!.length == columnsLength);
     }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class FilterDialog extends StatefulWidget {
-  List<List<String>>? stops;
-  TextEditingController? controller;
+  final List<List<String>>? stops;
+  final TextEditingController? controller;
   // ValueChanged<String> updateTime, updateStop;
   FilterDialog({Key? key, this.stops, this.controller}) : super(key: key);
   @override
@@ -82,13 +82,13 @@ class _FilterDialogState extends State<FilterDialog> {
                             if (index == widget.stops!.length) {
                               return SizedBox(height: 20);
                             }
-                            String stop_name = widget.stops![index][0];
+                            String stopName = widget.stops![index][0];
                             return ListTile(
                               leading: Icon(Icons.departure_board),
-                              title: Text(stop_name),
+                              title: Text(stopName),
                               trailing: Icon(Icons.search),
                               onTap: () {
-                                widget.controller!.text = stop_name;
+                                widget.controller!.text = stopName;
                                 Navigator.pop(context);
                               },
                             );

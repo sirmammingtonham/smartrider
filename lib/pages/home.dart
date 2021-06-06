@@ -18,7 +18,6 @@ import 'package:smartrider/widgets/map_widget.dart';
 import 'package:smartrider/widgets/search_bar.dart';
 import 'package:smartrider/widgets/saferide_status_widget.dart';
 import 'package:smartrider/pages/sliding_panel_page.dart';
-import 'package:smartrider/main.dart';
 
 GlobalKey showcaseSettings = GlobalKey();
 GlobalKey showcaseShuttleToggle = GlobalKey();

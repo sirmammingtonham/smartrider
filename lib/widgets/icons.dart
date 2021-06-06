@@ -15,8 +15,8 @@
 ///
 import 'package:flutter/widgets.dart';
 
-class SR_Icons {
-  SR_Icons._();
+class SmartriderIcons {
+  SmartriderIcons._();
 
   static const _kFontFam = 'SR_Icons';
 

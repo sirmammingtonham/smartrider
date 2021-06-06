@@ -160,7 +160,8 @@ class _LocationAutocompleteFieldState extends State<PlacesAutocompleteField> {
   void didUpdateWidget(PlacesAutocompleteField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller == null && oldWidget.controller != null)
-      _controller = TextEditingController.fromValue(oldWidget.controller!.value);
+      _controller =
+          TextEditingController.fromValue(oldWidget.controller!.value);
     else if (widget.controller != null && oldWidget.controller == null)
       _controller = null;
   }
@@ -235,12 +236,10 @@ class _LocationAutocompleteFieldState extends State<PlacesAutocompleteField> {
           ],
         ));
 
-    if (widget.inputDecoration != null) {
-      child = InputDecorator(
-        decoration: widget.inputDecoration,
-        child: child,
-      );
-    }
+    child = InputDecorator(
+      decoration: widget.inputDecoration,
+      child: child,
+    );
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,

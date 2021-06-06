@@ -13,26 +13,26 @@ import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/pages/sliding_panel_page.dart';
 import 'package:smartrider/widgets/map_widget.dart';
 
-void main() {
-  testWidgets('Test build properly', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(SmartRider());
+// void main() {
+//   testWidgets('Test build properly', (WidgetTester tester) async {
+//     // Build our app and trigger a frame.
+//     await tester.pumpWidget(SmartRider());
 
-    // Verify that we compiled sucessfully
-    expect(find.text('oh poops'), findsNothing);
-  });
+//     // Verify that we compiled sucessfully
+//     expect(find.text('oh poops'), findsNothing);
+//   });
 
-  testWidgets('Tap shuttle change button', (WidgetTester tester) async {
-    await tester.pumpWidget(SmartRider());
+//   testWidgets('Tap shuttle change button', (WidgetTester tester) async {
+//     await tester.pumpWidget(SmartRider());
 
-    // Verify that we compiled sucessfully
-    expect(find.text('oh poops'), findsNothing);
+//     // Verify that we compiled sucessfully
+//     expect(find.text('oh poops'), findsNothing);
 
-    // Tap the shuttle button to switch
-    await tester.tap(find.byIcon(Icons.directions_bus));
-    await tester.pump();
+//     // Tap the shuttle button to switch
+//     await tester.tap(find.byIcon(Icons.directions_bus));
+//     await tester.pump();
 
-    // Verify that the button change the sliding panel text
-    expect(find.text('Bus Schedules'), findsOneWidget);
-  });
-}
+//     // Verify that the button change the sliding panel text
+//     expect(find.text('Bus Schedules'), findsOneWidget);
+//   });
+// }
