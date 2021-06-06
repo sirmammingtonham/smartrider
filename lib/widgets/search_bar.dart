@@ -68,7 +68,8 @@ class SearchBarState extends State<SearchBar> {
       context: context,
       apiKey: GOOGLE_API_KEY, //Platform.environment['MAPS_API_KEY'],
       hint: "Need a Safe Ride?",
-      location: Location(lat: 42.729980, lng: -73.676682), // location of union as center
+      location: Location(
+          lat: 42.729980, lng: -73.676682), // location of union as center
       radius: 1000, // 1km decent estimate of the bounds on safe ride's website
       language: "en",
       components: [Component(Component.country, "us")],
@@ -174,14 +175,12 @@ class SearchBarState extends State<SearchBar> {
                   description: SEARCHBAR_SHOWCASE_MESSAGE,
                   shapeBorder: RoundedRectangleBorder(),
                   child: Container(
-                      width: 256,
+                      width: MediaQuery.of(context).size.width - 150,
                       // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
-                      child: Expanded(
-                          child: ListTile(
-                              title: const Text('Test saferide call to union'),
-                              onTap: () =>
-                                  BlocProvider.of<SaferideBloc>(context)
-                                      .add(SaferideSelectionTestEvent())))),
+                      child: ListTile(
+                          title: const Text('Test saferide call to union'),
+                          onTap: () => BlocProvider.of<SaferideBloc>(context)
+                              .add(SaferideSelectionTestEvent()))),
                   // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
                   //     PlacesAutocompleteField(
                   //   apiKey:

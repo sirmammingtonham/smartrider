@@ -47,10 +47,13 @@ class BitmapHelper {
     final svgImage = await _getSvgImageFromAssets(svgAssetLink, color, size);
     // final sizedSvgImage = await _getSizedSvgImage(svgImage);
 
-    final pngSizedBytes =
-        await (svgImage.toByteData(format: ui.ImageByteFormat.png) as FutureOr<ByteData>);
-    final unit8List = pngSizedBytes.buffer.asUint8List();
-    return BitmapDescriptor.fromBytes(unit8List);
+    final ByteData? pngSizedBytes =
+        await (svgImage.toByteData(format: ui.ImageByteFormat.png));
+    if (pngSizedBytes != null) {
+      final unit8List = pngSizedBytes.buffer.asUint8List();
+      return BitmapDescriptor.fromBytes(unit8List);
+    }
+    return BitmapDescriptor.defaultMarker;
   }
 
   static Future<ui.Image> _getSvgImageFromAssets(

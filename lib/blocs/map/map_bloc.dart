@@ -127,7 +127,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   // Map<String?, StreamSubscription<MovementStatus>> _saferideUpdateSubs = {};
   LatLng? _saferideDest;
 
-  Set<Marker?> _currentMarkers = <Marker?>{};
+  Set<Marker> _currentMarkers = <Marker>{};
   Set<Polyline> _currentPolylines = <Polyline>{};
 
   BitmapDescriptor? _shuttleStopIcon, _busStopIcon;
@@ -162,9 +162,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         _enabledShuttles = prefsState.shuttles;
         _enabledBuses = prefsState.buses;
         if (_controller != null) {
-          _controller!.setMapStyle(prefsState.theme.brightness == Brightness.dark
-              ? _darkMapStyle
-              : _lightMapStyle);
+          _controller!.setMapStyle(
+              prefsState.theme.brightness == Brightness.dark
+                  ? _darkMapStyle
+                  : _lightMapStyle);
         }
       }
     });
@@ -555,15 +556,16 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     //TODO: get bus direction id
     try {
       try {
-        stop =
-            _busRoutes[update.routeId]!.forwardStops[update.currentStopSequence!];
+        stop = _busRoutes[update.routeId]!
+            .forwardStops[update.currentStopSequence!];
       } catch (error) {
-        stop =
-            _busRoutes[update.routeId]!.reverseStops[update.currentStopSequence!];
+        stop = _busRoutes[update.routeId]!
+            .reverseStops[update.currentStopSequence!];
       } // we should really handle this better
     } catch (error) {
       print(error);
       print(update.routeId);
+      return 0.0;
     }
 
     double lat1 = stop.stopLat!;
@@ -633,7 +635,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _enabledShuttles!.forEach((route, enabled) {
         if (enabled!) {
           _shuttleRoutes[route]!.stopIds!.forEach((id) {
-            _currentMarkers.add(shuttleMarkerMap[id]);
+            if (shuttleMarkerMap[id] != null) {
+              _currentMarkers.add(shuttleMarkerMap[id]!);
+            }
           });
         }
       });
@@ -647,7 +651,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     return _currentMarkers;
   }
 
-  Set<Marker?> _getMarkerClusters(double zoomLevel) {
+  Set<Marker> _getMarkerClusters(double zoomLevel) {
     fluster = Fluster<MapMarker>(
       minZoom: 14, // The min zoom at clusters will show
       maxZoom: 18, // The max zoom at clusters will show
@@ -657,19 +661,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       points: _mapMarkers, // The list of markers created before
       createCluster: (
         // Create cluster marker
-        BaseCluster cluster,
-        double lng,
-        double lat,
+        BaseCluster? cluster,
+        double? lng,
+        double? lat,
       ) =>
           MapMarker(
-              id: cluster.id.toString(),
-              position: LatLng(lat, lng),
+              id: cluster?.id.toString(),
+              position: LatLng(lat!, lng!),
               icon: this._busStopIcon, // replace with cluster marker
-              info: fluster.children(cluster.id)!.length.toString(),
-              isCluster: cluster.isCluster,
-              clusterId: cluster.id,
-              pointsSize: cluster.pointsSize,
-              childMarkerId: cluster.childMarkerId,
+              info: fluster.children(cluster?.id)!.length.toString(),
+              isCluster: cluster?.isCluster,
+              clusterId: cluster?.id,
+              pointsSize: cluster?.pointsSize,
+              childMarkerId: cluster?.childMarkerId,
               controller: this._controller),
     );
 

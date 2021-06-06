@@ -13,7 +13,7 @@ class MapLoadingState extends MapState {
 
 class MapLoadedState extends MapState {
   final Set<Polyline> polylines;
-  final Set<Marker?> markers;
+  final Set<Marker> markers;
   final bool? isBus;
   const MapLoadedState({required this.polylines, required this.markers, required this.isBus});
 
