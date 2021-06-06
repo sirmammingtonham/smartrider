@@ -1,9 +1,9 @@
 // thx flutter shuttle tracker lol
 import 'dart:convert';
-import 'dart:io';
+// import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 
 import '../models/shuttle/shuttle_route.dart';
 import '../models/shuttle/shuttle_stop.dart';
@@ -20,7 +20,7 @@ class ShuttleProvider {
     var client = http.Client();
     http.Response response;
     try {
-      response = await client.get('https://shuttles.rpi.edu/$type');
+      response = await client.get(Uri.parse('https://shuttles.rpi.edu/$type'));
       // await createJSONFile('$type', response);
 
       if (response.statusCode == 200) {
@@ -130,11 +130,11 @@ class ShuttleProvider {
   }
 
   /// Helper function to create local JSON file
-  Future createJSONFile(String fileName, http.Response response) async {
-    if (response.statusCode == 200) {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/$fileName.json');
-      await file.writeAsString(response.body);
-    }
-  }
+  // Future createJSONFile(String fileName, http.Response response) async {
+  //   if (response.statusCode == 200) {
+  //     final directory = await getApplicationDocumentsDirectory();
+  //     final file = File('${directory.path}/$fileName.json');
+  //     await file.writeAsString(response.body);
+  //   }
+  // }
 }

@@ -45,27 +45,27 @@ class Post {
 
 /// Creates an HTTP Post Request, given the POST url and a JSON-organized file.
 /// TODO: Make the POST request work with the GitHub API.
-Future createPost(String url, {Map body}) async {
-  /// Creates the GitHub OAuth2Client provided by Flutter's OAuth2 library
-  var client = OAuth2Helper(GitHubOAuth2Client(
-      // Corresponds with the Android Scheme (located in AndroidManifest.xml)
-      customUriScheme: 'smartrider.app',
-      // Handles redirect URI after authorization
-      redirectUri: 'smartrider.app://oauth2redirect'));
+// Future createPost(String url, {Map body}) async {
+//   /// Creates the GitHub OAuth2Client provided by Flutter's OAuth2 library
+//   var client = OAuth2Helper(GitHubOAuth2Client(
+//       // Corresponds with the Android Scheme (located in AndroidManifest.xml)
+//       customUriScheme: 'smartrider.app',
+//       // Handles redirect URI after authorization
+//       redirectUri: 'smartrider.app://oauth2redirect'));
 
-  /// Gets the response from authenticating the request.
-  client.setAuthorizationParams(
-      grantType: OAuth2Helper.AUTHORIZATION_CODE,
-      clientId: 'be5f78f24f2b3ede9699',
-      clientSecret: GITHUB_API_SECRET,
-      scopes: ['repo']);
+//   /// Gets the response from authenticating the request.
+//   client.setAuthorizationParams(
+//       grantType: OAuth2Helper.AUTHORIZATION_CODE,
+//       clientId: 'be5f78f24f2b3ede9699',
+//       clientSecret: GITHUB_API_SECRET,
+//       scopes: ['repo']);
 
-  /// The client used to submit the authenticated HTTP Post Request.
-  Future resp = client.post(url, body: body);
-  resp.then((value) => print(value));
+//   /// The client used to submit the authenticated HTTP Post Request.
+//   Future resp = client.post(url, body: body);
+//   resp.then((value) => print(value));
 
-  return resp;
-}
+//   return resp;
+// }
 
 /// The IssueRequest page lets the user enter a bug/feature request through the
 /// app, rather than through the GitHub issue page. It can also allow us to
@@ -317,10 +317,10 @@ class _IssueRequestState extends State<IssueRequest> {
             ),
             // Submits the POST request to the GitHub repository to form an issue.
             onPressed: () async {
-              Post newPost = new Post(
-                  title: title, body: description, labels: dropdownValue);
-              // Sends the POST request to GitHub API:
-              Post p = await createPost(postUrl, body: newPost.toMap());
+              // Post newPost = new Post(
+              //     title: title, body: description, labels: dropdownValue);
+              // // Sends the POST request to GitHub API:
+              // Post p = await createPost(postUrl, body: newPost.toMap());
 
               // Once the POST is submitted, we can leave the Issue Request page.
               Navigator.pop(context);

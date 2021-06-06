@@ -68,7 +68,7 @@ class SearchBarState extends State<SearchBar> {
       context: context,
       apiKey: GOOGLE_API_KEY, //Platform.environment['MAPS_API_KEY'],
       hint: "Need a Safe Ride?",
-      location: Location(42.729980, -73.676682), // location of union as center
+      location: Location(lat: 42.729980, lng: -73.676682), // location of union as center
       radius: 1000, // 1km decent estimate of the bounds on safe ride's website
       language: "en",
       components: [Component(Component.country, "us")],

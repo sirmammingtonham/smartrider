@@ -45,28 +45,28 @@ class Order {
 
   Order.fromSnapshot(DocumentSnapshot snap) {
     this.id = snap.id;
-
-    final doc = snap.data();
     this.status = TripStatus.values.firstWhere(
-        (value) => value.toString() == 'TripStatus.' + doc['status'],
+        (value) => value.toString() == 'TripStatus.' + snap.get('status'),
         orElse: () => TripStatus.UNDEFINED);
 
-    this.tripId = doc['trip_id'];
-    this.pickup = doc['pickup'];
-    this.dropoff = doc['dropoff'];
+    this.tripId = snap.get('trip_id');
+    this.pickup = snap.get('pickup');
+    this.dropoff = snap.get('dropoff');
 
-    this.rider = doc['rider'];
+    this.rider = snap.get('rider');
 
-    if (doc['driver'] != null) this.driver = Driver.fromDocument(doc['driver']);
+    if (snap.get('driver') != null)
+      this.driver = Driver.fromDocument(snap.get('driver'));
 
-    this.createdAt = doc['created_at'];
-    this.updatedAt = doc['updated_at'];
+    this.createdAt = snap.get('created_at');
+    this.updatedAt = snap.get('updated_at');
 
-    this.queuePosition = doc['queue_position'];
-    if (doc['estimate'] != null)
-      this.estimate = Estimate.fromDocument(doc['estimate']);
+    this.queuePosition = snap.get('queue_position');
+    if (snap.get('estimate') != null) {
+      this.estimate = Estimate.fromDocument(snap.get('estimate'));
 
-    this.waitEstimate = doc['wait_estimate'];
+      this.waitEstimate = snap.get('wait_estimate');
+    }
   }
 
   Map<String, dynamic> toJSON() {

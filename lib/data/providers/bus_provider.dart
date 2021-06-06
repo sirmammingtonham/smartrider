@@ -121,7 +121,7 @@ class BusProvider {
   /// Returns a [List] of [BusTripUpdate] objects.
   Future<List<BusTripUpdate>> getTripUpdates() async {
     http.Response response =
-        await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
+        await http.get(Uri.parse('http://64.128.172.149:8080/gtfsrealtime/TripUpdates'));
 
     // var routes = ["87", "286", "289", "288"];
     List<BusTripUpdate> tripUpdatesList = response != null
@@ -138,7 +138,7 @@ class BusProvider {
   /// Returns a [List] of [BusVehicleUpdate] objects.
   Future<List<BusVehicleUpdate>> getVehicleUpdates() async {
     http.Response response = await http
-        .get('http://64.128.172.149:8080/gtfsrealtime/VehiclePositions');
+        .get(Uri.parse('http://64.128.172.149:8080/gtfsrealtime/VehiclePositions'));
 
     List<BusVehicleUpdate> vehicleUpdatesList = response != null
         ? FeedMessage.fromBuffer(response.bodyBytes)
@@ -192,7 +192,7 @@ class BusProvider {
                     !temp.excludeDates.contains(today)) {
                   // check for exclusive just in case
                   // replace today's schedule with another day's (e.g: today is a weekday, but uses sunday schedule)
-                  timetableMap[routeMapping[route.data()['route_id']]] = temp;
+                  timetableMap[routeMapping[route.get('route_id')]] = temp;
                   break;
                 }
               }
@@ -200,7 +200,7 @@ class BusProvider {
           }
         } else {
           // normal case: today not in exclude dates
-          timetableMap[routeMapping[route.data()['route_id']]] = entry;
+          timetableMap[routeMapping[route.get('route_id')]] = entry;
         }
       }
     }

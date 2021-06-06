@@ -35,21 +35,22 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
   final _platformChannelSpecifics = NotificationDetails(
-      AndroidNotificationDetails(
+      android: AndroidNotificationDetails(
         'alarm_notif',
         'alarm_notif',
         'Channel for Alarm notification',
         icon: 'app_icon',
         largeIcon: DrawableResourceAndroidBitmap('app_icon'),
       ),
-      IOSNotificationDetails(
+      iOS: IOSNotificationDetails(
           presentAlert: true, presentBadge: true, presentSound: true));
 
   ScheduleBloc({@required this.mapBloc, @required this.busRepo})
       : super(ScheduleInitialState()) {
     _notifications.initialize(
-        InitializationSettings(AndroidInitializationSettings('app_icon'),
-            IOSInitializationSettings()),
+        InitializationSettings(
+            android: AndroidInitializationSettings('app_icon'),
+            iOS: IOSInitializationSettings()),
         onSelectNotification: _notificationSelected);
 
     _isBus = true;
