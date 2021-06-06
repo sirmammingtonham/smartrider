@@ -1,10 +1,10 @@
 class BusFeedInfo {
-  String feedPublisherName;
-  String feedPublisherUrl;
-  String feedLang;
-  String feedStartDate;
-  String feedEndDate;
-  String feedVersion;
+  String? feedPublisherName;
+  String? feedPublisherUrl;
+  String? feedLang;
+  String? feedStartDate;
+  String? feedEndDate;
+  String? feedVersion;
 
   BusFeedInfo({
     this.feedPublisherName,

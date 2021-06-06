@@ -38,11 +38,11 @@ class AuthProvider {
     return currentUser != null;
   }
 
-  String getUser() {
-    return _firebaseAuth.currentUser.email;
+  String? getUser() {
+    return _firebaseAuth.currentUser!.email;
   }
 
-  User getActualUser() {
+  User? getActualUser() {
     return _firebaseAuth.currentUser;
   }
 }

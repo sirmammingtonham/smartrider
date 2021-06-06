@@ -1,21 +1,21 @@
 /// Bus Stoptime model:
 /// Contains data related to stop times
 class BusStoptime {
-  int id;
-  String tripId;
-  String arrivalTime;
-  int arrivalTimestamp;
-  String departureTime;
-  int departureTimestamp;
-  String stopId;
-  int stopSequence;
+  int? id;
+  String? tripId;
+  String? arrivalTime;
+  int? arrivalTimestamp;
+  String? departureTime;
+  int? departureTimestamp;
+  String? stopId;
+  int? stopSequence;
   Null stopHeadsign;
-  int pickupType;
-  int dropOffType;
+  int? pickupType;
+  int? dropOffType;
   Null continuousPickup;
   Null continuousDropOff;
   Null shapeDistTraveled;
-  int timepoint;
+  int? timepoint;
 
   BusStoptime(
       {this.id,

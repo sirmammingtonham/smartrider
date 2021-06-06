@@ -5,19 +5,19 @@ import 'package:fixnum/fixnum.dart';
 /// Bus Trip Update model:
 /// Contains data related to realtime trip updates
 class BusTripUpdate {
-  String id;
-  bool isDeleted;
+  String? id;
+  bool? isDeleted;
 
   /// Representation of [tripUpdate.trip] attributes
-  String tripId;
-  String startTime;
-  String startDate;
-  String routeId;
+  String? tripId;
+  String? startTime;
+  String? startDate;
+  String? routeId;
 
   /// Representation of [tripUpdate.stopTimeUpdate] attribute
-  List<StopTimeUpdate> stopTimeUpdate;
+  List<StopTimeUpdate>? stopTimeUpdate;
 
-  String vehicleId;
+  String? vehicleId;
 
   BusTripUpdate(
       {this.id,
@@ -55,7 +55,7 @@ class BusTripUpdate {
     stopTimeUpdate = [];
 
     entity.tripUpdate.stopTimeUpdate.forEach((entity) {
-      stopTimeUpdate.add(StopTimeUpdate.fromPBEntity(entity));
+      stopTimeUpdate!.add(StopTimeUpdate.fromPBEntity(entity));
     });
 
     vehicleId = entity.tripUpdate.vehicle.id;
@@ -82,10 +82,10 @@ class BusTripUpdate {
 
 /// Modified [BusStoptime] class to account for realtime data
 class StopTimeUpdate {
-  int stopSequence;
-  Int64 arrivalTime;
-  Int64 departureTime;
-  String stopId;
+  int? stopSequence;
+  Int64? arrivalTime;
+  Int64? departureTime;
+  String? stopId;
   dynamic scheduleRelationship;
 
   StopTimeUpdate(

@@ -9,9 +9,9 @@ import 'package:intl/intl.dart';
 import 'package:smartrider/util/data.dart';
 
 class ShuttleTable extends StatefulWidget {
-  final Function containsFilter;
-  final Function jumpMap;
-  ShuttleTable({Key key, this.containsFilter, this.jumpMap}) : super(key: key);
+  final Function? containsFilter;
+  final Function? jumpMap;
+  ShuttleTable({Key? key, this.containsFilter, this.jumpMap}) : super(key: key);
   @override
   ShuttleTableState createState() => ShuttleTableState();
 }
@@ -24,13 +24,13 @@ class ShuttleTableState extends State<ShuttleTable>
     Tab(text: 'WEST'),
     Tab(text: 'WEEKEND'),
   ];
-  TabController _tabController;
+  TabController? _tabController;
 
   @override
   void initState() {
     super.initState();
     _tabController = new TabController(vsync: this, length: shuttleTabs.length);
-    _tabController.addListener(() {
+    _tabController!.addListener(() {
       _handleTabSelection();
     });
   }
@@ -53,7 +53,7 @@ class ShuttleTableState extends State<ShuttleTable>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController!.dispose();
     super.dispose();
   }
 
@@ -62,7 +62,7 @@ class ShuttleTableState extends State<ShuttleTable>
     return Material(
       child: Column(children: <Widget>[
         TabBar(
-          indicatorColor: _getTabColor(_tabController),
+          indicatorColor: _getTabColor(_tabController!),
           isScrollable: true,
           tabs: shuttleTabs,
           // unselectedLabelColor: Colors.white.withOpacity(0.3),
@@ -102,11 +102,10 @@ _getTimeIndex(List<String> curTimeList) {
   var f = DateFormat('H.m');
   double min = double.maxFinite;
   double curTime = double.parse(f.format(now));
-  double compTime;
-  String closest;
+  String? closest;
   curTimeList.forEach((time) {
     var t = time.replaceAll(':', '.');
-    compTime = double.tryParse(t.substring(0, t.length - 2));
+    double? compTime = double.tryParse(t.substring(0, t.length - 2));
     if (compTime == null) return;
     if (t.endsWith('pm') && !t.startsWith("12")) {
       compTime += 12.0;
@@ -120,7 +119,7 @@ _getTimeIndex(List<String> curTimeList) {
   return curTimeList.indexWhere((element) => element == closest);
 }
 
-Widget shuttleList(int idx, Function _containsFilter, Function _jumpMap) {
+Widget shuttleList(int idx, Function? _containsFilter, Function? _jumpMap) {
   var curStopList = shuttleStopLists[idx];
   var curTimeList = shuttleTimeLists[idx];
   return

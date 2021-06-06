@@ -1,8 +1,8 @@
 class ShuttleEta {
-  int vehicleId;
-  int routeId;
-  List<StopEtas> stopEtas;
-  String updated;
+  int? vehicleId;
+  int? routeId;
+  List<StopEtas>? stopEtas;
+  String? updated;
 
   ShuttleEta({this.vehicleId, this.routeId, this.stopEtas, this.updated});
 
@@ -10,9 +10,9 @@ class ShuttleEta {
     vehicleId = json['vehicle_id'];
     routeId = json['route_id'];
     if (json['stop_etas'] != null) {
-      stopEtas = new List<StopEtas>();
+      stopEtas = [];
       json['stop_etas'].forEach((v) {
-        stopEtas.add(new StopEtas.fromJson(v));
+        stopEtas!.add(new StopEtas.fromJson(v));
       });
     }
     updated = json['updated'];
@@ -23,7 +23,7 @@ class ShuttleEta {
     data['vehicle_id'] = this.vehicleId;
     data['route_id'] = this.routeId;
     if (this.stopEtas != null) {
-      data['stop_etas'] = this.stopEtas.map((v) => v.toJson()).toList();
+      data['stop_etas'] = this.stopEtas!.map((v) => v.toJson()).toList();
     }
     data['updated'] = this.updated;
     return data;
@@ -31,9 +31,9 @@ class ShuttleEta {
 }
 
 class StopEtas {
-  int stopId;
-  String eta;
-  bool arriving;
+  int? stopId;
+  String? eta;
+  bool? arriving;
 
   StopEtas({this.stopId, this.eta, this.arriving});
 

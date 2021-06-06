@@ -6,25 +6,25 @@ import 'package:fixnum/fixnum.dart';
 /// Bus Vehicle Update model:
 /// Contains data related to realtime vehicle updates 
 class BusVehicleUpdate {
-  String id;
-  bool isDeleted;
+  String? id;
+  bool? isDeleted;
 
   /// Representation of [vehicle.trip] attributes
-  String tripId;
-  String startTime;
-  String startDate;
-  String routeId;
+  String? tripId;
+  String? startTime;
+  String? startDate;
+  String? routeId;
 
   /// Representation of [vehicle.position] attributes
-  double latitude;
-  double longitude;
-  double bearing;
-  int currentStopSequence;
+  double? latitude;
+  double? longitude;
+  double? bearing;
+  int? currentStopSequence;
   dynamic currentStatus;
-  Int64 timestamp;
+  Int64? timestamp;
 
   /// Represenation of [vehicle.vehicle.id]
-  String vehicleId;
+  String? vehicleId;
 
   BusVehicleUpdate(
       {this.id,
@@ -40,7 +40,7 @@ class BusVehicleUpdate {
       this.timestamp,
       this.vehicleId});
 
-  LatLng get getLatLng => LatLng(this.latitude, this.longitude);
+  LatLng get getLatLng => LatLng(this.latitude!, this.longitude!);
 
   BusVehicleUpdate.fromJson(Map<String, dynamic> json) {
     id = json['id'];

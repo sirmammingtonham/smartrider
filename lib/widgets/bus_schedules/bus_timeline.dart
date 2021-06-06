@@ -23,15 +23,15 @@ const List<String> choices = [
 
 /// Creates an object that contains all the busses and their respective stops.
 class BusTimeline extends StatefulWidget {
-  final PanelController panelController;
+  final PanelController? panelController;
   // final Map<String, BusRoute> busRoutes;
-  final Map<String, BusTimetable> busTables;
+  final Map<String?, BusTimetable>? busTables;
 
   BusTimeline(
-      {Key key,
-      @required this.panelController,
+      {Key? key,
+      required this.panelController,
       // @required this.busRoutes,
-      @required this.busTables})
+      required this.busTables})
       : super(key: key);
   @override
   BusTimelineState createState() => BusTimelineState();
@@ -47,7 +47,7 @@ class BusTimelineState extends State<BusTimeline>
     Tab(text: 'Express Shuttle'),
   ];
 
-  TabController _tabController;
+  TabController? _tabController;
 
   // TODO: better way to do this
   var isExpandedList = List<bool>.filled(50, false);
@@ -57,7 +57,7 @@ class BusTimelineState extends State<BusTimeline>
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: busTabs.length);
-    _tabController.addListener(() {
+    _tabController!.addListener(() {
       isExpandedList.fillRange(0, 50, false);
       setState(() {});
     });
@@ -66,7 +66,7 @@ class BusTimelineState extends State<BusTimeline>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController!.dispose();
     super.dispose();
   }
 
@@ -81,7 +81,7 @@ class BusTimelineState extends State<BusTimeline>
           key: showcaseBusTab,
           description: BUS_TAB_SHOWCASE_MESSAGE,
           child: TabBar(
-            indicatorColor: BUS_COLORS.values.toList()[_tabController.index],
+            indicatorColor: BUS_COLORS.values.toList()[_tabController!.index],
             isScrollable: true,
             tabs: busTabs,
             labelColor: Theme.of(context).brightness == Brightness.light
@@ -200,11 +200,11 @@ class BusTimelineState extends State<BusTimeline>
   /// useful user information like the next arrival.
   Widget busList(String routeId) {
     // check if schedule is unavailable
-    if (!widget.busTables.containsKey(routeId)) {
+    if (!widget.busTables!.containsKey(routeId)) {
       return BusUnavailable();
     }
-    var busStops = widget.busTables[routeId]
-        .stops; //this.widget.busRoutes[routeId].forwardStops;
+    var busStops = widget.busTables![routeId]!
+        .stops!; //this.widget.busRoutes[routeId].forwardStops;
     /// Returns the scrollable list for our bus stops to be contained in.
     return RefreshIndicator(
         onRefresh: () => Future.delayed(const Duration(seconds: 1), () => "1"),
@@ -216,7 +216,7 @@ class BusTimelineState extends State<BusTimeline>
           itemBuilder: (context, index) {
             var stopTimes = this
                 .widget
-                .busTables[routeId]
+                .busTables![routeId]!
                 .getClosestTimes(index)
                 .where((stopPair) => stopPair[1] != -1)
                 .toList();
@@ -232,13 +232,13 @@ class BusTimelineState extends State<BusTimeline>
   }
 
   void _handlePopupSelection(
-      String choice, TimetableStop busStop, List<dynamic> stopTime) {
+      String choice, TimetableStop? busStop, List<dynamic>? stopTime) {
     if (choice == choices[0]) {
       BlocProvider.of<ScheduleBloc>(context)
-          .scheduleBusAlarm(stopTime[1], busStop);
+          .scheduleBusAlarm(stopTime![1], busStop!);
     } else if (choice == choices[1]) {
-      this.widget.panelController.animatePanelToPosition(0);
-      BlocProvider.of<MapBloc>(context).scrollToLocation(busStop.latLng);
+      this.widget.panelController!.animatePanelToPosition(0);
+      BlocProvider.of<MapBloc>(context).scrollToLocation(busStop!.latLng);
     }
   }
 }
@@ -249,8 +249,8 @@ class BusTimelineState extends State<BusTimeline>
 /// schedule list for each bus. This particular class is responsible
 /// for the first stop.
 class FillPainter extends CustomPainter {
-  final Color circleColor;
-  final Color lineColor;
+  final Color? circleColor;
+  final Color? lineColor;
   final bool first;
   final bool last;
 
@@ -272,7 +272,7 @@ class FillPainter extends CustomPainter {
     final paint = Paint();
     // cascade notation, look it up it's pretty cool
     Paint line = new Paint()
-      ..color = lineColor
+      ..color = lineColor!
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.fill
       ..strokeWidth = 6;
@@ -291,7 +291,7 @@ class FillPainter extends CustomPainter {
     }
 
     // set the color property of the paint
-    paint.color = circleColor;
+    paint.color = circleColor!;
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = 3.0;
 
@@ -309,8 +309,8 @@ class FillPainter extends CustomPainter {
 /// schedule list for each bus. This particular class is responsible
 /// for all stops but the first.
 class StrokePainter extends CustomPainter {
-  final Color circleColor;
-  final Color lineColor;
+  final Color? circleColor;
+  final Color? lineColor;
   final bool last;
   StrokePainter({
     this.circleColor,
@@ -321,7 +321,7 @@ class StrokePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint line = new Paint()
-      ..color = lineColor
+      ..color = lineColor!
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.fill
       ..strokeWidth = 6;

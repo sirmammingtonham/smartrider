@@ -1,28 +1,28 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 class ShuttleUpdate {
   /// ID of the update
-  int id;
+  int? id;
 
   /// Not super sure what this is used for
-  String trackerId;
+  String? trackerId;
 
   /// Heading in degrees for the shuttle
-  num heading;
+  num? heading;
 
   /// Speed of the shuttle
-  num speed;
+  num? speed;
 
   /// Timestamp of when this updated was sent
-  String time;
+  String? time;
 
   /// Timestamp of when shuttle was recieved
-  String created;
+  String? created;
 
   /// ID associated with the shuttle
-  int vehicleId;
+  int? vehicleId;
 
   /// The route ID that the shuttle runs on
-  int routeId;
+  int? routeId;
 
   /// lng and lat
   dynamic latitude;

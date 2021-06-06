@@ -13,13 +13,13 @@ class LoadPrefsEvent extends PrefsEvent {
 
 class SavePrefsEvent extends PrefsEvent {
   // final Map<String, bool> prefData;
-  final String name;
+  final String? name;
   final bool val;
 
   const SavePrefsEvent(this.name, this.val);
 
   @override
-  List<Object> get props => [this.name, this.val];
+  List<Object?> get props => [this.name, this.val];
 }
 
 class PrefsUpdateEvent extends PrefsEvent {

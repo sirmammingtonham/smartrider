@@ -17,8 +17,8 @@ import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
 import 'package:smartrider/pages/home.dart';
 
 class PanelPage extends StatefulWidget {
-  final PanelController panelController;
-  PanelPage({Key key, @required this.panelController}) : super(key: key);
+  final PanelController? panelController;
+  PanelPage({Key? key, required this.panelController}) : super(key: key);
   @override
   PanelPageState createState() => PanelPageState();
 }
@@ -34,8 +34,8 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
     super.initState();
   }
 
-  Widget panelAppBar(bool isBus, PanelController panelController,
-      TabController tabController, List<Widget> tabs) {
+  Widget panelAppBar(bool isBus, PanelController? panelController,
+      TabController? tabController, List<Widget> tabs) {
     return AppBar(
         centerTitle: true,
         shape: RoundedRectangleBorder(
@@ -47,14 +47,14 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
         leading: IconButton(
           icon: Icon(Icons.arrow_downward),
           onPressed: () {
-            panelController.animatePanelToPosition(0);
+            panelController!.animatePanelToPosition(0);
           },
         ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.arrow_downward),
             onPressed: () {
-              panelController.animatePanelToPosition(0);
+              panelController!.animatePanelToPosition(0);
             },
           )
         ],
@@ -86,7 +86,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                     scheduleState.isBus,
                     BlocProvider.of<ScheduleBloc>(context).panelController,
                     BlocProvider.of<ScheduleBloc>(context).tabController,
-                    _tabs),
+                    _tabs) as PreferredSizeWidget?,
                 body: TabBarView(
                   controller:
                       BlocProvider.of<ScheduleBloc>(context).tabController,
@@ -115,7 +115,7 @@ class PanelPageState extends State<PanelPage> with TickerProviderStateMixin {
                     scheduleState.isBus,
                     BlocProvider.of<ScheduleBloc>(context).panelController,
                     BlocProvider.of<ScheduleBloc>(context).tabController,
-                    _tabs),
+                    _tabs) as PreferredSizeWidget?,
                 body: TabBarView(
                   controller:
                       BlocProvider.of<ScheduleBloc>(context).tabController,

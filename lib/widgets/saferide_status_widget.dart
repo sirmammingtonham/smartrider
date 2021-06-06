@@ -139,7 +139,7 @@ class SaferideStatusWidget extends StatelessWidget {
                       SizedBox(height: 5),
                       Center(
                         child: Text(
-                          state.waitEstimate < 1
+                          state.waitEstimate! < 1
                               ? 'Now!'
                               : '${state.waitEstimate} min${state.waitEstimate != 1 ? 's' : ''} away',
                           style: TextStyle(
@@ -150,7 +150,7 @@ class SaferideStatusWidget extends StatelessWidget {
                       ),
                       ListTile(
                         leading: Icon(Icons.face),
-                        title: Text(state.driverName),
+                        title: Text(state.driverName!),
                         subtitle: Text('Driver'),
                         trailing: Icon(Icons.call),
                       ),
@@ -160,7 +160,7 @@ class SaferideStatusWidget extends StatelessWidget {
                       ListTile(
                         leading: Icon(Icons.drive_eta),
                         title: Text('Queue position: #${state.queuePosition}'),
-                        trailing: Text(state.licensePlate),
+                        trailing: Text(state.licensePlate!),
                       ),
                       ElevatedButton(
                         style: ButtonStyle(
@@ -198,11 +198,11 @@ class SaferideStatusWidget extends StatelessWidget {
           // TODO: get this to animate, with a slide up from previous state
           switch (saferideState.runtimeType) {
             case SaferideSelectionState:
-              return _selectionWidget(context, saferideState);
+              return _selectionWidget(context, saferideState as SaferideSelectionState);
             case SaferideWaitingState:
-              return _waitingWidget(context, saferideState);
+              return _waitingWidget(context, saferideState as SaferideWaitingState);
             case SaferideAcceptedState:
-              return _confirmedWidget(context, saferideState);
+              return _confirmedWidget(context, saferideState as SaferideAcceptedState);
             default:
               return Container();
           }

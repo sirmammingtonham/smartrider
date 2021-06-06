@@ -52,10 +52,10 @@ class SmartRider extends StatelessWidget {
   final SaferideRepository saferideRepo;
 
   SmartRider({
-    @required this.authRepo,
-    @required this.busRepo,
-    @required this.shuttleRepo,
-    @required this.saferideRepo,
+    required this.authRepo,
+    required this.busRepo,
+    required this.shuttleRepo,
+    required this.saferideRepo,
   });
 
   // This widget is the root of your application.
@@ -108,7 +108,7 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
       theme: state.theme,
       home: ShowCaseWidget(
         builder: Builder(
-            builder: (context) => state.firstLaunch
+            builder: (context) => state.firstLaunch!
                 ? OnboardingScreen()
                 : WelcomeScreen(homePage: HomePage())),
         autoPlay: true,

@@ -22,13 +22,13 @@ class TestApp extends StatelessWidget {
     var vehicles = await provider.getVehicleUpdates();
 
     BusVehicleUpdate update = vehicles[0];
-    BusStopSimplified stop = routes[update.routeId + '-185']
-        .forwardStops[update.currentStopSequence];
+    BusStopSimplified stop = routes[update.routeId! + '-185']!
+        .forwardStops[update.currentStopSequence!];
 
-    double lat1 = update.latitude;
-    double lat2 = stop.stopLat;
-    double lon1 = update.longitude;
-    double lon2 = stop.stopLon;
+    double lat1 = update.latitude!;
+    double lat2 = stop.stopLat!;
+    double lon1 = update.longitude!;
+    double lon2 = stop.stopLon!;
 
     double heading = atan2(sin(lon2 - lon1) * cos(lat2),
             cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon2 - lon1)) %
@@ -41,15 +41,15 @@ class TestApp extends StatelessWidget {
 
   Future<void> test() async {
     var timetable = await provider.getBusTimetable();
-    for (int i = 0; i < timetable['87-185'].numColumns; i++) {
-      print(timetable['87-185'].getClosestTimes(i));
+    for (int i = 0; i < timetable['87-185']!.numColumns; i++) {
+      print(timetable['87-185']!.getClosestTimes(i));
     }
     return;
   }
 
   Future<void> test0() async {
     var routes = await provider.getRoutes();
-    for (var stop in routes['87-185'].forwardStops) {
+    for (var stop in routes['87-185']!.forwardStops) {
       print(stop.toJson());
     }
     return;

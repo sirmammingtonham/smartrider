@@ -21,12 +21,12 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   final _geocoder = GoogleMapsGeocoding(apiKey: GOOGLE_API_KEY);
   final SaferideRepository saferideRepo;
   final AuthRepository authRepo;
-  Prediction _currentPrediction;
-  LatLng _currentPickupLatLng,
+  Prediction? _currentPrediction;
+  LatLng? _currentPickupLatLng,
       _currentDropoffLatLng = const LatLng(42.729280, -73.679056);
-  Driver _currentDriver;
+  Driver? _currentDriver;
 
-  SaferideBloc({@required this.saferideRepo, @required this.authRepo})
+  SaferideBloc({required this.saferideRepo, required this.authRepo})
       : super(SaferideInitialState());
 
   @override
@@ -80,8 +80,8 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         {
           _currentDriver = order.driver;
           add(SaferideAcceptedEvent(
-              driverName: _currentDriver.name,
-              licensePlate: _currentDriver.licensePlate,
+              driverName: _currentDriver!.name,
+              licensePlate: _currentDriver!.licensePlate,
               queuePosition: order.queuePosition ?? -1,
               waitEstimate: order.estimate?.remainingDuration ?? -1));
         }
@@ -104,9 +104,9 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       final order = await saferideRepo.createOrder(Order(
         status: TripStatus.NEW,
         pickup: GeoPoint(
-            _currentPickupLatLng.latitude, _currentPickupLatLng.longitude),
+            _currentPickupLatLng!.latitude, _currentPickupLatLng!.longitude),
         dropoff: GeoPoint(
-            _currentDropoffLatLng.latitude, _currentDropoffLatLng.longitude),
+            _currentDropoffLatLng!.latitude, _currentDropoffLatLng!.longitude),
         rider: authRepo.getUser,
       ));
 
@@ -151,13 +151,13 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     }
 
     final GeocodingResponse responses =
-        await _geocoder.searchByPlaceId(_currentPrediction.placeId);
+        await _geocoder.searchByPlaceId(_currentPrediction!.placeId!);
     if (responses.status != 'OK') {
       yield SaferideErrorState(
           status: responses.status, message: responses.errorMessage);
     }
 
-    String pickupDescription;
+    String? pickupDescription;
     _currentPickupLatLng = event.pickupLatLng;
     if (_currentPickupLatLng == null) {
       try {
@@ -180,7 +180,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         pickupDescription: pickupDescription,
         dropLatLng: _currentDropoffLatLng,
         dropAddress: r.formattedAddress,
-        dropDescription: _currentPrediction.description,
+        dropDescription: _currentPrediction!.description,
         queuePosition: 0,
         waitEstimate: 0,
       );

@@ -13,8 +13,8 @@ import 'package:smartrider/widgets/custom_widgets/custom_sticky_table.dart';
 //import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class BusTable extends StatefulWidget {
-  final Map<String, BusTimetable> timetableMap;
-  BusTable({Key key, @required this.timetableMap}) : super(key: key);
+  final Map<String?, BusTimetable>? timetableMap;
+  BusTable({Key? key, required this.timetableMap}) : super(key: key);
 
   @override
   BusTableState createState() => BusTableState();
@@ -28,7 +28,7 @@ class BusTableState extends State<BusTable>
     Tab(text: 'Route 289'),
     Tab(text: 'Express Shuttle'),
   ];
-  TabController _tabController;
+  TabController? _tabController;
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class BusTableState extends State<BusTable>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController!.dispose();
     super.dispose();
   }
 
@@ -75,11 +75,11 @@ class BusTableState extends State<BusTable>
   }
 
   Widget busList(String routeId) {
-    if (!this.widget.timetableMap.containsKey(routeId)) {
+    if (!this.widget.timetableMap!.containsKey(routeId)) {
       return BusUnavailable();
     }
 
-    final BusTimetable table = this.widget.timetableMap[routeId];
+    final BusTimetable table = this.widget.timetableMap![routeId]!;
 
     return Scaffold(
         body: CustomStickyHeader(
@@ -90,7 +90,7 @@ class BusTableState extends State<BusTable>
           width: 100,
           height: 50,
           child: SizedBox(
-            child: Text(table.stops[i].stopName,
+            child: Text(table.stops![i].stopName!,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.bold)),
           )),

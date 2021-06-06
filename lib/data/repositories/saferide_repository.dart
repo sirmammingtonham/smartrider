@@ -17,7 +17,7 @@ class SaferideRepository {
   Future<void> cancelOrder() async =>
       _saferideProvider.cancelOrder();
 
-  Future<Map<String, Driver>> get getDrivers async =>
+  Future<Map<String?, Driver>?> get getDrivers async =>
       _saferideProvider.getDrivers();
 
   Future<MovementStatus> getDeviceUpdate(String deviceId) async =>
@@ -26,14 +26,14 @@ class SaferideRepository {
   Stream<MovementStatus> subscribeToDeviceUpdates(String deviceId) =>
       _saferideProvider.subscribeToDeviceUpdates(deviceId);
 
-  Future<Map<String, MovementStatus>> get getDriverUpdates async =>
+  Future<Map<String?, MovementStatus>> get getDriverUpdates async =>
       _saferideProvider.getDriverUpdates();
 
   Future<int> get getQueueSize async => _saferideProvider.getQueueSize();
 
-  Map<String, Stream<MovementStatus>> get getDriverUpdateSubscriptions =>
+  Map<String?, Stream<MovementStatus>> get getDriverUpdateSubscriptions =>
       _saferideProvider.getDriverUpdateSubscriptions();
 
-  Future<int> getOrderPosition({@required DocumentSnapshot order}) async =>
+  Future<int> getOrderPosition({required DocumentSnapshot order}) async =>
       _saferideProvider.getOrderPosition(order);
 }

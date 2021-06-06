@@ -41,14 +41,14 @@ class SearchBar extends StatefulWidget {
   State<StatefulWidget> createState() => SearchBarState();
 }
 
-String username;
-String email;
+late String username;
+String? email;
 
 class SearchBarState extends State<SearchBar> {
-  double
+  double?
       topBarDist; // Distance between top of phone bezel & top search bar //TODO: use fraction instead of hard coded value
-  String name;
-  String role;
+  String? name;
+  String? role;
 
   SearchBarState();
 
@@ -64,7 +64,7 @@ class SearchBarState extends State<SearchBar> {
   }
 
   void _showAutocomplete() async {
-    Prediction p = await PlacesAutocomplete.show(
+    Prediction? p = await PlacesAutocomplete.show(
       context: context,
       apiKey: GOOGLE_API_KEY, //Platform.environment['MAPS_API_KEY'],
       hint: "Need a Safe Ride?",
@@ -112,7 +112,7 @@ class SearchBarState extends State<SearchBar> {
                             height: double.infinity,
                             child: Icon(Icons.my_location),
                           ),
-                          title: Text(saferideState.pickupDescription),
+                          title: Text(saferideState.pickupDescription!),
                           subtitle: const Text('Pickup location'),
                           onTap: () {},
                         ),
@@ -121,7 +121,7 @@ class SearchBarState extends State<SearchBar> {
                           leading: Container(
                               height: double.infinity,
                               child: Icon(Icons.place)),
-                          title: Text(saferideState.dropDescription),
+                          title: Text(saferideState.dropDescription!),
                           subtitle: const Text('Dropoff location'),
                           trailing: IconButton(
                             icon: Icon(Icons.cancel),
@@ -205,7 +205,7 @@ class SearchBarState extends State<SearchBar> {
                   child: CircleAvatar(
                     backgroundColor: Theme.of(context).buttonColor,
                     child: IconButton(
-                      icon: Text(computeUsername(name),
+                      icon: Text(computeUsername(name!),
                           style:
                               TextStyle(fontSize: 15, color: Colors.white70)),
                       onPressed: () {
@@ -213,7 +213,7 @@ class SearchBarState extends State<SearchBar> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ProfilePage(
-                                      title: computeUsername(name),
+                                      title: computeUsername(name!),
                                       name: null,
                                       role: role,
                                       email: name,

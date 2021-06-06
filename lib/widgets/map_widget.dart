@@ -30,11 +30,11 @@ class SmartriderMap extends StatelessWidget {
   const SmartriderMap();
 
   Widget mapUI(
-      {@required BuildContext context,
-      @required SaferideState saferideState,
-      @required MapState mapState}) {
+      {required BuildContext context,
+      required SaferideState saferideState,
+      required MapState mapState}) {
     Widget map;
-    Widget viewButton;
+    Widget? viewButton;
     Widget locationButton = Positioned(
       right: 20.0,
       bottom: saferideState is SaferideSelectionState ? 160.0 : 120.0,
@@ -83,7 +83,7 @@ class SmartriderMap extends StatelessWidget {
         myLocationButtonEnabled: false,
         trafficEnabled: false,
         polylines: mapState is MapLoadedState ? mapState.polylines : {},
-        markers: mapState is MapLoadedState ? mapState.markers : {},
+        markers: mapState is MapLoadedState ? mapState.markers as Set<Marker> : {},
         zoomControlsEnabled: false,
         onCameraMove: (position) {
           BlocProvider.of<MapBloc>(context)
@@ -103,7 +103,7 @@ class SmartriderMap extends StatelessWidget {
             shapeBorder: CircleBorder(),
             child: FloatingActionButton(
               child: Icon(
-                mapState is MapLoadedState && mapState.isBus
+                mapState is MapLoadedState && mapState.isBus!
                     ? Icons.airport_shuttle
                     : Icons.directions_bus,
                 color: Theme.of(context).brightness == Brightness.light

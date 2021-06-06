@@ -26,10 +26,10 @@ import '../models/bus/bus_vehicle_update.dart';
 class BusProvider {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Map<String, String> routeMapping;
+  Map<String?, String?>? routeMapping;
 
-  List<String> _defaultRoutes;
-  Future _providerHasLoaded;
+  List<String?>? _defaultRoutes;
+  Future? _providerHasLoaded;
 
   static const shortRouteIds = [
     '87',
@@ -52,14 +52,14 @@ class BusProvider {
     routeMapping = Map.fromIterable(routes.docs,
         key: (doc) => doc['route_id'], value: (doc) => doc['route_short_name']);
 
-    _defaultRoutes = routeMapping.keys.toList();
+    _defaultRoutes = routeMapping!.keys.toList();
   }
 
-  Future get waitForLoad => _providerHasLoaded;
+  Future? get waitForLoad => _providerHasLoaded;
 
   /// Fetchs data from the JSON API and returns a decoded JSON.
   Future<QuerySnapshot> fetch(String collection,
-      {List routes, String idField = 'route_id'}) async {
+      {List? routes, String idField = 'route_id'}) async {
     return _firestore
         .collection(collection)
         .where(idField, whereIn: _defaultRoutes)
@@ -70,11 +70,11 @@ class BusProvider {
   // bool get getIsConnected => isConnected;
 
   /// Returns a [Map] of <[BusRoute.routeShortName], [BusRoute]>  pairs.
-  Future<Map<String, BusRoute>> getRoutes() async {
+  Future<Map<String?, BusRoute>> getRoutes() async {
     QuerySnapshot response =
         await fetch('routes', idField: 'route_id', routes: _defaultRoutes);
 
-    Map<String, BusRoute> routeMap = Map.fromIterable(response.docs,
+    Map<String?, BusRoute> routeMap = Map.fromIterable(response.docs,
         key: (doc) => doc['route_short_name'],
         value: (doc) => BusRoute.fromJson(doc.data()));
 
@@ -82,24 +82,24 @@ class BusProvider {
   }
 
   /// Returns a [Map] of [BusShape] objects.
-  Future<Map<String, BusShape>> getPolylines() async {
+  Future<Map<String?, BusShape>> getPolylines() async {
     QuerySnapshot response =
         await fetch('polylines', idField: 'route_id', routes: _defaultRoutes);
 
-    Map<String, BusShape> shapesMap = Map.fromIterable(response.docs,
-        key: (doc) => routeMapping[doc['route_id']],
+    Map<String?, BusShape> shapesMap = Map.fromIterable(response.docs,
+        key: (doc) => routeMapping![doc['route_id']],
         value: (doc) => BusShape.fromJson(json.decode(doc['geoJSON'])));
     return shapesMap;
   }
 
   /// Returns a [Map] of [BusStop] objects.
-  Future<Map<String, BusStop>> getStops() async {
+  Future<Map<String?, BusStop>> getStops() async {
     QuerySnapshot response = await _firestore
         .collection('stops')
         .where('route_ids', arrayContainsAny: _defaultRoutes)
         .get();
 
-    Map<String, BusStop> stopsMap = Map.fromIterable(response.docs,
+    Map<String?, BusStop> stopsMap = Map.fromIterable(response.docs,
         key: (doc) => doc['stop_id'],
         value: (doc) => BusStop.fromJson(doc.data()));
 
@@ -107,12 +107,12 @@ class BusProvider {
   }
 
   /// Returns a [List] of [BusTrip] objects.
-  Future<Map<String, BusTrip>> getTrips() async {
+  Future<Map<String?, BusTrip>> getTrips() async {
     QuerySnapshot response =
         await fetch('trips', idField: 'route_id', routes: _defaultRoutes);
 
-    Map<String, BusTrip> tripList = Map.fromIterable(response.docs,
-        key: (doc) => routeMapping[doc['route_id']],
+    Map<String?, BusTrip> tripList = Map.fromIterable(response.docs,
+        key: (doc) => routeMapping![doc['route_id']],
         value: (doc) => BusTrip.fromJson(doc.data()));
 
     return tripList;
@@ -120,40 +120,38 @@ class BusProvider {
 
   /// Returns a [List] of [BusTripUpdate] objects.
   Future<List<BusTripUpdate>> getTripUpdates() async {
-    http.Response response =
-        await http.get(Uri.parse('http://64.128.172.149:8080/gtfsrealtime/TripUpdates'));
+    http.Response response = await http
+        .get(Uri.parse('http://64.128.172.149:8080/gtfsrealtime/TripUpdates'));
 
     // var routes = ["87", "286", "289", "288"];
-    List<BusTripUpdate> tripUpdatesList = response != null
-        ? FeedMessage.fromBuffer(response.bodyBytes)
+    List<BusTripUpdate> tripUpdatesList =
+        FeedMessage.fromBuffer(response.bodyBytes)
             .entity
             .map((entity) => BusTripUpdate.fromPBEntity(entity))
             // .where((update) =>
             // trips.contains(update.id)) // check if trip id is active
-            .toList()
-        : [];
+            .toList();
     return tripUpdatesList;
   }
 
   /// Returns a [List] of [BusVehicleUpdate] objects.
   Future<List<BusVehicleUpdate>> getVehicleUpdates() async {
-    http.Response response = await http
-        .get(Uri.parse('http://64.128.172.149:8080/gtfsrealtime/VehiclePositions'));
+    http.Response response = await http.get(
+        Uri.parse('http://64.128.172.149:8080/gtfsrealtime/VehiclePositions'));
 
-    List<BusVehicleUpdate> vehicleUpdatesList = response != null
-        ? FeedMessage.fromBuffer(response.bodyBytes)
+    List<BusVehicleUpdate> vehicleUpdatesList =
+        FeedMessage.fromBuffer(response.bodyBytes)
             .entity
             .map((entity) => BusVehicleUpdate.fromPBEntity(entity))
-            .where((update) => _defaultRoutes
-                .map((str) => str.split('-')[0])
+            .where((update) => _defaultRoutes!
+                .map((str) => str!.split('-')[0])
                 .contains(update.routeId))
-            .toList()
-        : [];
+            .toList();
     return vehicleUpdatesList;
   }
 
   /// Returns a [Map] of <route_name,[BusTimetable]>
-  Future<Map<String, BusTimetable>> getBusTimetable() async {
+  Future<Map<String?, BusTimetable>> getBusTimetable() async {
     String day = DateFormat('EEEE').format(DateTime.now());
     const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
     if (weekdays.contains(day)) {
@@ -164,19 +162,19 @@ class BusProvider {
         .where('route_id', whereIn: _defaultRoutes)
         .get();
 
-    Map<String, BusTimetable> timetableMap = {};
+    Map<String?, BusTimetable> timetableMap = {};
     // since timetables are nested in subcollection we have to retrieve those
     for (QueryDocumentSnapshot route in response.docs) {
       var table =
           await route.reference.collection(day.toLowerCase()).doc('0').get();
 
       if (table.data() != null) {
-        var entry = BusTimetable.fromJson(table.data());
+        var entry = BusTimetable.fromJson(table.data()!);
         // check if today is in exclusive dates
         final DateTime now = DateTime.now();
         final DateFormat formatter = DateFormat.yMMMMd('en_US');
         final String today = formatter.format(now);
-        if (entry.excludeDates.contains(today)) {
+        if (entry.excludeDates!.contains(today)) {
           // special case: today is excluded
           // search through other possible days for inclusive dates that contains today
           var possibleDays = ['weekday', 'saturday', 'sunday'];
@@ -187,12 +185,12 @@ class BusProvider {
                   .doc('0')
                   .get();
               if (table.data() != null) {
-                var temp = BusTimetable.fromJson(table.data());
-                if (temp.includeDates.contains(today) &&
-                    !temp.excludeDates.contains(today)) {
+                var temp = BusTimetable.fromJson(table.data()!);
+                if (temp.includeDates!.contains(today) &&
+                    !temp.excludeDates!.contains(today)) {
                   // check for exclusive just in case
                   // replace today's schedule with another day's (e.g: today is a weekday, but uses sunday schedule)
-                  timetableMap[routeMapping[route.get('route_id')]] = temp;
+                  timetableMap[routeMapping![route.get('route_id')]] = temp;
                   break;
                 }
               }
@@ -200,7 +198,7 @@ class BusProvider {
           }
         } else {
           // normal case: today not in exclude dates
-          timetableMap[routeMapping[route.get('route_id')]] = entry;
+          timetableMap[routeMapping![route.get('route_id')]] = entry;
         }
       }
     }

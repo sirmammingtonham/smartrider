@@ -8,7 +8,7 @@ FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 /// Fetchs data from the JSON API and returns a decoded JSON.
 Future<QuerySnapshot> fetch(String collection,
-    {String idField, List routes}) async {
+    {required String idField, List? routes}) async {
   return firestore
       .collection(collection)
       .where(idField, arrayContainsAny: routes)

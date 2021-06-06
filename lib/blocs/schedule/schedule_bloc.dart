@@ -21,15 +21,15 @@ part 'schedule_state.dart';
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final BusRepository busRepo;
   final MapBloc mapBloc;
-  PanelController _panelController;
-  TabController _tabController;
+  PanelController? _panelController;
+  TabController? _tabController;
 
-  bool _isBus;
-  bool _isTimeline;
+  bool _isBus = true;
+  late bool _isTimeline;
 
   /// bool to prevent [_handleTabSelection] callback from switching
   /// if type is updated via bloc event
-  bool _isChanging;
+  late bool _isChanging;
 
   /// notification stuff
   final FlutterLocalNotificationsPlugin _notifications =
@@ -45,7 +45,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       iOS: IOSNotificationDetails(
           presentAlert: true, presentBadge: true, presentSound: true));
 
-  ScheduleBloc({@required this.mapBloc, @required this.busRepo})
+  ScheduleBloc({required this.mapBloc, required this.busRepo})
       : super(ScheduleInitialState()) {
     _notifications.initialize(
         InitializationSettings(
@@ -58,23 +58,23 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     _isChanging = false;
   }
 
-  PanelController get panelController => _panelController;
-  TabController get tabController => _tabController;
+  PanelController? get panelController => _panelController;
+  TabController? get tabController => _tabController;
 
   void _handleTabSelection() {
-    if (_tabController.indexIsChanging && !_isChanging) {
+    if (_tabController!.indexIsChanging && !_isChanging) {
       mapBloc.add(MapTypeChangeEvent());
       add(ScheduleTypeChangeEvent());
     }
   }
 
-  Map<String, BusRoute> busRoutes;
-  Map<String, BusTimetable> busTables;
+  Map<String, BusRoute>? busRoutes;
+  Map<String?, BusTimetable>? busTables;
 
-  Future _notificationSelected(String payload) async {
-    var split = payload.split('/').map((coord) => double.tryParse(coord));
-    LatLng loc = LatLng(split.first, split.last);
-    _panelController.animatePanelToPosition(0);
+  Future _notificationSelected(String? payload) async {
+    var split = payload!.split('/').map((coord) => double.tryParse(coord));
+    LatLng loc = LatLng(split.first!, split.last!);
+    _panelController!.animatePanelToPosition(0);
     mapBloc.scrollToLocation(loc);
   }
 
@@ -107,9 +107,9 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     switch (event.runtimeType) {
       case ScheduleInitEvent:
         {
-          _tabController = (event as ScheduleInitEvent).tabController
+          _tabController = (event as ScheduleInitEvent).tabController!
             ..addListener(_handleTabSelection);
-          _panelController = (event as ScheduleInitEvent).panelController;
+          _panelController = event.panelController;
           // busRoutes = await busRepo.getRoutes;
           busTables = await busRepo.getTimetables;
           yield* _mapScheduleTimelineToState();
@@ -118,7 +118,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       case ScheduleViewChangeEvent:
         {
           _isTimeline = (event as ScheduleViewChangeEvent).isTimeline;
-          if ((event as ScheduleViewChangeEvent).isTimeline) {
+          if (event.isTimeline) {
             yield* _mapScheduleTimelineToState();
           } else {
             yield* _mapScheduleTableToState();
@@ -128,7 +128,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       case ScheduleTypeChangeEvent:
         {
           _isChanging = true;
-          _tabController.animateTo(_isBus ? 1 : 0);
+          _tabController!.animateTo(_isBus ? 1 : 0);
           _isChanging = false;
           _isBus = !_isBus;
           if (_isTimeline) {

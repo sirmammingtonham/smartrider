@@ -1,16 +1,16 @@
 /// Bus Trip model:
 /// Contains data for individual trips
 class BusTrip {
-  String tripId;
-  String routeId;
-  String serviceId;
-  String tripHeadsign;
+  String? tripId;
+  String? routeId;
+  String? serviceId;
+  String? tripHeadsign;
   Null tripShortName;
-  int directionId;
+  int? directionId;
   Null blockId;
-  String shapeId;
-  int wheelchairAccessible;
-  int bikesAllowed;
+  String? shapeId;
+  int? wheelchairAccessible;
+  int? bikesAllowed;
 
   BusTrip(
       {this.tripId,

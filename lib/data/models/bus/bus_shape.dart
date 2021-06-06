@@ -22,20 +22,20 @@ const BUS_INDICIES = {
 };
 
 class BusShape {
-  String routeId;
-  String routeShortName;
-  List<List<LatLng>> coordinates;
+  String? routeId;
+  String? routeShortName;
+  List<List<LatLng>>? coordinates;
 
   BusShape({this.routeId, this.coordinates});
 
   List<Polyline> get getPolylines {
     int i = 0;
-    return coordinates
+    return coordinates!
         .map((linestring) => Polyline(
             polylineId: PolylineId('${this.routeId}${i++}'),
-            color: BUS_COLORS[this.routeShortName].withAlpha(255),
-            width: BUS_WIDTHS[this.routeShortName],
-            zIndex: BUS_INDICIES[this.routeShortName],
+            color: BUS_COLORS[this.routeShortName!]!.withAlpha(255),
+            width: BUS_WIDTHS[this.routeShortName!]!,
+            zIndex: BUS_INDICIES[this.routeShortName!]!,
             // patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
             points: linestring))
         .toList();
@@ -43,7 +43,7 @@ class BusShape {
 
   BusShape.fromJson(Map<String, dynamic> json) {
     this.routeId = json['properties']['route_id'];
-    this.routeShortName = routeId.substring(0, routeId.indexOf('-'));
+    this.routeShortName = routeId!.substring(0, routeId!.indexOf('-'));
     this.coordinates = [];
 
     // check if single linestring or multi-linestring and handle differently
@@ -52,14 +52,14 @@ class BusShape {
       json['coordinates'].forEach((p) {
         linestring.add(LatLng(p[1], p[0]));
       });
-      coordinates.add(linestring);
+      coordinates!.add(linestring);
     } else {
       json['coordinates'].forEach((l) {
         List<LatLng> linestring = [];
         l.forEach((p) {
           linestring.add(LatLng(p[1], p[0]));
         });
-        coordinates.add(linestring);
+        coordinates!.add(linestring);
       });
     }
   }

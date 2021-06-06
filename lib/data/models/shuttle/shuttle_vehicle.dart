@@ -1,10 +1,10 @@
 class ShuttleVehicle {
-  int id;
-  String name;
-  String created;
-  String updated;
-  bool enabled;
-  String trackerId;
+  int? id;
+  String? name;
+  String? created;
+  String? updated;
+  bool? enabled;
+  String? trackerId;
 
   ShuttleVehicle(
       {this.id,

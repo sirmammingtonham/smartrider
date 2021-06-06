@@ -1,7 +1,7 @@
 class BusCalendarDates{
-  String serviceId;
-  String date;
-  String exceptionType;
+  String? serviceId;
+  String? date;
+  String? exceptionType;
 
   BusCalendarDates({
     this.serviceId,

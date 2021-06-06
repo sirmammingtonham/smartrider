@@ -6,7 +6,7 @@ import 'package:smartrider/pages/home.dart';
 class WelcomeScreen extends StatelessWidget {
   final HomePage homePage;
 
-  const WelcomeScreen({@required this.homePage});
+  const WelcomeScreen({required this.homePage});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class WelcomeScreen extends StatelessWidget {
       if (state is AuthenticationFailure) {
         final SnackBar snackbar = SnackBar(
             content: Text(
-          state.errorMessage,
+          state.errorMessage!,
           textAlign: TextAlign.center,
         ));
         Scaffold.of(context).showSnackBar(snackbar);
@@ -64,10 +64,10 @@ class _SignupUIState extends State<SignupUI> {
   TextEditingController _nameController = TextEditingController();
   String role =
       'Student'; // default role is student (implement role chooser in the future)
-  PersistentBottomSheetController _sheetController;
+  late PersistentBottomSheetController _sheetController;
   bool _obscurePass = true;
 
-  Color primary;
+  Color? primary;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -191,7 +191,7 @@ class _SignupUIState extends State<SignupUI> {
       child: TextFormField(
         controller: controller,
         obscureText: isPassField ? _obscurePass : false,
-        validator: valFunc,
+        validator: valFunc as String? Function(String?)?,
         style: TextStyle(fontSize: 20, color: Theme.of(context).accentColor),
         decoration: InputDecoration(
           errorStyle: TextStyle(color: Theme.of(context).errorColor),
@@ -250,7 +250,7 @@ class _SignupUIState extends State<SignupUI> {
                         icon: _obscurePass
                             ? Icon(Icons.visibility_off)
                             : Icon(Icons.visibility),
-                        onPressed: () => _sheetController.setState(() {
+                        onPressed: () => _sheetController.setState!(() {
                               _obscurePass = !_obscurePass;
                             })),
                   ),
@@ -285,7 +285,7 @@ class _SignupUIState extends State<SignupUI> {
   }
 
   void _loginUser() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       BlocProvider.of<AuthenticationBloc>(context).add(
         AuthenticationLoggedIn(
             _emailController.text, _passwordController.text, role),
@@ -299,7 +299,7 @@ class _SignupUIState extends State<SignupUI> {
   }
 
   void _registerUser() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       BlocProvider.of<AuthenticationBloc>(context).add(
         AuthenticationSignUp(_emailController.text, _nameController.text,
             _passwordController.text, _rinController.text, role),
@@ -318,7 +318,7 @@ class _SignupUIState extends State<SignupUI> {
     }
   }
 
-  String _emailValidation(String value) {
+  String? _emailValidation(String value) {
     if (value.isEmpty)
       return 'Enter an email';
     else if (!value.contains("@rpi.edu"))
@@ -327,7 +327,7 @@ class _SignupUIState extends State<SignupUI> {
       return null;
   }
 
-  String _passValidation(String value) {
+  String? _passValidation(String value) {
     if (value.isEmpty)
       return "Please enter a password.";
     else if (value.length < 6)
@@ -337,7 +337,7 @@ class _SignupUIState extends State<SignupUI> {
   }
 
   //     === DEPRECIATED ===
-  String _rinValidation(String val) {
+  String? _rinValidation(String val) {
     /*if (val.trim().length != 9 || !val.startsWith("66")) {
       return 'Please enter a valid RIN';
     }
@@ -345,7 +345,7 @@ class _SignupUIState extends State<SignupUI> {
     return null;
   }
 
-  String _nameValidation(String val) {
+  String? _nameValidation(String val) {
     if (val.trim().isEmpty) return "Please don't leave the name field blank";
 
     return null;
@@ -353,7 +353,7 @@ class _SignupUIState extends State<SignupUI> {
 
   void _showLoginSheet() {
     _sheetController =
-        _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
+        _scaffoldKey.currentState!.showBottomSheet<void>((BuildContext context) {
       return Container(
         child: ClipRRect(
           borderRadius: BorderRadius.only(
@@ -476,7 +476,7 @@ class _SignupUIState extends State<SignupUI> {
 
   void _showRegisterSheet() {
     _sheetController =
-        _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
+        _scaffoldKey.currentState!.showBottomSheet<void>((BuildContext context) {
       return Container(
         child: ClipRRect(
           borderRadius: BorderRadius.only(

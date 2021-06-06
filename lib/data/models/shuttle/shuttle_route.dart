@@ -2,18 +2,18 @@ import 'dart:ui';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ShuttleRoute {
-  int id;
-  String name;
-  String description;
-  bool enabled;
-  Color color;
-  int width;
-  List<int> stopIds;
-  String created;
-  String updated;
-  List<Point> points;
-  bool active;
-  List<Schedule> schedule;
+  int? id;
+  String? name;
+  String? description;
+  bool? enabled;
+  Color? color;
+  int? width;
+  List<int>? stopIds;
+  String? created;
+  String? updated;
+  List<Point>? points;
+  bool? active;
+  List<Schedule>? schedule;
 
   ShuttleRoute(
       {this.id,
@@ -30,10 +30,10 @@ class ShuttleRoute {
       this.schedule});
 
   Polyline get getPolyline => Polyline(
-        polylineId: PolylineId(this.name),
-        color: this.color,
+        polylineId: PolylineId(this.name!),
+        color: this.color!,
         width: 4,
-        points: this.points.map((points) => points.getLatLng).toList(),
+        points: this.points!.map((points) => points.getLatLng).toList(),
       );
 
   ShuttleRoute.fromJson(Map<String, dynamic> json) {
@@ -47,16 +47,16 @@ class ShuttleRoute {
     created = json['created'];
     updated = json['updated'];
     if (json['points'] != null) {
-      points = new List<Point>();
+      points = [];
       json['points'].forEach((v) {
-        points.add(new Point.fromJson(v));
+        points!.add(new Point.fromJson(v));
       });
     }
     active = json['active'];
     if (json['schedule'] != null) {
-      schedule = new List<Schedule>();
+      schedule = [];
       json['schedule'].forEach((v) {
-        schedule.add(new Schedule.fromJson(v));
+        schedule!.add(new Schedule.fromJson(v));
       });
     }
   }
@@ -73,23 +73,23 @@ class ShuttleRoute {
     data['created'] = this.created;
     data['updated'] = this.updated;
     if (this.points != null) {
-      data['points'] = this.points.map((v) => v.toJson()).toList();
+      data['points'] = this.points!.map((v) => v.toJson()).toList();
     }
     data['active'] = this.active;
     if (this.schedule != null) {
-      data['schedule'] = this.schedule.map((v) => v.toJson()).toList();
+      data['schedule'] = this.schedule!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class Point {
-  double latitude;
-  double longitude;
+  double? latitude;
+  double? longitude;
 
   Point({this.latitude, this.longitude});
 
-  LatLng get getLatLng => LatLng(latitude, longitude);
+  LatLng get getLatLng => LatLng(latitude!, longitude!);
 
   Point.fromJson(Map<String, dynamic> json) {
     latitude = json['latitude'];
@@ -105,12 +105,12 @@ class Point {
 }
 
 class Schedule {
-  int id;
-  int routeId;
-  int startDay;
-  String startTime;
-  int endDay;
-  String endTime;
+  int? id;
+  int? routeId;
+  int? startDay;
+  String? startTime;
+  int? endDay;
+  String? endTime;
 
   Schedule(
       {this.id,

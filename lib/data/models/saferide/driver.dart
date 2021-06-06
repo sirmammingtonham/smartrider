@@ -1,10 +1,10 @@
 class Driver {
-  String deviceId;
-  String name;
-  String email;
-  String phone;
-  bool available;
-  String licensePlate;
+  String? deviceId;
+  String? name;
+  String? email;
+  String? phone;
+  bool? available;
+  String? licensePlate;
 
   Driver(
       {this.deviceId,

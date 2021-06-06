@@ -58,10 +58,10 @@ class _HomePage extends StatefulWidget {
 /// Builds the current instance of the home page.
 class _HomePageState extends State<_HomePage>
     with SingleTickerProviderStateMixin {
-  PanelController _panelController; // Lets the user control the stop tabs
-  TabController _tabController;
+  PanelController? _panelController; // Lets the user control the stop tabs
+  TabController? _tabController;
   // The height of the tab when the user is viewing the shuttle and bus stops
-  double _panelHeightOpen;
+  late double _panelHeightOpen;
 
   double _panelHeightClosed = 95.0; // Height of the closed tab
 
@@ -76,8 +76,8 @@ class _HomePageState extends State<_HomePage>
   }
 
   void startShowcase(PrefsLoadedState prefState, context) {
-    if (prefState.prefs.getBool('firstTimeLoad') == true) {
-      ShowCaseWidget.of(context).startShowCase([
+    if (prefState.prefs!.getBool('firstTimeLoad') == true) {
+      ShowCaseWidget.of(context)!.startShowCase([
         showcaseMap,
         showcaseSettings,
         showcaseSearch,
@@ -86,15 +86,15 @@ class _HomePageState extends State<_HomePage>
         showcaseLocation,
         showcaseSlidingPanel
       ]);
-      prefState.prefs.setBool('firstTimeLoad', false);
+      prefState.prefs!.setBool('firstTimeLoad', false);
     }
   }
 
   void startTimelineShowcase(PrefsLoadedState prefState, context) {
-    if (prefState.prefs.getBool('firstSlideUp') == true) {
-      ShowCaseWidget.of(context).startShowCase(
+    if (prefState.prefs!.getBool('firstSlideUp') == true) {
+      ShowCaseWidget.of(context)!.startShowCase(
           [showcaseTransportTab, showcaseBusTab, showcaseTimeline]);
-      prefState.prefs.setBool('firstSlideUp', false);
+      prefState.prefs!.setBool('firstSlideUp', false);
     }
   }
 
@@ -105,7 +105,7 @@ class _HomePageState extends State<_HomePage>
         maxHeight: _panelHeightOpen,
         minHeight: _panelHeightClosed,
         onPanelOpened: () {
-          startTimelineShowcase(prefsState, context);
+          startTimelineShowcase(prefsState as PrefsLoadedState, context);
         },
         parallaxEnabled: true,
         renderPanelSheet: false,
@@ -125,7 +125,7 @@ class _HomePageState extends State<_HomePage>
                 ),
               ),
               leading: Icon(Icons.arrow_upward),
-              title: Text(mapState is MapLoadedState && !mapState.isBus
+              title: Text(mapState is MapLoadedState && !mapState.isBus!
                   ? 'Shuttle Schedules'
                   : 'Bus Schedules'),
               actions: <Widget>[
@@ -161,16 +161,16 @@ class _HomePageState extends State<_HomePage>
           final mapState = states.get<MapState>();
           final prefState = states.get<PrefsState>();
           if (saferideState is SaferideNoState) {
-            _panelController.show();
+            _panelController!.show();
           } else if (saferideState is SaferideSelectionState) {
-            _panelController.hide();
+            _panelController!.hide();
           }
           if (prefState is PrefsLoadingState) {
             return Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           } else if (prefState is PrefsLoadedState) {
-            WidgetsBinding.instance
+            WidgetsBinding.instance!
                 .addPostFrameCallback((_) => startShowcase(prefState, context));
             return _slidingPanel(saferideState, mapState, prefState, context);
           } else if (prefState is PrefsSavingState) {

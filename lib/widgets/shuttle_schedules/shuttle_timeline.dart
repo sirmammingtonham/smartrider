@@ -24,7 +24,7 @@ const List<String> choices = [
 /// Creates an object that contains all the shuttles and their respective stops.
 class ShuttleTimeline extends StatefulWidget {
   final PanelController panelController;
-  ShuttleTimeline({Key key, @required this.panelController}) : super(key: key);
+  ShuttleTimeline({Key? key, required this.panelController}) : super(key: key);
   @override
   ShuttleTimelineState createState() => ShuttleTimelineState();
 }
@@ -46,7 +46,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     Colors.orange
   ];
 
-  TabController _tabController;
+  TabController? _tabController;
   var isExpandedList = List<bool>.filled(100, false);
   @override
 
@@ -55,7 +55,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     super.initState();
     _tabController =
         TabController(vsync: this, length: shuttleTabs.length, initialIndex: 1);
-    _tabController.addListener(() {
+    _tabController!.addListener(() {
       isExpandedList.fillRange(0, 100, false);
       _handleTabSelection();
     });
@@ -72,7 +72,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       TabBar(
-        indicatorColor: SHUTTLE_COLORS[_tabController.index],
+        indicatorColor: SHUTTLE_COLORS[_tabController!.index],
         isScrollable: true,
         tabs: shuttleTabs,
         labelColor: Theme.of(context).brightness == Brightness.light
@@ -110,7 +110,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
           subtitle: Text('Info unavailable'),
           leading: CustomPaint(
               painter: FillPainter(
-                  circleColor: SHUTTLE_COLORS[_tabController.index],
+                  circleColor: SHUTTLE_COLORS[_tabController!.index],
                   lineColor: Theme.of(context).primaryColorLight,
                   first: index == 0,
                   last: index == curStopList.length - 1),
@@ -211,11 +211,10 @@ _getTimeIndex(List<String> curTimeList) {
   var f = DateFormat('H.m');
   double min = double.maxFinite;
   double curTime = double.parse(f.format(now));
-  double compTime;
-  String closest;
+  String? closest;
   curTimeList.forEach((time) {
     var t = time.replaceAll(':', '.');
-    compTime = double.tryParse(t.substring(0, t.length - 2));
+    double? compTime = double.tryParse(t.substring(0, t.length - 2));
     if (compTime == null) return;
     if (t.endsWith('pm') && !t.startsWith("12")) {
       compTime += 12.0;
@@ -233,8 +232,8 @@ _getTimeIndex(List<String> curTimeList) {
 /// schedule list for each shuttle. This particular class is responsible
 /// for the first stop.
 class FillPainter extends CustomPainter {
-  final Color circleColor;
-  final Color lineColor;
+  final Color? circleColor;
+  final Color? lineColor;
   final bool first;
   final bool last;
   final double overflow;
@@ -252,7 +251,7 @@ class FillPainter extends CustomPainter {
     final paint = Paint();
     // cascade notation, look it up it's pretty cool
     Paint line = new Paint()
-      ..color = lineColor
+      ..color = lineColor!
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.fill
       ..strokeWidth = 6;
@@ -271,7 +270,7 @@ class FillPainter extends CustomPainter {
     }
 
     // set the color property of the paint
-    paint.color = circleColor;
+    paint.color = circleColor!;
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = 3.0;
 
@@ -289,8 +288,8 @@ class FillPainter extends CustomPainter {
 /// schedule list for each shuttle. This particular class is responsible
 /// for all stops but the first.
 class StrokePainter extends CustomPainter {
-  final Color circleColor;
-  final Color lineColor;
+  final Color? circleColor;
+  final Color? lineColor;
   final bool last;
   StrokePainter({
     this.circleColor,
@@ -301,7 +300,7 @@ class StrokePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint line = new Paint()
-      ..color = lineColor
+      ..color = lineColor!
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.fill
       ..strokeWidth = 6;

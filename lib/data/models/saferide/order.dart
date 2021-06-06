@@ -15,27 +15,27 @@ enum TripStatus {
 }
 
 class Order {
-  String id;
-  TripStatus status;
-  String tripId;
-  GeoPoint pickup;
-  GeoPoint dropoff;
-  String
+  String? id;
+  TripStatus? status;
+  String? tripId;
+  GeoPoint? pickup;
+  GeoPoint? dropoff;
+  String?
       rider; // currently just email, TODO: add more stuff from the user's account like phone number, name, etc
-  Driver driver;
-  Timestamp createdAt;
-  Timestamp updatedAt;
-  int queuePosition;
-  int waitEstimate;
-  Estimate estimate;
+  Driver? driver;
+  Timestamp? createdAt;
+  Timestamp? updatedAt;
+  int? queuePosition;
+  int? waitEstimate;
+  Estimate? estimate;
 
   Order(
       {this.id,
-      @required this.status,
+      required this.status,
       this.tripId,
-      @required this.pickup,
-      @required this.dropoff,
-      @required this.rider,
+      required this.pickup,
+      required this.dropoff,
+      required this.rider,
       this.driver,
       this.createdAt,
       this.updatedAt,

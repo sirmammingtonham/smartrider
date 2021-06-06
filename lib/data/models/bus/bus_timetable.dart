@@ -1,19 +1,19 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class BusTimetable {
-  String routeId;
-  int directionId;
-  String directionName;
-  String label;
-  String startDate;
-  String endDate;
-  String serviceId;
+  String? routeId;
+  int? directionId;
+  String? directionName;
+  String? label;
+  String? startDate;
+  String? endDate;
+  String? serviceId;
 
-  List<String> includeDates;
-  List<String> excludeDates;
-  List<TimetableStop> stops;
-  List<String> formatted;
-  List<int> timestamps;
+  List<String>? includeDates;
+  List<String>? excludeDates;
+  List<TimetableStop>? stops;
+  List<String>? formatted;
+  List<int>? timestamps;
 
   BusTimetable(
       {this.routeId,
@@ -28,11 +28,11 @@ class BusTimetable {
       this.stops,
       this.formatted});
 
-  int get numColumns => stops.length;
-  int get numRows => (formatted.length / stops.length).truncate();
+  int get numColumns => stops!.length;
+  int get numRows => (formatted!.length / stops!.length).truncate();
 
-  String getTime(int x, int y) => formatted[y * stops.length + x];
-  int getTimestamp(int x, int y) => timestamps[y * stops.length + x];
+  String getTime(int x, int y) => formatted![y * stops!.length + x];
+  int getTimestamp(int x, int y) => timestamps![y * stops!.length + x];
 
   /// returns a list of [string, int] pairs, string represents a formatted time and
   /// int represents
@@ -120,14 +120,14 @@ class BusTimetable {
 }
 
 class TimetableStop {
-  String stopId;
-  double stopLat;
-  double stopLon;
-  String stopName;
+  String? stopId;
+  double? stopLat;
+  double? stopLon;
+  String? stopName;
 
   TimetableStop({this.stopId, this.stopLat, this.stopLon, this.stopName});
 
-  LatLng get latLng => LatLng(stopLat, stopLon);
+  LatLng get latLng => LatLng(stopLat!, stopLon!);
 
   TimetableStop.fromJson(Map<String, dynamic> json) {
     stopId = json['stop_id'];

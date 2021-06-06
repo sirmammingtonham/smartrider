@@ -1,11 +1,11 @@
 class Estimate {
-  String arriveAt;
-  int distance;
-  int duration;
-  int remainingDuration;
-  String startPlace;
-  String endPlace;
-  Map<String, dynamic> polyline; // update type later
+  String? arriveAt;
+  int? distance;
+  int? duration;
+  int? remainingDuration;
+  String? startPlace;
+  String? endPlace;
+  Map<String, dynamic>? polyline; // update type later
 
   Estimate(
       {this.arriveAt,

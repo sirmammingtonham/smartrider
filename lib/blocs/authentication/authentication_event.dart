@@ -32,6 +32,6 @@ class AuthenticationSignUp extends AuthenticationEvent {
 }
 
 class AuthentificationResetPass extends AuthenticationEvent {
-  final String email;
+  final String? email;
   const AuthentificationResetPass(this.email);
 }

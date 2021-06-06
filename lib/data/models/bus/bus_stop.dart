@@ -4,29 +4,29 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 /// Bus Stop model:
 /// Contains data related to Bus Stops
 class BusStop {
-  String stopId;
-  String stopCode;
-  String stopName;
-  int ttsStopName;
-  String stopDesc;
-  double stopLat;
-  double stopLon;
-  String zoneId;
-  String stopUrl;
-  int locationType;
-  int parentStation;
-  String stopTimezone;
-  int wheelchairBoarding;
-  int levelId;
-  int platformCode;
+  String? stopId;
+  String? stopCode;
+  String? stopName;
+  int? ttsStopName;
+  String? stopDesc;
+  double? stopLat;
+  double? stopLon;
+  String? zoneId;
+  String? stopUrl;
+  int? locationType;
+  int? parentStation;
+  String? stopTimezone;
+  int? wheelchairBoarding;
+  int? levelId;
+  int? platformCode;
 
-  List<int> arrivalTimes;
-  List<int> departureTimes;
-  List<int> stopSequence;
+  List<int>? arrivalTimes;
+  List<int>? departureTimes;
+  List<int>? stopSequence;
 
-  List<String> routeIds;
-  List<String> shapeIds;
-  List<String> tripIds;
+  List<String>? routeIds;
+  List<String>? shapeIds;
+  List<String>? tripIds;
 
   BusStop(
       {this.stopId,
@@ -51,7 +51,7 @@ class BusStop {
       this.shapeIds,
       this.tripIds});
 
-  LatLng get getLatLng => LatLng(this.stopLat, this.stopLon);
+  LatLng get getLatLng => LatLng(this.stopLat!, this.stopLon!);
 
   BusStop.fromJson(Map<String, dynamic> json) {
     stopId = json['stop_id'];

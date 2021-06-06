@@ -4,30 +4,30 @@ abstract class AuthenticationState extends Equatable {
   const AuthenticationState();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class AuthenticationInit extends AuthenticationState {}
 
 class AuthenticationSuccess extends AuthenticationState {
-  final String displayName,role;
+  final String? displayName,role;
 
   const AuthenticationSuccess(this.displayName,this.role);
 
   @override
-  List<Object> get props => [displayName];
+  List<Object?> get props => [displayName];
 
   @override
   String toString() => 'AuthenticationSuccess($displayName)';
 }
 
 class AuthenticationFailure extends AuthenticationState {
-  final String errorMessage;
+  final String? errorMessage;
 
   const AuthenticationFailure(this.errorMessage);
   
   @override
-  List<Object> get props => [errorMessage];
+  List<Object?> get props => [errorMessage];
 
   @override
   String toString() => 'AuthenticationFailure($errorMessage)';

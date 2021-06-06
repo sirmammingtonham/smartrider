@@ -24,15 +24,15 @@ abstract class ListItem {
 
 /// Represents the physical profile page.
 class ProfilePage extends StatefulWidget {
-  final String role; // Decides what role the user has (student, etc.)
-  final String email; // The user's email that is linked to their account.
-  final String name; // Name of the user.
+  final String? role; // Decides what role the user has (student, etc.)
+  final String? email; // The user's email that is linked to their account.
+  final String? name; // Name of the user.
   ProfilePage(
       {this.title,
-      @required this.name,
-      @required this.role,
-      @required this.email});
-  final String title;
+      required this.name,
+      required this.role,
+      required this.email});
+  final String? title;
 
   /// Sets the state of the profile page.
   @override
@@ -157,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           // Profile greeting text
                           Center(
                               child: Text(
-                            'Hello, ' + widget.role,
+                            'Hello, ' + widget.role!,
                             style: Theme.of(context).textTheme.headline3,
                           )),
                         ],
@@ -178,7 +178,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     fontSize: 60,
                                     color: Theme.of(context)
                                         .textTheme
-                                        .headline1
+                                        .headline1!
                                         .color))
                             : null),
                   ),
@@ -200,15 +200,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       // Describes the role
                       ListTile(
                           title: Text("Role"),
-                          subtitle: Text(widget.role),
-                          leading: this.determinerole(widget.role)
+                          subtitle: Text(widget.role!),
+                          leading: this.determinerole(widget.role!)
                               ? Icon(Icons.book)
                               : Icon(Icons.drive_eta)),
                       // Describes the user's email
                       ListTile(
                         title: Text("Email"),
                         leading: Icon(Icons.email),
-                        subtitle: Text(widget.email),
+                        subtitle: Text(widget.email!),
                       )
                     ],
                   ),

@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: gtfs-realtime.proto
 //
-// @dart = 2.3
+
 // ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
 
 import 'dart:core' as $core;
@@ -34,7 +34,7 @@ class FeedMessage extends $pb.GeneratedMessage {
   static $pb.PbList<FeedMessage> createRepeated() => $pb.PbList<FeedMessage>();
   @$core.pragma('dart2js:noInline')
   static FeedMessage getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FeedMessage>(create);
-  static FeedMessage _defaultInstance;
+  static FeedMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
   FeedHeader get header => $_getN(0);
@@ -72,7 +72,7 @@ class FeedHeader extends $pb.GeneratedMessage {
   static $pb.PbList<FeedHeader> createRepeated() => $pb.PbList<FeedHeader>();
   @$core.pragma('dart2js:noInline')
   static FeedHeader getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FeedHeader>(create);
-  static FeedHeader _defaultInstance;
+  static FeedHeader? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get gtfsRealtimeVersion => $_getSZ(0);
@@ -125,7 +125,7 @@ class FeedEntity extends $pb.GeneratedMessage {
   static $pb.PbList<FeedEntity> createRepeated() => $pb.PbList<FeedEntity>();
   @$core.pragma('dart2js:noInline')
   static FeedEntity getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FeedEntity>(create);
-  static FeedEntity _defaultInstance;
+  static FeedEntity? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get id => $_getSZ(0);
@@ -200,7 +200,7 @@ class TripUpdate_StopTimeEvent extends $pb.GeneratedMessage {
   static $pb.PbList<TripUpdate_StopTimeEvent> createRepeated() => $pb.PbList<TripUpdate_StopTimeEvent>();
   @$core.pragma('dart2js:noInline')
   static TripUpdate_StopTimeEvent getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TripUpdate_StopTimeEvent>(create);
-  static TripUpdate_StopTimeEvent _defaultInstance;
+  static TripUpdate_StopTimeEvent? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get delay => $_getIZ(0);
@@ -253,7 +253,7 @@ class TripUpdate_StopTimeUpdate extends $pb.GeneratedMessage {
   static $pb.PbList<TripUpdate_StopTimeUpdate> createRepeated() => $pb.PbList<TripUpdate_StopTimeUpdate>();
   @$core.pragma('dart2js:noInline')
   static TripUpdate_StopTimeUpdate getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TripUpdate_StopTimeUpdate>(create);
-  static TripUpdate_StopTimeUpdate _defaultInstance;
+  static TripUpdate_StopTimeUpdate? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get stopSequence => $_getIZ(0);
@@ -328,7 +328,7 @@ class TripUpdate extends $pb.GeneratedMessage {
   static $pb.PbList<TripUpdate> createRepeated() => $pb.PbList<TripUpdate>();
   @$core.pragma('dart2js:noInline')
   static TripUpdate getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TripUpdate>(create);
-  static TripUpdate _defaultInstance;
+  static TripUpdate? _defaultInstance;
 
   @$pb.TagNumber(1)
   TripDescriptor get trip => $_getN(0);
@@ -401,7 +401,7 @@ class VehiclePosition extends $pb.GeneratedMessage {
   static $pb.PbList<VehiclePosition> createRepeated() => $pb.PbList<VehiclePosition>();
   @$core.pragma('dart2js:noInline')
   static VehiclePosition getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<VehiclePosition>(create);
-  static VehiclePosition _defaultInstance;
+  static VehiclePosition? _defaultInstance;
 
   @$pb.TagNumber(1)
   TripDescriptor get trip => $_getN(0);
@@ -519,7 +519,7 @@ class Alert extends $pb.GeneratedMessage {
   static $pb.PbList<Alert> createRepeated() => $pb.PbList<Alert>();
   @$core.pragma('dart2js:noInline')
   static Alert getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Alert>(create);
-  static Alert _defaultInstance;
+  static Alert? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<TimeRange> get activePeriod => $_getList(0);
@@ -630,7 +630,7 @@ class TimeRange extends $pb.GeneratedMessage {
   static $pb.PbList<TimeRange> createRepeated() => $pb.PbList<TimeRange>();
   @$core.pragma('dart2js:noInline')
   static TimeRange getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TimeRange>(create);
-  static TimeRange _defaultInstance;
+  static TimeRange? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get start => $_getI64(0);
@@ -674,7 +674,7 @@ class Position extends $pb.GeneratedMessage {
   static $pb.PbList<Position> createRepeated() => $pb.PbList<Position>();
   @$core.pragma('dart2js:noInline')
   static Position getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Position>(create);
-  static Position _defaultInstance;
+  static Position? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.double get latitude => $_getN(0);
@@ -746,7 +746,7 @@ class TripDescriptor extends $pb.GeneratedMessage {
   static $pb.PbList<TripDescriptor> createRepeated() => $pb.PbList<TripDescriptor>();
   @$core.pragma('dart2js:noInline')
   static TripDescriptor getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TripDescriptor>(create);
-  static TripDescriptor _defaultInstance;
+  static TripDescriptor? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get tripId => $_getSZ(0);
@@ -824,7 +824,7 @@ class VehicleDescriptor extends $pb.GeneratedMessage {
   static $pb.PbList<VehicleDescriptor> createRepeated() => $pb.PbList<VehicleDescriptor>();
   @$core.pragma('dart2js:noInline')
   static VehicleDescriptor getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<VehicleDescriptor>(create);
-  static VehicleDescriptor _defaultInstance;
+  static VehicleDescriptor? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get id => $_getSZ(0);
@@ -877,7 +877,7 @@ class EntitySelector extends $pb.GeneratedMessage {
   static $pb.PbList<EntitySelector> createRepeated() => $pb.PbList<EntitySelector>();
   @$core.pragma('dart2js:noInline')
   static EntitySelector getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<EntitySelector>(create);
-  static EntitySelector _defaultInstance;
+  static EntitySelector? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get agencyId => $_getSZ(0);
@@ -947,7 +947,7 @@ class TranslatedString_Translation extends $pb.GeneratedMessage {
   static $pb.PbList<TranslatedString_Translation> createRepeated() => $pb.PbList<TranslatedString_Translation>();
   @$core.pragma('dart2js:noInline')
   static TranslatedString_Translation getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TranslatedString_Translation>(create);
-  static TranslatedString_Translation _defaultInstance;
+  static TranslatedString_Translation? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get text => $_getSZ(0);
@@ -987,7 +987,7 @@ class TranslatedString extends $pb.GeneratedMessage {
   static $pb.PbList<TranslatedString> createRepeated() => $pb.PbList<TranslatedString>();
   @$core.pragma('dart2js:noInline')
   static TranslatedString getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TranslatedString>(create);
-  static TranslatedString _defaultInstance;
+  static TranslatedString? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<TranslatedString_Translation> get translation => $_getList(0);

@@ -5,7 +5,7 @@ import 'package:smartrider/data/models/backend/user.dart';
 
 class DatabaseService {
   //unique user id, will be generated from authorization class after a user successfully logs in
-  final String usid;
+  final String? usid;
   //reference to the user collection in the database
   final CollectionReference _userCollection =
       FirebaseFirestore.instance.collection('users');
@@ -13,8 +13,8 @@ class DatabaseService {
   // final CollectionReference _shuttleCollection =
   //     FirebaseFirestore.instance.collection('active_shuttles');
   DatabaseService({this.usid});
-  Future updateUserData(String email, String userType,
-      {String rin = "0", String name}) async {
+  Future updateUserData(String? email, String userType,
+      {String rin = "0", String? name}) async {
     //Updates the user data for the user corresponding to the usid
     return await _userCollection.doc(usid).set({
       'email': name,
@@ -24,7 +24,7 @@ class DatabaseService {
     });
   }
 
-  Future<String> getUserRole() async{
+  Future<String?> getUserRole() async{
     DocumentSnapshot snapshot = await _userCollection.doc(usid).get();
     if(snapshot.exists){
       return snapshot.get('userType')?.toString();

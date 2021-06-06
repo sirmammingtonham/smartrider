@@ -13,9 +13,9 @@ class SaferideProvider {
   final HypertrackViewsFlutter hypertrack =
       HypertrackViewsFlutter(PUBLISHABLE_KEY);
 
-  String orderId;
+  String? orderId;
 
-  Map<String, Driver> _driversMap;
+  Map<String?, Driver>? _driversMap;
 
   //fill in the fields specified in order.dart with the orders collection in the firebase
   Future<Stream<DocumentSnapshot>> createOrder(Order order) async {
@@ -35,7 +35,7 @@ class SaferideProvider {
     }
   }
 
-  Future<Map<String, Driver>> getDrivers() async {
+  Future<Map<String?, Driver>?> getDrivers() async {
     QuerySnapshot response = await firestore.collection('drivers').get();
     _driversMap = Map.fromIterable(response.docs,
         key: (doc) => doc['device_id'],
@@ -49,13 +49,13 @@ class SaferideProvider {
   Stream<MovementStatus> subscribeToDeviceUpdates(String deviceId) =>
       hypertrack.subscribeToDeviceUpdates(deviceId);
 
-  Future<Map<String, MovementStatus>> getDriverUpdates() async {
+  Future<Map<String?, MovementStatus>> getDriverUpdates() async {
     assert(_driversMap != null);
 
-    Map<String, MovementStatus> updates = {};
-    for (String id in _driversMap.keys) {
+    Map<String?, MovementStatus> updates = {};
+    for (String? id in _driversMap!.keys) {
       try {
-        updates[id] = await hypertrack.getDeviceUpdate(id);
+        updates[id] = await hypertrack.getDeviceUpdate(id!);
       } on PlatformException catch (e) {
         // TODO: better error handling
         // (not really an error, just signals the device is inactive)
@@ -67,10 +67,10 @@ class SaferideProvider {
     return updates;
   }
 
-  Map<String, Stream<MovementStatus>> getDriverUpdateSubscriptions() {
+  Map<String?, Stream<MovementStatus>> getDriverUpdateSubscriptions() {
     assert(_driversMap != null);
 
-    return Map.fromIterable(_driversMap.keys,
+    return Map.fromIterable(_driversMap!.keys,
         key: (id) => id,
         value: (id) => hypertrack
             .subscribeToDeviceUpdates(id)

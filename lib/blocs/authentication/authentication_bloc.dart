@@ -12,7 +12,7 @@ class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthRepository _authRepository;
 
-  AuthenticationBloc({@required AuthRepository authRepository})
+  AuthenticationBloc({required AuthRepository authRepository})
       : assert(authRepository != null),
         _authRepository = authRepository,
         super(AuthenticationInit());
@@ -28,8 +28,8 @@ class AuthenticationBloc
       case AuthenticationLoggedIn:
         yield* _mapAuthenticationLoggedInToState(
             (event as AuthenticationLoggedIn).email,
-            (event as AuthenticationLoggedIn).pass,
-            (event as AuthenticationLoggedIn).role);
+            event.pass,
+            event.role);
         break;
       case AuthenticationLoggedOut:
         yield* _mapAuthenticationLoggedOutToState();
@@ -37,10 +37,10 @@ class AuthenticationBloc
       case AuthenticationSignUp:
         yield* _mapAuthenticationSignUpToState(
             (event as AuthenticationSignUp).email,
-            (event as AuthenticationSignUp).name,
-            (event as AuthenticationSignUp).pass,
-            (event as AuthenticationSignUp).rin,
-            (event as AuthenticationSignUp).role);
+            event.name,
+            event.pass,
+            event.rin,
+            event.role);
     }
   }
 
@@ -48,8 +48,8 @@ class AuthenticationBloc
     final isSignedIn = _authRepository.isSignedIn;
     if (isSignedIn) {
       final name = _authRepository.getUser;
-      User user = _authRepository.getActualUser;
-      String role = await DatabaseService(usid: user.uid).getUserRole();
+      User user = _authRepository.getActualUser!;
+      String? role = await DatabaseService(usid: user.uid).getUserRole();
       yield AuthenticationSuccess(name, role ?? 'Student');
     } else {
       yield AuthenticationInit();
@@ -58,14 +58,14 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> _mapAuthenticationLoggedInToState(
       e, p, role) async* {
-    UserCredential result = await _authRepository.signInWithCredentials(
-        e, p); //attempt to signin user
+    UserCredential result = await (_authRepository.signInWithCredentials(
+        e, p) as FutureOr<UserCredential>); //attempt to signin user
 
     switch (result.runtimeType) {
       case UserCredential:
         {
           //if signing in user is successful
-          User user = _authRepository.getActualUser;
+          User user = _authRepository.getActualUser!;
           if (user.emailVerified) {
             yield AuthenticationSuccess(e, role);
           } else {

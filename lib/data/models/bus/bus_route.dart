@@ -3,22 +3,22 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 /// Bus route model:
 /// Contains data related to individual routes
 class BusRoute {
-  String routeId;
-  String agencyId;
-  String routeShortName;
-  String routeLongName;
-  String routeDesc;
-  int routeType;
-  String routeUrl;
-  String routeColor;
-  String routeTextColor;
-  int routeSortOrder;
-  int continuousPickup;
-  int continuousDropOff;
+  String? routeId;
+  String? agencyId;
+  String? routeShortName;
+  String? routeLongName;
+  String? routeDesc;
+  int? routeType;
+  String? routeUrl;
+  String? routeColor;
+  String? routeTextColor;
+  int? routeSortOrder;
+  int? continuousPickup;
+  int? continuousDropOff;
 
-  int startDate;
-  int endDate;
-  Iterable<BusStopSimplified> stops;
+  int? startDate;
+  int? endDate;
+  Iterable<BusStopSimplified>? stops;
 
   BusRoute(
       {this.routeId,
@@ -38,14 +38,14 @@ class BusRoute {
       this.stops});
 
   List<BusStopSimplified> get forwardStops =>
-      stops.where((stop) => stop.stopSeq0 != -1).toList()
+      stops!.where((stop) => stop.stopSeq0 != -1).toList()
         ..sort((first, second) {
-          return first.stopSeq0.compareTo(second.stopSeq0);
+          return first.stopSeq0!.compareTo(second.stopSeq0!);
         });
   List<BusStopSimplified> get reverseStops =>
-      stops.where((stop) => stop.stopSeq1 != -1).toList()
+      stops!.where((stop) => stop.stopSeq1 != -1).toList()
         ..sort((first, second) {
-          return first.stopSeq1.compareTo(second.stopSeq1);
+          return first.stopSeq1!.compareTo(second.stopSeq1!);
         });
 
   BusRoute.fromJson(Map<String, dynamic> json) {
@@ -90,12 +90,12 @@ class BusRoute {
 }
 
 class BusStopSimplified {
-  String stopId;
-  String stopName;
-  double stopLat;
-  double stopLon;
-  int stopSeq0;
-  int stopSeq1;
+  String? stopId;
+  String? stopName;
+  double? stopLat;
+  double? stopLon;
+  int? stopSeq0;
+  int? stopSeq1;
 
   BusStopSimplified(
       {this.stopId,
@@ -105,7 +105,7 @@ class BusStopSimplified {
       this.stopSeq0,
       this.stopSeq1});
 
-  LatLng get getLatLng => LatLng(this.stopLat, this.stopLon);
+  LatLng get getLatLng => LatLng(this.stopLat!, this.stopLon!);
 
   BusStopSimplified.fromJson(Map<String, dynamic> json) {
     stopId = json['stop_id'];

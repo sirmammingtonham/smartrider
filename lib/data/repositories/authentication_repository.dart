@@ -21,7 +21,7 @@ class AuthRepository {
 
   bool get isSignedIn => _authProvider.isSignedIn();
 
-  String get getUser => _authProvider.getUser();
+  String? get getUser => _authProvider.getUser();
 
-  User get getActualUser => _authProvider.getActualUser();
+  User? get getActualUser => _authProvider.getActualUser();
 }

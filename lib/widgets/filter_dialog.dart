@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 class FilterDialog extends StatefulWidget {
-  List<List<String>> stops;
-  TextEditingController controller;
+  List<List<String>>? stops;
+  TextEditingController? controller;
   // ValueChanged<String> updateTime, updateStop;
-  FilterDialog({Key key, this.stops, this.controller}) : super(key: key);
+  FilterDialog({Key? key, this.stops, this.controller}) : super(key: key);
   @override
   _FilterDialogState createState() => _FilterDialogState();
 }
 
 class _FilterDialogState extends State<FilterDialog> {
-  String searchQuery;
+  String? searchQuery;
 
   @override
   void initState() {
@@ -63,7 +63,7 @@ class _FilterDialogState extends State<FilterDialog> {
                             IconButton(
                               icon: Icon(Icons.cancel),
                               onPressed: () {
-                                widget.controller.text = '';
+                                widget.controller!.text = '';
                                 Navigator.pop(context);
                               },
                             ),
@@ -76,19 +76,19 @@ class _FilterDialogState extends State<FilterDialog> {
                       child: ListView.builder(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          itemCount: widget.stops.length + 1,
+                          itemCount: widget.stops!.length + 1,
                           itemBuilder: (context, index) {
                             // hack that allows us to show the last list item without clipping
-                            if (index == widget.stops.length) {
+                            if (index == widget.stops!.length) {
                               return SizedBox(height: 20);
                             }
-                            String stop_name = widget.stops[index][0];
+                            String stop_name = widget.stops![index][0];
                             return ListTile(
                               leading: Icon(Icons.departure_board),
                               title: Text(stop_name),
                               trailing: Icon(Icons.search),
                               onTap: () {
-                                widget.controller.text = stop_name;
+                                widget.controller!.text = stop_name;
                                 Navigator.pop(context);
                               },
                             );

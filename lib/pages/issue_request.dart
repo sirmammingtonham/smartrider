@@ -12,13 +12,13 @@ import 'package:smartrider/util/strings.dart';
 /// to create a GitHub API Post Request, to create an issue on the Github repository.
 class Post {
   /// Title of the issue.
-  final String title;
+  final String? title;
 
   /// Description of the issue.
-  final String body;
+  final String? body;
 
   /// Tags for the issue (either userBug or userFeature).
-  final String labels;
+  final String? labels;
 
   /// Creates a Post Request, represented as an object.
   Post({this.title, this.body, this.labels});
@@ -82,13 +82,13 @@ class IssueRequest extends StatefulWidget {
 /// Represents the current state of the Issue Request Page.
 class _IssueRequestState extends State<IssueRequest> {
   /// Value of the review checkbox
-  bool valuefirst = false;
+  bool? valuefirst = false;
 
   /// Value of the type-of-request dropdown
-  String dropdownValue = "Bug";
+  String? dropdownValue = "Bug";
 
   /// HTTP Post created once one is created.
-  Future post;
+  Future? post;
 
   /// Value of the title TextField. Represents the title of the bug/feature
   /// that the user is requesting.
@@ -181,7 +181,7 @@ class _IssueRequestState extends State<IssueRequest> {
                       EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                 ),
                 style: TextStyle(
-                    color: Theme.of(context).accentTextTheme.bodyText1.color),
+                    color: Theme.of(context).accentTextTheme.bodyText1!.color),
                 // When changed, the TextField will store the current TextField
                 // value to our title variable (which will eventually be sent
                 // as the issue title.)
@@ -239,7 +239,7 @@ class _IssueRequestState extends State<IssueRequest> {
                 maxLines: null,
                 // Also controls the appearance of the description textfield.
                 style: TextStyle(
-                    color: Theme.of(context).accentTextTheme.bodyText1.color),
+                    color: Theme.of(context).accentTextTheme.bodyText1!.color),
                 // When the user makes an edit to the description textfield, the value
                 // that they type will be stored in our description string.
                 onChanged: (value) {
@@ -252,7 +252,7 @@ class _IssueRequestState extends State<IssueRequest> {
         // Prompts the user to select Bug/Feature/Other option in their dropdown.
         Text("This is a:",
             style:
-                TextStyle(color: Theme.of(context).textTheme.bodyText1.color)),
+                TextStyle(color: Theme.of(context).textTheme.bodyText1!.color)),
         // Dropdown for the user to select the type of issue request they are making
         new DropdownButton<String>(
             value: dropdownValue,
@@ -264,9 +264,9 @@ class _IssueRequestState extends State<IssueRequest> {
             }).toList(),
             // Controls what the dropdown looks like.
             style:
-                TextStyle(color: Theme.of(context).textTheme.bodyText1.color),
+                TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
             // Changes the Dropdown appearance to display the user's choice.
-            onChanged: (String newValue) {
+            onChanged: (String? newValue) {
               setState(() {
                 dropdownValue = newValue;
               });
@@ -297,7 +297,7 @@ class _IssueRequestState extends State<IssueRequest> {
               activeColor: Theme.of(context).focusColor,
               focusColor: Theme.of(context).focusColor,
               value: valuefirst,
-              onChanged: (bool value) {
+              onChanged: (bool? value) {
                 setState(() {
                   valuefirst = value;
                 });
