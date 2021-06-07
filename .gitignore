@@ -19,3 +19,13 @@ doc/api/
 *.js_
 *.js.deps
 *.js.map
+
+# Secrets (shhhh)
+google-services.json
+tokens.txt
+api-keys.xml
+android/app/src/main/res/values/api-keys.xml
+strings.dart
+android/app/src/main/res/api-keys.template
+ApiKeys.plist
+GoogleService-Info.plist
