@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key, required this.title}) : super(key: key);
@@ -10,12 +11,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  final _ordersCollection = FirebaseFirestore.instance.collection('orders');
+  Future<List> testCollection() async {
+    return [];
   }
 
   @override
@@ -24,22 +22,33 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+      body: StreamBuilder(
+        stream: _ordersCollection
+            .orderBy('created_at', descending: false)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) return Text("no data??");
+          final list = snapshot.data?.docs
+              .map((doc) => ListTile(
+                    title: Text('${doc['rider']}'),
+                    subtitle: Text('${doc['status']}'),
+                    trailing: Icon(Icons.adb),
+                  ))
+              .toList();
+          return ListView(
+            children: list ?? [],
+          );
+        },
       ),
+// FutureBuilder(
+//           future: testCollection(),
+//           builder: (BuildContext context, AsyncSnapshot snapshot) {
+//             return Center(child: ListView.builder(itemBuilder: (context, idx) {
+//               return Container();
+//             }));
+//           }),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {},
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
