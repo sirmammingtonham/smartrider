@@ -22,6 +22,7 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
+      // rebuild whenever the collection changes?
       body: StreamBuilder(
         stream: _ordersCollection
             .orderBy('created_at', descending: false)

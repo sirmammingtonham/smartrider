@@ -16,8 +16,8 @@ class SaferideRepository {
   Future<void> cancelOrder() async =>
       _saferideProvider.cancelOrder();
 
-  Future<Map<String?, Driver>?> get getDrivers async =>
-      _saferideProvider.getDrivers();
+  // Future<Map<String?, Driver>?> get getDrivers async =>
+  //     _saferideProvider.getDrivers();
 
   // Future<MovementStatus> getDeviceUpdate(String deviceId) async =>
   //     _saferideProvider.getDeviceUpdate(deviceId);

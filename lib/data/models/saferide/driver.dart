@@ -1,25 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Driver {
-  String? deviceId;
-  String? name;
-  String? email;
-  String? phone;
-  bool? available;
-  String? licensePlate;
+  String vehicleId;
+  String name;
+  String phone;
+  DocumentReference ref;
 
   Driver(
-      {this.deviceId,
-      this.name,
-      this.email,
-      this.phone,
-      this.available,
-      this.licensePlate});
-
-  Driver.fromDocument(doc) {
-    this.deviceId = doc['device_id'];
-    this.name = doc['name'];
-    this.email = doc['email'];
-    this.phone = doc['phone'];
-    this.available = doc['available'];
-    this.licensePlate = doc['license_plate'];
-  }
+      {required this.vehicleId,
+      required this.name,
+      required this.phone,
+      required this.ref});
 }

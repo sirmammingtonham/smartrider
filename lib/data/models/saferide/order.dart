@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'driver.dart';
@@ -55,7 +54,7 @@ class Order {
     this.rider = snap.get('rider');
 
     if (snap.get('driver') != null)
-      this.driver = Driver.fromDocument(snap.get('driver'));
+      // this.driver = Driver.fromDocument(snap.get('driver'));
 
     this.createdAt = snap.get('created_at');
     this.updatedAt = snap.get('updated_at');

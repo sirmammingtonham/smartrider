@@ -24,18 +24,19 @@ class SaferideProvider {
 
   Future<void> cancelOrder() async {
     if (this.orderId != null) {
-      DocumentReference orders = firestore.collection('orders').doc(this.orderId);
+      DocumentReference orders =
+          firestore.collection('orders').doc(this.orderId);
       await orders.delete();
     }
   }
 
-  Future<Map<String?, Driver>?> getDrivers() async {
-    QuerySnapshot response = await firestore.collection('drivers').get();
-    _driversMap = Map.fromIterable(response.docs,
-        key: (doc) => doc['device_id'],
-        value: (doc) => Driver.fromDocument(doc.data()));
-    return _driversMap;
-  }
+  // Future<Map<String?, Driver>?> getDrivers() async {
+  //   QuerySnapshot response = await firestore.collection('drivers').get();
+  //   _driversMap = Map.fromIterable(response.docs,
+  //       key: (doc) => doc['device_id'],
+  //       value: (doc) => Driver.fromDocument(doc.data()));
+  //   return _driversMap;
+  // }
 
   Future<int> getOrderPosition(DocumentSnapshot snap) async {
     String id = snap.id;
