@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+part of 'authentication_bloc.dart';
 
 abstract class AuthenticationEvent extends Equatable {
   const AuthenticationEvent();
@@ -10,10 +10,9 @@ abstract class AuthenticationEvent extends Equatable {
 class AuthenticationStarted extends AuthenticationEvent {}
 
 class AuthenticationLoginEvent extends AuthenticationEvent {
-  final String driverEmail, driverName, vehicleId, password, phoneNumber;
+  final driverName, vehicleId, password, phoneNumber;
   const AuthenticationLoginEvent(
-      {required this.driverEmail,
-      required this.driverName,
+      {required this.driverName,
       required this.vehicleId,
       required this.password,
       required this.phoneNumber});

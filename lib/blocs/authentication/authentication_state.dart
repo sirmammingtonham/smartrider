@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:smartdriver/data/models/saferide/driver.dart';
+part of 'authentication_bloc.dart';
 
 abstract class AuthenticationState extends Equatable {
   const AuthenticationState();

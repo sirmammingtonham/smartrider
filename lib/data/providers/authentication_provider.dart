@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:smartdriver/blocs/authentication/authentication_exception.dart';
+import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
 import 'package:smartdriver/data/models/saferide/driver.dart';
 
 class AuthenticationProvider {
@@ -23,9 +23,12 @@ class AuthenticationProvider {
 
       // user should have access to orders and vehicles collection now
       final vehicleSnapshot = await firestore.doc('vehicles/$vehicleId').get();
-      if (vehicleSnapshot.exists) {
-        vehicleSnapshot.reference
-            .update({'available': true, 'name': name, 'phone': phoneNumber});
+      // TODO: plaintext pass for now, need to hash with bcrypt at some point
+      if (vehicleSnapshot.exists && vehicleSnapshot['password'] == password) {
+        vehicleSnapshot.reference.update({
+          'available': true,
+          'current_driver': {'name': name, 'phone_number': phoneNumber}
+        });
         return Driver(
             vehicleId: vehicleId,
             name: name,
@@ -33,7 +36,7 @@ class AuthenticationProvider {
             ref: vehicleSnapshot.reference);
       } else {
         throw AuthenticationException(
-            'vehicleDoesNotExist: Vehicle ID doesn\'t exist in database!');
+            'incorrectCredentials: Incorrect vehicle ID and password combination!');
       }
     } on FirebaseAuthException catch (error) {
       throw AuthenticationException('${error.code}: ${error.message}');

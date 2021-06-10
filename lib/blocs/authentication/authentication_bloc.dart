@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import '../../data/models/saferide/driver.dart';
 import '../../data/repositories/authentication_repository.dart';
 
-import 'authentication_event.dart';
-import 'authentication_exception.dart';
-import 'authentication_state.dart';
+part 'authentication_event.dart';
+part 'authentication_exception.dart';
+part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
