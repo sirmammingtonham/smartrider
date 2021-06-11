@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
-import 'package:smartdriver/data/models/saferide/driver.dart';
+import 'package:smartdriver/data/models/driver.dart';
 
 class AuthenticationProvider {
   final FirebaseFirestore firestore;
@@ -33,7 +33,7 @@ class AuthenticationProvider {
             vehicleId: vehicleId,
             name: name,
             phone: phoneNumber,
-            ref: vehicleSnapshot.reference);
+            vehicleRef: vehicleSnapshot.reference);
       } else {
         throw AuthenticationException(
             'incorrectCredentials: Incorrect vehicle ID and password combination!');

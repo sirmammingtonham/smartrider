@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
                       trailing: Icon(Icons.adb),
                     ))
                 .toList();
-            
+
             return SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.h),
@@ -105,7 +105,7 @@ class _HomeState extends State<Home> {
                                                 labelText:
                                                     'Reason for cancellation.',
                                                 hintText:
-                                                    'Please enter a reason.'),
+                                                    'Reason for cancellation.'),
                                             onFieldSubmitted: (String? str) {},
                                           )));
                                         });
