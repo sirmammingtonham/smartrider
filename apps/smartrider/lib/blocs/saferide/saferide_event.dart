@@ -10,13 +10,13 @@ class SaferideNoEvent extends SaferideEvent {
 }
 
 class SaferideSelectionEvent extends SaferideEvent {
-  final LatLng? pickupLatLng;
-  final Prediction? prediction;
+  final Prediction? pickupPrediction;
+  final Prediction? dropoffPrediction;
 
-  const SaferideSelectionEvent({this.pickupLatLng, this.prediction});
+  const SaferideSelectionEvent({this.pickupPrediction, this.dropoffPrediction});
 
   @override
-  List<Object?> get props => [pickupLatLng, prediction];
+  List<Object?> get props => [pickupPrediction, dropoffPrediction];
 }
 
 class SaferideSelectionTestEvent extends SaferideEvent {
@@ -38,13 +38,13 @@ class SaferideConfirmedEvent extends SaferideEvent {
 
 class SaferideWaitUpdateEvent extends SaferideEvent {
   final int queuePosition;
-  final int waitEstimate;
+  final Timestamp? estimatedPickup;
 
   const SaferideWaitUpdateEvent(
-      {required this.queuePosition, required this.waitEstimate});
+      {required this.queuePosition, required this.estimatedPickup});
 
   @override
-  List<Object> get props => [queuePosition, waitEstimate];
+  List<Object> get props => [queuePosition];
 }
 
 class SaferideAcceptedEvent extends SaferideEvent {

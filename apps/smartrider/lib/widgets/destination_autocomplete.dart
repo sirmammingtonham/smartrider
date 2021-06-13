@@ -101,7 +101,7 @@ class PlacesAutocompleteField extends StatefulWidget {
   ///
   /// Specify null to remove the decoration entirely (including the
   /// extra padding introduced by the decoration to save space for the labels).
-  final InputDecoration inputDecoration;
+  final InputDecoration? inputDecoration;
 
   /// The position, in the input term, of the last character that the service
   /// uses to match predictions.
@@ -235,11 +235,12 @@ class _LocationAutocompleteFieldState extends State<PlacesAutocompleteField> {
                 : SizedBox()
           ],
         ));
-
-    child = InputDecorator(
-      decoration: widget.inputDecoration,
-      child: child,
-    );
+    if (widget.inputDecoration != null) {
+      child = InputDecorator(
+        decoration: widget.inputDecoration!,
+        child: child,
+      );
+    }
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -472,27 +473,6 @@ class _Loader extends StatelessWidget {
     return Container(
         constraints: BoxConstraints(maxHeight: 2.0),
         child: LinearProgressIndicator());
-  }
-}
-
-class PoweredByGoogleImage extends StatelessWidget {
-  final _poweredByGoogleWhite =
-      "packages/flutter_google_places/assets/google_white.png";
-  final _poweredByGoogleBlack =
-      "packages/flutter_google_places/assets/google_black.png";
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-      Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Image.asset(
-            Theme.of(context).brightness == Brightness.light
-                ? _poweredByGoogleWhite
-                : _poweredByGoogleBlack,
-            scale: 2.5,
-          ))
-    ]);
   }
 }
 

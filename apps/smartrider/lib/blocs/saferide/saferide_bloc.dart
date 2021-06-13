@@ -17,16 +17,21 @@ part 'saferide_event.dart';
 part 'saferide_state.dart';
 
 class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
-  final _geocoder = GoogleMapsGeocoding(apiKey: GOOGLE_API_KEY);
+  // final _geocoder = GoogleMapsGeocoding(apiKey: GOOGLE_API_KEY);
+  final places = new GoogleMapsPlaces(apiKey: GOOGLE_API_KEY);
+
   final SaferideRepository saferideRepo;
   final AuthRepository authRepo;
   Prediction? _currentPrediction;
-  LatLng? _currentPickupLatLng,
-      _currentDropoffLatLng = const LatLng(42.729280, -73.679056);
+  LatLng? _currentPickupLatLng, _currentDropoffLatLng;
   Driver? _currentDriver;
 
+  PlacesDetailsResponse? dropoffDetails, pickupDetails;
+  String? dropoffAddress, pickupAddress;
+  GeoPoint? dropoffPoint, pickupPoint;
+
   SaferideBloc({required this.saferideRepo, required this.authRepo})
-      : super(SaferideInitialState());
+      : super(SaferideNoState());
 
   @override
   Future<void> close() {
@@ -38,13 +43,16 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       yield SaferideNoState();
     } else if (event is SaferideSelectionEvent) {
       yield* _mapSaferideSelectionToState(event);
-    } else if (event is SaferideSelectionTestEvent) {
-      yield* _mapTestToState(event);
-    } else if (event is SaferideConfirmedEvent) {
+    }
+// else if (event is SaferideSelectionTestEvent) {
+//       yield* _mapTestToState(event);
+//     }
+    else if (event is SaferideConfirmedEvent) {
       yield* _mapConfirmToState(event);
     } else if (event is SaferideWaitUpdateEvent) {
       yield SaferideWaitingState(
-          queuePosition: event.queuePosition, waitEstimate: event.waitEstimate);
+          queuePosition: event.queuePosition,
+          waitEstimate: 0); //event.estimatedPickup);
     } else if (event is SaferideAcceptedEvent) {
       yield SaferideAcceptedState(
           licensePlate: event.licensePlate,
@@ -67,28 +75,28 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   Future<void> orderListener(DocumentSnapshot update) async {
     final order = Order.fromSnapshot(update);
 
-    // switch (order.status) {
-    //   case TripStatus.NEW:
-    //     {
-    //       add(SaferideWaitUpdateEvent(
-    //           queuePosition: order.queuePosition ?? -1,
-    //           waitEstimate: order.waitEstimate ?? -1));
-    //     }
-    //     break;
-    //   case TripStatus.PICKING_UP:
-    //     {
-    //       _currentDriver = order.driver;
-    //       add(SaferideAcceptedEvent(
-    //           driverName: _currentDriver!.name,
-    //           licensePlate: _currentDriver!.licensePlate,
-    //           queuePosition: order.queuePosition ?? -1,
-    //           waitEstimate: order.estimate?.remainingDuration ?? -1));
-    //     }
-    //     break;
-    //   default:
-    //     print(order.status);
-    //     break;
-    // }
+    switch (order.status) {
+      case 'WAITING':
+        {
+          add(SaferideWaitUpdateEvent(
+              queuePosition: order.queuePosition ?? -1,
+              estimatedPickup: order.estimatedPickup));
+        }
+        break;
+      case 'PICKING_UP':
+        {
+          // _currentDriver = order.driver;
+          // add(SaferideAcceptedEvent(
+          //     driverName: _currentDriver!.name,
+          //     licensePlate: _currentDriver!.licensePlate,
+          //     queuePosition: order.queuePosition ?? -1,
+          //     waitEstimate: order.estimate?.remainingDuration ?? -1));
+        }
+        break;
+      default:
+        print(order.status);
+        break;
+    }
 
     // need to add condition to switch state if about to get picked up,
     // can listen to change in order status
@@ -117,72 +125,42 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     }
   }
 
-  Stream<SaferideState> _mapTestToState(
-      SaferideSelectionTestEvent event) async* {
-    String pickupDescription;
-
-    try {
-      Position currentLocation = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best);
-      _currentPickupLatLng =
-          LatLng(currentLocation.latitude, currentLocation.longitude);
-      pickupDescription = 'Current Location';
-    } on PermissionDeniedException catch (_) {
-      pickupDescription = 'Choose on Map';
-    }
-
-    yield SaferideSelectionState(
-        pickupLatLng: _currentPickupLatLng,
-        pickupDescription: pickupDescription,
-        dropLatLng: event.testCoord,
-        dropAddress: event.testAdr,
-        dropDescription: event.testDesc,
-        queuePosition: await saferideRepo.getQueueSize,
-        waitEstimate: 22);
-  }
-
-  // TODO: add logic to calculate route, we want polylines at this point!
   Stream<SaferideState> _mapSaferideSelectionToState(
       SaferideSelectionEvent event) async* {
-    if (_currentPrediction == null && event.prediction == null) return;
-    if (event.prediction != null) {
-      _currentPrediction = event.prediction;
+    if (event.dropoffPrediction != null) {
+      dropoffDetails =
+          await places.getDetailsByPlaceId(event.dropoffPrediction!.placeId!);
+      dropoffAddress = dropoffDetails!.result.formattedAddress!;
+      dropoffPoint = GeoPoint(dropoffDetails!.result.geometry!.location.lat,
+          dropoffDetails!.result.geometry!.location.lng);
+    }
+    if (event.pickupPrediction != null) {
+      pickupDetails =
+          await places.getDetailsByPlaceId(event.dropoffPrediction!.placeId!);
+      pickupAddress = pickupDetails!.result.formattedAddress!;
+      pickupPoint = GeoPoint(pickupDetails!.result.geometry!.location.lat,
+          pickupDetails!.result.geometry!.location.lng);
     }
 
-    final GeocodingResponse responses =
-        await _geocoder.searchByPlaceId(_currentPrediction!.placeId!);
-    if (responses.status != 'OK') {
-      yield SaferideErrorState(
-          status: responses.status, message: responses.errorMessage);
-    }
-
-    String? pickupDescription;
-    _currentPickupLatLng = event.pickupLatLng;
-    if (_currentPickupLatLng == null) {
+    /// if they didn't enter a pickup location, we just use their current location
+    if (pickupDetails == null) {
       try {
         Position currentLocation = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.best);
-        _currentPickupLatLng =
-            LatLng(currentLocation.latitude, currentLocation.longitude);
-        pickupDescription = 'Current Location';
+        pickupPoint =
+            GeoPoint(currentLocation.latitude, currentLocation.longitude);
+        pickupAddress = 'Current Location';
       } on PermissionDeniedException catch (_) {
-        pickupDescription = 'Choose on Map';
+        pickupAddress = 'Enter Pickup Location';
       }
     }
 
-    if (responses.results.isNotEmpty) {
-      GeocodingResult r = responses.results[0];
-      _currentDropoffLatLng =
-          LatLng(r.geometry.location.lat, r.geometry.location.lng);
-      yield SaferideSelectionState(
-        pickupLatLng: _currentPickupLatLng,
-        pickupDescription: pickupDescription,
-        dropLatLng: _currentDropoffLatLng,
-        dropAddress: r.formattedAddress,
-        dropDescription: _currentPrediction!.description,
-        queuePosition: 0,
-        waitEstimate: 0,
-      );
-    }
+    yield SaferideSelectionState(
+      pickupPoint: _currentPickupLatLng,
+      pickupDescription: pickupAddress,
+      dropPoint: _currentDropoffLatLng,
+      dropDescription: dropoffAddress,
+      queuePosition: 0, //
+    );
   }
 }

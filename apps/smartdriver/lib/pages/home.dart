@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared/models/saferide/order.dart';
 import 'package:sizer/sizer.dart';
 
 class Home extends StatefulWidget {
@@ -12,7 +13,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final _ordersCollection = FirebaseFirestore.instance.collection('orders');
+  final _ordersCollection =
+      FirebaseFirestore.instance.collection('orders_test');
   Future<List> testCollection() async {
     return [];
   }
@@ -25,20 +27,24 @@ class _HomeState extends State<Home> {
       ),
       // might have to wrap in blocbuilder to react to acceptance but idk if we want to do that here
       body: StreamBuilder(
+          //TODO: move stream and logic into orders bloc
           stream: _ordersCollection
-              .orderBy('created_at', descending: false)
+              .where('status', isEqualTo: 'WAITING')
+              .orderBy('updated_at', descending: false)
               .snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) return Text('no data??');
-            final list = snapshot.data?.docs
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty)
+              return Text('no data??');
+            Order latestOrder = Order.fromSnapshot(snapshot.data!.docs[0]);
+            final queueList = snapshot.data!.docs
+                .skip(1)
                 .map((doc) => ListTile(
-                      title: Text('${doc['rider']}'),
+                      title: Text('${(doc['rider'] as DocumentReference).id}'),
                       subtitle: Text('${doc['status']}'),
                       trailing: Icon(Icons.adb),
                     ))
                 .toList();
-
             return SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.h),
@@ -122,10 +128,18 @@ class _HomeState extends State<Home> {
                     /// spacer
                     Container(height: 1.h),
 
+                    Center(
+                      child: Text(
+                        'Riders in Queue: ${0}',
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+
                     /// A list of future orders
                     ListView(
                       shrinkWrap: true,
-                      children: list ?? [],
+                      children: queueList,
                     )
                   ],
                 ),

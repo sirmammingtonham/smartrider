@@ -31,7 +31,7 @@ class SaferideStatusWidget extends StatelessWidget {
                       SizedBox(height: 5),
                       Center(
                         child: Text(
-                          'Estimated Wait: ${state.waitEstimate}',
+                          'Estimated Wait: ',//${state.waitEstimate}',
                           style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,

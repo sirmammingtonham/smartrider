@@ -15,29 +15,25 @@ class SaferideNoState extends SaferideState {}
 class SaferideLoadingState extends SaferideState {}
 
 class SaferideSelectionState extends SaferideState {
-  final LatLng? pickupLatLng;
-  final LatLng? dropLatLng;
-  final String? dropAddress;
+  final LatLng? pickupPoint;
+  final LatLng? dropPoint;
   final String? pickupDescription;
   final String? dropDescription;
   final int queuePosition;
-  final int waitEstimate;
 
   const SaferideSelectionState(
-      {required this.pickupLatLng,
+      {required this.pickupPoint,
+      required this.dropPoint,
       required this.pickupDescription,
-      required this.dropLatLng,
-      required this.dropAddress,
       required this.dropDescription,
-      required this.queuePosition,
-      required this.waitEstimate});
+      required this.queuePosition});
 
   @override
   List<Object?> get props => [
-        pickupLatLng,
+        pickupPoint,
+        dropPoint,
         pickupDescription,
-        dropLatLng,
-        dropAddress,
+        dropDescription,
         dropDescription
       ];
 }

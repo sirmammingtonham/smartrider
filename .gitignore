@@ -28,7 +28,6 @@ doc/api/
 .classpath
 .project
 .settings/
-.vscode/
 
 # packages file containing multi-root paths
 .packages.generated

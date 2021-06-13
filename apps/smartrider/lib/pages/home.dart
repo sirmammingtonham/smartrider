@@ -57,7 +57,7 @@ class _HomePage extends StatefulWidget {
 /// Builds the current instance of the home page.
 class _HomePageState extends State<_HomePage>
     with SingleTickerProviderStateMixin {
-  PanelController? _panelController; // Lets the user control the stop tabs
+  late final PanelController _panelController; // Lets the user control the stop tabs
   TabController? _tabController;
   // The height of the tab when the user is viewing the shuttle and bus stops
   late double _panelHeightOpen;
@@ -159,10 +159,10 @@ class _HomePageState extends State<_HomePage>
           final saferideState = states.get<SaferideState>();
           final mapState = states.get<MapState>();
           final prefState = states.get<PrefsState>();
-          if (saferideState is SaferideNoState) {
-            _panelController!.show();
+          if (saferideState is SaferideNoState && _panelController.isAttached) {
+            _panelController.show();
           } else if (saferideState is SaferideSelectionState) {
-            _panelController!.hide();
+            _panelController.hide();
           }
           if (prefState is PrefsLoadingState) {
             return Scaffold(

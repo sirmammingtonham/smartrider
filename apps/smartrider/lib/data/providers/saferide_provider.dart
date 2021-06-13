@@ -1,28 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 
-// saferide imports
-// import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
-// import 'package:smartrider/util/strings.dart';
 // saferide models
 import 'package:shared/models/saferide/order.dart';
 import 'package:shared/models/saferide/driver.dart';
 
 class SaferideProvider {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  // final HypertrackViewsFlutter hypertrack =
-  //     HypertrackViewsFlutter(PUBLISHABLE_KEY);
 
   String? orderId;
 
   Map<String?, Driver>? _driversMap;
 
   //fill in the fields specified in order.dart with the orders collection in the firebase
-  Future<Stream<DocumentSnapshot>> createOrder(Order order) async {
+  Future<Stream<DocumentSnapshot>> createOrder(
+      {required DocumentReference user,
+      required String pickupAddress,
+      required GeoPoint pickupPoint,
+      required String dropoffAddress,
+      required GeoPoint dropoffPoint}) async {
     CollectionReference orders = firestore.collection('orders');
     final ref = await orders.add({
-      // ...order.toJSON(),
-      'created_at': FieldValue.serverTimestamp()
+      'status': 'WAITING',
+      'pickup_address': pickupAddress,
+      'pickup_point': pickupPoint,
+      'dropoff_address': dropoffAddress,
+      'dropoff_point': dropoffPoint,
+      'rider': user,
+      'updated_at': FieldValue.serverTimestamp()
     });
     orderId = ref.id;
     return ref.snapshots();
@@ -36,13 +40,13 @@ class SaferideProvider {
     }
   }
 
-  Future<Map<String?, Driver>?> getDrivers() async {
-    QuerySnapshot response = await firestore.collection('drivers').get();
+  // Future<Map<String?, Driver>?> getDrivers() async {
+    // QuerySnapshot response = await firestore.collection('drivers').get();
     // _driversMap = Map.fromIterable(response.docs,
     //     key: (doc) => doc['device_id'],
     //     value: (doc) => Driver.fromDocument(doc.data()));
-    return _driversMap;
-  }
+  //   return _driversMap;
+  // }
 
   // Future<MovementStatus> getDeviceUpdate(String deviceId) async =>
   //     await hypertrack.getDeviceUpdate(deviceId);
@@ -78,20 +82,20 @@ class SaferideProvider {
   //           .skipWhile((status) => status.deviceId == null));
   // }
 
-  Future<int> getOrderPosition(DocumentSnapshot snap) async {
-    String id = snap.id;
-    Query orders = firestore
-        .collection('orders')
-        .where('status', isEqualTo: 'NEW')
-        .orderBy('created_at', descending: false);
+  // Future<int> getOrderPosition(DocumentSnapshot snap) async {
+  //   String id = snap.id;
+  //   Query orders = firestore
+  //       .collection('orders')
+  //       .where('status', isEqualTo: 'NEW')
+  //       .orderBy('created_at', descending: false);
 
-    final response = await orders.get();
-    return response.docs.map((doc) => doc.id).toList().indexOf(id);
-  }
+  //   final response = await orders.get();
+  //   return response.docs.map((doc) => doc.id).toList().indexOf(id);
+  // }
 
-  Future<int> getQueueSize() async {
-    Query orders =
-        firestore.collection('orders').where('status', isEqualTo: 'NEW');
-    return (await orders.get()).size;
-  }
+  // Future<int> getQueueSize() async {
+  //   Query orders =
+  //       firestore.collection('orders').where('status', isEqualTo: 'NEW');
+  //   return (await orders.get()).size;
+  // }
 }

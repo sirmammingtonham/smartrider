@@ -3,6 +3,7 @@ name: smartrider
 packages:
   - apps/**
 
+# mostly using melos for the ability to run scripts in multiple package folders
 scripts:
   lint:all:
     run: melos run analyze && melos run format

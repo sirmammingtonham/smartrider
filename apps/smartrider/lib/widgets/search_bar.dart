@@ -1,6 +1,7 @@
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/util/messages.dart';
@@ -49,7 +50,7 @@ class SearchBarState extends State<SearchBar> {
       topBarDist; // Distance between top of phone bezel & top search bar //TODO: use fraction instead of hard coded value
   String? name;
   String? role;
-
+  final places = GoogleMapsPlaces(apiKey: GOOGLE_API_KEY);
   SearchBarState();
 
   @override
@@ -63,11 +64,11 @@ class SearchBarState extends State<SearchBar> {
     }
   }
 
-  void _showAutocomplete() async {
+  void _showAutocomplete(String message, {required bool isPickup}) async {
     Prediction? p = await PlacesAutocomplete.show(
       context: context,
-      apiKey: GOOGLE_API_KEY, //Platform.environment['MAPS_API_KEY'],
-      hint: "Need a Safe Ride?",
+      apiKey: GOOGLE_API_KEY,
+      hint: message,
       location: Location(
           lat: 42.729980, lng: -73.676682), // location of union as center
       radius: 1000, // 1km decent estimate of the bounds on safe ride's website
@@ -77,8 +78,13 @@ class SearchBarState extends State<SearchBar> {
     );
 
     if (p != null) {
-      BlocProvider.of<SaferideBloc>(context)
-          .add(SaferideSelectionEvent(prediction: p));
+      if (isPickup) {
+        BlocProvider.of<SaferideBloc>(context)
+            .add(SaferideSelectionEvent(pickupPrediction: p));
+      } else {
+        BlocProvider.of<SaferideBloc>(context)
+            .add(SaferideSelectionEvent(dropoffPrediction: p));
+      }
     }
   }
 
@@ -115,7 +121,10 @@ class SearchBarState extends State<SearchBar> {
                           ),
                           title: Text(saferideState.pickupDescription!),
                           subtitle: const Text('Pickup location'),
-                          onTap: () {},
+                          onTap: () {
+                            _showAutocomplete("Enter pickup address",
+                                isPickup: true);
+                          },
                         ),
                         Divider(height: 0),
                         ListTile(
@@ -132,7 +141,8 @@ class SearchBarState extends State<SearchBar> {
                             },
                           ),
                           onTap: () {
-                            _showAutocomplete();
+                            _showAutocomplete("Enter dropoff address",
+                                isPickup: false);
                           },
                         )
                       ]))));
@@ -175,27 +185,38 @@ class SearchBarState extends State<SearchBar> {
                   description: SEARCHBAR_SHOWCASE_MESSAGE,
                   shapeBorder: RoundedRectangleBorder(),
                   child: Container(
-                      width: MediaQuery.of(context).size.width - 150,
-                      // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
-                      child: ListTile(
-                          title: const Text('Test saferide call to union'),
-                          onTap: () => BlocProvider.of<SaferideBloc>(context)
-                              .add(SaferideSelectionTestEvent()))),
-                  // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
-                  //     PlacesAutocompleteField(
-                  //   apiKey:
-                  //       GOOGLE_API_KEY, //Platform.environment['MAPS_API_KEY'],
-                  //   hint: "Need a Safe Ride?",
-                  //   location: Location(
-                  //       42.729980, -73.676682), // location of union as center
-                  //   radius:
-                  //       1000, // 1km from union seems to be a good estimate of the bounds on safe ride's website
-                  //   language: "en",
-                  //   components: [Component(Component.country, "us")],
-                  //   strictbounds: true,
-                  //   inputDecoration: null,
-                  //   onSelected: onAutocompleteSelect,
-                  // )),
+                    width: MediaQuery.of(context).size.width - 150,
+                    // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
+                    child: TypeAheadField(
+                      textFieldConfiguration: TextFieldConfiguration(
+                          autofocus: false,
+                          // style: DefaultTextStyle.of(context)
+                          //     .style
+                          //     .copyWith(fontStyle: FontStyle.italic),
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Need a safe ride?')),
+                      suggestionsCallback: (pattern) async {
+                        return (await places.autocomplete(pattern,
+                                location:
+                                    Location(lat: 42.729980, lng: -73.676682),
+                                radius: 1000,
+                                strictbounds: true,
+                                language: 'en'))
+                            .predictions;
+                      },
+                      itemBuilder: (context, Prediction suggestion) {
+                        return ListTile(
+                          leading: Icon(Icons.shopping_cart),
+                          title: Text(suggestion.description!),
+                          // subtitle: Text('${suggestion.distanceMeters!} m away'),
+                        );
+                      },
+                      onSuggestionSelected: (Prediction suggestion) {
+                        print(suggestion);
+                      },
+                    ),
+                  ),
                 ),
                 Showcase(
                   key: showcaseProfile,

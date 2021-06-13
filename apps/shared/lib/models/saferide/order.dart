@@ -10,11 +10,13 @@ class Order {
   /// status enum
   final String status;
 
-  /// pickup point
-  final GeoPoint pickup;
+  /// pickup
+  final String pickupAddress;
+  final GeoPoint pickupPoint;
 
-  /// dropoff point
-  final GeoPoint dropoff;
+  /// dropoff
+  final String dropoffAddress;
+  final GeoPoint dropoffPoint;
 
   /// reference to rider's document in users collection
   final DocumentReference rider;
@@ -30,29 +32,35 @@ class Order {
   final Timestamp? estimatedPickup;
 
   /// queue position, updated on writes through cloud functions
-  final int queuePosition;
+  final int? queuePosition;
 
   Order(
       {required this.orderRef,
       required this.status,
-      required this.pickup,
-      required this.dropoff,
+      required this.pickupAddress,
+      required this.pickupPoint,
+      required this.dropoffAddress,
+      required this.dropoffPoint,
       required this.rider,
       this.vehicleRef,
       required this.updatedAt,
       this.estimatedPickup,
       required this.queuePosition});
 
+  Future<String> get riderName async => (await rider.get()).get('name');
+
   factory Order.fromSnapshot(DocumentSnapshot snap) {
     return Order(
       orderRef: snap.reference,
       status: snap.get('status'),
-      pickup: snap.get('pickup'),
-      dropoff: snap.get('dropoff'),
+      pickupAddress: snap.get('pickup_address'),
+      dropoffAddress: snap.get('dropoff_address'),
+      pickupPoint: snap.get('pickup_point'),
+      dropoffPoint: snap.get('dropoff_point'),
       rider: snap.get('rider'),
-      vehicleRef: snap['vehicle_reference'],
+      vehicleRef: snap.get('vehicle'),
       updatedAt: snap.get('updated_at'),
-      estimatedPickup: snap['estimated_pickup'],
+      estimatedPickup: snap.get('estimated_pickup'),
       queuePosition: snap.get('queue_position'),
     );
   }
