@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared/models/driver.dart';
-import 'package:shared/models/order.dart';
+import 'package:shared/models/saferide/driver.dart';
+import 'package:shared/models/saferide/order.dart';
 
 class OrderProvider {
   final FirebaseFirestore firestore;

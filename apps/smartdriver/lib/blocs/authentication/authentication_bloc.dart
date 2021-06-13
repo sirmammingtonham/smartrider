@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:shared/saferide/driver.dart';
+import 'package:shared/models/saferide/driver.dart';
 import 'package:smartdriver/data/repositories/authentication_repository.dart';
 
 part 'authentication_event.dart';
