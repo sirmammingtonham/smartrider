@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../data/models/driver.dart';
-import '../../data/repositories/order_repository.dart';
+import 'package:shared/saferide/driver.dart';
+import 'package:smartdriver/data/repositories/order_repository.dart';
 
 part 'order_event.dart';
 part 'order_exception.dart';

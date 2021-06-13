@@ -5,10 +5,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 // import 'package:path_provider/path_provider.dart';
 
-import '../models/shuttle/shuttle_route.dart';
-import '../models/shuttle/shuttle_stop.dart';
-import '../models/shuttle/shuttle_update.dart';
-import '../models/shuttle/shuttle_eta.dart';
+import 'package:shared/models/shuttle/shuttle_route.dart';
+import 'package:shared/models/shuttle/shuttle_stop.dart';
+import 'package:shared/models/shuttle/shuttle_update.dart';
+import 'package:shared/models/shuttle/shuttle_eta.dart';
 
 /// This class contains methods for providing data to Repository
 class ShuttleProvider {

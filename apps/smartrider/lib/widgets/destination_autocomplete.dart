@@ -8,7 +8,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'dart:math';
 
 import 'dart:async';
-import 'package:flutter/foundation.dart';
+
 import 'package:http/http.dart';
 import 'package:rxdart/rxdart.dart';
 

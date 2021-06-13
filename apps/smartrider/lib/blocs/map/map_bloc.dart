@@ -24,15 +24,15 @@ import 'package:smartrider/data/repositories/shuttle_repository.dart';
 import 'package:smartrider/data/repositories/saferide_repository.dart';
 
 // model imports
-import 'package:smartrider/data/models/shuttle/shuttle_route.dart';
-import 'package:smartrider/data/models/shuttle/shuttle_stop.dart';
-import 'package:smartrider/data/models/shuttle/shuttle_update.dart';
+import 'package:shared/models/shuttle/shuttle_route.dart';
+import 'package:shared/models/shuttle/shuttle_stop.dart';
+import 'package:shared/models/shuttle/shuttle_update.dart';
 
-import 'package:smartrider/data/models/saferide/driver.dart';
+import 'package:shared/models/saferide/driver.dart';
 
-import 'package:smartrider/data/models/bus/bus_route.dart';
-import 'package:smartrider/data/models/bus/bus_shape.dart';
-import 'package:smartrider/data/models/bus/bus_vehicle_update.dart';
+import 'package:shared/models/bus/bus_route.dart';
+import 'package:shared/models/bus/bus_shape.dart';
+import 'package:shared/models/bus/bus_vehicle_update.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';

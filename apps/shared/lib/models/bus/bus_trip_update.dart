@@ -1,5 +1,5 @@
 /// packages used for protocol buffer implementation
-import 'package:smartrider/data/models/bus/pb/gtfs-realtime.pbserver.dart';
+import 'pb/gtfs-realtime.pbserver.dart';
 import 'package:fixnum/fixnum.dart';
 
 /// Bus Trip Update model:

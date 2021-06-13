@@ -3,8 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:smartrider/data/models/bus/bus_route.dart';
-import 'package:smartrider/data/models/bus/bus_vehicle_update.dart';
+import 'package:shared/models/bus/bus_route.dart';
+import 'package:shared/models/bus/bus_vehicle_update.dart';
 
 import 'package:smartrider/data/providers/bus_provider.dart';
 

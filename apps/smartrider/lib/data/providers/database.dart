@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:smartrider/data/models/backend/user.dart';
+import 'package:shared/models/backend/user.dart';
 
 /* Contains functions for handling the database */
 
@@ -24,12 +24,11 @@ class DatabaseService {
     });
   }
 
-  Future<String?> getUserRole() async{
+  Future<String?> getUserRole() async {
     DocumentSnapshot snapshot = await _userCollection.doc(usid).get();
-    if(snapshot.exists){
+    if (snapshot.exists) {
       return snapshot.get('userType')?.toString();
-    }
-    else{
+    } else {
       return 'No Role for user';
     }
   }
@@ -62,7 +61,7 @@ class DatabaseService {
   //   Map<String, dynamic> data;
   //   data = null;
   //   Future<DocumentSnapshot> userRef = _userCollection.doc(usid).get();
-  //   DocumentSnapshot document = 
+  //   DocumentSnapshot document =
   //   await userRef.then((DocumentSnapshot ds) {
   //     //print(ds.data);
   //     data = ds.data;

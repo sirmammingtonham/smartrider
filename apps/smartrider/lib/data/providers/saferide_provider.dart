@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 // import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
 // import 'package:smartrider/util/strings.dart';
 // saferide models
-import '../models/saferide/order.dart';
-import '../models/saferide/driver.dart';
+import 'package:shared/models/saferide/order.dart';
+import 'package:shared/models/saferide/driver.dart';
 
 class SaferideProvider {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -21,25 +21,26 @@ class SaferideProvider {
   Future<Stream<DocumentSnapshot>> createOrder(Order order) async {
     CollectionReference orders = firestore.collection('orders');
     final ref = await orders.add({
-      ...order.toJSON(),
+      // ...order.toJSON(),
       'created_at': FieldValue.serverTimestamp()
-    }); // spread syntax
+    });
     orderId = ref.id;
     return ref.snapshots();
   }
 
   Future<void> cancelOrder() async {
     if (this.orderId != null) {
-      DocumentReference orders = firestore.collection('orders').doc(this.orderId);
+      DocumentReference orders =
+          firestore.collection('orders').doc(this.orderId);
       await orders.delete();
     }
   }
 
   Future<Map<String?, Driver>?> getDrivers() async {
     QuerySnapshot response = await firestore.collection('drivers').get();
-    _driversMap = Map.fromIterable(response.docs,
-        key: (doc) => doc['device_id'],
-        value: (doc) => Driver.fromDocument(doc.data()));
+    // _driversMap = Map.fromIterable(response.docs,
+    //     key: (doc) => doc['device_id'],
+    //     value: (doc) => Driver.fromDocument(doc.data()));
     return _driversMap;
   }
 

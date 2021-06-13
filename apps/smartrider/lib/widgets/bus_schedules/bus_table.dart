@@ -3,8 +3,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:smartrider/data/models/bus/bus_timetable.dart';
-import 'package:smartrider/data/models/bus/bus_stop.dart';
+import 'package:shared/models/bus/bus_timetable.dart';
+import 'package:shared/models/bus/bus_stop.dart';
 // loading custom widgets and data
 import 'package:smartrider/util/data.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';

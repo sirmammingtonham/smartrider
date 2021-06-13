@@ -7,11 +7,11 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_webservice/geocoding.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:smartrider/data/models/saferide/driver.dart';
+import 'package:shared/models/saferide/driver.dart';
 import 'package:smartrider/data/repositories/authentication_repository.dart';
 import 'package:smartrider/data/repositories/saferide_repository.dart';
 import 'package:smartrider/util/strings.dart';
-import 'package:smartrider/data/models/saferide/order.dart';
+import 'package:shared/models/saferide/order.dart';
 
 part 'saferide_event.dart';
 part 'saferide_state.dart';
@@ -67,28 +67,28 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   Future<void> orderListener(DocumentSnapshot update) async {
     final order = Order.fromSnapshot(update);
 
-    switch (order.status) {
-      case TripStatus.NEW:
-        {
-          add(SaferideWaitUpdateEvent(
-              queuePosition: order.queuePosition ?? -1,
-              waitEstimate: order.waitEstimate ?? -1));
-        }
-        break;
-      case TripStatus.PICKING_UP:
-        {
-          _currentDriver = order.driver;
-          add(SaferideAcceptedEvent(
-              driverName: _currentDriver!.name,
-              licensePlate: _currentDriver!.licensePlate,
-              queuePosition: order.queuePosition ?? -1,
-              waitEstimate: order.estimate?.remainingDuration ?? -1));
-        }
-        break;
-      default:
-        print(order.status);
-        break;
-    }
+    // switch (order.status) {
+    //   case TripStatus.NEW:
+    //     {
+    //       add(SaferideWaitUpdateEvent(
+    //           queuePosition: order.queuePosition ?? -1,
+    //           waitEstimate: order.waitEstimate ?? -1));
+    //     }
+    //     break;
+    //   case TripStatus.PICKING_UP:
+    //     {
+    //       _currentDriver = order.driver;
+    //       add(SaferideAcceptedEvent(
+    //           driverName: _currentDriver!.name,
+    //           licensePlate: _currentDriver!.licensePlate,
+    //           queuePosition: order.queuePosition ?? -1,
+    //           waitEstimate: order.estimate?.remainingDuration ?? -1));
+    //     }
+    //     break;
+    //   default:
+    //     print(order.status);
+    //     break;
+    // }
 
     // need to add condition to switch state if about to get picked up,
     // can listen to change in order status
@@ -100,16 +100,16 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     if (_currentPickupLatLng != null && _currentDropoffLatLng != null) {
       yield SaferideLoadingState();
 
-      final order = await saferideRepo.createOrder(Order(
-        status: TripStatus.NEW,
-        pickup: GeoPoint(
-            _currentPickupLatLng!.latitude, _currentPickupLatLng!.longitude),
-        dropoff: GeoPoint(
-            _currentDropoffLatLng!.latitude, _currentDropoffLatLng!.longitude),
-        rider: authRepo.getUser,
-      ));
+      // final order = await saferideRepo.createOrder(Order(
+      //   status: TripStatus.NEW,
+      //   pickup: GeoPoint(
+      //       _currentPickupLatLng!.latitude, _currentPickupLatLng!.longitude),
+      //   dropoff: GeoPoint(
+      //       _currentDropoffLatLng!.latitude, _currentDropoffLatLng!.longitude),
+      //   rider: authRepo.getUser,
+      // ));
 
-      order.listen(orderListener);
+      // order.listen(orderListener);
 
       // TODO: add state while waiting for saferide to pickup
     } else {

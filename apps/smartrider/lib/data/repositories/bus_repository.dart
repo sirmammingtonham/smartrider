@@ -1,9 +1,9 @@
-import '../models/bus/bus_route.dart';
-import '../models/bus/bus_shape.dart';
-import '../models/bus/bus_stop.dart';
-import '../models/bus/bus_timetable.dart';
-import '../models/bus/bus_trip_update.dart';
-import '../models/bus/bus_vehicle_update.dart';
+import 'package:shared/models/bus/bus_route.dart';
+import 'package:shared/models/bus/bus_shape.dart';
+import 'package:shared/models/bus/bus_stop.dart';
+import 'package:shared/models/bus/bus_timetable.dart';
+import 'package:shared/models/bus/bus_trip_update.dart';
+import 'package:shared/models/bus/bus_vehicle_update.dart';
 
 import '../providers/bus_provider.dart';
 
@@ -24,10 +24,10 @@ class BusRepository {
     return self;
   }
 
-
   Map<String?, String?>? get routeMap => _busProvider.routeMapping;
 
-  Future<Map<String?, BusRoute>> get getRoutes async => _busProvider.getRoutes();
+  Future<Map<String?, BusRoute>> get getRoutes async =>
+      _busProvider.getRoutes();
 
   Future<Map<String?, BusShape>> get getPolylines async =>
       _busProvider.getPolylines();

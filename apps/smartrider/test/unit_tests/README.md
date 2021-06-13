@@ -27,7 +27,7 @@
 - [ ] `sliding_panel_page.dart`
 - [ ] `welcome.dart`
 
-### Model tests (`lib/data/models`)
+### Model tests (`lib/dapackage:shared/models`)
 - [ ] `backend/user.dart`
 - [ ] `bus/bus_calendar.dart`
 - [ ] `bus/bus_route.dart`

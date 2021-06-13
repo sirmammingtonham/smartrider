@@ -22,6 +22,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  #local packages
+  shared:
+    path: '../shared'
+
   #firebase dependencies
   firebase_core: ^1.2.1
   # firebase_analytics: ^8.1.1
@@ -36,9 +40,6 @@ dependencies:
   rxdart: ^0.27.1
   fluster: ^1.2.0
   protobuf: ^2.0.0
-
-  #saferide dependencies
-  # hypertrack_views_flutter: ^0.1.1
 
   #notication dependencies
   flutter_local_notifications: ^6.0.0

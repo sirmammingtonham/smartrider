@@ -4,18 +4,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:smartrider/data/models/bus/pb/gtfs-realtime.pb.dart';
+import 'package:shared/models/bus/pb/gtfs-realtime.pb.dart';
 
 /// static gtfs models
-import '../models/bus/bus_route.dart';
-import '../models/bus/bus_shape.dart';
-import '../models/bus/bus_stop.dart';
-import '../models/bus/bus_trip.dart';
-import '../models/bus/bus_timetable.dart';
+import 'package:shared/models/bus/bus_route.dart';
+import 'package:shared/models/bus/bus_shape.dart';
+import 'package:shared/models/bus/bus_stop.dart';
+import 'package:shared/models/bus/bus_trip.dart';
+import 'package:shared/models/bus/bus_timetable.dart';
 
 /// realtime gtfs models
-import '../models/bus/bus_trip_update.dart';
-import '../models/bus/bus_vehicle_update.dart';
+import 'package:shared/models/bus/bus_trip_update.dart';
+import 'package:shared/models/bus/bus_vehicle_update.dart';
 
 /// A provider for Bus data.
 ///

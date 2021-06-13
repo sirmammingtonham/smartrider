@@ -23,6 +23,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  #local packages
+  shared:
+    path: ../shared
   
   #firebase dependencies
   firebase_core: ^1.2.1

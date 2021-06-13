@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
 
-import '../models/saferide/driver.dart';
-import '../models/saferide/order.dart';
+import 'package:shared/models/saferide/driver.dart';
+import 'package:shared/models/saferide/order.dart';
 import '../providers/saferide_provider.dart';
 
 class SaferideRepository {
@@ -12,9 +12,8 @@ class SaferideRepository {
 
   Future<Stream<DocumentSnapshot>> createOrder(Order order) async =>
       _saferideProvider.createOrder(order);
-  
-  Future<void> cancelOrder() async =>
-      _saferideProvider.cancelOrder();
+
+  Future<void> cancelOrder() async => _saferideProvider.cancelOrder();
 
   Future<Map<String?, Driver>?> get getDrivers async =>
       _saferideProvider.getDrivers();

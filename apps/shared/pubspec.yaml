@@ -1,0 +1,21 @@
+name: shared
+description: package to host shared files between rider and driver apps
+version: 0.0.1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  google_maps_flutter: ^2.0.6
+  equatable: ^2.0.2
+  cloud_firestore: ^2.2.1
+  protobuf: ^2.0.0
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
