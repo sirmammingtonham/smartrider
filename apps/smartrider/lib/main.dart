@@ -64,18 +64,11 @@ class SmartRider extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<PrefsBloc>(
-          create: (context) {
-            PrefsBloc pBloc = PrefsBloc();
-            pBloc.add(LoadPrefsEvent());
-            return pBloc;
-          },
+          create: (context) => PrefsBloc()..add(LoadPrefsEvent()),
         ),
-        BlocProvider<AuthenticationBloc>(create: (context) {
-          AuthenticationBloc aBloc =
-              AuthenticationBloc(authRepository: authRepo);
-          aBloc.add(AuthenticationStarted());
-          return aBloc;
-        }),
+        BlocProvider<AuthenticationBloc>(
+            create: (context) => AuthenticationBloc(authRepository: authRepo)
+              ..add(AuthenticationStarted())),
         BlocProvider<SaferideBloc>(
           create: (context) =>
               SaferideBloc(saferideRepo: saferideRepo, authRepo: authRepo),

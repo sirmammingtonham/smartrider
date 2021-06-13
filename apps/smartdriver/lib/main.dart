@@ -1,7 +1,10 @@
+import 'dart:html';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
+import 'package:smartdriver/blocs/location/location_bloc.dart';
 import 'package:smartdriver/data/repositories/authentication_repository.dart';
 
 import 'package:smartdriver/pages/home.dart';
@@ -20,10 +23,11 @@ class SmartDriver extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
+          BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
           BlocProvider<AuthenticationBloc>(
               create: (context) => AuthenticationBloc(
-                  authRepository: AuthenticationRepository())),
-          // BlocProvider(create: (context) => SaferideBloc()),
+                  authRepository: AuthenticationRepository(),
+                  locationBloc: BlocProvider.of<LocationBloc>(context))),
         ],
         child: Sizer(builder: (context, orientation, deviceType) {
           return MaterialApp(
@@ -36,8 +40,7 @@ class SmartDriver extends StatelessWidget {
                 switch (state.runtimeType) {
                   case AuthenticationLoggedOutState:
                     // return Login();
-                    return Home(
-                        title: 'bruhhh');
+                    return Home(title: 'bruhhh');
                   case AuthenticationLoggedInState:
                     return Home(
                         title:
