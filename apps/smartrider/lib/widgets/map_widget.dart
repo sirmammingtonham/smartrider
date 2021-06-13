@@ -37,7 +37,7 @@ class SmartriderMap extends StatelessWidget {
     Widget? viewButton;
     Widget locationButton = Positioned(
       right: 20.0,
-      bottom: saferideState is SaferideSelectionState ? 160.0 : 120.0,
+      bottom: saferideState is SaferideSelectingState ? 160.0 : 120.0,
       child: Showcase(
           key: showcaseLocation,
           description: LOCATION_BUTTON_SHOWCASE_MESSAGE,

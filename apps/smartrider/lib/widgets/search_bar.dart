@@ -104,8 +104,8 @@ class SearchBarState extends State<SearchBar> {
                     },
                     onSuggestionSelected: (Prediction suggestion) {
                       BlocProvider.of<SaferideBloc>(context).add(isPickup
-                          ? SaferideSelectionEvent(pickupPrediction: suggestion)
-                          : SaferideSelectionEvent(
+                          ? SaferideSelectingEvent(pickupPrediction: suggestion)
+                          : SaferideSelectingEvent(
                               dropoffPrediction: suggestion));
                       Navigator.pop(context);
                     },
@@ -133,7 +133,7 @@ class SearchBarState extends State<SearchBar> {
         name = authState is AuthenticationSuccess ? authState.displayName : '';
         role = authState is AuthenticationSuccess ? authState.role : '';
 
-        if (saferideState is SaferideSelectionState) {
+        if (saferideState is SaferideSelectingState) {
           return Positioned(
               top: topBarDist,
               right: 15,
@@ -175,7 +175,7 @@ class SearchBarState extends State<SearchBar> {
                           },
                         )
                       ]))));
-        } else if (saferideState is SaferideAcceptedState) {
+        } else if (saferideState is SaferidePickingUpState) {
           return Container();
         } else {
           return searchBar(prefState);
@@ -243,7 +243,7 @@ class SearchBarState extends State<SearchBar> {
                       },
                       onSuggestionSelected: (Prediction suggestion) {
                         BlocProvider.of<SaferideBloc>(context).add(
-                            SaferideSelectionEvent(
+                            SaferideSelectingEvent(
                                 dropoffPrediction: suggestion));
                       },
                     ),

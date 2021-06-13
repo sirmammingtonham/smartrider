@@ -16,14 +16,14 @@ import 'package:shared/models/saferide/order.dart';
 part 'saferide_event.dart';
 part 'saferide_state.dart';
 
+// BIG TODO: use shared prefs or look up in the database if the user has called a ride
+// so they dont reset when they leave and reopen the app
 class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
-  // final _geocoder = GoogleMapsGeocoding(apiKey: GOOGLE_API_KEY);
   final places = new GoogleMapsPlaces(apiKey: GOOGLE_API_KEY);
 
   final SaferideRepository saferideRepo;
   final AuthRepository authRepo;
-  LatLng? _currentPickupLatLng, _currentDropoffLatLng;
-  Driver? _currentDriver;
+  // Map<String, String> _currentDriver;
 
   PlacesDetailsResponse? dropoffDetails, pickupDetails;
   String? dropoffAddress, pickupAddress;
@@ -39,34 +39,61 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   }
 
   Stream<SaferideState> mapEventToState(SaferideEvent event) async* {
-    if (event is SaferideNoEvent) {
-      yield SaferideNoState();
-    } else if (event is SaferideSelectionEvent) {
-      yield* _mapSaferideSelectionToState(event);
-    }
-// else if (event is SaferideSelectionTestEvent) {
-//       yield* _mapTestToState(event);
-//     }
-    else if (event is SaferideConfirmedEvent) {
-      yield* _mapConfirmToState(event);
-    } else if (event is SaferideWaitUpdateEvent) {
-      yield SaferideWaitingState(
-          queuePosition: event.queuePosition,
-          waitEstimate: 0); //event.estimatedPickup);
-    } else if (event is SaferideAcceptedEvent) {
-      yield SaferideAcceptedState(
-          licensePlate: event.licensePlate,
-          driverName: event.driverName,
-          queuePosition: event.queuePosition,
-          waitEstimate: event.waitEstimate);
-    } else if (event is SaferideCancelEvent) {
-      yield* _mapCancelToState(event);
+    switch (event.runtimeType) {
+      case SaferideNoEvent:
+        {
+          yield SaferideNoState();
+        }
+        break;
+      case SaferideSelectingEvent:
+        {
+          yield* _mapSaferideSelectionToState(event as SaferideSelectingEvent);
+        }
+        break;
+      case SaferideConfirmedEvent:
+        {
+          yield* _mapConfirmToState(event as SaferideConfirmedEvent);
+        }
+        break;
+      case SaferideWaitingEvent:
+        {
+          yield SaferideWaitingState(
+              queuePosition: (event as SaferideWaitingEvent).queuePosition,
+              estimatedPickup: event.estimatedPickup!);
+        }
+        break;
+      case SaferidePickingUpEvent:
+        {
+          yield SaferidePickingUpState(
+              licensePlate: (event as SaferidePickingUpEvent).licensePlate,
+              driverName: event.driverName,
+              queuePosition: event.queuePosition,
+              estimatedPickup: event.estimatedPickup);
+        }
+        break;
+      case SaferideDroppingOffEvent:
+        {
+          yield SaferideDroppingOffState();
+        }
+        break;
+      case SaferideUserCancelledEvent:
+        {
+          yield* _mapCancelToState(event as SaferideUserCancelledEvent);
+        }
+        break;
+      case SaferideDriverCancelledEvent:
+        {
+          yield SaferideCancelledState(
+              reason: (event as SaferideDriverCancelledEvent).reason);
+        }
+        break;
     }
   }
 
   /// attempts to cancel saferide
   /// true if successful, false if fail
-  Stream<SaferideState> _mapCancelToState(SaferideCancelEvent event) async* {
+  Stream<SaferideState> _mapCancelToState(
+      SaferideUserCancelledEvent event) async* {
     await saferideRepo.cancelOrder();
     yield SaferideNoState();
   }
@@ -78,23 +105,44 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     switch (order.status) {
       case 'WAITING':
         {
-          add(SaferideWaitUpdateEvent(
+          add(SaferideWaitingEvent(
               queuePosition: order.queuePosition ?? -1,
               estimatedPickup: order.estimatedPickup));
         }
         break;
       case 'PICKING_UP':
         {
-          // _currentDriver = order.driver;
-          // add(SaferideAcceptedEvent(
-          //     driverName: _currentDriver!.name,
-          //     licensePlate: _currentDriver!.licensePlate,
-          //     queuePosition: order.queuePosition ?? -1,
-          //     waitEstimate: order.estimate?.remainingDuration ?? -1));
+          final vehicle = await order.vehicleRef!.get();
+          final currentDriver =
+              (vehicle.get('current_driver') as Map<String, String>);
+          add(SaferidePickingUpEvent(
+              driverName: currentDriver['name']!,
+              driverPhone: currentDriver['phone_number']!,
+              licensePlate: vehicle.get('license_plate'),
+              queuePosition: order.queuePosition ?? -1,
+              estimatedPickup: order.estimatedPickup!));
         }
         break;
+      case 'DROPPING_OFF':
+        {
+          add(SaferideDroppingOffEvent());
+        }
+        break;
+      case 'CANCELLED':
+        {
+          add(SaferideDriverCancelledEvent(reason: order.cancellationReason!));
+        }
+        break;
+      case 'ERROR':
+        {}
+        break;
       default:
-        print(order.status);
+        {
+          // should never get here
+          print(order.status);
+          assert(false); //TODO: error handling
+
+        }
         break;
     }
 
@@ -105,28 +153,25 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   Stream<SaferideState> _mapConfirmToState(
       SaferideConfirmedEvent event) async* {
     //create order, listen to changes in snapshot, update display vars in state
-    if (_currentPickupLatLng != null && _currentDropoffLatLng != null) {
+    if (pickupPoint != null && dropoffPoint != null) {
       yield SaferideLoadingState();
 
-      // final order = await saferideRepo.createOrder(Order(
-      //   status: TripStatus.NEW,
-      //   pickup: GeoPoint(
-      //       _currentPickupLatLng!.latitude, _currentPickupLatLng!.longitude),
-      //   dropoff: GeoPoint(
-      //       _currentDropoffLatLng!.latitude, _currentDropoffLatLng!.longitude),
-      //   rider: authRepo.getUser,
-      // ));
+      final order = await saferideRepo.createNewOrder(
+          user: FirebaseFirestore.instance.doc(
+              'users/${authRepo.getActualUser!.uid}'), //TODO: move this and fix auth providers
+          pickupAddress: pickupAddress!,
+          pickupPoint: pickupPoint!,
+          dropoffAddress: dropoffAddress!,
+          dropoffPoint: dropoffPoint!);
 
-      // order.listen(orderListener);
-
-      // TODO: add state while waiting for saferide to pickup
+      order.listen(orderListener);
     } else {
       yield SaferideErrorState(message: 'bruh', status: 'bruh');
     }
   }
 
   Stream<SaferideState> _mapSaferideSelectionToState(
-      SaferideSelectionEvent event) async* {
+      SaferideSelectingEvent event) async* {
     if (event.dropoffPrediction != null) {
       dropoffDetails =
           await places.getDetailsByPlaceId(event.dropoffPrediction!.placeId!);
@@ -159,7 +204,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       }
     }
 
-    yield SaferideSelectionState(
+    yield SaferideSelectingState(
       pickupPoint: pickupPoint,
       pickupDescription: pickupDescription,
       dropPoint: dropoffPoint,

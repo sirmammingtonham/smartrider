@@ -93,9 +93,9 @@ class SaferideProvider {
   //   return response.docs.map((doc) => doc.id).toList().indexOf(id);
   // }
 
-  // Future<int> getQueueSize() async {
-  //   Query orders =
-  //       firestore.collection('orders').where('status', isEqualTo: 'NEW');
-  //   return (await orders.get()).size;
-  // }
+  Future<int> getQueueSize() async {
+    Query orders =
+        firestore.collection('orders').where('status', isEqualTo: 'WAITING');
+    return (await orders.get()).size;
+  }
 }

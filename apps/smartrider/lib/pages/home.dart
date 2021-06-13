@@ -164,7 +164,7 @@ class _HomePageState extends State<_HomePage>
           final prefState = states.get<PrefsState>();
           if (saferideState is SaferideNoState && _panelController.isAttached) {
             _panelController.show();
-          } else if (saferideState is SaferideSelectionState) {
+          } else if (saferideState is SaferideSelectingState) {
             _panelController.hide();
           }
           if (prefState is PrefsLoadingState) {

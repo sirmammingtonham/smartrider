@@ -76,14 +76,14 @@ class _HomeState extends State<Home> {
                               title: Text('Ethan'),
                               subtitle: Text('Rider\'s name'),
                             ),
-                            const ListTile(
+                            ListTile(
                               leading: Icon(Icons.add_location_alt_rounded),
-                              title: Text('1761 15th St, Troy, NY 12180'),
+                              title: Text(latestOrder.pickupAddress),
                               subtitle: Text('Pickup'),
                             ),
-                            const ListTile(
+                            ListTile(
                               leading: Icon(Icons.wrong_location_rounded),
-                              title: Text('Nugent Hall, Troy, NY 12180'),
+                              title: Text(latestOrder.dropoffAddress),
                               subtitle: Text('Dropoff'),
                             ),
                             Row(

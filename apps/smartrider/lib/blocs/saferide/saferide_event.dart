@@ -9,24 +9,14 @@ class SaferideNoEvent extends SaferideEvent {
   List<Object> get props => [];
 }
 
-class SaferideSelectionEvent extends SaferideEvent {
+class SaferideSelectingEvent extends SaferideEvent {
   final Prediction? pickupPrediction;
   final Prediction? dropoffPrediction;
 
-  const SaferideSelectionEvent({this.pickupPrediction, this.dropoffPrediction});
+  const SaferideSelectingEvent({this.pickupPrediction, this.dropoffPrediction});
 
   @override
   List<Object?> get props => [pickupPrediction, dropoffPrediction];
-}
-
-class SaferideSelectionTestEvent extends SaferideEvent {
-  final testCoord = const LatLng(42.729280, -73.679056);
-  final testAdr = "1761 15th St, Troy, NY 12180";
-  final testDesc = "Rensselaer Union";
-  const SaferideSelectionTestEvent();
-
-  @override
-  List<Object> get props => [];
 }
 
 class SaferideConfirmedEvent extends SaferideEvent {
@@ -36,35 +26,52 @@ class SaferideConfirmedEvent extends SaferideEvent {
   List<Object> get props => [];
 }
 
-class SaferideWaitUpdateEvent extends SaferideEvent {
+class SaferideWaitingEvent extends SaferideEvent {
   final int queuePosition;
   final Timestamp? estimatedPickup;
 
-  const SaferideWaitUpdateEvent(
+  const SaferideWaitingEvent(
       {required this.queuePosition, required this.estimatedPickup});
 
   @override
   List<Object> get props => [queuePosition];
 }
 
-class SaferideAcceptedEvent extends SaferideEvent {
-  final String? licensePlate;
-  final String? driverName;
-  final int? queuePosition;
-  final int? waitEstimate;
-  const SaferideAcceptedEvent(
-      {this.licensePlate,
-      this.driverName,
-      this.queuePosition,
-      this.waitEstimate});
+class SaferidePickingUpEvent extends SaferideEvent {
+  final String licensePlate;
+  final String driverName;
+  final String driverPhone;
+  final int queuePosition;
+  final Timestamp estimatedPickup;
+  const SaferidePickingUpEvent(
+      {required this.licensePlate,
+      required this.driverName,
+      required this.driverPhone,
+      required this.queuePosition,
+      required this.estimatedPickup});
 
   @override
-  List<Object?> get props =>
-      [licensePlate, driverName, queuePosition, waitEstimate];
+  List<Object> get props =>
+      [licensePlate, driverName, queuePosition, estimatedPickup];
 }
 
-class SaferideCancelEvent extends SaferideEvent {
-  const SaferideCancelEvent();
+class SaferideDroppingOffEvent extends SaferideEvent {
+  const SaferideDroppingOffEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class SaferideUserCancelledEvent extends SaferideEvent {
+  const SaferideUserCancelledEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class SaferideDriverCancelledEvent extends SaferideEvent {
+  final String reason;
+  const SaferideDriverCancelledEvent({required this.reason});
 
   @override
   List<Object> get props => [];

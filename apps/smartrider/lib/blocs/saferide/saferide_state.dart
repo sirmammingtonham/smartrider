@@ -14,14 +14,14 @@ class SaferideNoState extends SaferideState {}
 
 class SaferideLoadingState extends SaferideState {}
 
-class SaferideSelectionState extends SaferideState {
+class SaferideSelectingState extends SaferideState {
   final GeoPoint? pickupPoint;
   final GeoPoint? dropPoint;
   final String? pickupDescription;
   final String? dropDescription;
   final int queuePosition;
 
-  const SaferideSelectionState(
+  const SaferideSelectingState(
       {required this.pickupPoint,
       required this.dropPoint,
       required this.pickupDescription,
@@ -40,30 +40,46 @@ class SaferideSelectionState extends SaferideState {
 
 class SaferideWaitingState extends SaferideState {
   final int queuePosition;
-  final int waitEstimate;
+  final Timestamp estimatedPickup;
 
   const SaferideWaitingState(
-      {required this.queuePosition, required this.waitEstimate});
+      {required this.queuePosition, required this.estimatedPickup});
 
   @override
-  List<Object> get props => [queuePosition, waitEstimate];
+  List<Object> get props => [queuePosition, estimatedPickup];
 }
 
-class SaferideAcceptedState extends SaferideState {
-  final String? driverName;
-  final String? licensePlate;
-  final int? queuePosition;
-  final int? waitEstimate;
+class SaferidePickingUpState extends SaferideState {
+  final String driverName;
+  final String licensePlate;
+  final int queuePosition;
+  final Timestamp estimatedPickup;
   // phone number too
 
-  const SaferideAcceptedState(
+  const SaferidePickingUpState(
       {required this.driverName,
       required this.licensePlate,
       required this.queuePosition,
-      required this.waitEstimate});
+      required this.estimatedPickup});
 
   @override
   List<Object?> get props => [driverName, licensePlate, queuePosition];
+}
+
+class SaferideDroppingOffState extends SaferideState {
+  const SaferideDroppingOffState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class SaferideCancelledState extends SaferideState {
+  final String reason;
+
+  const SaferideCancelledState({required this.reason});
+
+  @override
+  List<Object?> get props => [reason];
 }
 
 class SaferideErrorState extends SaferideState {
