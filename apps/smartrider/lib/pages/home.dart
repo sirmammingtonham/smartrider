@@ -19,6 +19,8 @@ import 'package:smartrider/widgets/search_bar.dart';
 import 'package:smartrider/widgets/saferide_status_widget.dart';
 import 'package:smartrider/pages/sliding_panel_page.dart';
 
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+
 GlobalKey showcaseSettings = GlobalKey();
 GlobalKey showcaseShuttleToggle = GlobalKey();
 
@@ -57,7 +59,8 @@ class _HomePage extends StatefulWidget {
 /// Builds the current instance of the home page.
 class _HomePageState extends State<_HomePage>
     with SingleTickerProviderStateMixin {
-  late final PanelController _panelController; // Lets the user control the stop tabs
+  late final PanelController
+      _panelController; // Lets the user control the stop tabs
   TabController? _tabController;
   // The height of the tab when the user is viewing the shuttle and bus stops
   late double _panelHeightOpen;
@@ -171,6 +174,12 @@ class _HomePageState extends State<_HomePage>
           } else if (prefState is PrefsLoadedState) {
             WidgetsBinding.instance!
                 .addPostFrameCallback((_) => startShowcase(prefState, context));
+            KeyboardVisibilityController().onChange.listen((bool visible) {
+              if (visible)
+                _panelController.hide();
+              else
+                _panelController.show();
+            });
             return _slidingPanel(saferideState, mapState, prefState, context);
           } else if (prefState is PrefsSavingState) {
             return Center(child: CircularProgressIndicator());

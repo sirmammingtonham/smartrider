@@ -22,12 +22,12 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
 
   final SaferideRepository saferideRepo;
   final AuthRepository authRepo;
-  Prediction? _currentPrediction;
   LatLng? _currentPickupLatLng, _currentDropoffLatLng;
   Driver? _currentDriver;
 
   PlacesDetailsResponse? dropoffDetails, pickupDetails;
   String? dropoffAddress, pickupAddress;
+  String? dropoffDescription, pickupDescription;
   GeoPoint? dropoffPoint, pickupPoint;
 
   SaferideBloc({required this.saferideRepo, required this.authRepo})
@@ -131,6 +131,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       dropoffDetails =
           await places.getDetailsByPlaceId(event.dropoffPrediction!.placeId!);
       dropoffAddress = dropoffDetails!.result.formattedAddress!;
+      dropoffDescription = dropoffDetails!.result.name;
       dropoffPoint = GeoPoint(dropoffDetails!.result.geometry!.location.lat,
           dropoffDetails!.result.geometry!.location.lng);
     }
@@ -138,6 +139,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       pickupDetails =
           await places.getDetailsByPlaceId(event.dropoffPrediction!.placeId!);
       pickupAddress = pickupDetails!.result.formattedAddress!;
+      pickupDescription = pickupDetails!.result.name;
       pickupPoint = GeoPoint(pickupDetails!.result.geometry!.location.lat,
           pickupDetails!.result.geometry!.location.lng);
     }
@@ -149,17 +151,19 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
             desiredAccuracy: LocationAccuracy.best);
         pickupPoint =
             GeoPoint(currentLocation.latitude, currentLocation.longitude);
-        pickupAddress = 'Current Location';
+        pickupAddress =
+            '${currentLocation.latitude}, ${currentLocation.longitude}'; // try to get this in a way that google maps can use
+        pickupDescription = 'Current Location';
       } on PermissionDeniedException catch (_) {
-        pickupAddress = 'Enter Pickup Location';
+        pickupDescription = 'Enter Pickup Location';
       }
     }
 
     yield SaferideSelectionState(
-      pickupPoint: _currentPickupLatLng,
-      pickupDescription: pickupAddress,
-      dropPoint: _currentDropoffLatLng,
-      dropDescription: dropoffAddress,
+      pickupPoint: pickupPoint,
+      pickupDescription: pickupDescription,
+      dropPoint: dropoffPoint,
+      dropDescription: dropoffDescription,
       queuePosition: 0, //
     );
   }

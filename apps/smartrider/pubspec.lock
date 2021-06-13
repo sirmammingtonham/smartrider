@@ -203,7 +203,7 @@ packages:
     source: hosted
     version: "7.0.1"
   flutter_keyboard_visibility:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_keyboard_visibility
       url: "https://pub.dartlang.org"
@@ -527,13 +527,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0-nullsafety"
-  rxdart:
-    dependency: "direct main"
-    description:
-      name: rxdart
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.27.1"
   scrollable_positioned_list:
     dependency: "direct main"
     description:

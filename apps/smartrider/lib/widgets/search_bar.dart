@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:shared/models/bus/pb/gtfs-realtime.pb.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/util/messages.dart';
@@ -20,7 +21,6 @@ import 'package:smartrider/pages/settings.dart';
 // import places api
 import 'package:google_maps_webservice/geocoding.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:smartrider/widgets/destination_autocomplete.dart';
 
 // import 'dart:io';
 import 'package:smartrider/util/strings.dart';
@@ -65,27 +65,56 @@ class SearchBarState extends State<SearchBar> {
   }
 
   void _showAutocomplete(String message, {required bool isPickup}) async {
-    Prediction? p = await PlacesAutocomplete.show(
-      context: context,
-      apiKey: GOOGLE_API_KEY,
-      hint: message,
-      location: Location(
-          lat: 42.729980, lng: -73.676682), // location of union as center
-      radius: 1000, // 1km decent estimate of the bounds on safe ride's website
-      language: "en",
-      components: [Component(Component.country, "us")],
-      strictbounds: true,
-    );
-
-    if (p != null) {
-      if (isPickup) {
-        BlocProvider.of<SaferideBloc>(context)
-            .add(SaferideSelectionEvent(pickupPrediction: p));
-      } else {
-        BlocProvider.of<SaferideBloc>(context)
-            .add(SaferideSelectionEvent(dropoffPrediction: p));
-      }
-    }
+    // TODO: rework this to be less hardcoded...
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Align(
+            alignment: Alignment(0, -0.98),
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                child: Card(
+                  elevation: 6.0,
+                  child: TypeAheadField(
+                    hideOnLoading: true,
+                    textFieldConfiguration: TextFieldConfiguration(
+                        autofocus: false,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.only(left: 10),
+                            hintText: message)),
+                    suggestionsCallback: (pattern) async {
+                      if (pattern.isEmpty) return Iterable<Prediction>.empty();
+                      return (await places.autocomplete(pattern,
+                              location:
+                                  Location(lat: 42.729980, lng: -73.676682),
+                              radius: 1000,
+                              strictbounds: true,
+                              language: 'en'))
+                          .predictions;
+                    },
+                    itemBuilder: (context, Prediction suggestion) {
+                      return ListTile(
+                        leading: Icon(Icons.location_on),
+                        title: Text(suggestion.description!),
+                        // subtitle: Text('${suggestion.distanceMeters!} m away'),
+                      );
+                    },
+                    onSuggestionSelected: (Prediction suggestion) {
+                      BlocProvider.of<SaferideBloc>(context).add(isPickup
+                          ? SaferideSelectionEvent(pickupPrediction: suggestion)
+                          : SaferideSelectionEvent(
+                              dropoffPrediction: suggestion));
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
   }
 
   @override
@@ -117,7 +146,7 @@ class SearchBarState extends State<SearchBar> {
                         ListTile(
                           leading: Container(
                             height: double.infinity,
-                            child: Icon(Icons.my_location),
+                            child: Icon(Icons.add_location_alt_rounded),
                           ),
                           title: Text(saferideState.pickupDescription!),
                           subtitle: const Text('Pickup location'),
@@ -130,7 +159,7 @@ class SearchBarState extends State<SearchBar> {
                         ListTile(
                           leading: Container(
                               height: double.infinity,
-                              child: Icon(Icons.place)),
+                              child: Icon(Icons.wrong_location_rounded)),
                           title: Text(saferideState.dropDescription!),
                           subtitle: const Text('Dropoff location'),
                           trailing: IconButton(
@@ -188,15 +217,15 @@ class SearchBarState extends State<SearchBar> {
                     width: MediaQuery.of(context).size.width - 150,
                     // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
                     child: TypeAheadField(
+                      hideOnLoading: true,
                       textFieldConfiguration: TextFieldConfiguration(
                           autofocus: false,
-                          // style: DefaultTextStyle.of(context)
-                          //     .style
-                          //     .copyWith(fontStyle: FontStyle.italic),
                           decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'Need a safe ride?')),
                       suggestionsCallback: (pattern) async {
+                        if (pattern.isEmpty)
+                          return Iterable<Prediction>.empty();
                         return (await places.autocomplete(pattern,
                                 location:
                                     Location(lat: 42.729980, lng: -73.676682),
@@ -207,13 +236,15 @@ class SearchBarState extends State<SearchBar> {
                       },
                       itemBuilder: (context, Prediction suggestion) {
                         return ListTile(
-                          leading: Icon(Icons.shopping_cart),
+                          leading: Icon(Icons.location_on),
                           title: Text(suggestion.description!),
                           // subtitle: Text('${suggestion.distanceMeters!} m away'),
                         );
                       },
                       onSuggestionSelected: (Prediction suggestion) {
-                        print(suggestion);
+                        BlocProvider.of<SaferideBloc>(context).add(
+                            SaferideSelectionEvent(
+                                dropoffPrediction: suggestion));
                       },
                     ),
                   ),

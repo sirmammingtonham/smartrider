@@ -15,8 +15,8 @@ class SaferideNoState extends SaferideState {}
 class SaferideLoadingState extends SaferideState {}
 
 class SaferideSelectionState extends SaferideState {
-  final LatLng? pickupPoint;
-  final LatLng? dropPoint;
+  final GeoPoint? pickupPoint;
+  final GeoPoint? dropPoint;
   final String? pickupDescription;
   final String? dropDescription;
   final int queuePosition;

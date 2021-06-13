@@ -116,6 +116,14 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
       ),
     );
   } else {
-    return MaterialApp(home: CircularProgressIndicator());
+    return GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: MaterialApp(home: CircularProgressIndicator()));
   }
 }

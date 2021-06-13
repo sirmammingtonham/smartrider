@@ -173,8 +173,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _saferideBlocSub = saferideBloc.stream.listen((saferideState) {
       switch (saferideState.runtimeType) {
         case SaferideSelectionState:
-          add(MapSaferideSelectionEvent(
-              coord: (saferideState as SaferideSelectionState).dropPoint));
+          // add(MapSaferideSelectionEvent(
+          //     coord: (saferideState as SaferideSelectionState).dropPoint));
           break;
         case SaferideNoState:
           {

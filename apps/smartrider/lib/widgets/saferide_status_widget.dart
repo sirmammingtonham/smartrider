@@ -10,6 +10,8 @@ import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/util/multi_bloc_builder.dart';
 
+import 'package:shared/util/num_to_ordinal.dart';
+
 class SaferideStatusWidget extends StatelessWidget {
   const SaferideStatusWidget();
 
@@ -17,7 +19,7 @@ class SaferideStatusWidget extends StatelessWidget {
       Align(
           alignment: FractionalOffset.bottomCenter,
           child: FractionallySizedBox(
-            heightFactor: 0.2,
+            heightFactor: 0.16,
             child: Container(
                 decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
@@ -31,23 +33,32 @@ class SaferideStatusWidget extends StatelessWidget {
                       SizedBox(height: 5),
                       Center(
                         child: Text(
-                          'Estimated Wait: ',//${state.waitEstimate}',
+                          '${state.queuePosition + 1}${(state.queuePosition + 1).toOrdinal()} in line',
                           style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Colors.white),
                         ),
                       ),
-                      SizedBox(height: 5),
-                      Center(
-                        child: Text(
-                          '${state.queuePosition} in line',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w300,
-                              color: Colors.white60),
-                        ),
-                      ),
+                      Builder(builder: (context) {
+                        // TODO: is this accurate?
+                        if (state.queuePosition > 7) {
+                          return Padding(
+                            padding: EdgeInsets.only(top: 5),
+                            child: Center(
+                              child: Text(
+                                'Note: Wait > 20 mins',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.white60),
+                              ),
+                            ),
+                          );
+                        } else {
+                          return SizedBox.shrink();
+                        }
+                      }),
                       SizedBox(height: 14),
                       ElevatedButton(
                         style: ButtonStyle(
@@ -88,7 +99,8 @@ class SaferideStatusWidget extends StatelessWidget {
                     children: <Widget>[
                       SizedBox(height: 5),
                       Center(
-                        child: Text('${state.waitEstimate} min${state.waitEstimate != 1 ? 's' : ''}',
+                        child: Text(
+                          '${state.waitEstimate} min${state.waitEstimate != 1 ? 's' : ''}',
                           style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
@@ -198,11 +210,14 @@ class SaferideStatusWidget extends StatelessWidget {
           // TODO: get this to animate, with a slide up from previous state
           switch (saferideState.runtimeType) {
             case SaferideSelectionState:
-              return _selectionWidget(context, saferideState as SaferideSelectionState);
+              return _selectionWidget(
+                  context, saferideState as SaferideSelectionState);
             case SaferideWaitingState:
-              return _waitingWidget(context, saferideState as SaferideWaitingState);
+              return _waitingWidget(
+                  context, saferideState as SaferideWaitingState);
             case SaferideAcceptedState:
-              return _confirmedWidget(context, saferideState as SaferideAcceptedState);
+              return _confirmedWidget(
+                  context, saferideState as SaferideAcceptedState);
             default:
               return Container();
           }
