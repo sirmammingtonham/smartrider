@@ -6,3 +6,15 @@ abstract class OrderEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
+
+class OrderDefaultEvent extends OrderEvent {}
+
+class OrderWaitingEvent extends OrderEvent {}
+
+class OrderPickingUpEvent extends OrderEvent {}
+
+class OrderDroppingOffEvent extends OrderEvent {}
+
+class OrderCancelledEvent extends OrderEvent {}
+
+class OrderErrorEvent extends OrderEvent {}
