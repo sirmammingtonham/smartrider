@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:shared/models/bus/bus_realtime_update.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:http/http.dart' as http;
@@ -148,6 +148,18 @@ class BusProvider {
                 .contains(update.routeId))
             .toList();
     return vehicleUpdatesList;
+  }
+
+  Future<List<BusRealtimeUpdate>> getBusRealtimeUpdates() async {
+    var now = DateTime.now();
+    var milliseconds = now.millisecondsSinceEpoch;
+    http.Response response = await http.get(
+        Uri.parse('https://www.cdta.org/realtime/buses.json?$milliseconds'));
+    List<BusRealtimeUpdate> updates =
+        ((jsonDecode(response.body) as List).map((jsonMap) {
+      return BusRealtimeUpdate.fromJson(jsonMap);
+    }).toList());
+    return updates;
   }
 
   /// Returns a [Map] of <route_name,[BusTimetable]>
