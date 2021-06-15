@@ -27,10 +27,10 @@ dependencies:
     path: ../shared/
 
   #firebase dependencies
-  firebase_core: ^1.2.1
+  firebase_core: ^1.3.0
   # firebase_analytics: ^8.1.1
-  firebase_auth: ^1.3.0
-  cloud_firestore: ^2.2.1
+  firebase_auth: ^1.4.1
+  cloud_firestore: ^2.2.2
 
   #map dependencies
   google_maps_flutter: ^2.0.6
