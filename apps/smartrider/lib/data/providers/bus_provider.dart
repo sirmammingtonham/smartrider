@@ -42,6 +42,10 @@ class BusProvider {
     _providerHasLoaded = _init();
   }
 
+  List<String> getShortRoutes() {
+    return shortRouteIds;
+  }
+
   // we need to await in the constructor, so doing it like this allows for the factory to wait for initialization
   Future<void> _init() async {
     var routes = await _firestore
@@ -150,8 +154,8 @@ class BusProvider {
     return vehicleUpdatesList;
   }
 
-/// Returns a [Map] of <route_name, List<[BusRealtimeUpdate]>>  realtime update includes 
-/// the realtime positions and bearings of the buses obtained from cdta api
+  /// Returns a [Map] of <route_name, List<[BusRealtimeUpdate]>>  realtime update includes
+  /// the realtime positions and bearings of the buses obtained from cdta api
   Future<Map<String, List<BusRealtimeUpdate>>> getBusRealtimeUpdates() async {
     var now = DateTime.now();
     var milliseconds = now.millisecondsSinceEpoch;

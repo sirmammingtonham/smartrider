@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:shared/models/bus/bus_realtime_update.dart';
 import 'package:shared/util/bitmap_helpers.dart';
 import 'package:shared/util/errors.dart';
 
@@ -114,7 +115,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Map<String?, BusRoute> _busRoutes = {};
   Map<String?, BusShape> _busShapes = {};
-  List<BusVehicleUpdate> _busUpdates = [];
+  Map<String, List<BusRealtimeUpdate>> _busUpdates = {};
 
   Map<String?, ShuttleRoute> _shuttleRoutes = {};
   List<ShuttleStop>? _shuttleStops = [];
@@ -268,7 +269,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     if (_isBus!) {
       _busRoutes = await busRepo.getRoutes;
       _busShapes = await busRepo.getPolylines;
-      _busUpdates = await busRepo.getUpdates;
+      _busUpdates = await busRepo.getRealtimeUpdate;
       prefsBloc.add(PrefsUpdateEvent()); // just to get enabled bus routes
     } else {
       _shuttleRoutes = await shuttleRepo.getRoutes;
@@ -325,7 +326,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Stream<MapState> _mapUpdateRequestedToState() async* {
     if (_isBus!) {
-      _busUpdates = await busRepo.getUpdates;
+      _busUpdates = await busRepo.getRealtimeUpdate;
     } else {
       if (_shuttleRoutes.isEmpty) {
         yield* _mapDataRequestedToState();
@@ -531,57 +532,62 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         });
   }
 
-  Marker _busUpdateToMarker(BusVehicleUpdate update) {
+  Marker _busUpdateToMarker(BusRealtimeUpdate update) {
     int routeId = int.parse(update.routeId!);
+    LatLng busPosition = LatLng(update.lat,update.lng);
     // real time update shuttles
     return Marker(
         icon: _updateIcons[_updateIcons.containsKey(routeId) ? routeId : -1]!,
         infoWindow: InfoWindow(title: "Bus ID: ${update.id.toString()}"),
         flat: true,
         markerId: MarkerId(update.id.toString()),
-        position: update.getLatLng,
+        position: busPosition,
         rotation: _calculateBusHeading(update),
         anchor: Offset(0.5, 0.5),
         onTap: () {
           _controller!.animateCamera(
             CameraUpdate.newCameraPosition(
-                CameraPosition(target: update.getLatLng, zoom: 18, tilt: 50)),
+                CameraPosition(target: busPosition, zoom: 18, tilt: 50)),
           );
         });
   }
 
-  double _calculateBusHeading(BusVehicleUpdate update) {
-    late BusStopSimplified stop;
+  /// bearing of the bus,  degree is always relative to north
+  double _calculateBusHeading(BusRealtimeUpdate update) {
+    // late BusStopSimplified stop;
 
-    //TODO: get bus direction id
-    try {
-      try {
-        stop = _busRoutes[update.routeId]!
-            .forwardStops[update.currentStopSequence!];
-      } catch (error) {
-        stop = _busRoutes[update.routeId]!
-            .reverseStops[update.currentStopSequence!];
-      } // we should really handle this better
-    } catch (error) {
-      print(error);
-      print(update.routeId);
-      return 0.0;
-    }
+    // //TODO: get bus direction id
+    // try {
+    //   try {
+    //     stop = _busRoutes[update.routeId]!
+    //         .forwardStops[update.currentStopSequence!];
+    //   } catch (error) {
+    //     stop = _busRoutes[update.routeId]!
+    //         .reverseStops[update.currentStopSequence!];
+    //   } // we should really handle this better
+    // } catch (error) {
+    //   print(error);
+    //   print(update.routeId);
+    //   return 0.0;
+    // }
 
-    double lat1 = stop.stopLat!;
-    double lat2 = update.latitude!;
-    double lon1 = stop.stopLon!;
-    double lon2 = update.longitude!;
+    // double lat1 = stop.stopLat!;
+    // double lat2 = update.latitude!;
+    // double lon1 = stop.stopLon!;
+    // double lon2 = update.longitude!;
 
-    double dL = lon2 - lon1;
+    // double dL = lon2 - lon1;
 
-    // https://towardsdatascience.com/calculating-the-bearing-between-two-geospatial-coordinates-66203f57e4b4
-    double x = cos(lat2) * sin(dL);
-    double y = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dL);
-    double bearing = atan2(x, y); // in radians
-    double heading = (bearing * 180 / pi + 360) % 360; // convert to degrees
+    // // https://towardsdatascience.com/calculating-the-bearing-between-two-geospatial-coordinates-66203f57e4b4
+    // double x = cos(lat2) * sin(dL);
+    // double y = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dL);
+    // double bearing = atan2(x, y); // in radians
+    // double heading = (bearing * 180 / pi + 360) % 360; // convert to degrees
 
-    return heading;
+    //return heading;
+
+    int bearing = int.parse(update.bearing);
+    return bearing.toDouble();
   }
 
   Set<Polyline> _getEnabledPolylines() {
@@ -610,9 +616,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _mapMarkers.clear();
 
     if (_isBus!) {
-      for (var update in _busUpdates) {
-        _currentMarkers.add(_busUpdateToMarker(update));
-      }
+      List<String> defaultRoutes = busRepo.getDefaultRoutes;
+      defaultRoutes.forEach((routeId) {
+        _busUpdates[routeId]?.forEach((update) {
+          _currentMarkers.add(_busUpdateToMarker(update));
+        });
+      });
 
       _enabledBuses!.forEach((route, enabled) {
         if (enabled) {

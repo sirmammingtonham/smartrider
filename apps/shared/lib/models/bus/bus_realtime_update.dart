@@ -1,3 +1,5 @@
+
+
 class BusRealtimeUpdate {
   String objName;
   String id;
@@ -54,4 +56,5 @@ class BusRealtimeUpdate {
     data['trip_headsign'] = this.tripHeadsign;
     return data;
   }
+
 }

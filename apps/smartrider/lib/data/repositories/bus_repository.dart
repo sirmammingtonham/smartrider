@@ -1,3 +1,4 @@
+import 'package:shared/models/bus/bus_realtime_update.dart';
 import 'package:shared/models/bus/bus_route.dart';
 import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/models/bus/bus_stop.dart';
@@ -42,6 +43,12 @@ class BusRepository {
 
   Future<List<BusVehicleUpdate>> get getUpdates async =>
       _busProvider.getVehicleUpdates();
+
+  Future<Map<String, List<BusRealtimeUpdate>>> get getRealtimeUpdate async =>
+      _busProvider.getBusRealtimeUpdates();
+
+  List<String> get getDefaultRoutes =>
+      _busProvider.getShortRoutes();
 
   // bool get isConnected => _busProvider.getIsConnected;
 }

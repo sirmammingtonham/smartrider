@@ -1,9 +1,12 @@
 import 'package:http/http.dart' as http;
-import 'package:collection/collection.dart';
+//import 'package:collection/collection.dart';
 import 'package:shared/models/bus/bus_realtime_update.dart';
 import 'dart:convert';
 
+//import 'package:smartrider/data/repositories/bus_repository.dart';
+
 void main() async {
+ // BusRepository busRepo = await BusRepository.create();
 const shortRouteIds = [
     '87',
     '286',
@@ -32,4 +35,11 @@ const shortRouteIds = [
       print(element.bearing);
     });
   });
+  //  List<String> defaultRoutes = busRepo.getDefaultRoutes;
+  //     defaultRoutes.forEach((routeId) {
+  //       // updates[routeId]?.forEach((element) {
+  //       //   print(int.parse(element.bearing));
+  //       // });
+  //       print(routeId);
+  //     });
 }
