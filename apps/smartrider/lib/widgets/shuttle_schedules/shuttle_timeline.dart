@@ -12,7 +12,7 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 //import 'package:flutter/rendering.dart';
 
 // loading custom widgets and data
-import 'package:smartrider/util/data.dart';
+import 'package:shared/util/data.dart';
 import 'package:smartrider/widgets/custom_widgets/custom_expansion_tile.dart';
 
 const List<String> choices = [

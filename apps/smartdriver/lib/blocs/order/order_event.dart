@@ -20,17 +20,34 @@ class OrderQueueUpdateEvent extends OrderEvent {
 }
 
 class OrderAcceptedEvent extends OrderEvent {
-  final DocumentReference orderRef;
+  final Order order;
+  final SRUser rider;
 
-  const OrderAcceptedEvent({required this.orderRef});
+  const OrderAcceptedEvent({required this.order, required this.rider});
 
   @override
-  List<Object?> get props => [orderRef];
+  List<Object?> get props => [order, rider];
 }
 
-class OrderReachedPickupEvent extends OrderEvent {}
+class OrderReachedPickupEvent extends OrderEvent {
+  final Order order;
+  final SRUser rider;
 
-class OrderReachedDropoffEvent extends OrderEvent {}
+  const OrderReachedPickupEvent({required this.order, required this.rider});
+
+  @override
+  List<Object?> get props => [order, rider];
+}
+
+class OrderReachedDropoffEvent extends OrderEvent {
+  final Order order;
+  final SRUser rider;
+
+  const OrderReachedDropoffEvent({required this.order, required this.rider});
+
+  @override
+  List<Object?> get props => [order, rider];
+}
 
 class OrderUserCancelledEvent extends OrderEvent {
   final DocumentReference orderRef;
@@ -43,15 +60,22 @@ class OrderUserCancelledEvent extends OrderEvent {
   List<Object?> get props => [orderRef];
 }
 
-class OrderDriverDeclinedEvent extends OrderEvent {
+class OrderDriverCancelledEvent extends OrderEvent {
   final DocumentReference orderRef;
   final String cancellationReason;
 
-  const OrderDriverDeclinedEvent(
+  const OrderDriverCancelledEvent(
       {required this.orderRef, required this.cancellationReason});
 
   @override
   List<Object?> get props => [orderRef];
 }
 
-class OrderErrorEvent extends OrderEvent {}
+class OrderErrorEvent extends OrderEvent {
+  final SRError error;
+
+  const OrderErrorEvent({required this.error});
+
+  @override
+  List<Object?> get props => [error];
+}

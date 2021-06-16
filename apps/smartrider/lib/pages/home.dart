@@ -5,13 +5,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import 'package:smartrider/util/messages.dart';
+import 'package:shared/util/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
-import 'package:smartrider/util/multi_bloc_builder.dart';
+import 'package:shared/util/multi_bloc_builder.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 // custom widget imports
 import 'package:smartrider/widgets/map_widget.dart';

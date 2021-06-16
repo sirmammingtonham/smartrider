@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
-import 'package:smartrider/util/multi_bloc_builder.dart';
+import 'package:shared/util/multi_bloc_builder.dart';
 
 import 'package:shared/util/num_to_ordinal.dart';
 

@@ -10,8 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
-import 'package:smartrider/util/messages.dart';
-import 'package:smartrider/util/multi_bloc_builder.dart';
+import 'package:shared/util/messages.dart';
+import 'package:shared/util/multi_bloc_builder.dart';
 
 import 'package:smartrider/pages/home.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -61,7 +61,7 @@ class SmartriderMap extends StatelessWidget {
 
     if (mapState is MapErrorState) {
       map = Center(
-        child: Text('${mapState.message}'),
+        child: Text(mapState.error.toString()),
       );
     } else {
       map = GoogleMap(
@@ -83,8 +83,7 @@ class SmartriderMap extends StatelessWidget {
         myLocationButtonEnabled: false,
         trafficEnabled: false,
         polylines: mapState is MapLoadedState ? mapState.polylines : {},
-        markers:
-            mapState is MapLoadedState ? mapState.markers as Set<Marker> : {},
+        markers: mapState is MapLoadedState ? mapState.markers : {},
         zoomControlsEnabled: false,
         onCameraMove: (position) {
           BlocProvider.of<MapBloc>(context)

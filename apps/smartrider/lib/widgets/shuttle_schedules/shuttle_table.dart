@@ -6,7 +6,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
 
 // loading custom widgets and data
-import 'package:smartrider/util/data.dart';
+import 'package:shared/util/data.dart';
 
 class ShuttleTable extends StatefulWidget {
   final Function? containsFilter;

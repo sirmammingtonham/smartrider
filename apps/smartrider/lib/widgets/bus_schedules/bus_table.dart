@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
 import 'package:shared/models/bus/bus_stop.dart';
 // loading custom widgets and data
-import 'package:smartrider/util/data.dart';
+import 'package:shared/util/data.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
 import 'package:smartrider/widgets/custom_widgets/custom_sticky_table.dart';
 //import 'package:sticky_headers/sticky_headers.dart';

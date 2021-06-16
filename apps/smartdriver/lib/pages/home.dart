@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:sizer/sizer.dart';
 import 'package:smartdriver/blocs/order/order_bloc.dart';
 
@@ -13,6 +15,25 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Future<void> showCancellationDialog(DocumentReference orderRef) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+              child: Card(
+                  child: TextFormField(
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Reason for cancellation.',
+                hintText: 'Reason for cancellation.'),
+            onFieldSubmitted: (String str) {
+              BlocProvider.of<OrderBloc>(context).add(OrderDriverCancelledEvent(
+                  orderRef: orderRef, cancellationReason: str));
+            },
+          )));
+        });
+  }
+
   Widget waitingStateWidget(OrderWaitingState state) {
     if (state.latest == null) {
       return Placeholder(); // replace with "no new orders widget and loading circle"
@@ -66,34 +87,16 @@ class _HomeState extends State<Home> {
                           onPressed: () {
                             BlocProvider.of<OrderBloc>(context).add(
                                 OrderAcceptedEvent(
-                                    orderRef: state.latest!.orderRef));
+                                    order: state.latest!,
+                                    rider: state.latestRider!));
                           },
                         ),
                         const SizedBox(width: 8),
+                        // should we even allow a driver to decline/cancel before accepting?
                         TextButton(
-                          child: const Text('DECLINE'),
-                          onPressed: () async {
-                            /* we have to make them give a reason for cancellation */
-                            await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                      child: Card(
-                                          child: TextFormField(
-                                    decoration: InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        labelText: 'Reason for cancellation.',
-                                        hintText: 'Reason for cancellation.'),
-                                    onFieldSubmitted: (String str) {
-                                      BlocProvider.of<OrderBloc>(context).add(
-                                          OrderDriverDeclinedEvent(
-                                              orderRef: state.latest!.orderRef,
-                                              cancellationReason: str));
-                                    },
-                                  )));
-                                });
-                          },
-                        ),
+                            child: const Text('DECLINE'),
+                            onPressed: () async => await showCancellationDialog(
+                                state.latest!.orderRef)),
                         const SizedBox(width: 8),
                       ],
                     ),
@@ -127,6 +130,125 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Widget pickingUpStateWidget(OrderPickingUpState state) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 3.h),
+      elevation: 1,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 1.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Text(
+                'Picking up ${state.rider.name}',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            ListTile(
+              visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+              leading: Icon(Icons.face),
+              title: Text(state.rider.name),
+              subtitle: Text('Rider\'s name'),
+            ),
+            ListTile(
+              leading: Icon(Icons.add_location_alt_rounded),
+              title: Text(state.order.pickupAddress),
+              subtitle: Text('Tap to Map to Pickup'),
+              onTap: () {
+                MapsLauncher.launchCoordinates(state.order.pickupPoint.latitude,
+                    state.order.pickupPoint.longitude);
+              },
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextButton(
+                  child: const Text('REACHED PICKUP'),
+                  onPressed: () {
+                    //TODO: maybe require a confirmation dialogue?
+                    BlocProvider.of<OrderBloc>(context).add(
+                        OrderReachedPickupEvent(
+                            order: state.order, rider: state.rider));
+                  },
+                ),
+                const SizedBox(width: 8),
+                TextButton(
+                  child: const Text('CANCEL'),
+                  onPressed: () async =>
+                      await showCancellationDialog(state.order.orderRef),
+                ),
+                const SizedBox(width: 8),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget droppingOffStateWidget(OrderDroppingOffState state) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 3.h),
+      elevation: 1,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 1.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Text(
+                'Dropping off ${state.rider.name}',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            ListTile(
+              visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+              leading: Icon(Icons.face),
+              title: Text(state.rider.name),
+              subtitle: Text('Rider\'s name'),
+            ),
+            ListTile(
+              leading: Icon(Icons.wrong_location_rounded),
+              title: Text(state.order.dropoffAddress),
+              subtitle: Text('Tap to Map to Dropoff'),
+              onTap: () {
+                MapsLauncher.launchQuery(state.order.dropoffAddress);
+              },
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextButton(
+                  child: const Text('REACHED DROPOFF'),
+                  onPressed: () {
+                    //TODO: maybe require a confirmation dialogue?
+                    BlocProvider.of<OrderBloc>(context).add(
+                        OrderReachedDropoffEvent(
+                            order: state.order, rider: state.rider));
+                  },
+                ),
+                const SizedBox(width: 8),
+                TextButton(
+                  child: const Text('CANCEL'),
+                  onPressed: () async =>
+                      await showCancellationDialog(state.order.orderRef),
+                ),
+                const SizedBox(width: 8),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,13 +261,25 @@ class _HomeState extends State<Home> {
             case OrderWaitingState:
               return waitingStateWidget(state as OrderWaitingState);
             case OrderPickingUpState:
-              return Placeholder();
+              return pickingUpStateWidget(state as OrderPickingUpState);
             case OrderDroppingOffState:
-              return Placeholder();
+              return droppingOffStateWidget(state as OrderDroppingOffState);
             case OrderCancelledState:
               return Placeholder();
             case OrderErrorState:
-              return Placeholder();
+              {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text((state as OrderErrorState).error.toString()),
+                  duration: const Duration(seconds: 10),
+                  action: SnackBarAction(
+                    label: 'REPORT',
+                    onPressed: () {
+                      //TODO: add anonymous github issue request or firebase crashlytics
+                    },
+                  ),
+                ));
+              }
+              return Container();
             default:
               return Placeholder();
           }

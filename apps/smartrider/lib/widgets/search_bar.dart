@@ -5,8 +5,8 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shared/models/bus/pb/gtfs-realtime.pb.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
-import 'package:smartrider/util/messages.dart';
-import 'package:smartrider/util/multi_bloc_builder.dart';
+import 'package:shared/util/messages.dart';
+import 'package:shared/util/multi_bloc_builder.dart';
 
 import 'package:smartrider/pages/profile.dart';
 import 'package:smartrider/widgets/icons.dart';
@@ -23,7 +23,7 @@ import 'package:google_maps_webservice/geocoding.dart';
 import 'package:google_maps_webservice/places.dart';
 
 // import 'dart:io';
-import 'package:smartrider/util/strings.dart';
+import 'package:shared/util/strings.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:showcaseview/showcaseview.dart';
 

@@ -1,4 +1,4 @@
-// import 'package:smartrider/util/data.dart';
+// import 'package:shared/util/data.dart';
 
 // import 'package:flutter/widgets.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';

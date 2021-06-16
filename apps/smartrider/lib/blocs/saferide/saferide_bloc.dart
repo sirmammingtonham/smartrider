@@ -10,7 +10,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:shared/models/saferide/driver.dart';
 import 'package:smartrider/data/repositories/authentication_repository.dart';
 import 'package:smartrider/data/repositories/saferide_repository.dart';
-import 'package:smartrider/util/strings.dart';
+import 'package:shared/util/strings.dart';
 import 'package:shared/models/saferide/order.dart';
 
 part 'saferide_event.dart';

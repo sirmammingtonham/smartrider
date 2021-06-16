@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// shouldn't be used, just here to show the different status enum values
-enum _OrderStatus { WAITING, PICKING_UP, DROPPING_OFF, CANCELLED, ERROR }
+enum _OrderStatus { WAITING, PICKING_UP, DROPPING_OFF, COMPLETED, CANCELLED, ERROR }
 
 class Order {
   /// reference to the order in firestore

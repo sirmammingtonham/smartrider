@@ -3,7 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:shared/models/authentication/user.dart';
-import 'package:shared/models/saferide/driver.dart';
+import 'package:shared/util/errors.dart';
 import 'package:shared/models/saferide/order.dart';
 import 'package:smartdriver/data/repositories/authentication_repository.dart';
 import 'package:smartdriver/data/repositories/order_repository.dart';
@@ -44,12 +44,25 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       case OrderAcceptedEvent:
         yield* _mapOrderAcceptedToState(event as OrderAcceptedEvent);
         break;
+      case OrderReachedPickupEvent:
+        yield* _mapOrderReachedPickupToState(event as OrderReachedPickupEvent);
+        break;
+      case OrderReachedDropoffEvent:
+        yield* _mapOrderReachedDropoffToState(
+            event as OrderReachedDropoffEvent);
+        break;
       case OrderUserCancelledEvent:
-        yield* _mapOrderCancelledToState(event as OrderUserCancelledEvent);
+        yield* _mapOrderUserCancelledToState(event as OrderUserCancelledEvent);
         break;
-      case OrderDriverDeclinedEvent:
-        yield* _mapOrderDeclinedToState(event as OrderDriverDeclinedEvent);
+      case OrderDriverCancelledEvent:
+        yield* _mapOrderDriverCancelledToState(
+            event as OrderDriverCancelledEvent);
         break;
+      case OrderErrorEvent:
+        yield* _mapOrderErrorToState(event as OrderErrorEvent);
+        break;
+      default:
+        throw Exception("bruh");
     }
   }
 
@@ -61,19 +74,41 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   }
 
   Stream<OrderState> _mapOrderAcceptedToState(OrderAcceptedEvent event) async* {
-    final ref = await orderRepository.acceptOrder(
-        authenticationRepository.currentDriver, event.orderRef);
-    yield OrderPickingUpState(
-        orderData: ((await ref.get()).data()! as Map<String, dynamic>));
+    // commented code not necessary since fields we care about wont change
+    // final ref = await orderRepository.acceptOrder(
+    //     authenticationRepository.currentDriver, event.order.orderRef);
+    // final order = Order.fromSnapshot(await ref.get());
+    await orderRepository.acceptOrder(
+        authenticationRepository.currentDriver, event.order.orderRef);
+    yield OrderPickingUpState(order: event.order, rider: event.rider);
   }
 
-  Stream<OrderState> _mapOrderCancelledToState(
-      OrderUserCancelledEvent event) async* {
+  Stream<OrderState> _mapOrderReachedPickupToState(
+      OrderReachedPickupEvent event) async* {
+    await orderRepository.reachedPickupOrder(event.order.orderRef);
+    yield OrderDroppingOffState(order: event.order, rider: event.rider);
+  }
+
+  Stream<OrderState> _mapOrderReachedDropoffToState(
+      OrderReachedDropoffEvent event) async* {
+    await orderRepository.reachedDropoffOrder(
+        authenticationRepository.currentDriver, event.order.orderRef);
     yield OrderWaitingState();
   }
 
-  Stream<OrderState> _mapOrderDeclinedToState(
-      OrderDriverDeclinedEvent event) async* {
+  Stream<OrderState> _mapOrderUserCancelledToState(
+      OrderUserCancelledEvent event) async* {
+    yield OrderErrorState(error: SRError.USER_CANCELLED_ERROR);
+    yield OrderWaitingState();
+  }
+
+  Stream<OrderState> _mapOrderDriverCancelledToState(
+      OrderDriverCancelledEvent event) async* {
+    yield OrderWaitingState();
+  }
+
+  Stream<OrderState> _mapOrderErrorToState(OrderErrorEvent event) async* {
+    yield OrderErrorState(error: event.error);
     yield OrderWaitingState();
   }
 }

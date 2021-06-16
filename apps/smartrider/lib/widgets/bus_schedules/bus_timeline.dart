@@ -7,7 +7,7 @@ import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
-import 'package:smartrider/util/messages.dart';
+import 'package:shared/util/messages.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/pages/home.dart';

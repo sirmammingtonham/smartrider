@@ -22,16 +22,32 @@ class OrderWaitingState extends OrderState {
 }
 
 class OrderPickingUpState extends OrderState {
-  final Map<String, dynamic> orderData;
+  final Order order;
+  final SRUser rider;
 
-  OrderPickingUpState({required this.orderData});
+  OrderPickingUpState({required this.order, required this.rider});
 
   @override
-  List<Object?> get props => [orderData];
+  List<Object?> get props => [order, rider];
 }
 
-class OrderDroppingOffState extends OrderState {}
+class OrderDroppingOffState extends OrderState {
+  final Order order;
+  final SRUser rider;
+
+  OrderDroppingOffState({required this.order, required this.rider});
+
+  @override
+  List<Object?> get props => [order, rider];
+}
 
 class OrderCancelledState extends OrderState {}
 
-class OrderErrorState extends OrderState {}
+class OrderErrorState extends OrderState {
+  final SRError error;
+
+  const OrderErrorState({required this.error});
+
+  @override
+  List<Object?> get props => [error];
+}

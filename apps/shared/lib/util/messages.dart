@@ -15,7 +15,3 @@ const SLIDING_PAGE_TAB_SHOWCASE_MESSAGE =
 const BUS_TAB_SHOWCASE_MESSAGE = 'Tab a tab to swap between bus routes';
 const TIMELINE_ITEM_SHOWCASE_MESSAGE =
     'Tap on a stop to get more info about arrival times';
-
-// ERROR MESSAGES
-const NETWORK_ERROR_MESSAGE =
-    'No internet or shuttle data unavailable. (Error Code: bruh)';
