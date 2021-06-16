@@ -7,12 +7,16 @@ class OrderProvider {
   // dependency injection for unit testing
   OrderProvider({required this.firestore});
 
-  Future<DocumentReference> acceptOrder(Driver driver, Order order) async {
+  Stream<QuerySnapshot<Map<String, dynamic>>> get orderStream =>
+      firestore.collection('orders_test').snapshots();
+
+  Future<DocumentReference> acceptOrder(
+      Driver driver, DocumentReference orderRef) async {
     // need to use geolocator to provide updates on location and stuff probably (should go in its own bloc)
-    await order.orderRef
+    await orderRef
         .update({'status': 'PICKING_UP', 'vehicle': driver.vehicleRef});
-    await driver.vehicleRef.update({'current_order': order.orderRef});
-    return order.orderRef;
+    await driver.vehicleRef.update({'current_order': orderRef});
+    return orderRef;
   }
 
   Future<DocumentReference> declineOrder(Order order) async {

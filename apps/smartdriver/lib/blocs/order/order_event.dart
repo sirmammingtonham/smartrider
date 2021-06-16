@@ -9,12 +9,49 @@ abstract class OrderEvent extends Equatable {
 
 class OrderDefaultEvent extends OrderEvent {}
 
-class OrderWaitingEvent extends OrderEvent {}
+class OrderQueueUpdateEvent extends OrderEvent {
+  final Order latest;
+  final Iterable<Order> queue;
 
-class OrderPickingUpEvent extends OrderEvent {}
+  const OrderQueueUpdateEvent({required this.latest, required this.queue});
 
-class OrderDroppingOffEvent extends OrderEvent {}
+  @override
+  List<Object?> get props => [latest, queue];
+}
 
-class OrderCancelledEvent extends OrderEvent {}
+class OrderAcceptedEvent extends OrderEvent {
+  final DocumentReference orderRef;
+
+  const OrderAcceptedEvent({required this.orderRef});
+
+  @override
+  List<Object?> get props => [orderRef];
+}
+
+class OrderReachedPickupEvent extends OrderEvent {}
+
+class OrderReachedDropoffEvent extends OrderEvent {}
+
+class OrderUserCancelledEvent extends OrderEvent {
+  final DocumentReference orderRef;
+  final String cancellationReason;
+
+  const OrderUserCancelledEvent(
+      {required this.orderRef, required this.cancellationReason});
+
+  @override
+  List<Object?> get props => [orderRef];
+}
+
+class OrderDriverDeclinedEvent extends OrderEvent {
+  final DocumentReference orderRef;
+  final String cancellationReason;
+
+  const OrderDriverDeclinedEvent(
+      {required this.orderRef, required this.cancellationReason});
+
+  @override
+  List<Object?> get props => [orderRef];
+}
 
 class OrderErrorEvent extends OrderEvent {}

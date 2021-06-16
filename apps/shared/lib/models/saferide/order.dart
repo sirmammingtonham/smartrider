@@ -51,23 +51,21 @@ class Order {
       required this.queuePosition,
       this.cancellationReason});
 
-  Future<String> get riderName async => (await rider.get()).get('name');
-
   factory Order.fromSnapshot(DocumentSnapshot snap) {
+    final data = (snap.data()! as Map<String, dynamic>);
     return Order(
         orderRef: snap.reference,
-        status: snap.get('status'),
-        pickupAddress: snap.get('pickup_address'),
-        dropoffAddress: snap.get('dropoff_address'),
-        pickupPoint: snap.get('pickup_point'),
-        dropoffPoint: snap.get('dropoff_point'),
-        rider: snap.get('rider'),
-        vehicleRef: snap.get('vehicle'),
-        updatedAt: snap.get('updated_at'),
-        estimatedPickup: snap.get('estimated_pickup'),
-        queuePosition: snap.get('queue_position'),
-        cancellationReason: snap.get('status') == 'CANCELLED'
-            ? snap.get('cancel_reason')
-            : null);
+        status: data['status']!,
+        pickupAddress: data['pickup_address']!,
+        dropoffAddress: data['dropoff_address']!,
+        pickupPoint: data['pickup_point']!,
+        dropoffPoint: data['dropoff_point']!,
+        rider: data['rider']!,
+        vehicleRef: data['vehicle'],
+        updatedAt: data['updated_at']!,
+        estimatedPickup: data['estimated_pickup'],
+        queuePosition: data['queue_position'],
+        cancellationReason:
+            data['status'] == 'CANCELLED' ? data['cancel_reason'] : null);
   }
 }

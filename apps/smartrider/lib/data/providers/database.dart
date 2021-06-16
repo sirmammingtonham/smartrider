@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared/models/backend/user.dart';
+import 'package:shared/models/authentication/user.dart';
 
 /* Contains functions for handling the database */
 
@@ -36,22 +36,22 @@ class DatabaseService {
   //receive data function(s) go here
 
   // user list from snapshot
-  List<User> _userListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) {
-      return User(
-          email: doc['email'],
-          rin: doc['rin'],
-          userType: doc['userType'],
-          name: doc["name"]);
-    }).toList();
-  }
+  // List<SRUser> _userListFromSnapshot(QuerySnapshot snapshot) {
+  //   return snapshot.docs.map((doc) {
+  //     return SRUser(
+  //         email: doc['email'],
+  //         rin: doc['rin'],
+  //         userType: doc['userType'],
+  //         name: doc["name"]);
+  //   }).toList();
+  // }
 
   //Stream<List<User>> get users {
   // gets user stream
-  Stream<List<User>> get users {
-    //takes user info from collection and creates a list of user objects
-    return _userCollection.snapshots().map(_userListFromSnapshot);
-  }
+  // Stream<List<SRUser>> get users {
+  //   //takes user info from collection and creates a list of user objects
+  //   return _userCollection.snapshots().map(_userListFromSnapshot);
+  // }
 
   //// very deprecated!!
   ///

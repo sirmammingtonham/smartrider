@@ -7,8 +7,8 @@ class OrderRepository {
   final OrderProvider authProvider =
       OrderProvider(firestore: FirebaseFirestore.instance);
 
-  Future<DocumentReference> acceptOrder(Driver driver, Order order) async {
-    return authProvider.acceptOrder(driver, order);
+  Future<DocumentReference> acceptOrder(Driver driver, DocumentReference orderRef) async {
+    return authProvider.acceptOrder(driver, orderRef);
   }
 
   Future<DocumentReference> declineOrder(Order order) async {
@@ -18,4 +18,6 @@ class OrderRepository {
   Future<DocumentReference> cancelOrder(Driver driver, Order order) async {
     return authProvider.cancelOrder(driver, order);
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> get orderStream => authProvider.orderStream;
 }

@@ -18,7 +18,7 @@ class SaferideProvider {
       required GeoPoint pickupPoint,
       required String dropoffAddress,
       required GeoPoint dropoffPoint}) async {
-    CollectionReference orders = firestore.collection('orders');
+    CollectionReference orders = firestore.collection('orders_test');
     final ref = await orders.add({
       'status': 'WAITING',
       'pickup_address': pickupAddress,
@@ -41,10 +41,10 @@ class SaferideProvider {
   }
 
   // Future<Map<String?, Driver>?> getDrivers() async {
-    // QuerySnapshot response = await firestore.collection('drivers').get();
-    // _driversMap = Map.fromIterable(response.docs,
-    //     key: (doc) => doc['device_id'],
-    //     value: (doc) => Driver.fromDocument(doc.data()));
+  // QuerySnapshot response = await firestore.collection('drivers').get();
+  // _driversMap = Map.fromIterable(response.docs,
+  //     key: (doc) => doc['device_id'],
+  //     value: (doc) => Driver.fromDocument(doc.data()));
   //   return _driversMap;
   // }
 

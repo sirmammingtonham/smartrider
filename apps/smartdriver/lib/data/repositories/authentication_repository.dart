@@ -10,6 +10,8 @@ class AuthenticationRepository {
       firestore: FirebaseFirestore.instance,
       firebaseAuth: FirebaseAuth.instance);
 
+  Driver get currentDriver => authProvider.currentDriver;
+
   Future<Driver> tryLogin(
       {required String name,
       required String phoneNumber,

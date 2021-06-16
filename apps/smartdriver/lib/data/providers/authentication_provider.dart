@@ -8,6 +8,7 @@ import 'package:shared/models/saferide/driver.dart';
 class AuthenticationProvider {
   final FirebaseFirestore firestore;
   final FirebaseAuth firebaseAuth;
+  late Driver currentDriver;
 
   // dependency injection for unit testing
   AuthenticationProvider({required this.firestore, required this.firebaseAuth});
@@ -29,11 +30,12 @@ class AuthenticationProvider {
           'available': true,
           'current_driver': {'name': name, 'phone_number': phoneNumber}
         });
-        return Driver(
+        currentDriver = Driver(
             vehicleId: vehicleId,
             name: name,
             phone: phoneNumber,
             vehicleRef: vehicleSnapshot.reference);
+        return currentDriver;
       } else {
         throw AuthenticationException(
             'incorrectCredentials: Incorrect vehicle ID and password combination!');
