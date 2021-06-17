@@ -5,6 +5,7 @@
 const SLIDING_PANEL_SHOWCASE_MESSAGE = 'Swipe up to view the shuttle/bus times';
 const LOCATION_BUTTON_SHOWCASE_MESSAGE = 'Tap to see your location';
 const VIEW_CHANGE_BUTTON_SHOWCASE_MESSAGE = 'Tap to see shuttles or buses';
+const LEGEND_BUTTON_SHOWCASE_MESSAGE = 'Tap to view the map legend';
 const MAP_SHOWCASE_TITLE = 'This is the map!';
 const MAP_SHOWCASE_MESSAGE = 'Swipe to look around and pinch to zoom in/out';
 const SETTINGS_SHOWCASE_MESSAGE = 'Tap to see settings';

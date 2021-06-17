@@ -533,7 +533,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   Marker _busUpdateToMarker(BusRealtimeUpdate update) {
-    int routeId = int.parse(update.routeId!);
+    int routeId = int.parse(update.routeId);
     LatLng busPosition = LatLng(update.lat,update.lng);
     // real time update shuttles
     return Marker(

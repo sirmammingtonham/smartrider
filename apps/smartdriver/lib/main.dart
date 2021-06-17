@@ -47,8 +47,8 @@ class SmartDriver extends StatelessWidget {
               builder: (context, state) {
                 switch (state.runtimeType) {
                   case AuthenticationLoggedOutState:
-                    // return Login();
-                    return Home(title: 'bruhhh');
+                    return Login();
+                    // return Home(title: 'bruhhh');
                   case AuthenticationLoggedInState:
                     return Home(
                         title:

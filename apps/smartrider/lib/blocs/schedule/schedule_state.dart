@@ -1,7 +1,7 @@
 part of 'schedule_bloc.dart';
 
 abstract class ScheduleState extends Equatable {
-  final bool? isBus = true;
+  final bool isBus = true;
   const ScheduleState();
   @override
   List<Object?> get props => [isBus];

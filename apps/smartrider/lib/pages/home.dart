@@ -23,6 +23,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 GlobalKey showcaseSettings = GlobalKey();
 GlobalKey showcaseShuttleToggle = GlobalKey();
+GlobalKey showcaseLegend = GlobalKey();
 
 GlobalKey showcaseProfile = GlobalKey();
 GlobalKey showcaseSlidingPanel = GlobalKey();

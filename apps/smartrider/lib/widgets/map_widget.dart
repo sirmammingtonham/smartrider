@@ -15,6 +15,7 @@ import 'package:shared/util/multi_bloc_builder.dart';
 
 import 'package:smartrider/pages/home.dart';
 import 'package:showcaseview/showcaseview.dart';
+import 'package:smartrider/widgets/legend.dart';
 
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
@@ -137,6 +138,7 @@ class SmartriderMap extends StatelessWidget {
               width: 300,
             )),
       ),
+      Legend(),
       viewButton ?? Container(),
       locationButton
     ]);
