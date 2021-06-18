@@ -151,6 +151,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Image(
                                               image: AssetImage(
@@ -194,6 +196,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Image(
                                             image: AssetImage(
@@ -238,6 +242,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Align(
                                             alignment: Alignment.bottomCenter,
@@ -285,6 +291,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Image(
                                             image: AssetImage(
@@ -370,7 +378,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               );
       }),
-      bottomSheet: _currentPage == _numPages - 1 && !onboardDone 
+      bottomSheet: _currentPage == _numPages - 1 && !onboardDone
           ? Container(
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
@@ -402,6 +410,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             )
           : Text(''),
-    );  
+    );
   }
 }

@@ -81,6 +81,7 @@ flutter:
   assets:
 # app icons
     - assets/app_icons/app_icon_v2.png
+    - assets/app_icons/logo_v2.png
     - assets/app_icons/app_icon_star.png
     - assets/app_icons/app_icon_word_light_mode.png
     - assets/app_icons/app_icon_word_dark_mode.png
