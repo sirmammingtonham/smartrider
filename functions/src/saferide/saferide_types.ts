@@ -1,13 +1,12 @@
 import { firestore } from "firebase-admin";
 
 export type Status =
-  | "NEW"
+  | "WAITING"
   | "PICKING_UP"
-  | "REACHED_PICKUP"
   | "DROPPING_OFF"
-  | "REACHED_DROPOFF"
+  | "COMPLETED"
   | "CANCELLED"
-  | undefined;
+  | "ERROR";
 
 export interface User {
   id: string;

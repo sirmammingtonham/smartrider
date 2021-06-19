@@ -29,6 +29,7 @@ class _HomeState extends State<Home> {
             onFieldSubmitted: (String str) {
               BlocProvider.of<OrderBloc>(context).add(OrderDriverCancelledEvent(
                   orderRef: orderRef, cancellationReason: str));
+              Navigator.pop(context);
             },
           )));
         });
@@ -36,7 +37,19 @@ class _HomeState extends State<Home> {
 
   Widget waitingStateWidget(OrderWaitingState state) {
     if (state.latest == null) {
-      return Placeholder(); // replace with "no new orders widget and loading circle"
+      return Center(
+        child: Column(
+          children: [
+            SizedBox(height: 25.h),
+            Text(
+              'Waiting for First Rider',
+              style: TextStyle(fontSize: 36),
+            ),
+            SizedBox(height: 8.h),
+            CircularProgressIndicator()
+          ],
+        ),
+      );
     }
     return SingleChildScrollView(
       child: Padding(
@@ -130,6 +143,7 @@ class _HomeState extends State<Home> {
     );
   }
 
+//TODO: add list tile to call rider
   Widget pickingUpStateWidget(OrderPickingUpState state) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 3.h),
@@ -257,6 +271,7 @@ class _HomeState extends State<Home> {
         ),
         // might have to wrap in blocbuilder to react to acceptance but idk if we want to do that here
         body: BlocBuilder<OrderBloc, OrderState>(builder: (context, state) {
+          print(state.runtimeType);
           switch (state.runtimeType) {
             case OrderWaitingState:
               return waitingStateWidget(state as OrderWaitingState);

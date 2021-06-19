@@ -59,13 +59,14 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         {
           yield SaferideWaitingState(
               queuePosition: (event as SaferideWaitingEvent).queuePosition,
-              estimatedPickup: event.estimatedPickup!);
+              estimatedPickup: event.estimatedPickup);
         }
         break;
       case SaferidePickingUpEvent:
         {
           yield SaferidePickingUpState(
               licensePlate: (event as SaferidePickingUpEvent).licensePlate,
+              phoneNumber: event.driverPhone,
               driverName: event.driverName,
               queuePosition: event.queuePosition,
               estimatedPickup: event.estimatedPickup);
@@ -113,14 +114,15 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       case 'PICKING_UP':
         {
           final vehicle = await order.vehicleRef!.get();
+          print(vehicle.get('current_driver').runtimeType);
           final currentDriver =
-              (vehicle.get('current_driver') as Map<String, String>);
+              (vehicle.get('current_driver') as Map<String, dynamic>);
           add(SaferidePickingUpEvent(
               driverName: currentDriver['name']!,
               driverPhone: currentDriver['phone_number']!,
               licensePlate: vehicle.get('license_plate'),
               queuePosition: order.queuePosition ?? -1,
-              estimatedPickup: order.estimatedPickup!));
+              estimatedPickup: order.estimatedPickup));
         }
         break;
       case 'DROPPING_OFF':
@@ -132,6 +134,9 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         {
           add(SaferideDriverCancelledEvent(reason: order.cancellationReason!));
         }
+        break;
+      case 'COMPLETED':
+        {}
         break;
       case 'ERROR':
         {}

@@ -7,8 +7,10 @@ class OrderProvider {
   // dependency injection for unit testing
   OrderProvider({required this.firestore});
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> get orderStream =>
-      firestore.collection('orders_test').snapshots();
+  Stream<QuerySnapshot<Map<String, dynamic>>> get orderStream => firestore
+      .collection('orders_test')
+      .where('status', isEqualTo: 'WAITING')
+      .snapshots();
 
   Future<DocumentReference> acceptOrder(
       Driver driver, DocumentReference orderRef) async {
@@ -26,7 +28,8 @@ class OrderProvider {
 
   Future<DocumentReference> reachedDropoffOrder(
       Driver driver, DocumentReference orderRef) async {
-    await orderRef.update({'status': 'COMPLETED'});
+    await orderRef.update(
+        {'status': 'COMPLETED', 'completed_at': FieldValue.serverTimestamp()});
     await driver.vehicleRef.update({'available': true});
     return orderRef;
   }
@@ -36,13 +39,13 @@ class OrderProvider {
   }
 
   Future<DocumentReference> cancelOrder(
-      Driver driver, Order order, String reason) async {
-    await order.orderRef.update({
+      Driver driver, DocumentReference orderRef, String reason) async {
+    await orderRef.update({
       'status': 'CANCELLED',
       'vehicle': driver.vehicleRef,
       'cancel_reason': reason
     });
     await driver.vehicleRef.update({'available': true});
-    return order.orderRef;
+    return orderRef;
   }
 }

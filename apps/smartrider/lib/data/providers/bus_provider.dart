@@ -157,9 +157,8 @@ class BusProvider {
   /// Returns a [Map] of <route_name, List<[BusRealtimeUpdate]>>  realtime update includes
   /// the realtime positions and bearings of the buses obtained from cdta api
   Future<Map<String, List<BusRealtimeUpdate>>> getBusRealtimeUpdates() async {
-    var now = DateTime.now();
-    var milliseconds = now.millisecondsSinceEpoch;
-    print(milliseconds);
+    final now = DateTime.now();
+    final milliseconds = now.millisecondsSinceEpoch;
     http.Response response = await http.get(
         Uri.parse('https://www.cdta.org/realtime/buses.json?$milliseconds'));
     Map<String, List<BusRealtimeUpdate>> updates =
