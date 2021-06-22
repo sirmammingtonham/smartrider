@@ -20,7 +20,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  // adding placeholder vars for now, replace these with sharedprefs!
+  // adding placeholder vars for now, replace these with sharedprefs
   Map<String, bool>? prefsData;
 
   AuthRepository auth = AuthRepository.create();
@@ -128,9 +128,9 @@ class SettingsWidget extends StatelessWidget {
           cardBuilder([
             SwitchListTile(
               title: Text('Push Notifications'),
-              value: state.prefs!.getBool('pushNotifications')!,
+              value: state.prefs.getBool('pushNotifications')!,
               onChanged: (bool value) {
-                state.prefs!.setBool('pushNotifications', value);
+                state.prefs.setBool('pushNotifications', value);
                 setState();
               },
               secondary: const Icon(Icons.notifications),
@@ -139,9 +139,9 @@ class SettingsWidget extends StatelessWidget {
                 builder: (context) => SwitchListTile(
                       activeColor: Theme.of(context).toggleableActiveColor,
                       title: Text('Lights Out'),
-                      value: state.prefs!.getBool('darkMode')!,
+                      value: state.prefs.getBool('darkMode')!,
                       onChanged: (bool value) {
-                        state.prefs!.setBool('darkMode', value);
+                        state.prefs.setBool('darkMode', value);
                         BlocProvider.of<PrefsBloc>(context)
                             .add(ThemeChangedEvent(value));
                         setState();
@@ -159,7 +159,7 @@ class SettingsWidget extends StatelessWidget {
               ),
             ),
           ),
-          if (state.shuttles!.keys.isEmpty)
+          if (state.shuttles.keys.isEmpty)
             Container(
               margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
               child: Material(
@@ -179,12 +179,12 @@ class SettingsWidget extends StatelessWidget {
                 ),
               ),
             ),
-          cardBuilder(state.shuttles!.keys
+          cardBuilder(state.shuttles.keys
               .map((key) => SwitchListTile(
                     title: Text(key!),
-                    value: state.shuttles![key]!,
+                    value: state.shuttles[key]!,
                     onChanged: (bool value) {
-                      state.shuttles![key] = value;
+                      state.shuttles[key] = value;
                       BlocProvider.of<PrefsBloc>(context)
                           .add(SavePrefsEvent(key, value));
                       setState();
@@ -203,12 +203,12 @@ class SettingsWidget extends StatelessWidget {
               ),
             ),
           ),
-          cardBuilder(state.buses!.keys
+          cardBuilder(state.buses.keys
               .map((key) => SwitchListTile(
                     title: Text(PrefsBloc.busIdMap[key]!),
-                    value: state.buses![key]!,
+                    value: state.buses[key]!,
                     onChanged: (bool value) {
-                      state.buses![key] = value;
+                      state.buses[key] = value;
                       BlocProvider.of<PrefsBloc>(context)
                           .add(SavePrefsEvent(key, value));
                       setState();

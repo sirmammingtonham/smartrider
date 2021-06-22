@@ -24,4 +24,7 @@ class SaferideRepository {
           dropoffPoint: dropoffPoint);
 
   Future<void> cancelOrder() async => _saferideProvider.cancelOrder();
+
+  Future<DocumentSnapshot> getOrder(String orderId) async =>
+      _saferideProvider.getOrder(orderId);
 }

@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_webservice/geocoding.dart';
+// import 'package:google_maps_webservice/geocoding.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:shared/models/saferide/driver.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+// import 'package:shared/models/saferide/driver.dart';
 import 'package:smartrider/data/repositories/authentication_repository.dart';
 import 'package:smartrider/data/repositories/saferide_repository.dart';
 import 'package:shared/util/strings.dart';
@@ -20,18 +22,40 @@ part 'saferide_state.dart';
 // so they dont reset when they leave and reopen the app
 class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   final places = new GoogleMapsPlaces(apiKey: GOOGLE_API_KEY);
-
+  final PrefsBloc prefsBloc;
   final SaferideRepository saferideRepo;
   final AuthRepository authRepo;
-  // Map<String, String> _currentDriver;
 
+  DocumentReference? currentOrder;
   PlacesDetailsResponse? dropoffDetails, pickupDetails;
   String? dropoffAddress, pickupAddress;
   String? dropoffDescription, pickupDescription;
   GeoPoint? dropoffPoint, pickupPoint;
 
-  SaferideBloc({required this.saferideRepo, required this.authRepo})
-      : super(SaferideNoState());
+  SaferideBloc(
+      {required this.prefsBloc,
+      required this.saferideRepo,
+      required this.authRepo})
+      : super(SaferideNoState()) {
+    prefsBloc.stream.listen((state) async {
+      switch (state.runtimeType) {
+        case PrefsLoadedState:
+          {
+            String? orderId = prefsBloc.getCurrentOrderId();
+            if (orderId != null) {
+              final snap = await saferideRepo.getOrder(orderId);
+              if (snap.exists) {
+                currentOrder = snap.reference;
+                currentOrder!.snapshots().listen(orderListener);
+              }
+            }
+          }
+          break;
+        default:
+          break;
+      }
+    });
+  }
 
   @override
   Future<void> close() {
@@ -106,6 +130,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     switch (order.status) {
       case 'WAITING':
         {
+          prefsBloc.setCurrentOrderId(order.orderRef.id);
           add(SaferideWaitingEvent(
               queuePosition: order.queuePosition ?? -1,
               estimatedPickup: order.estimatedPickup));
@@ -132,14 +157,20 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         break;
       case 'CANCELLED':
         {
+          prefsBloc.setCurrentOrderId(null);
           add(SaferideDriverCancelledEvent(reason: order.cancellationReason!));
         }
         break;
       case 'COMPLETED':
-        {}
+        {
+          prefsBloc.setCurrentOrderId(null);
+          add(SaferideNoEvent());
+        }
         break;
       case 'ERROR':
-        {}
+        {
+          prefsBloc.setCurrentOrderId(null);
+        }
         break;
       default:
         {

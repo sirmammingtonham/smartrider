@@ -18,26 +18,26 @@ class PrefsLoadingState extends PrefsState {
 
 /// This class represents what user will see when data is fetched
 class PrefsLoadedState extends PrefsState {
-  final SharedPreferences? prefs;
-  final Map<String?, bool?>? shuttles;
-  final Map<String, bool>? buses;
+  final SharedPreferences prefs;
+  final Map<String?, bool?> shuttles;
+  final Map<String, bool> buses;
   final bool modifyActiveRoutes;
 
   const PrefsLoadedState(this.prefs, this.shuttles, this.buses,
       {this.modifyActiveRoutes: false});
 
-  ThemeData get theme => prefs!.getBool('darkMode')! ? darkTheme : lightTheme;
+  ThemeData get theme => prefs.getBool('darkMode')! ? darkTheme : lightTheme;
 
-  bool? get firstLaunch => prefs!.getBool('firstLaunch');
+  bool? get firstLaunch => prefs.getBool('firstLaunch');
 
   @override
   List<Object?> get props => [
         this.shuttles,
         this.buses,
         this.modifyActiveRoutes,
-        this.prefs!.getBool('pushNotifications'),
-        this.prefs!.getBool('darkMode'),
-        this.prefs!.getBool('firstLaunch')
+        this.prefs.getBool('pushNotifications'),
+        this.prefs.getBool('darkMode'),
+        this.prefs.getBool('firstLaunch')
       ];
 }
 
