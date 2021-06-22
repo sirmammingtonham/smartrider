@@ -159,7 +159,6 @@ class BusProvider {
   Future<Map<String, List<BusRealtimeUpdate>>> getBusRealtimeUpdates() async {
     var now = DateTime.now();
     var milliseconds = now.millisecondsSinceEpoch;
-    print(milliseconds);
     http.Response response = await http.get(
         Uri.parse('https://www.cdta.org/realtime/buses.json?$milliseconds'));
     Map<String, List<BusRealtimeUpdate>> updates =
@@ -226,6 +225,8 @@ class BusProvider {
           // normal case: today not in exclude dates
           timetableMap[routeMapping![route.get('route_id')]] = entry;
         }
+
+        // TO-DO update the timetable with cdta api
       }
     }
 
