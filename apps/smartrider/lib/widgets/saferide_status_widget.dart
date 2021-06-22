@@ -11,6 +11,7 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
 
 import 'package:shared/util/num_to_ordinal.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SaferideStatusWidget extends StatelessWidget {
   const SaferideStatusWidget();
@@ -84,6 +85,7 @@ class SaferideStatusWidget extends StatelessWidget {
           ));
 
   /// widget for order status waiting
+  // TODO: hide search bar wtf is up
   Widget _waitingWidget(BuildContext context, SaferideWaitingState state) =>
       Align(
           alignment: FractionalOffset.bottomCenter,
@@ -166,6 +168,9 @@ class SaferideStatusWidget extends StatelessWidget {
                         title: Text(state.driverName),
                         subtitle: Text('Driver'),
                         trailing: Icon(Icons.call),
+                        onTap: () {
+                        launch('tel://${state.phoneNumber}');
+                        },
                       ),
                       Divider(
                         height: 0,
@@ -173,7 +178,7 @@ class SaferideStatusWidget extends StatelessWidget {
                       ListTile(
                         leading: Icon(Icons.drive_eta),
                         title: Text(
-                            '${state.queuePosition + 1}${(state.queuePosition + 1).toOrdinal()} in line'),
+                            'TODO: replace with brand of car?'),
                         trailing: Text(state.licensePlate),
                       ),
                       ElevatedButton(
@@ -204,7 +209,7 @@ class SaferideStatusWidget extends StatelessWidget {
       Align(
           alignment: FractionalOffset.bottomCenter,
           child: FractionallySizedBox(
-            heightFactor: 0.32,
+            heightFactor: 0.16,
             child: Container(
                 decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,

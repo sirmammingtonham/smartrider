@@ -29,7 +29,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     if (this.state is OrderWaitingState) {
       Iterable<Order> orders = collectionSnapshot.docs
           .map((orderSnap) => Order.fromSnapshot(orderSnap));
-      add(OrderQueueUpdateEvent(latest: orders.first, queue: orders.skip(1)));
+      if (orders.isNotEmpty) {
+        add(OrderQueueUpdateEvent(latest: orders.first, queue: orders.skip(1)));
+      }
     }
   }
 
@@ -104,6 +106,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
   Stream<OrderState> _mapOrderDriverCancelledToState(
       OrderDriverCancelledEvent event) async* {
+    await orderRepository.cancelOrder(authenticationRepository.currentDriver,
+        event.orderRef, event.cancellationReason);
     yield OrderWaitingState();
   }
 

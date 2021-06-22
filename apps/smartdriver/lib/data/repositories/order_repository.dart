@@ -27,8 +27,8 @@ class OrderRepository {
   }
 
   Future<DocumentReference> cancelOrder(
-      Driver driver, Order order, String reason) async {
-    return authProvider.cancelOrder(driver, order, reason);
+      Driver driver, DocumentReference orderRef, String reason) async {
+    return authProvider.cancelOrder(driver, orderRef, reason);
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> get orderStream =>

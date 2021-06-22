@@ -78,12 +78,10 @@ class BusVehicleUpdate {
     vehicleId = entity.vehicle.vehicle.id;
   }
 
-  // TODO
   Map<String, dynamic> toJson() {
     return Map();
   }
 
-  // TODO
   FeedEntity toFeedEntity() {
     return FeedEntity();
   }

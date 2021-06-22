@@ -16,6 +16,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@google-cloud/firestore": "^4.12.3",
     "@turf/turf": "^5.1.6",
     "axios": "^0.21.0",
     "firebase-admin": "^9.3.0",

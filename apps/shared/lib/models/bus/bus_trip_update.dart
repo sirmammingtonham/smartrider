@@ -74,7 +74,6 @@ class BusTripUpdate {
     return data;
   }
 
-  // TODO
   FeedEntity toPBEntity() {
     return FeedEntity();
   }
@@ -121,7 +120,6 @@ class StopTimeUpdate {
     return data;
   }
 
-  // TODO
   FeedEntity toPBEntity() {
     return FeedEntity();
   }

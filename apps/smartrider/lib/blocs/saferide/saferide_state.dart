@@ -40,30 +40,33 @@ class SaferideSelectingState extends SaferideState {
 
 class SaferideWaitingState extends SaferideState {
   final int queuePosition;
-  final Timestamp estimatedPickup;
+  final Timestamp? estimatedPickup;
 
   const SaferideWaitingState(
-      {required this.queuePosition, required this.estimatedPickup});
+      {required this.queuePosition, this.estimatedPickup});
 
   @override
-  List<Object> get props => [queuePosition, estimatedPickup];
+  List<Object?> get props => [queuePosition, estimatedPickup];
 }
 
 class SaferidePickingUpState extends SaferideState {
   final String driverName;
+  final String phoneNumber;
   final String licensePlate;
   final int queuePosition;
-  final Timestamp estimatedPickup;
+  final Timestamp? estimatedPickup;
   // phone number too
 
   const SaferidePickingUpState(
       {required this.driverName,
+      required this.phoneNumber,
       required this.licensePlate,
       required this.queuePosition,
       required this.estimatedPickup});
 
   @override
-  List<Object?> get props => [driverName, licensePlate, queuePosition];
+  List<Object?> get props =>
+      [driverName, phoneNumber, licensePlate, queuePosition, estimatedPickup];
 }
 
 class SaferideDroppingOffState extends SaferideState {

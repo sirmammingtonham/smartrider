@@ -1,5 +1,3 @@
-
-
 class BusRealtimeUpdate {
   String objName;
   String id;
@@ -30,8 +28,8 @@ class BusRealtimeUpdate {
     return BusRealtimeUpdate(
         objName: json['objName'],
         id: json['id'],
-        lat: json['lat'],
-        lng: json['lng'],
+        lat: json['lat'].toDouble(),
+        lng: json['lng'].toDouble(),
         bearing: json['bearing'],
         routeId: json['route_id'],
         stopId: json['stop_id'],
@@ -56,5 +54,4 @@ class BusRealtimeUpdate {
     data['trip_headsign'] = this.tripHeadsign;
     return data;
   }
-
 }
