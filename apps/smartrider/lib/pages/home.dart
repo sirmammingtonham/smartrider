@@ -79,7 +79,7 @@ class _HomePageState extends State<_HomePage>
   }
 
   void startShowcase(PrefsLoadedState prefState, context) {
-    if (prefState.prefs!.getBool('firstTimeLoad') == true) {
+    if (prefState.prefs.getBool('firstTimeLoad') == true) {
       ShowCaseWidget.of(context)!.startShowCase([
         showcaseMap,
         showcaseSettings,
@@ -89,15 +89,15 @@ class _HomePageState extends State<_HomePage>
         showcaseLocation,
         showcaseSlidingPanel
       ]);
-      prefState.prefs!.setBool('firstTimeLoad', false);
+      prefState.prefs.setBool('firstTimeLoad', false);
     }
   }
 
   void startTimelineShowcase(PrefsLoadedState prefState, context) {
-    if (prefState.prefs!.getBool('firstSlideUp') == true) {
+    if (prefState.prefs.getBool('firstSlideUp') == true) {
       ShowCaseWidget.of(context)!.startShowCase(
           [showcaseTransportTab, showcaseBusTab, showcaseTimeline]);
-      prefState.prefs!.setBool('firstSlideUp', false);
+      prefState.prefs.setBool('firstSlideUp', false);
     }
   }
 
@@ -164,7 +164,7 @@ class _HomePageState extends State<_HomePage>
           final mapState = states.get<MapState>();
           final prefState = states.get<PrefsState>();
           if (saferideState is SaferideNoState && _panelController.isAttached) {
-            _panelController.show();
+            _panelController.show(); //TODO fix this
           } else if (saferideState is SaferideSelectingState) {
             _panelController.hide();
           }

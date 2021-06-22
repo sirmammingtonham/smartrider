@@ -70,8 +70,10 @@ class SmartRider extends StatelessWidget {
             create: (context) => AuthenticationBloc(authRepository: authRepo)
               ..add(AuthenticationStarted())),
         BlocProvider<SaferideBloc>(
-          create: (context) =>
-              SaferideBloc(saferideRepo: saferideRepo, authRepo: authRepo),
+          create: (context) => SaferideBloc(
+              prefsBloc: BlocProvider.of<PrefsBloc>(context),
+              saferideRepo: saferideRepo,
+              authRepo: authRepo),
         ),
         BlocProvider<MapBloc>(
             create: (context) => MapBloc(
