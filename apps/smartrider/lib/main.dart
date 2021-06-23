@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:sizer/sizer.dart';
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -97,18 +98,22 @@ class SmartRider extends StatelessWidget {
 
 Widget _buildWithTheme(BuildContext context, PrefsState state) {
   if (state is PrefsLoadedState) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'smartrider Prototype',
-      theme: state.theme,
-      home: ShowCaseWidget(
-        builder: Builder(
-            builder: (context) => state.firstLaunch!
-                ? OnboardingScreen()
-                : WelcomeScreen(homePage: HomePage())),
-        autoPlay: true,
-        autoPlayDelay: Duration(seconds: 10),
-      ),
+    return Sizer(
+      builder: (context, orientation, deviceType) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'smartrider Prototype',
+          theme: state.theme,
+          home: ShowCaseWidget(
+            builder: Builder(
+                builder: (context) => state.firstLaunch!
+                    ? OnboardingScreen()
+                    : WelcomeScreen(homePage: HomePage())),
+            autoPlay: true,
+            autoPlayDelay: Duration(seconds: 10),
+          ),
+        );
+      },
     );
   } else {
     return GestureDetector(
