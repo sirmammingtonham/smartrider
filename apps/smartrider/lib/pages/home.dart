@@ -153,6 +153,7 @@ class _HomePageState extends State<_HomePage>
   Widget build(BuildContext context) {
     /// Height of the stop schedules when open
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
+
     return MultiBlocBuilder(
         blocs: [
           BlocProvider.of<SaferideBloc>(context),

@@ -34,6 +34,7 @@ dependencies:
 
   #map dependencies
   google_maps_flutter: ^2.0.6
+  google_maps_flutter_web: ^0.3.0+2
   geolocator: ^7.0.3
   google_maps_webservice: ^0.0.20-nullsafety.5
   http: ^0.13.3
@@ -43,7 +44,8 @@ dependencies:
   flutter_keyboard_visibility: ^5.0.2
 
   #notication dependencies
-  flutter_local_notifications: ^6.0.0
+  #flutter_local_notifications: ^6.0.0
+  awesome_notifications: 0.0.6+9
 
   #url_launcher
   url_launcher: ^6.0.6
