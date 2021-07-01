@@ -402,17 +402,24 @@ const clearFirestore = async () => {
     "timetables",
   ];
 
-  for (const ref of refs) {
-    const coll = firestore.collection(ref);
-    const docs = await firestore.all(coll);
-    await Promise.map(
-      docs,
-      (doc: any) => {
-        return firestore.remove(coll, doc.ref.id);
-      },
-      { concurrency: 500 }
-    );
-  }
+  // for (const ref of refs) {
+  //   const coll = firestore.collection(ref);
+  //   const docs = await firestore.all(coll);
+  //   await Promise.map(
+  //     docs,
+  //     (doc: any) => {
+  //       return firestore.remove(coll, doc.ref.id);
+  //     },
+  //     { concurrency: 500 }
+  //   );
+  // }
+  const db = admin.firestore();
+  refs.forEach( async (ref: string)=>{
+    const Collection = await db.collection(`${ref}`);
+    await db.recursiveDelete(Collection).catch((reason: any) =>{
+      console.log(`collection ${ref} failed to delete`);
+    });
+  });
   console.timeEnd("clearFirestore");
 };
 
@@ -466,6 +473,9 @@ export const refreshDataBase = functions
     const db = admin.firestore();
     const endDates: number[] = [];
     const querySnapshot = await db.collection("routes").get();
+    const timetableSnapshot = await db.collection("timetables").get();
+
+
     querySnapshot.forEach((doc) => {
       const end_date = doc.get("end_date");
       if (isNumber(end_date)) {
