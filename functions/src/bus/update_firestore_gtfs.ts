@@ -473,7 +473,6 @@ export const refreshDataBase = functions
     const db = admin.firestore();
     const endDates: number[] = [];
     const querySnapshot = await db.collection("routes").get();
-    const timetableSnapshot = await db.collection("timetables").get();
 
 
     querySnapshot.forEach((doc) => {

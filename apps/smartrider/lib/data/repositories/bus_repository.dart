@@ -47,7 +47,7 @@ class BusRepository {
   Future<Map<String, List<BusRealtimeUpdate>>> get getRealtimeUpdate async =>
       _busProvider.getBusRealtimeUpdates();
       
-  Future<Map<String, String>> get getRealtimeTimetable async =>
+  Future<Map<String,Map<String, String>>> get getRealtimeTimetable async =>
       _busProvider.getTimetableRealtime();
 
   List<String> get getDefaultRoutes => _busProvider.getShortRoutes();

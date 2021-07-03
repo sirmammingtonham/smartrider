@@ -31,8 +31,22 @@ class BusTimetable {
   int get numColumns => stops!.length;
   int get numRows => (formatted!.length / stops!.length).truncate();
 
+  // both these method are (col, row)
   String getTime(int x, int y) => formatted![y * stops!.length + x];
   int getTimestamp(int x, int y) => timestamps![y * stops!.length + x];
+
+  // set formatted time to newtime
+  void setTime(int x, int y, String newtime) =>
+      formatted![y * stops!.length + x] = newtime;
+
+  // return the index of stop in stops given its id
+  int getStopIndex(String stopid) {
+    int def = -1;
+    stops?.asMap().forEach((key, stop) {
+      if (stop.stopId == stopid) def = key;
+    });
+    return def;
+  }
 
   /// returns a list of [string, int] pairs, string represents a formatted time and
   /// int represents
@@ -95,6 +109,39 @@ class BusTimetable {
 
     formatted = json['formatted'].cast<String>();
     timestamps = json['timestamps'].cast<int>();
+  }
+
+  /// pass in value has to be [stopID, stopTime]
+  // ignore: non_constant_identifier_names
+  void UpdateWithRealtime(Map<String, String>? realtimeMap) {
+    // TO-DO update
+    //  timeslots (rows), stopoffset (cols)
+    if (realtimeMap != null && realtimeMap.length == numColumns) {
+      realtimeMap.forEach((id, newtime) {
+        int stopIndex = getStopIndex(id);
+        if (stopIndex != -1) {
+          int now = DateTime.now().hour * 3600 +
+              DateTime.now().minute * 60 +
+              DateTime.now().second;
+
+          int min = 0;
+
+          for (int j = 0; j < numRows; ++j) {
+            // check if current difference is less than previous minimum
+            bool isLower = (getTimestamp(stopIndex, j) - now).abs() <
+                (getTimestamp(stopIndex, min) - now).abs();
+
+            if (getTimestamp(stopIndex, j) > now && isLower) {
+              min = j;
+            }
+          }
+          setTime(stopIndex, min, newtime);
+          // print(stopIndex.toString() + ":" + newtime);
+        } else {
+          print("stop doesn't exist");
+        }
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {

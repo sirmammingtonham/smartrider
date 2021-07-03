@@ -1,13 +1,12 @@
 import 'package:http/http.dart' as http;
 //import 'package:collection/collection.dart';
-import 'package:shared/models/bus/bus_realtime_update.dart';
+// import 'package:shared/models/bus/bus_realtime_update.dart';
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
-//import 'package:smartrider/data/repositories/bus_repository.dart';
-
+// import 'package:smartrider/data/repositories/bus_repository.dart';
 void main() async {
   // BusRepository busRepo = await BusRepository.create();
-
 
   // const shortRouteIds = [
   //   '87',
@@ -46,16 +45,42 @@ void main() async {
   //       print(routeId);
   //     });
 
-
+  // final now = DateTime.now();
+  // final milliseconds = now.millisecondsSinceEpoch;
+  // http.Response response = await http.get(Uri.parse(
+  //     'https://www.cdta.org/apicache/routebus_87_0.json?_=$milliseconds'));
+  // Map<String, String> data = (jsonDecode(response.body) as Map<String, dynamic>).map((key, value) {
+  //    return MapEntry(key, (value as String));
+  //    });
+  // data.forEach((key, value) {
+  //   print(key + "<--key  value-->" + value);
+  // });
+  const shortRouteIds = [
+    '87',
+    '286',
+    '289',
+    '288', // cdta express shuttle
+  ];
   final now = DateTime.now();
   final milliseconds = now.millisecondsSinceEpoch;
-  http.Response response = await http.get(Uri.parse(
-      'https://www.cdta.org/apicache/routebus_87_0.json?_=$milliseconds'));
-  Map<String, String> data = (jsonDecode(response.body) as Map<String, dynamic>).map((key, value) {
-     return MapEntry(key, (value as String));
-     });
-  data.forEach((key, value) {
-    print(key + "<--key  value-->" + value);
-  });
-  
+  Map<String, Map<String, String>> ret = new Map();
+  for (String route in shortRouteIds) {
+    http.Response response = await http.get(Uri.parse(
+        'https://www.cdta.org/apicache/routebus_${route}_0.json?_=$milliseconds'));
+    if (response.statusCode == 200) {
+      Map<String, String> data =
+          (jsonDecode(response.body) as Map<String, dynamic>).map((key, value) {
+        return MapEntry(key, (value as String));
+      });
+      ret[route] = data;
+    }
+    else{
+      print(route+"not available");
+    }
+  }
+  print(ret.toString());
+
+  // DateTime date= DateFormat.Hm().parse("21:45");
+  // String d = DateFormat.Hm().format(date);
+  // print(d);
 }

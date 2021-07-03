@@ -154,15 +154,23 @@ class BusProvider {
     return vehicleUpdatesList;
   }
 
-  Future<Map<String, String>> getTimetableRealtime() async {
-     final now = DateTime.now();
-  final milliseconds = now.millisecondsSinceEpoch;
-  http.Response response = await http.get(Uri.parse(
-      'https://www.cdta.org/apicache/routebus_87_0.json?_=$milliseconds'));
-  Map<String, String> data = (jsonDecode(response.body) as Map<String, dynamic>).map((key, value) {
-     return MapEntry(key, (value as String));
-     });
-    return data;
+// TO-DO get realtime timetable updates of all routes
+  Future<Map<String, Map<String, String>>> getTimetableRealtime() async {
+    final now = DateTime.now();
+    final milliseconds = now.millisecondsSinceEpoch;
+    Map<String, Map<String, String>> ret = new Map();
+    for (String route in shortRouteIds) {
+    http.Response response = await http.get(Uri.parse(
+        'https://www.cdta.org/apicache/routebus_${route}_0.json?_=$milliseconds'));
+    if (response.statusCode == 200) {
+      Map<String, String> data =
+          (jsonDecode(response.body) as Map<String, dynamic>).map((key, value) {
+        return MapEntry(key, (value as String));
+      });
+      ret[route] = data;
+    }
+  }
+    return ret;
   }
 
   /// Returns a [Map] of <route_name, List<[BusRealtimeUpdate]>>  realtime update includes
@@ -197,15 +205,18 @@ class BusProvider {
         .collection('timetables')
         .where('route_id', whereIn: _defaultRoutes)
         .get();
-
     Map<String?, BusTimetable> timetableMap = {};
+    Map<String, Map<String, String>> realtimeTable = await this.getTimetableRealtime();
+
     // since timetables are nested in subcollection we have to retrieve those
     for (QueryDocumentSnapshot route in response.docs) {
       var table =
           await route.reference.collection(day.toLowerCase()).doc('0').get();
-
       if (table.data() != null) {
-        var entry = BusTimetable.fromJson(table.data()!);
+        BusTimetable entry = BusTimetable.fromJson(table.data()!);
+        String id = route.get('route_id');
+        id = id.split("-")[0];
+        entry.UpdateWithRealtime(realtimeTable[id]);
         // check if today is in exclusive dates
         final DateTime now = DateTime.now();
         final DateFormat formatter = DateFormat.yMMMMd('en_US');
