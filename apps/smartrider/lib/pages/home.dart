@@ -7,6 +7,8 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'package:shared/util/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
+
+import 'package:sizer/sizer.dart';
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
@@ -66,7 +68,7 @@ class _HomePageState extends State<_HomePage>
   // The height of the tab when the user is viewing the shuttle and bus stops
   late double _panelHeightOpen;
 
-  double _panelHeightClosed = 95.0; // Height of the closed tab
+  double _panelHeightClosed = 95; // Height of the closed tab
 
   @override
   void initState() {
@@ -127,14 +129,15 @@ class _HomePageState extends State<_HomePage>
                   top: Radius.circular(18.0),
                 ),
               ),
-              leading: Icon(Icons.arrow_upward),
+              leading: Icon(Icons.arrow_upward, size: 19.sp),
               title: Text(mapState is MapLoadedState && !mapState.isBus!
                   ? 'Shuttle Schedules'
-                  : 'Bus Schedules'),
+                  : 'Bus Schedules', textAlign: TextAlign.center, 
+                  style: TextStyle(fontSize: 17.sp),),
               actions: <Widget>[
                 Padding(
                     padding: const EdgeInsets.only(right: 12.0),
-                    child: Icon(Icons.arrow_upward))
+                    child: Icon(Icons.arrow_upward, size: 19.sp))
               ],
             )),
         // stack the search bar widget over the map ui
