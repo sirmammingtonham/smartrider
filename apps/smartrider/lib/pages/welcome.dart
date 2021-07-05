@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/pages/home.dart';
+import 'package:sizer/sizer.dart';
 
+//TODO: fix overflow error and optimize for all devices
 class WelcomeScreen extends StatelessWidget {
   final HomePage homePage;
 
