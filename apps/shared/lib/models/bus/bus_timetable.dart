@@ -31,6 +31,25 @@ class BusTimetable {
   int get numColumns => stops!.length;
   int get numRows => (formatted!.length / stops!.length).truncate();
 
+
+// change time from cdta to match time format of our database
+String formatTime(String oldtime) {
+    String ampm, hour, minute = "am";
+    ampm = "am";
+    List<String> times = oldtime.split(":");
+    int inthour = int.parse(times[0]);
+    if (inthour >= 12) {
+      ampm = "pm";
+      if(inthour > 12){
+         times[0] = (inthour-12).toString();
+      }  
+    }
+    hour = times[0];
+    minute = times[1];
+    String newtime = hour + ":" + minute + ampm;
+    return newtime;
+  }
+
   // both these method are (col, row)
   String getTime(int x, int y) => formatted![y * stops!.length + x];
   int getTimestamp(int x, int y) => timestamps![y * stops!.length + x];
@@ -123,7 +142,6 @@ class BusTimetable {
           int now = DateTime.now().hour * 3600 +
               DateTime.now().minute * 60 +
               DateTime.now().second;
-
           int min = 0;
 
           for (int j = 0; j < numRows; ++j) {
@@ -135,7 +153,7 @@ class BusTimetable {
               min = j;
             }
           }
-          setTime(stopIndex, min, newtime);
+          setTime(stopIndex, min, formatTime(newtime));
           // print(stopIndex.toString() + ":" + newtime);
         } else {
           print("stop doesn't exist");
