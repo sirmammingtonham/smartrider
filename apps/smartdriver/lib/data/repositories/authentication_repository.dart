@@ -25,6 +25,6 @@ class AuthenticationRepository {
   }
 
   Future<void> tryLogout() async {
-    return;
+    authProvider.tryLogout();
   }
 }

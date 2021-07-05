@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:sizer/sizer.dart';
+import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
 import 'package:smartdriver/blocs/order/order_bloc.dart';
 
 class Home extends StatefulWidget {
@@ -263,13 +264,40 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Widget drawer() => Drawer(
+          child: ListView(padding: EdgeInsets.zero, children: <Widget>[
+        SizedBox(
+          height: 20.h,
+          child: DrawerHeader(
+            decoration: BoxDecoration(
+              color: Theme.of(context).accentColor,
+            ),
+            child: Text(
+              'Settings',
+              style: TextStyle(color: Colors.white, fontSize: 24.sp),
+            ),
+          ),
+        ),
+        ListTile(
+          title: Text(
+            'Logout',
+            style: TextStyle(fontSize: 12.sp),
+          ),
+          trailing: Icon(Icons.logout),
+          onTap: () {
+            BlocProvider.of<AuthenticationBloc>(context)
+                .add(AuthenticationLogoutEvent());
+          },
+        )
+      ]));
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        // might have to wrap in blocbuilder to react to acceptance but idk if we want to do that here
+        drawer: drawer(),
         body: BlocBuilder<OrderBloc, OrderState>(builder: (context, state) {
           print(state.runtimeType);
           switch (state.runtimeType) {

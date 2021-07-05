@@ -128,7 +128,7 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
       },
     );
   } else {
-    return GestureDetector(
+    return GestureDetector( 
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
 

@@ -46,6 +46,7 @@ class AuthenticationProvider {
   }
 
   Future<void> tryLogout() async {
+    currentDriver.vehicleRef.update({'available': false});
     return firebaseAuth.signOut();
   }
 }

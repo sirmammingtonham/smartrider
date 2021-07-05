@@ -11,6 +11,7 @@ import 'package:smartdriver/pages/home.dart';
 import 'package:smartdriver/pages/login.dart';
 import 'package:sizer/sizer.dart';
 
+//TODO: make sure availability is set to false when they exit the app (not in background)
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -28,9 +29,11 @@ class SmartDriver extends StatelessWidget {
         providers: [
           BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
           BlocProvider<AuthenticationBloc>(
-              create: (context) => AuthenticationBloc(
-                  authRepository: authenticationRepository,
-                  locationBloc: BlocProvider.of<LocationBloc>(context))),
+            create: (context) => AuthenticationBloc(
+              authRepository: authenticationRepository,
+              locationBloc: BlocProvider.of<LocationBloc>(context),
+            ),
+          ),
           BlocProvider<OrderBloc>(
             create: (context) => OrderBloc(
                 authenticationRepository: authenticationRepository,
@@ -47,8 +50,12 @@ class SmartDriver extends StatelessWidget {
               builder: (context, state) {
                 switch (state.runtimeType) {
                   case AuthenticationLoggedOutState:
-                    return Login();
-                    // return Home(title: 'bruhhh');
+                    return Login(
+                      driverName:
+                          (state as AuthenticationLoggedOutState).driverName,
+                      phoneNumber: state.phoneNumber,
+                      vehicleId: state.vehicleId,
+                    );
                   case AuthenticationLoggedInState:
                     return Home(
                         title:

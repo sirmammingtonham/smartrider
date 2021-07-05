@@ -6,11 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
 
 class Login extends StatelessWidget {
-  //TODO: Use sharedprefs to store last successful login info and use it to default
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _vehicleController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  Login({
+    String? driverName,
+    String? phoneNumber,
+    String? vehicleId,
+  }) {
+    _nameController.text = driverName ?? '';
+    _phoneController.text = phoneNumber ?? '';
+    _vehicleController.text = vehicleId ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +42,7 @@ class Login extends StatelessWidget {
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Name',
-                    hintText: 'First name that will be displayed to users'),
+                    hintText: 'Name that will be displayed to users'),
               ),
               Container(height: 3.h),
               TextFormField(

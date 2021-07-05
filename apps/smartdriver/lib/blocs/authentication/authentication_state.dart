@@ -17,7 +17,12 @@ class AuthenticationLoggedInState extends AuthenticationState {
 }
 
 class AuthenticationLoggedOutState extends AuthenticationState {
-  // minimal class just to represent logged out
+  final String? driverName, phoneNumber, vehicleId;
+  const AuthenticationLoggedOutState(
+      {this.driverName, this.phoneNumber, this.vehicleId});
+
+  @override
+  List<Object?> get props => [driverName, phoneNumber, vehicleId];
 }
 
 class AuthenticationFailureState extends AuthenticationState {

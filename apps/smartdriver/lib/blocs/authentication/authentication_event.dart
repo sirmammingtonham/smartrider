@@ -7,15 +7,17 @@ abstract class AuthenticationEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AuthenticationStarted extends AuthenticationEvent {}
+class AuthenticationStartedEvent extends AuthenticationEvent {}
 
 class AuthenticationLoginEvent extends AuthenticationEvent {
-  final driverName, vehicleId, password, phoneNumber;
+  final String driverName, phoneNumber, vehicleId, password;
   const AuthenticationLoginEvent(
       {required this.driverName,
-      required this.vehicleId,
       required this.password,
+      required this.vehicleId,
       required this.phoneNumber});
 }
 
-class AuthenticationLogoutEvent extends AuthenticationEvent {}
+class AuthenticationLogoutEvent extends AuthenticationEvent {
+  const AuthenticationLogoutEvent();
+}
