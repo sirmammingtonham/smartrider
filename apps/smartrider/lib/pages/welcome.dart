@@ -4,7 +4,7 @@ import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:sizer/sizer.dart';
 
-//TODO: fix overflow error and optimize for all devices
+//TODO: 
 class WelcomeScreen extends StatelessWidget {
   final HomePage homePage;
 
@@ -92,8 +92,8 @@ class _SignupUIState extends State<SignupUI> {
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
       child: Align(
         child: Container(
-          height: 400.0,
-          width: 400.0,
+          height: 65.h,
+          width: 95.w,
           decoration: BoxDecoration(
             image: DecorationImage(image: AssetImage(pathToImage)),
           ),
@@ -688,7 +688,7 @@ class _SignupUIState extends State<SignupUI> {
                     Theme.of(context).accentColor, //button fill color
                     Theme.of(context).primaryColor, // text color
                     _showLoginSheet),
-                height: 65,
+                height: 7.h,
               ),
               padding: EdgeInsets.only(top: 10, left: 20, right: 20),
             ),
@@ -701,7 +701,7 @@ class _SignupUIState extends State<SignupUI> {
                     Theme.of(context).primaryColor, //button fill color
                     Theme.of(context).accentColor, // text color
                     _showRegisterSheet),
-                height: 65,
+                height: 7.h,
               ),
               padding: EdgeInsets.only(top: 10, left: 20, right: 20),
             ),

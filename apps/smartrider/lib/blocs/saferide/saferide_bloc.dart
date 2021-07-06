@@ -21,7 +21,7 @@ part 'saferide_state.dart';
 // BIG TODO: use shared prefs or look up in the database if the user has called a ride
 // so they dont reset when they leave and reopen the app
 class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
-  final places = new GoogleMapsPlaces(apiKey: GOOGLE_API_KEY);
+  final places = new GoogleMapsPlaces(apiKey: google_api_key);
   final PrefsBloc prefsBloc;
   final SaferideRepository saferideRepo;
   final AuthRepository authRepo;

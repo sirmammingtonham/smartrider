@@ -46,7 +46,7 @@ String? email;
 class SearchBarState extends State<SearchBar> {
   String? name;
   String? role;
-  final places = GoogleMapsPlaces(apiKey: GOOGLE_API_KEY);
+  final places = GoogleMapsPlaces(apiKey: google_api_key);
   SearchBarState();
 
   @override
