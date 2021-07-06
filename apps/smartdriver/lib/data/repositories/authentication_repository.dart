@@ -10,7 +10,7 @@ class AuthenticationRepository {
       firestore: FirebaseFirestore.instance,
       firebaseAuth: FirebaseAuth.instance);
 
-  Driver get currentDriver => authProvider.currentDriver;
+  Driver? get currentDriver => authProvider.currentDriver;
 
   Future<Driver> tryLogin(
       {required String name,
@@ -22,6 +22,10 @@ class AuthenticationRepository {
         phoneNumber: phoneNumber,
         vehicleId: vehicleId,
         password: password);
+  }
+
+Future<void> setAvailibility(bool available) async {
+    authProvider.setAvailibility(available);
   }
 
   Future<void> tryLogout() async {

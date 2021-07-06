@@ -16,7 +16,8 @@ class OrderProvider {
       Driver driver, DocumentReference orderRef) async {
     await orderRef
         .update({'status': 'PICKING_UP', 'vehicle': driver.vehicleRef});
-    await driver.vehicleRef.update({'current_order': orderRef});
+    await driver.vehicleRef
+        .update({'current_order': orderRef, 'available': false});
     return orderRef;
   }
 

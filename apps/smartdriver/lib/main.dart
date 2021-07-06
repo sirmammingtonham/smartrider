@@ -48,19 +48,19 @@ class _SmartDriverState extends State<SmartDriver> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
-
     switch (state) {
-      case AppLifecycleState.resumed:
       case AppLifecycleState.inactive:
-      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.resumed:
+        await orderBloc.updateAvailibility(true);
         break;
       case AppLifecycleState.detached:
-        {
-          // switch them to unavailable if app is closed
-          authenticationBloc.add(AuthenticationLogoutEvent());
-        }
+      case AppLifecycleState.paused:
+        // switch driver to unavailable if app is detached
+        // since we need to make sure we don't assign riders to unavailable drivers
+        await orderBloc.updateAvailibility(false);
         break;
     }
   }

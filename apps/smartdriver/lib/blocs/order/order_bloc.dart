@@ -35,6 +35,15 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     }
   }
 
+  Future<void> updateAvailibility(bool available) async {
+    if (available && this.state is OrderWaitingState) {
+      // only set state to available if we don't already have an accepted order
+      authenticationRepository.setAvailibility(true);
+    } else if (!available) {
+      authenticationRepository.setAvailibility(false);
+    }
+  }
+
   @override
   Stream<OrderState> mapEventToState(
     OrderEvent event,
@@ -81,7 +90,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     //     authenticationRepository.currentDriver, event.order.orderRef);
     // final order = Order.fromSnapshot(await ref.get());
     await orderRepository.acceptOrder(
-        authenticationRepository.currentDriver, event.order.orderRef);
+        authenticationRepository.currentDriver!, event.order.orderRef);
     yield OrderPickingUpState(order: event.order, rider: event.rider);
   }
 
@@ -94,7 +103,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   Stream<OrderState> _mapOrderReachedDropoffToState(
       OrderReachedDropoffEvent event) async* {
     await orderRepository.reachedDropoffOrder(
-        authenticationRepository.currentDriver, event.order.orderRef);
+        authenticationRepository.currentDriver!, event.order.orderRef);
     yield OrderWaitingState();
   }
 
@@ -106,7 +115,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
   Stream<OrderState> _mapOrderDriverCancelledToState(
       OrderDriverCancelledEvent event) async* {
-    await orderRepository.cancelOrder(authenticationRepository.currentDriver,
+    await orderRepository.cancelOrder(authenticationRepository.currentDriver!,
         event.orderRef, event.cancellationReason);
     yield OrderWaitingState();
   }

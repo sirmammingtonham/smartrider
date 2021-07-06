@@ -299,7 +299,6 @@ class _HomeState extends State<Home> {
         ),
         drawer: drawer(),
         body: BlocBuilder<OrderBloc, OrderState>(builder: (context, state) {
-          print(state.runtimeType);
           switch (state.runtimeType) {
             case OrderWaitingState:
               return waitingStateWidget(state as OrderWaitingState);
