@@ -58,7 +58,7 @@ void main() async {
   );
 }
 
-class SmartRider extends StatelessWidget {
+class SmartRider extends StatefulWidget {
   final AuthRepository authRepo;
   final BusRepository busRepo;
   final ShuttleRepository shuttleRepo;
@@ -71,6 +71,37 @@ class SmartRider extends StatelessWidget {
     required this.saferideRepo,
   });
 
+  @override
+  _SmartRiderState createState() => _SmartRiderState();
+}
+
+class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // monitor if the app is in the background (might not be needed but ¯\_(ツ)_/¯)
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        break;
+    }
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -80,25 +111,26 @@ class SmartRider extends StatelessWidget {
           create: (context) => PrefsBloc()..add(LoadPrefsEvent()),
         ),
         BlocProvider<AuthenticationBloc>(
-            create: (context) => AuthenticationBloc(authRepository: authRepo)
-              ..add(AuthenticationStarted())),
+            create: (context) =>
+                AuthenticationBloc(authRepository: widget.authRepo)
+                  ..add(AuthenticationStarted())),
         BlocProvider<SaferideBloc>(
           create: (context) => SaferideBloc(
               prefsBloc: BlocProvider.of<PrefsBloc>(context),
-              saferideRepo: saferideRepo,
-              authRepo: authRepo),
+              saferideRepo: widget.saferideRepo,
+              authRepo: widget.authRepo),
         ),
         BlocProvider<MapBloc>(
             create: (context) => MapBloc(
                 saferideBloc: BlocProvider.of<SaferideBloc>(context),
                 prefsBloc: BlocProvider.of<PrefsBloc>(context),
-                busRepo: busRepo,
-                shuttleRepo: shuttleRepo,
-                saferideRepo: saferideRepo)),
+                busRepo: widget.busRepo,
+                shuttleRepo: widget.shuttleRepo,
+                saferideRepo: widget.saferideRepo)),
         BlocProvider<ScheduleBloc>(
           create: (context) => ScheduleBloc(
             mapBloc: BlocProvider.of<MapBloc>(context),
-            busRepo: busRepo,
+            busRepo: widget.busRepo,
           ),
         ),
       ],

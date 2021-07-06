@@ -11,34 +11,69 @@ import 'package:smartdriver/pages/home.dart';
 import 'package:smartdriver/pages/login.dart';
 import 'package:sizer/sizer.dart';
 
-//TODO: make sure availability is set to false when they exit the app (not in background)
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(SmartDriver());
 }
 
-class SmartDriver extends StatelessWidget {
+class SmartDriver extends StatefulWidget {
+  @override
+  _SmartDriverState createState() => _SmartDriverState();
+}
+
+class _SmartDriverState extends State<SmartDriver> with WidgetsBindingObserver {
   final authenticationRepository = AuthenticationRepository();
   final orderRepository = OrderRepository();
+  late final LocationBloc locationBloc;
+  late final AuthenticationBloc authenticationBloc;
+  late final OrderBloc orderBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+    locationBloc = LocationBloc();
+    authenticationBloc = AuthenticationBloc(
+        authRepository: authenticationRepository, locationBloc: locationBloc);
+    orderBloc = OrderBloc(
+        authenticationRepository: authenticationRepository,
+        orderRepository: orderRepository);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        {
+          // switch them to unavailable if app is closed
+          authenticationBloc.add(AuthenticationLogoutEvent());
+        }
+        break;
+    }
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
+          BlocProvider<LocationBloc>(create: (context) => locationBloc),
           BlocProvider<AuthenticationBloc>(
-            create: (context) => AuthenticationBloc(
-              authRepository: authenticationRepository,
-              locationBloc: BlocProvider.of<LocationBloc>(context),
-            ),
-          ),
-          BlocProvider<OrderBloc>(
-            create: (context) => OrderBloc(
-                authenticationRepository: authenticationRepository,
-                orderRepository: orderRepository),
-          ),
+              create: (context) => authenticationBloc),
+          BlocProvider<OrderBloc>(create: (context) => orderBloc),
         ],
         child: Sizer(builder: (context, orientation, deviceType) {
           return MaterialApp(
