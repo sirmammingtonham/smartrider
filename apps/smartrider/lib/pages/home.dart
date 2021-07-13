@@ -130,10 +130,13 @@ class _HomePageState extends State<_HomePage>
                 ),
               ),
               leading: Icon(Icons.arrow_upward, size: 19.sp),
-              title: Text(mapState is MapLoadedState && !mapState.isBus!
-                  ? 'Shuttle Schedules'
-                  : 'Bus Schedules', textAlign: TextAlign.center, 
-                  style: TextStyle(fontSize: 17.sp),),
+              title: Text(
+                mapState is MapLoadedState && !mapState.isBus!
+                    ? 'Shuttle Schedules'
+                    : 'Bus Schedules',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 17.sp),
+              ),
               actions: <Widget>[
                 Padding(
                     padding: const EdgeInsets.only(right: 12.0),
@@ -157,40 +160,56 @@ class _HomePageState extends State<_HomePage>
     /// Height of the stop schedules when open
     _panelHeightOpen = MediaQuery.of(context).size.height * .95;
 
-    return MultiBlocBuilder(
-        blocs: [
-          BlocProvider.of<SaferideBloc>(context),
-          BlocProvider.of<MapBloc>(context),
-          BlocProvider.of<PrefsBloc>(context),
-        ],
-        builder: (context, states) {
-          final saferideState = states.get<SaferideState>();
-          final mapState = states.get<MapState>();
-          final prefState = states.get<PrefsState>();
-          if (saferideState is SaferideNoState && _panelController.isAttached) {
-            _panelController.show(); //TODO fix this
-          } else if (saferideState is SaferideSelectingState) {
-            _panelController.hide();
-          }
-          if (prefState is PrefsLoadingState) {
-            return Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          } else if (prefState is PrefsLoadedState) {
-            WidgetsBinding.instance!
-                .addPostFrameCallback((_) => startShowcase(prefState, context));
-            KeyboardVisibilityController().onChange.listen((bool visible) {
-              if (visible)
-                _panelController.hide();
-              else
-                _panelController.show();
-            });
-            return _slidingPanel(saferideState, mapState, prefState, context);
-          } else if (prefState is PrefsSavingState) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            return Center(child: Text("oh poops"));
-          }
-        });
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: MultiBlocBuilder(
+            blocs: [
+              BlocProvider.of<SaferideBloc>(context),
+              BlocProvider.of<MapBloc>(context),
+              BlocProvider.of<PrefsBloc>(context),
+            ],
+            builder: (context, states) {
+              final saferideState = states.get<SaferideState>();
+              final mapState = states.get<MapState>();
+              final prefState = states.get<PrefsState>();
+
+              switch (saferideState.runtimeType) {
+                case SaferideNoState:
+                  {
+                    if (_panelController.isAttached) _panelController.show();
+                  }
+                  break;
+                case SaferideSelectingState:
+                  {
+                    _panelController.hide();
+                  }
+                  break;
+              }
+
+              switch (prefState.runtimeType) {
+                case PrefsLoadingState:
+                  return Center(child: CircularProgressIndicator());
+
+                case PrefsLoadedState:
+                  {
+                    WidgetsBinding.instance!.addPostFrameCallback((_) =>
+                        startShowcase(prefState as PrefsLoadedState, context));
+                    KeyboardVisibilityController()
+                        .onChange
+                        .listen((bool visible) {
+                      if (visible && saferideState is SaferideNoState)
+                        _panelController.hide();
+                      else
+                        _panelController.show();
+                    });
+                    return _slidingPanel(
+                        saferideState, mapState, prefState, context);
+                  }
+                case PrefsSavingState:
+                  return Center(child: CircularProgressIndicator());
+                default:
+                  return Center(child: Text("oh poops"));
+              }
+            }));
   }
 }

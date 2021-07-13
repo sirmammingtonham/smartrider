@@ -1,8 +1,9 @@
 //implementation imports
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sizer/sizer.dart';
+import 'package:device_preview/device_preview.dart';
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,35 +26,41 @@ import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/pages/onboarding.dart';
 
 // test imports
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-
+//TODO: fix pickup address
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   AwesomeNotifications().initialize(
-      // set the icon to null if you want to use the default app icon
-      'resource://drawable/res_app_icon',
-      [
-        NotificationChannel(
-            channelKey: 'basic_channel',
-            channelName: 'Basic notifications',
-            channelDescription: 'Notification channel for basic tests',
-            defaultColor: Color(0xFF9D50DD),
-            ledColor: Colors.white)
-      ]);
+    // set the icon to null if you want to use the default app icon
+    'resource://drawable/res_app_icon',
+    [
+      NotificationChannel(
+          channelKey: 'basic_channel',
+          channelName: 'Basic notifications',
+          channelDescription: 'Notification channel for basic tests',
+          defaultColor: Color(0xFF9D50DD),
+          ledColor: Colors.white)
+    ],
+  );
 
   // String host = defaultTargetPlatform == TargetPlatform.android
   //     ? '10.0.2.2:8080'
   //     : 'localhost:8080';
 
   // FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
+  SmartRider app = SmartRider(
+      authRepo: AuthRepository.create(),
+      busRepo: await BusRepository.create(),
+      shuttleRepo: ShuttleRepository.create(),
+      saferideRepo: SaferideRepository.create());
 
   runApp(
-    SmartRider(
-        authRepo: AuthRepository.create(),
-        busRepo: await BusRepository.create(),
-        shuttleRepo: ShuttleRepository.create(),
-        saferideRepo: SaferideRepository.create()),
+    DevicePreview(
+      enabled: false, //!kReleaseMode,  // uncomment to use device_preview
+      builder: (context) => app,
+    ), // Wrap your app
   );
 }
 
@@ -144,6 +151,10 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
     return Sizer(
       builder: (context, orientation, deviceType) {
         return MaterialApp(
+          // so we can test on multiple device sizes
+          locale: DevicePreview.locale(context),
+          builder: DevicePreview.appBuilder,
+
           debugShowCheckedModeBanner: false,
           title: 'smartrider Prototype',
           theme: state.theme,

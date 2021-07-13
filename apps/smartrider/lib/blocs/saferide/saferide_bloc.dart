@@ -30,6 +30,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   String? dropoffAddress, pickupAddress;
   String? dropoffDescription, pickupDescription;
   GeoPoint? dropoffPoint, pickupPoint;
+  StreamSubscription? orderSubscription;
 
   SaferideBloc(
       {required this.prefsBloc,
@@ -122,8 +123,20 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     yield SaferideNoState();
   }
 
+  Future<void> endSubscription() async {
+    prefsBloc.setCurrentOrderId(null);
+    if (orderSubscription != null) {
+      await orderSubscription!.cancel();
+    }
+  }
+
   /// listens to the order status and creates events accordingly
   Future<void> orderListener(DocumentSnapshot update) async {
+    if (!update.exists) {
+      await endSubscription();
+      return;
+    }
+
     final order = Order.fromSnapshot(update);
 
     switch (order.status) {
@@ -156,19 +169,20 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         break;
       case 'CANCELLED':
         {
-          prefsBloc.setCurrentOrderId(null);
+          await endSubscription();
           add(SaferideDriverCancelledEvent(reason: order.cancellationReason!));
         }
         break;
       case 'COMPLETED':
         {
-          prefsBloc.setCurrentOrderId(null);
+          await endSubscription();
           add(SaferideNoEvent());
         }
         break;
       case 'ERROR':
         {
-          prefsBloc.setCurrentOrderId(null);
+          await endSubscription();
+          //TODO: error handling
         }
         break;
       default:
@@ -180,9 +194,6 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         }
         break;
     }
-
-    // need to add condition to switch state if about to get picked up,
-    // can listen to change in order status
   }
 
   Stream<SaferideState> _mapConfirmToState(
@@ -199,7 +210,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
           dropoffAddress: dropoffAddress!,
           dropoffPoint: dropoffPoint!);
 
-      order.listen(orderListener);
+      orderSubscription = order.listen(orderListener);
     } else {
       yield SaferideErrorState(message: 'bruh', status: 'bruh');
     }
@@ -217,7 +228,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     }
     if (event.pickupPrediction != null) {
       pickupDetails =
-          await places.getDetailsByPlaceId(event.dropoffPrediction!.placeId!);
+          await places.getDetailsByPlaceId(event.pickupPrediction!.placeId!);
       pickupAddress = pickupDetails!.result.formattedAddress!;
       pickupDescription = pickupDetails!.result.name;
       pickupPoint = GeoPoint(pickupDetails!.result.geometry!.location.lat,
