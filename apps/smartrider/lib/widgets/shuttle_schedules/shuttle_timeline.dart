@@ -1,14 +1,14 @@
 // ui dependencies
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
 //import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
+// import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:smartrider/blocs/map/map_bloc.dart';
-import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
+// import 'package:smartrider/blocs/map/map_bloc.dart';
+// import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
 //import 'package:flutter/rendering.dart';
 

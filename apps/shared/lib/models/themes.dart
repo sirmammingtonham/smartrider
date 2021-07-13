@@ -22,9 +22,6 @@ final ThemeData darkTheme = ThemeData(
   buttonColor: Color(0xff665eff),
   toggleableActiveColor: Color(0xff665eff),
   secondaryHeaderColor: Color(0xff2a2e43),
-  textSelectionColor: Color(0xff665eff),
-  cursorColor: Color(0xff4285f4),
-  textSelectionHandleColor: Color(0xff1de9b6),
   backgroundColor: Color(0xff2a2e43),
   dialogBackgroundColor: Color(0xff2a2e43),
   indicatorColor: Color(0xff665eff),
@@ -483,6 +480,11 @@ final ThemeData darkTheme = ThemeData(
     ),
     borderRadius: BorderRadius.all(Radius.circular(0.0)),
   )),
+  textSelectionTheme: TextSelectionThemeData(
+    cursorColor: Color(0xff4285f4),
+    selectionColor: Color(0xff665eff),
+    selectionHandleColor: Color(0xff1de9b6),
+  ),
 );
 
 final ThemeData lightTheme = ThemeData(
@@ -507,9 +509,11 @@ final ThemeData lightTheme = ThemeData(
   buttonColor: Color(0xff665eff),
   toggleableActiveColor: Color(0xff665eff),
   secondaryHeaderColor: Color(0xffe3f2fd),
-  textSelectionColor: Color(0xff90caf9),
-  cursorColor: Color(0xff4285f4),
-  textSelectionHandleColor: Color(0xff64b5f6),
+  textSelectionTheme: TextSelectionThemeData(
+    selectionColor: Color(0xff90caf9),
+    cursorColor: Color(0xff4285f4),
+    selectionHandleColor: Color(0xff64b5f6),
+  ),
   backgroundColor: Color(0xff90caf9),
   dialogBackgroundColor: Color(0xffffffff),
   indicatorColor: Color(0xff2196f3),

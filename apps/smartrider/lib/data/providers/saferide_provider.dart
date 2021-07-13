@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // saferide models
-import 'package:shared/models/saferide/order.dart';
-import 'package:shared/models/saferide/driver.dart';
+// import 'package:shared/models/saferide/order.dart';
+// import 'package:shared/models/saferide/driver.dart';
 
 class SaferideProvider {
   final CollectionReference orders =
@@ -10,7 +10,7 @@ class SaferideProvider {
 
   String? orderId;
 
-  Map<String?, Driver>? _driversMap;
+  // Map<String?, Driver>? _driversMap;
 
   //fill in the fields specified in order.dart with the orders collection in the firebase
   Future<Stream<DocumentSnapshot>> createOrder(

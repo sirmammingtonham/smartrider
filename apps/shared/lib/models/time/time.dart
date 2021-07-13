@@ -1,5 +1,3 @@
-import 'package:equatable/equatable.dart';
-
 // ignore: camel_case_types
 class time extends Comparable<time> {
   bool? isMilitary; //if time is military time (default is true)
@@ -17,8 +15,8 @@ class time extends Comparable<time> {
   }
 
   time.copyContructor({this.hour, this.minute, this.second, this.isMilitary}) {
-    this.str = 
-    "${this.hour.toString().padLeft(2,"0")}:${this.minute.toString().padLeft(2,"0")}:${this.second.toString().padLeft(2,"0")}";
+    this.str =
+        "${this.hour.toString().padLeft(2, "0")}:${this.minute.toString().padLeft(2, "0")}:${this.second.toString().padLeft(2, "0")}";
   }
 
   @override

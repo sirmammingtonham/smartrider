@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
 
-import 'package:shared/models/saferide/driver.dart';
-import 'package:shared/models/saferide/order.dart';
 import '../providers/saferide_provider.dart';
 
 class SaferideRepository {

@@ -5,13 +5,13 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_test/flutter_test.dart';
 
-import 'package:smartrider/main.dart';
-import 'package:smartrider/pages/home.dart';
-import 'package:smartrider/pages/sliding_panel_page.dart';
-import 'package:smartrider/widgets/map_widget.dart';
+// import 'package:smartrider/main.dart';
+// import 'package:smartrider/pages/home.dart';
+// import 'package:smartrider/pages/sliding_panel_page.dart';
+// import 'package:smartrider/widgets/map_widget.dart';
 
 // void main() {
 //   testWidgets('Test build properly', (WidgetTester tester) async {

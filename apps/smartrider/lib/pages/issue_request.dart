@@ -1,12 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 
-import 'package:oauth2_client/oauth2_helper.dart';
-import 'package:oauth2_client/github_oauth2_client.dart';
-import 'package:shared/util/strings.dart';
+// import 'package:oauth2_client/oauth2_helper.dart';
+// import 'package:oauth2_client/github_oauth2_client.dart';
+// import 'package:shared/util/strings.dart';
 
 /// Represents an HTTP POST, structure implemented to send the info needed
 /// to create a GitHub API Post Request, to create an issue on the Github repository.

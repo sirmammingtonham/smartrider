@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared/models/authentication/user.dart';
+//import 'package:shared/models/authentication/user.dart';
 
 /* Contains functions for handling the database */
 

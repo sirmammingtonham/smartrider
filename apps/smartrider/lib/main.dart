@@ -25,7 +25,6 @@ import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/pages/onboarding.dart';
 
 // test imports
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 
 void main() async {

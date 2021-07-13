@@ -1,6 +1,5 @@
 import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
-import 'package:shared/models/shuttle/shuttle_vehicle.dart';
 import 'package:shared/models/shuttle/shuttle_update.dart';
 
 import '../providers/shuttle_provider.dart';

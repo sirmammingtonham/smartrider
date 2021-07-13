@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 //import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:shared/models/bus/bus_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';

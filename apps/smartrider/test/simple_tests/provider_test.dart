@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 //import 'package:collection/collection.dart';
 // import 'package:shared/models/bus/bus_realtime_update.dart';
 import 'dart:convert';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 
 // import 'package:smartrider/data/repositories/bus_repository.dart';
 void main() async {
@@ -73,9 +73,8 @@ void main() async {
         return MapEntry(key, (value as String));
       });
       ret[route] = data;
-    }
-    else{
-      print(route+"not available");
+    } else {
+      print(route + "not available");
     }
   }
   print(ret.toString());

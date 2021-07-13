@@ -11,8 +11,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 //showcase stuff
-import 'package:smartrider/pages/home.dart';
-import 'package:showcaseview/showcaseview.dart';
+// import 'package:smartrider/pages/home.dart';
+// import 'package:showcaseview/showcaseview.dart';
 
 class SettingsPage extends StatefulWidget {
   @override

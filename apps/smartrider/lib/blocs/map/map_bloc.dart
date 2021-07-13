@@ -1,6 +1,5 @@
 // implementation imports
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared/models/bus/bus_realtime_update.dart';
@@ -29,11 +28,11 @@ import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
 import 'package:shared/models/shuttle/shuttle_update.dart';
 
-import 'package:shared/models/saferide/driver.dart';
+// import 'package:shared/models/saferide/driver.dart';
 
 import 'package:shared/models/bus/bus_route.dart';
 import 'package:shared/models/bus/bus_shape.dart';
-import 'package:shared/models/bus/bus_vehicle_update.dart';
+//import 'package:shared/models/bus/bus_vehicle_update.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -123,7 +122,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   List<MapMarker> _mapMarkers = [];
 
-  Map<String?, Driver>? _saferideDrivers = {};
+  // Map<String?, Driver>? _saferideDrivers = {};
   // Map<String?, MovementStatus> _saferideUpdates = {};
   // Map<String?, StreamSubscription<MovementStatus>> _saferideUpdateSubs = {};
   LatLng? _saferideDest;
@@ -534,7 +533,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Marker _busUpdateToMarker(BusRealtimeUpdate update) {
     int routeId = int.parse(update.routeId);
-    LatLng busPosition = LatLng(update.lat,update.lng);
+    LatLng busPosition = LatLng(update.lat, update.lng);
     // real time update shuttles
     return Marker(
         icon: _updateIcons[_updateIcons.containsKey(routeId) ? routeId : -1]!,

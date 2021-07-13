@@ -7,7 +7,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:google_maps_webservice/geocoding.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 // import 'package:shared/models/saferide/driver.dart';
 import 'package:smartrider/data/repositories/authentication_repository.dart';
