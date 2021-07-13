@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 // import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:intl/intl.dart';
 
 // loading custom widgets and data
 import 'package:shared/util/data.dart';
@@ -89,39 +88,11 @@ class ShuttleTableState extends State<ShuttleTable>
       ]),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
-}
-
-_getTimeIndex(List<String> curTimeList) {
-  // TODO: update so it works with filter
-  // List curTimeList = _isShuttle ? shuttleTimeLists[_tabController.index] :
-  //             busTimeLists[_tabController.index-1];
-  var now = DateTime.now();
-  var f = DateFormat('H.m');
-  double min = double.maxFinite;
-  double curTime = double.parse(f.format(now));
-  String? closest;
-  curTimeList.forEach((time) {
-    var t = time.replaceAll(':', '.');
-    double? compTime = double.tryParse(t.substring(0, t.length - 2));
-    if (compTime == null) return;
-    if (t.endsWith('pm') && !t.startsWith("12")) {
-      compTime += 12.0;
-    }
-    if ((curTime - compTime).abs() < min) {
-      min = (curTime - compTime).abs();
-      closest = time;
-    }
-  });
-
-  return curTimeList.indexWhere((element) => element == closest);
 }
 
 Widget shuttleList(int idx, Function? _containsFilter, Function? _jumpMap) {
   var curStopList = shuttleStopLists[idx];
-  var curTimeList = shuttleTimeLists[idx];
+  // var curTimeList = shuttleTimeLists[idx];
   return
       // CustomStickyHeadersTable(
       //   columnsLength: busStopLists[idx].length,

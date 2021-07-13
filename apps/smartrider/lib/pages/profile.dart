@@ -93,6 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // is stored, whenever the profile page is clicked, there should be a call
     // to the database with the link of the profile pic. Replace _profilePic
     // with that result.
+
     var _profilePic = '';
     return MaterialApp(
         home: Scaffold(
@@ -103,7 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ), // adds space between button and lower bezel
               Row(children: <Widget>[
                 // Back button
-                RaisedButton(
+                ElevatedButton(
                     child: Text(
                       '< BACK',
                       style: Theme.of(context).textTheme.button,
@@ -111,8 +112,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(10.0))),
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(10.0)))),
 
                 // Adds space between BACK button and SIGN OUT button.
                 new Padding(
@@ -120,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: const EdgeInsets.symmetric(horizontal: 100.0),
                 ),
                 // Sign Out button
-                RaisedButton(
+                ElevatedButton(
                     child: Text(
                       'SIGN OUT',
                       style: Theme.of(context).textTheme.button,
@@ -131,8 +133,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                       Navigator.pop(context);
                     },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(10.0)))
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(10.0))))
               ]),
               // Space between row buttons and profile header
               new Padding(
@@ -142,51 +145,50 @@ class _ProfilePageState extends State<ProfilePage> {
 
               // Controls overflow between profile pic and container.
               new Stack(
-                children: <Widget>[
-                  // Profile Header
-                  Container(
-                      color: Theme.of(context).hoverColor,
-                      width: double.infinity,
-                      height: 175.0,
-                      child: Column(
-                        children: [
-                          // Spacing below text
-                          Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 45.0)),
-                          // Profile greeting text
-                          Center(
-                              child: Text(
-                            'Hello, ' + widget.role!,
-                            style: Theme.of(context).textTheme.headline3,
-                          )),
-                        ],
-                      )),
-                  // Controls where the profile picture is compare to the profile
-                  // greeting.
-                  new Positioned(
-                    left: 130.0,
-                    bottom: 110,
-                    // Profile picture.
-                    child: CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Theme.of(context).backgroundColor,
-                        backgroundImage: NetworkImage(_profilePic),
-                        child: (_profilePic == '')
-                            ? Text(username,
-                                style: TextStyle(
-                                    fontSize: 60,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .headline1!
-                                        .color))
-                            : null),
-                  ),
-                ],
-                // Profile pic overflows Stack. Keeps top portion of profile pic
-                // visible to user.
-                overflow: Overflow.visible,
-              ),
+                  children: <Widget>[
+                    // Profile Header
+                    Container(
+                        color: Theme.of(context).hoverColor,
+                        width: double.infinity,
+                        height: 175.0,
+                        child: Column(
+                          children: [
+                            // Spacing below text
+                            Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 45.0)),
+                            // Profile greeting text
+                            Center(
+                                child: Text(
+                              'Hello, ' + widget.role!,
+                              style: Theme.of(context).textTheme.headline3,
+                            )),
+                          ],
+                        )),
+                    // Controls where the profile picture is compare to the profile
+                    // greeting.
+                    new Positioned(
+                      left: 130.0,
+                      bottom: 110,
+                      // Profile picture.
+                      child: CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Theme.of(context).backgroundColor,
+                          backgroundImage: NetworkImage(_profilePic),
+                          child: (_profilePic == '')
+                              ? Text(username,
+                                  style: TextStyle(
+                                      fontSize: 60,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headline1!
+                                          .color))
+                              : null),
+                    ),
+                  ],
+                  // Profile pic overflows Stack. Keeps top portion of profile pic
+                  // visible to user.
+                  clipBehavior: Clip.none),
               // List of attributes on the user's profile
               Expanded(
                 child: SizedBox(
@@ -218,8 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
               ), // adds space between attributes and action buttons
               // Change Password Button
-              RaisedButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 95.0),
+              ElevatedButton(
                   child: Text(
                     'CHANGE PASSWORD',
                     style: Theme.of(context).textTheme.button,
@@ -244,11 +245,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                     );
                   },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(10.0))),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(10.0)),
+                    padding: const EdgeInsets.symmetric(horizontal: 95.0),
+                  )),
               // Report Bug Button
-              RaisedButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 53.0),
+              ElevatedButton(
                   child: Text(
                     'REPORT BUG / REQUEST FEATURE',
                     style: Theme.of(context).textTheme.button,
@@ -261,11 +264,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       MaterialPageRoute(builder: (context) => IssueRequest()),
                     );
                   },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(10.0))),
+                  style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 53.0),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(10.0)))),
               // Delete Account Button
-              RaisedButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 102.0),
+              ElevatedButton(
                   child: Text(
                     'DELETE ACCOUNT',
                     style: Theme.of(context).textTheme.button,
@@ -281,7 +285,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           title: Text(
                               "Are you sure you want to delete your account?"),
                           actions: [
-                            FlatButton(
+                            TextButton(
                                 onPressed: () {
                                   //If the user chooses yes, we will call the authentification delete function
                                   BlocProvider.of<AuthenticationBloc>(context)
@@ -302,7 +306,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   );
                                 },
                                 child: Text("Yes")),
-                            FlatButton(
+                            TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -312,8 +316,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                     );
                   },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(10.0))),
+                  style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 102.0),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(10.0)))),
               // Adds space between action buttons and bottom of screen.
               new Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),

@@ -65,7 +65,8 @@ class CustomStickyHeader extends StatefulWidget {
     if (cellAlignments.contentCellAlignments != null) {
       assert(cellAlignments.contentCellAlignments!.length == rowsLength);
       for (int i = 0; i < cellAlignments.contentCellAlignments!.length; i++) {
-        assert(cellAlignments.contentCellAlignments![i].length == columnsLength);
+        assert(
+            cellAlignments.contentCellAlignments![i].length == columnsLength);
       }
     }
     if (cellAlignments.stickyColumnAlignments != null) {
@@ -91,13 +92,13 @@ class CustomStickyHeader extends StatefulWidget {
 }
 
 class _CustomStickyHeaderState extends State<CustomStickyHeader> {
-  final ScrollController _verticalTitleController = ScrollController();
-  final ScrollController _verticalBodyController = ScrollController();
+  // final ScrollController _verticalTitleController = ScrollController();
+  // final ScrollController _verticalBodyController = ScrollController();
 
   final ScrollController _horizontalBodyController = ScrollController();
   final ScrollController _horizontalTitleController = ScrollController();
 
-  _SyncScrollController? _verticalSyncController;
+  // _SyncScrollController? _verticalSyncController;
   late _SyncScrollController _horizontalSyncController;
 
   @override
@@ -235,7 +236,8 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
                                 } else if (widget
                                         .cellAlignments.rowAlignments !=
                                     null) {
-                                  return widget.cellAlignments.rowAlignments![i];
+                                  return widget
+                                      .cellAlignments.rowAlignments![i];
                                 } else if (widget
                                         .cellAlignments.contentCellAlignments !=
                                     null) {

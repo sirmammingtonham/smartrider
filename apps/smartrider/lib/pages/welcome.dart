@@ -4,7 +4,7 @@ import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:sizer/sizer.dart';
 
-//TODO: 
+//TODO:
 class WelcomeScreen extends StatelessWidget {
   final HomePage homePage;
 
@@ -21,14 +21,14 @@ class WelcomeScreen extends StatelessWidget {
           state.errorMessage!,
           textAlign: TextAlign.center,
         ));
-        Scaffold.of(context).showSnackBar(snackbar);
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
       } else if (state is AwaitEmailVerify) {
         final SnackBar snackbar = SnackBar(
             content: Text(
           "Please check your email for verification",
           textAlign: TextAlign.center,
         ));
-        Scaffold.of(context).showSnackBar(snackbar);
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
       }
     }, child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
                 builder: (context, state) {
@@ -267,13 +267,15 @@ class _SignupUIState extends State<SignupUI> {
   //button widget
   Widget _button(String text, Color splashColor, Color highlightColor,
       Color fillColor, Color textColor, void function()) {
-    return RaisedButton(
-      highlightElevation: 0.0,
-      // splashColor: splashColor,
-      // highlightColor: highlightColor,
-      elevation: 0.0,
-      color: fillColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          //highlightElevation: 0.0,
+          // splashColor: splashColor,
+          // highlightColor: highlightColor,
+          elevation: 0.0,
+          primary: fillColor,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0))),
       child: Text(
         text,
         style: TextStyle(
@@ -337,16 +339,6 @@ class _SignupUIState extends State<SignupUI> {
       return 'Password needs to be at least 6 characters';
     else
       return null;
-  }
-
-  //     === DEPRECIATED ===
-  String? _rinValidation(String? val) {
-    if (val == null) return null;
-    /*if (val.trim().length != 9 || !val.startsWith("66")) {
-      return 'Please enter a valid RIN';
-    }
-    */
-    return null;
   }
 
   String? _nameValidation(String? val) {

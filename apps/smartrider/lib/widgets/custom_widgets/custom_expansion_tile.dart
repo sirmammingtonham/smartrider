@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -43,9 +41,7 @@ class CustomExpansionTile extends StatefulWidget {
     this.expandedCrossAxisAlignment,
     this.expandedAlignment,
     this.childrenPadding,
-  })  : assert(initiallyExpanded != null),
-        assert(maintainState != null),
-        assert(
+  })  : assert(
           expandedCrossAxisAlignment != CrossAxisAlignment.baseline,
           'CrossAxisAlignment.baseline is not supported since the expanded children '
           'are aligned in a column, not a row. Try to use another constant.',
@@ -147,8 +143,8 @@ class CustomExpansionTile extends StatefulWidget {
 
 class _ExpansionTileState extends State<CustomExpansionTile>
     with SingleTickerProviderStateMixin {
-  static final Animatable<double> _easeOutTween =
-      CurveTween(curve: Curves.easeOut);
+  // static final Animatable<double> _easeOutTween =
+  //     CurveTween(curve: Curves.easeOut);
   static final Animatable<double> _easeInTween =
       CurveTween(curve: Curves.easeIn);
   static final Animatable<double> _halfTween =
@@ -162,10 +158,10 @@ class _ExpansionTileState extends State<CustomExpansionTile>
   late AnimationController _controller;
   late Animation<double> _iconTurns;
   late Animation<double> _heightFactor;
-  Animation<Color?>? _borderColor;
+  // Animation<Color?>? _borderColor;
   late Animation<Color?> _headerColor;
   late Animation<Color?> _iconColor;
-  Animation<Color?>? _backgroundColor;
+  // Animation<Color?>? _backgroundColor;
 
   bool _isExpanded = false;
 
@@ -175,11 +171,11 @@ class _ExpansionTileState extends State<CustomExpansionTile>
     _controller = AnimationController(duration: _kExpand, vsync: this);
     _heightFactor = _controller.drive(_easeInTween);
     _iconTurns = _controller.drive(_halfTween.chain(_easeInTween));
-    _borderColor = _controller.drive(_borderColorTween.chain(_easeOutTween));
+    // _borderColor = _controller.drive(_borderColorTween.chain(_easeOutTween));
     _headerColor = _controller.drive(_headerColorTween.chain(_easeInTween));
     _iconColor = _controller.drive(_iconColorTween.chain(_easeInTween));
-    _backgroundColor =
-        _controller.drive(_backgroundColorTween.chain(_easeOutTween));
+    // _backgroundColor =
+    //     _controller.drive(_backgroundColorTween.chain(_easeOutTween));
 
     _isExpanded = PageStorage.of(context)?.readState(context) as bool? ??
         widget.initiallyExpanded;

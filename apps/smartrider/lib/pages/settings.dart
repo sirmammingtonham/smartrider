@@ -233,7 +233,7 @@ class SettingsWidget extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(25.0),
-                  child: RaisedButton(
+                  child: ElevatedButton(
                       child: Text(
                         'SIGN OUT',
                         style: Theme.of(context).textTheme.button,
@@ -244,8 +244,9 @@ class SettingsWidget extends StatelessWidget {
                         );
                         Navigator.pop(context);
                       },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(20.0))),
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(20.0)))),
                 ),
               ],
             ),

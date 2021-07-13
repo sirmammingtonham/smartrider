@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 // import 'package:smartrider/blocs/map/map_bloc.dart';
 // import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
@@ -206,28 +206,28 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
   }
 }
 
-/// Returns the stop that is closest to the current time.
-_getTimeIndex(List<String> curTimeList) {
-  var now = DateTime.now();
-  var f = DateFormat('H.m');
-  double min = double.maxFinite;
-  double curTime = double.parse(f.format(now));
-  String? closest;
-  curTimeList.forEach((time) {
-    var t = time.replaceAll(':', '.');
-    double? compTime = double.tryParse(t.substring(0, t.length - 2));
-    if (compTime == null) return;
-    if (t.endsWith('pm') && !t.startsWith("12")) {
-      compTime += 12.0;
-    }
-    if ((curTime - compTime).abs() < min) {
-      min = (curTime - compTime).abs();
-      closest = time;
-    }
-  });
+// /// Returns the stop that is closest to the current time.
+// _getTimeIndex(List<String> curTimeList) {
+//   var now = DateTime.now();
+//   var f = DateFormat('H.m');
+//   double min = double.maxFinite;
+//   double curTime = double.parse(f.format(now));
+//   String? closest;
+//   curTimeList.forEach((time) {
+//     var t = time.replaceAll(':', '.');
+//     double? compTime = double.tryParse(t.substring(0, t.length - 2));
+//     if (compTime == null) return;
+//     if (t.endsWith('pm') && !t.startsWith("12")) {
+//       compTime += 12.0;
+//     }
+//     if ((curTime - compTime).abs() < min) {
+//       min = (curTime - compTime).abs();
+//       closest = time;
+//     }
+//   });
 
-  return curTimeList.indexWhere((element) => element == closest);
-}
+//   return curTimeList.indexWhere((element) => element == closest);
+// }
 
 /// Creates our "lines and circles" on the left hand side of the
 /// schedule list for each shuttle. This particular class is responsible
