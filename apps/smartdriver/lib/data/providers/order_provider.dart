@@ -8,7 +8,7 @@ class OrderProvider {
   OrderProvider({required this.firestore});
 
   Stream<QuerySnapshot<Map<String, dynamic>>> get orderStream => firestore
-      .collection('orders_test')
+      .collection('orders')
       .where('status', isEqualTo: 'WAITING')
       .snapshots();
 

@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SaferideProvider {
   final CollectionReference orders =
-      FirebaseFirestore.instance.collection('orders_test');
+      FirebaseFirestore.instance.collection('orders');
 
   String? orderId;
 

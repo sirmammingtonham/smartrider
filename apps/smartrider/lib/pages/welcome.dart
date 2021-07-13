@@ -82,12 +82,12 @@ class _SignupUIState extends State<SignupUI> {
 
   Widget logo() {
     String pathToImage = "";
-    if (Theme.of(context).brightness == Brightness.dark) {
-      // in dark mode
-      pathToImage = 'assets/app_icons/app_icon_word_dark_mode.png';
-    } else {
-      pathToImage = 'assets/app_icons/app_icon_word_light_mode.png';
-    }
+    // if (Theme.of(context).brightness == Brightness.dark) {
+    //   // in dark mode
+    //   pathToImage = 'assets/app_icons/app_icon_word_dark_mode.png';
+    // } else {
+    //   pathToImage = 'assets/app_icons/app_icon_word_light_mode.png';
+    // }
     return Padding(
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
       child: Align(

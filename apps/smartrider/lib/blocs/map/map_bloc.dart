@@ -425,10 +425,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final stopMarkerSize = Size(80, 80);
     final vehicleUpdateSize = Size(100, 100);
     _shuttleStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/shuttle_icons/marker_shuttle.svg',
+        'assets/map_icons/marker_stop_shuttle.svg',
         size: stopMarkerSize);
     _busStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/marker_bus.svg',
+        'assets/map_icons/marker_stop_bus.svg',
         size: stopMarkerSize);
 
     final shuttleColors = {
@@ -440,21 +440,21 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     [22, 21, 24, 28].forEach((id) async {
       _updateIcons[id] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-          'assets/bus_icons/update_marker.svg',
+          'assets/map_icons/marker_vehicle.svg',
           color: shuttleColors[id]!.lighten(0.15),
           size: vehicleUpdateSize);
     });
 
     [87, 286, 289, 288].forEach((id) async {
       _updateIcons[id] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-          'assets/bus_icons/update_marker.svg',
+          'assets/map_icons/marker_vehicle.svg',
           color: BUS_COLORS[id.toString()]!.lighten(0.15),
           size: vehicleUpdateSize);
     });
 
     // default white
     _updateIcons[-1] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/bus_icons/update_marker.svg',
+        'assets/map_icons/marker_vehicle.svg',
         size: vehicleUpdateSize);
   }
 
