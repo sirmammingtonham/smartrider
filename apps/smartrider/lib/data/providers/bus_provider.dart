@@ -160,16 +160,20 @@ class BusProvider {
     final milliseconds = now.millisecondsSinceEpoch;
     Map<String, Map<String, String>> ret = new Map();
     for (String route in shortRouteIds) {
-    http.Response response = await http.get(Uri.parse(
-        'https://www.cdta.org/apicache/routebus_${route}_0.json?_=$milliseconds'));
-    if (response.statusCode == 200) {
-      Map<String, String> data =
-          (jsonDecode(response.body) as Map<String, dynamic>).map((key, value) {
-        return MapEntry(key, (value as String));
-      });
-      ret[route] = data;
+      http.Response response = await http.get(Uri.parse(
+          'https://www.cdta.org/apicache/routebus_${route}_0.json?_=$milliseconds'));
+      if (response.statusCode == 200) {
+        // filter out null values from json response and convert to map
+        Map<String, String> data = {};
+        (jsonDecode(response.body) as Map<String, dynamic>)
+            .forEach((key, value) {
+          if (value != null) {
+            data[key] = value.toString();
+          }
+        });
+        ret[route] = data;
+      }
     }
-  }
     return ret;
   }
 
@@ -206,7 +210,8 @@ class BusProvider {
         .where('route_id', whereIn: _defaultRoutes)
         .get();
     Map<String?, BusTimetable> timetableMap = {};
-    Map<String, Map<String, String>> realtimeTable = await this.getTimetableRealtime();
+    Map<String, Map<String, String>> realtimeTable =
+        await this.getTimetableRealtime();
 
     // since timetables are nested in subcollection we have to retrieve those
     for (QueryDocumentSnapshot route in response.docs) {

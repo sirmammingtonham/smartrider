@@ -13,43 +13,47 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: BlocListener<AuthenticationBloc, AuthenticationState>(
             listener: (context, state) {
-      if (state is AuthenticationFailure) {
-        final SnackBar snackbar = SnackBar(
-            content: Text(
-          state.errorMessage!,
-          textAlign: TextAlign.center,
-        ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-      } else if (state is AwaitEmailVerify) {
-        final SnackBar snackbar = SnackBar(
-            content: Text(
-          "Please check your email for verification",
-          textAlign: TextAlign.center,
-        ));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-      }
-    }, child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          if (state is AuthenticationFailure) {
+            final SnackBar snackbar = SnackBar(
+                content: Text(
+              state.errorMessage!,
+              textAlign: TextAlign.center,
+            ));
+            ScaffoldMessenger.of(context).showSnackBar(snackbar);
+          } else if (state is AwaitEmailVerify) {
+            final SnackBar snackbar = SnackBar(
+                content: Text(
+              "Please check your email for verification",
+              textAlign: TextAlign.center,
+            ));
+            ScaffoldMessenger.of(context).showSnackBar(snackbar);
+          }
+        }, child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
                 builder: (context, state) {
-      if (state is AuthenticationInit) {
-        return Theme(
-            data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
-            child: SignupUI());
-      } else if (state is AuthenticationSuccess) {
-        return homePage;
-      } else if (state is AuthenticationFailure) {
-        return Theme(
-            data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
-            child: SignupUI());
-      } else if (state is AwaitEmailVerify) {
-        return Theme(
-            data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
-            child: SignupUI());
-      } else {
-        return Center(child: Text("bruh moment occured"));
-      }
-    })));
+          if (state is AuthenticationInit) {
+            return Theme(
+                data:
+                    Theme.of(context).copyWith(canvasColor: Colors.transparent),
+                child: SignupUI());
+          } else if (state is AuthenticationSuccess) {
+            return homePage;
+          } else if (state is AuthenticationFailure) {
+            return Theme(
+                data:
+                    Theme.of(context).copyWith(canvasColor: Colors.transparent),
+                child: SignupUI());
+          } else if (state is AwaitEmailVerify) {
+            return Theme(
+                data:
+                    Theme.of(context).copyWith(canvasColor: Colors.transparent),
+                child: SignupUI());
+          } else {
+            return Center(child: Text("bruh moment occured"));
+          }
+        })));
   }
 }
 
@@ -81,13 +85,13 @@ class _SignupUIState extends State<SignupUI> {
   //Image(image: AssetImage('assets/app_icons/App\ Logo\ v1.png'))
 
   Widget logo() {
-    String pathToImage = "";
-    // if (Theme.of(context).brightness == Brightness.dark) {
-    //   // in dark mode
-    //   pathToImage = 'assets/app_icons/app_icon_word_dark_mode.png';
-    // } else {
-    //   pathToImage = 'assets/app_icons/app_icon_word_light_mode.png';
-    // }
+    String pathToImage;
+    if (Theme.of(context).brightness == Brightness.dark) {
+      // in dark mode
+      pathToImage = 'assets/onboarding_images/logo_light.png';
+    } else {
+      pathToImage = 'assets/onboarding_images/logo_dark.png';
+    }
     return Padding(
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
       child: Align(

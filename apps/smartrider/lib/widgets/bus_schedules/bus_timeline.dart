@@ -11,6 +11,7 @@ import 'package:shared/util/messages.dart';
 import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/widgets/custom_widgets/custom_painters.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/widgets/custom_widgets/custom_expansion_tile.dart';
@@ -139,20 +140,26 @@ class BusTimelineState extends State<BusTimeline>
       /// Contains everything below the ExpansionTile when it is expanded.
       children: [
         CustomPaint(
-            painter: StrokePainter(
-              circleColor: Theme.of(context).buttonColor,
-              lineColor: Theme.of(context).primaryColorLight,
-              last: index == busStops.length - 1,
-            ),
+          painter: StrokePainter(
+            circleColor: Theme.of(context).buttonColor,
+            lineColor: Theme.of(context).primaryColorLight,
+            last: index == busStops.length - 1,
+          ),
 
-            /// A list item for every arrival time for the selected bus stop.
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Container(
-                margin: const EdgeInsets.only(left: 34.5),
-                constraints: BoxConstraints.expand(width: 8),
-              ),
-              title: Container(
+          /// A list item for every arrival time for the selected bus stop.
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Container(
+              margin: const EdgeInsets.only(left: 34.5),
+              constraints: BoxConstraints.expand(width: 8),
+            ),
+            title: Container(
+              child: RefreshIndicator(
+                onRefresh: () =>
+                    Future.delayed(const Duration(seconds: 1), () => "1"),
+                displacement: 1,
+
+                /// A list of the upcoming bus stop arrivals.
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: stopTimes.length,
@@ -174,7 +181,7 @@ class BusTimelineState extends State<BusTimeline>
                     /// The container in which the bus stop arrival times are displayed.
                     return ListTile(
                       dense: true,
-                      leading: Icon(Icons.access_time, size: 20),
+                      leading: Icon(Icons.access_time, size: 20), // TODO: change icon if bus is within 5 minutes
                       title: Text(
                         stopTimes[timeIndex][0],
                         style: TextStyle(fontSize: 15),
@@ -191,7 +198,9 @@ class BusTimelineState extends State<BusTimeline>
                   },
                 ),
               ),
-            )),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -203,32 +212,30 @@ class BusTimelineState extends State<BusTimeline>
     if (!widget.busTables!.containsKey(routeId)) {
       return BusUnavailable();
     }
-    var busStops = widget.busTables![routeId]!
-        .stops!; //this.widget.busRoutes[routeId].forwardStops;
-    /// Returns the scrollable list for our bus stops to be contained in.
-    return RefreshIndicator(
-        onRefresh: () => Future.delayed(const Duration(seconds: 1), () => "1"),
-        displacement: 1,
+    var busStops = widget.busTables![routeId]!.stops!;
 
-        /// A list of the upcoming bus stop arrivals.
-        child: ScrollablePositionedList.builder(
-          itemCount: busStops.length,
-          itemBuilder: (context, index) {
-            var stopTimes = this
-                .widget
-                .busTables![routeId]!
-                .getClosestTimes(index)
-                .where((stopPair) => stopPair[1] != -1)
-                .toList();
-            return index == 0
-                ? Showcase(
-                    key: showcaseTimeline,
-                    description: TIMELINE_ITEM_SHOWCASE_MESSAGE,
-                    child:
-                        busExpansionTile(index, busStops, stopTimes, routeId))
-                : busExpansionTile(index, busStops, stopTimes, routeId);
-          },
-        ));
+    /// Returns the scrollable list for our bus stops to be contained in.
+    return ScrollablePositionedList.builder(
+      itemCount: busStops.length,
+      itemBuilder: (context, index) {
+        var stopTimes = this
+            .widget
+            .busTables![routeId]!
+            .getClosestTimes(index)
+            .where((stopPair) => stopPair[1] != -1)
+            .toList();
+        return index == 0
+            ? busExpansionTile(index, busStops, stopTimes, routeId)
+            : busExpansionTile(index, busStops, stopTimes, routeId);
+
+        /// showcase doesn't work because of duplicate global keys
+        /// (it tries to use the same global key despite there being multiple tabs)
+        // Showcase(
+        //   key: GlobalKey(debugLabel: 'bruh2'),//showcaseTimeline,
+        //   description: TIMELINE_ITEM_SHOWCASE_MESSAGE,
+        //   child: busExpansionTile(index, busStops, stopTimes, routeId))
+      },
+    );
   }
 
   void _handlePopupSelection(
@@ -241,96 +248,4 @@ class BusTimelineState extends State<BusTimeline>
       BlocProvider.of<MapBloc>(context).scrollToLocation(busStop!.latLng);
     }
   }
-}
-
-///TODO: Move these custom painters to another file
-
-/// Creates our "lines and circles" on the left hand side of the
-/// schedule list for each bus. This particular class is responsible
-/// for the first stop.
-class FillPainter extends CustomPainter {
-  final Color? circleColor;
-  final Color? lineColor;
-  final bool first;
-  final bool last;
-
-  /// WARNING: Default value for overflow may need to be changed based on how
-  /// much space the names of the
-  final double overflow;
-
-  FillPainter(
-      {this.circleColor,
-      this.lineColor,
-      this.first = false,
-      this.last = false,
-      this.overflow = 30.0})
-      : super();
-
-  /// Controls how the circle and lines are drawn.
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint();
-    // cascade notation, look it up it's pretty cool
-    Paint line = new Paint()
-      ..color = lineColor!
-      ..strokeCap = StrokeCap.square
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 6;
-
-    if (first) {
-      canvas.drawLine(Offset(size.width / 2, size.height + overflow),
-          Offset(size.width / 2, size.height / 2 + 15), line);
-    } else if (last) {
-      canvas.drawLine(Offset(size.width / 2, size.height / 2 - 15.0),
-          Offset(size.width / 2, -overflow), line);
-    } else {
-      canvas.drawLine(Offset(size.width / 2, (size.height / 2) - 15.0),
-          Offset(size.width / 2, -overflow), line);
-      canvas.drawLine(Offset(size.width / 2, (size.height / 2) + 15.0),
-          Offset(size.width / 2, size.height + overflow), line);
-    }
-
-    // set the color property of the paint
-    paint.color = circleColor!;
-    paint.style = PaintingStyle.stroke;
-    paint.strokeWidth = 3.0;
-
-    // center of the canvas is (x,y) => (width/2, height/2)
-    var center = Offset(size.width / 2, size.height / 2);
-
-    canvas.drawCircle(center, 11.0, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
-
-/// Creates our "lines and circles" on the left hand side of the
-/// schedule list for each bus. This particular class is responsible
-/// for all stops but the first.
-class StrokePainter extends CustomPainter {
-  final Color? circleColor;
-  final Color? lineColor;
-  final bool last;
-  StrokePainter({
-    this.circleColor,
-    this.lineColor,
-    this.last = false,
-  }) : super();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint line = new Paint()
-      ..color = lineColor!
-      ..strokeCap = StrokeCap.square
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 6;
-
-    if (!last) {
-      canvas.drawLine(Offset(38.5, size.height), Offset(38.5, 0), line);
-    }
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

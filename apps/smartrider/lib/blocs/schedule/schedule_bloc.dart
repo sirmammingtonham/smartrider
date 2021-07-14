@@ -21,8 +21,8 @@ part 'schedule_state.dart';
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final BusRepository busRepo;
   final MapBloc mapBloc;
-  PanelController? _panelController;
-  TabController? _tabController;
+  late final PanelController _panelController;
+  late final TabController _tabController;
 
   bool _isBus = true;
   late bool _isTimeline;
@@ -65,11 +65,11 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     _isChanging = false;
   }
 
-  PanelController? get panelController => _panelController;
-  TabController? get tabController => _tabController;
+  PanelController get panelController => _panelController;
+  TabController get tabController => _tabController;
 
   void _handleTabSelection() {
-    if (_tabController!.indexIsChanging && !_isChanging) {
+    if (_tabController.indexIsChanging && !_isChanging) {
       mapBloc.add(MapTypeChangeEvent());
       add(ScheduleTypeChangeEvent());
     }
@@ -130,7 +130,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     switch (event.runtimeType) {
       case ScheduleInitEvent:
         {
-          _tabController = (event as ScheduleInitEvent).tabController!
+          _tabController = (event as ScheduleInitEvent).tabController
             ..addListener(_handleTabSelection);
           _panelController = event.panelController;
           // busRoutes = await busRepo.getRoutes;
@@ -151,7 +151,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       case ScheduleTypeChangeEvent:
         {
           _isChanging = true;
-          _tabController!.animateTo(_isBus ? 1 : 0);
+          _tabController.animateTo(_isBus ? 1 : 0);
           _isChanging = false;
           _isBus = !_isBus;
           if (_isTimeline) {

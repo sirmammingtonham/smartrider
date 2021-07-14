@@ -64,7 +64,7 @@ class _HomePageState extends State<_HomePage>
     with SingleTickerProviderStateMixin {
   late final PanelController
       _panelController; // Lets the user control the stop tabs
-  TabController? _tabController;
+  late final TabController _tabController;
   // The height of the tab when the user is viewing the shuttle and bus stops
   late double _panelHeightOpen;
 
@@ -103,8 +103,8 @@ class _HomePageState extends State<_HomePage>
     }
   }
 
-  Widget _slidingPanel(SaferideState saferideState, MapState mapState,
-          PrefsState prefsState, BuildContext context) =>
+  Widget _slidingPanel(SaferideState saferideState, PrefsState prefsState,
+          BuildContext context) =>
       SlidingUpPanel(
         controller: _panelController,
         maxHeight: _panelHeightOpen,
@@ -119,39 +119,23 @@ class _HomePageState extends State<_HomePage>
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20.0),
         ),
-        collapsed: Showcase(
-            key: showcaseSlidingPanel,
-            description: SLIDING_PANEL_SHOWCASE_MESSAGE,
-            child: AppBar(
-              centerTitle: true,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(18.0),
-                ),
-              ),
-              leading: Icon(Icons.arrow_upward, size: 19.sp),
-              title: Text(
-                mapState is MapLoadedState && !mapState.isBus!
-                    ? 'Shuttle Schedules'
-                    : 'Bus Schedules',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 17.sp),
-              ),
-              actions: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: Icon(Icons.arrow_upward, size: 19.sp))
-              ],
-            )),
+        // collapsed: Showcase(
+        //     key: showcaseSlidingPanel,
+        //     description: SLIDING_PANEL_SHOWCASE_MESSAGE,
+        //     child: SizedBox(
+        //       child: Container(
+        //         child: ListTile(
+        //           title: Text('BRUH'),
+        //         ),
+        //       ),
+        //     )
         // stack the search bar widget over the map ui
         body: Stack(children: <Widget>[
           SmartriderMap(),
           SearchBar(),
           SaferideStatusWidget()
         ]),
-        panel: PanelPage(
-          panelController: _panelController,
-        ),
+        panel: PanelPage(),
       );
 
   /// Builds the map and the schedule dropdown based on dynamic data.
@@ -165,12 +149,10 @@ class _HomePageState extends State<_HomePage>
         body: MultiBlocBuilder(
             blocs: [
               BlocProvider.of<SaferideBloc>(context),
-              BlocProvider.of<MapBloc>(context),
               BlocProvider.of<PrefsBloc>(context),
             ],
             builder: (context, states) {
               final saferideState = states.get<SaferideState>();
-              final mapState = states.get<MapState>();
               final prefState = states.get<PrefsState>();
 
               switch (saferideState.runtimeType) {
@@ -202,8 +184,7 @@ class _HomePageState extends State<_HomePage>
                       else
                         _panelController.show();
                     });
-                    return _slidingPanel(
-                        saferideState, mapState, prefState, context);
+                    return _slidingPanel(saferideState, prefState, context);
                   }
                 case PrefsSavingState:
                   return Center(child: CircularProgressIndicator());
