@@ -1,7 +1,6 @@
 // ui dependencies
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
@@ -12,6 +11,7 @@ import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/widgets/custom_widgets/custom_painters.dart';
+import 'package:sizer/sizer.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/widgets/custom_widgets/custom_expansion_tile.dart';
@@ -24,13 +24,15 @@ const List<String> choices = [
 
 /// Creates an object that contains all the busses and their respective stops.
 class BusTimeline extends StatefulWidget {
-  final PanelController? panelController;
+  final PanelController panelController;
+  final ScrollController scrollController;
   // final Map<String, BusRoute> busRoutes;
   final Map<String?, BusTimetable>? busTables;
 
   BusTimeline(
       {Key? key,
       required this.panelController,
+      required this.scrollController,
       // @required this.busRoutes,
       required this.busTables})
       : super(key: key);
@@ -48,26 +50,42 @@ class BusTimelineState extends State<BusTimeline>
     Tab(text: 'Express Shuttle'),
   ];
 
-  TabController? _tabController;
+  late final TabController _tabController;
+  ScrollController? _scrollController;
 
   // TODO: better way to do this
-  var isExpandedList = List<bool>.filled(50, false);
+  final isExpandedList = List<bool>.filled(50, false);
 
   /// Affects the expansion of each bus's list of stops
   @override
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: busTabs.length);
-    _tabController!.addListener(() {
-      isExpandedList.fillRange(0, 50, false);
-      setState(() {});
+    _tabController.addListener(() {
+      setState(() {
+        isExpandedList.fillRange(0, 50, false);
+      });
     });
-    isExpandedList.fillRange(0, 50, false);
+
+    // we need to disable to scroll controller when the user is switching tabs
+    // so we dont get the annoying asf "multiple scroll view" error
+    _scrollController = widget.scrollController;
+    _tabController.animation?.addListener(() {
+      if (_tabController.animation!.value % 1 == 0.0) {
+        setState(() {
+          _scrollController = widget.scrollController;
+        });
+      } else if (_scrollController != null) {
+        setState(() {
+          _scrollController = null;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
-    _tabController!.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -79,25 +97,25 @@ class BusTimelineState extends State<BusTimeline>
     return Column(children: <Widget>[
       /// The tab bar displayed when the bus icon is selected.
       Showcase(
-          key: showcaseBusTab,
-          description: BUS_TAB_SHOWCASE_MESSAGE,
-          child: TabBar(
-            indicatorColor: BUS_COLORS.values.toList()[_tabController!.index],
-            isScrollable: true,
-            tabs: busTabs,
-            labelColor: Theme.of(context).brightness == Brightness.light
-                ? Colors.black
-                : null,
-            unselectedLabelColor:
-                Theme.of(context).brightness == Brightness.light
-                    ? Colors.black
-                    : null,
-            controller: _tabController,
-          )),
+        key: showcaseBusTab,
+        description: BUS_TAB_SHOWCASE_MESSAGE,
+        child: TabBar(
+          indicatorColor: BUS_COLORS.values.toList()[_tabController.index],
+          isScrollable: true,
+          tabs: busTabs,
+          labelColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.black
+              : null,
+          unselectedLabelColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.black
+              : null,
+          controller: _tabController,
+        ),
+      ),
 
       /// The list of bus stops to be displayed.
       Container(
-        height: MediaQuery.of(context).size.height * 0.7,
+        height: 60.h,
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
@@ -161,6 +179,7 @@ class BusTimelineState extends State<BusTimeline>
 
                 /// A list of the upcoming bus stop arrivals.
                 child: ListView.builder(
+                  padding: EdgeInsets.zero,
                   shrinkWrap: true,
                   itemCount: stopTimes.length,
                   itemExtent: 50,
@@ -181,7 +200,9 @@ class BusTimelineState extends State<BusTimeline>
                     /// The container in which the bus stop arrival times are displayed.
                     return ListTile(
                       dense: true,
-                      leading: Icon(Icons.access_time, size: 20), // TODO: change icon if bus is within 5 minutes
+                      leading: Icon(Icons.access_time,
+                          size:
+                              20), // TODO: change icon if bus is within 5 minutes
                       title: Text(
                         stopTimes[timeIndex][0],
                         style: TextStyle(fontSize: 15),
@@ -215,7 +236,10 @@ class BusTimelineState extends State<BusTimeline>
     var busStops = widget.busTables![routeId]!.stops!;
 
     /// Returns the scrollable list for our bus stops to be contained in.
-    return ScrollablePositionedList.builder(
+    // return ScrollablePositionedList.builder(
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      controller: _scrollController,
       itemCount: busStops.length,
       itemBuilder: (context, index) {
         var stopTimes = this
@@ -230,6 +254,7 @@ class BusTimelineState extends State<BusTimeline>
 
         /// showcase doesn't work because of duplicate global keys
         /// (it tries to use the same global key despite there being multiple tabs)
+        // TODO: fix dis
         // Showcase(
         //   key: GlobalKey(debugLabel: 'bruh2'),//showcaseTimeline,
         //   description: TIMELINE_ITEM_SHOWCASE_MESSAGE,
@@ -244,7 +269,7 @@ class BusTimelineState extends State<BusTimeline>
       BlocProvider.of<ScheduleBloc>(context)
           .scheduleBusAlarm(stopTime![1], busStop!);
     } else if (choice == choices[1]) {
-      this.widget.panelController!.animatePanelToPosition(0);
+      this.widget.panelController.animatePanelToPosition(0);
       BlocProvider.of<MapBloc>(context).scrollToLocation(busStop!.latLng);
     }
   }

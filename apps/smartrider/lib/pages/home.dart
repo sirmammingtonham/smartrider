@@ -62,13 +62,8 @@ class _HomePage extends StatefulWidget {
 /// Builds the current instance of the home page.
 class _HomePageState extends State<_HomePage>
     with SingleTickerProviderStateMixin {
-  late final PanelController
-      _panelController; // Lets the user control the stop tabs
+  late final PanelController _panelController;
   late final TabController _tabController;
-  // The height of the tab when the user is viewing the shuttle and bus stops
-  late double _panelHeightOpen;
-
-  double _panelHeightClosed = 95; // Height of the closed tab
 
   @override
   void initState() {
@@ -107,8 +102,8 @@ class _HomePageState extends State<_HomePage>
           BuildContext context) =>
       SlidingUpPanel(
         controller: _panelController,
-        maxHeight: _panelHeightOpen,
-        minHeight: _panelHeightClosed,
+        maxHeight: 90.h,
+        minHeight: 15.h,
         onPanelOpened: () {
           startTimelineShowcase(prefsState as PrefsLoadedState, context);
         },
@@ -119,31 +114,18 @@ class _HomePageState extends State<_HomePage>
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20.0),
         ),
-        // collapsed: Showcase(
-        //     key: showcaseSlidingPanel,
-        //     description: SLIDING_PANEL_SHOWCASE_MESSAGE,
-        //     child: SizedBox(
-        //       child: Container(
-        //         child: ListTile(
-        //           title: Text('BRUH'),
-        //         ),
-        //       ),
-        //     )
         // stack the search bar widget over the map ui
         body: Stack(children: <Widget>[
           SmartriderMap(),
           SearchBar(),
           SaferideStatusWidget()
         ]),
-        panel: PanelPage(),
+        panelBuilder: (sc) => PanelPage(panelScrollController: sc),
       );
 
   /// Builds the map and the schedule dropdown based on dynamic data.
   @override
   Widget build(BuildContext context) {
-    /// Height of the stop schedules when open
-    _panelHeightOpen = MediaQuery.of(context).size.height * .95;
-
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: MultiBlocBuilder(

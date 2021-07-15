@@ -109,41 +109,41 @@ class SearchBarState extends State<SearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: 30, //TODO: use sizer
-      right: 15,
-      left: 15,
-      child: MultiBlocBuilder(
-        blocs: [
-          BlocProvider.of<SaferideBloc>(context),
-          BlocProvider.of<AuthenticationBloc>(context),
-          BlocProvider.of<PrefsBloc>(context),
-        ],
-        builder: (context, states) {
-          final saferideState = states.get<SaferideState>();
-          final authState = states.get<AuthenticationState>();
-          final prefState = states.get<PrefsState>();
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: MultiBlocBuilder(
+          blocs: [
+            BlocProvider.of<SaferideBloc>(context),
+            BlocProvider.of<AuthenticationBloc>(context),
+            BlocProvider.of<PrefsBloc>(context),
+          ],
+          builder: (context, states) {
+            final saferideState = states.get<SaferideState>();
+            final authState = states.get<AuthenticationState>();
+            final prefState = states.get<PrefsState>();
 
-          name =
-              authState is AuthenticationSuccess ? authState.displayName : '';
-          role = authState is AuthenticationSuccess ? authState.role : '';
-          switch (saferideState.runtimeType) {
-            case SaferideNoState:
-              return searchBar(prefState);
-            case SaferideSelectingState:
-              return pickupDropoffSelectWidget(
-                  context, saferideState as SaferideSelectingState);
-            case SaferideWaitingState:
-            case SaferidePickingUpState:
-            case SaferideDroppingOffState:
-              return Container();
-            case SaferideCancelledState:
-            case SaferideErrorState:
-              return Placeholder(); //TODO: fill out these widgets
-            default:
-              return Text('saferide state type error');
-          }
-        },
+            name =
+                authState is AuthenticationSuccess ? authState.displayName : '';
+            role = authState is AuthenticationSuccess ? authState.role : '';
+            switch (saferideState.runtimeType) {
+              case SaferideNoState:
+                return searchBar(prefState);
+              case SaferideSelectingState:
+                return pickupDropoffSelectWidget(
+                    context, saferideState as SaferideSelectingState);
+              case SaferideWaitingState:
+              case SaferidePickingUpState:
+              case SaferideDroppingOffState:
+                return Container();
+              case SaferideCancelledState:
+              case SaferideErrorState:
+                return Placeholder(); //TODO: fill out these widgets
+              default:
+                return Text('saferide state type error');
+            }
+          },
+        ),
       ),
     );
   }
@@ -155,6 +155,7 @@ class SearchBarState extends State<SearchBar> {
           borderRadius: BorderRadius.circular(10.0),
           elevation: 6.0,
           child: Row(
+mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Showcase(
                   key: showcaseSettings,

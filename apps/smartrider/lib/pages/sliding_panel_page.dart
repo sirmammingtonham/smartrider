@@ -18,112 +18,147 @@ import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
 import 'package:smartrider/pages/home.dart';
 
 class PanelPage extends StatelessWidget {
+  final ScrollController panelScrollController;
+  PanelPage({required this.panelScrollController});
   final List<Widget> _tabs = [
-    Tab(icon: Icon(Icons.directions_bus)),
-    Tab(icon: Icon(Icons.airport_shuttle)),
+    Tab(icon: Icon(Icons.directions_bus, color: Colors.grey)),
+    Tab(icon: Icon(Icons.airport_shuttle, color: Colors.grey)),
   ];
 
-  Widget panelAppBar(bool isBus, PanelController panelController,
-      TabController tabController, List<Widget> tabs) {
-    final barSize = AppBar().preferredSize;
-    return AppBar(
-        centerTitle: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(20),
+  Widget panelAppBar(BuildContext context, ScheduleState scheduleState) {
+    void animatePanel() {
+      final pc = BlocProvider.of<ScheduleBloc>(context).panelController;
+      pc.animatePanelToPosition(pc.isPanelClosed ? 1 : 0);
+    }
+
+
+    final icon = InkWell(
+      onTap: animatePanel,
+      child: Icon(
+        Icons.expand_more,
+        color: Colors.white,
+        size: 30.sp,
+      ),
+    );
+
+    final title = Center(
+      child: Text(
+        scheduleState.isBus ? 'Bus Schedules' : 'Shuttle Schedules',
+        style: TextStyle(
+          fontSize: 20.sp,
+          color: Colors.white,
+        ),
+      ),
+    );
+    return Stack(
+      children: [
+        Container(
+          color: Theme.of(context).accentColor,
+          height: 15.h,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              icon,
+              title,
+              icon,
+            ],
           ),
         ),
-        // TODO: add little bar at the top to pull like google maps (might be more trouble than it's worth)
-        title: Text(isBus ? 'Bus Schedules' : 'Shuttle Schedules'),
-        leading: IconButton(
-          icon: Icon(Icons.expand_more),
-          onPressed: () {
-            panelController
-                .animatePanelToPosition(panelController.isPanelClosed ? 1 : 0);
-          },
+        Padding(
+          padding: const EdgeInsets.only(top: 7),
+          child: InkWell(
+            onTap: animatePanel,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  width: 15.w,
+                  height: 3.sp,
+                  decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                ),
+              ],
+            ),
+          ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.expand_more),
-            onPressed: () {
-              panelController.animatePanelToPosition(
-                  panelController.isPanelClosed ? 1 : 0);
-            },
-          )
-        ],
-        bottom: PreferredSize(
-          preferredSize: barSize,
-          child: Showcase(
-              key: showcaseTransportTab,
-              description: SLIDING_PAGE_TAB_SHOWCASE_MESSAGE,
-              child: TabBar(
-                unselectedLabelColor: Colors.white.withOpacity(0.3),
-                indicatorColor: Colors.white,
-                controller: tabController,
-                tabs: tabs,
-              )),
-        ));
+      ],
+    );
   }
+
+  Widget panelBody(BuildContext context, ScheduleState scheduleState) =>
+      Expanded(
+        child: TabBarView(
+          controller: BlocProvider.of<ScheduleBloc>(context).tabController,
+          children: scheduleState is ScheduleTimelineState
+              ? [
+                  // timeline widgets
+                  BusTimeline(
+                    panelController:
+                        BlocProvider.of<ScheduleBloc>(context).panelController,
+                    scrollController: panelScrollController,
+                    busTables: scheduleState.busTables,
+                  ),
+                  ShuttleUnavailable(),
+                ]
+              : [
+                  // table widgets
+                  BusTable(
+                      timetableMap:
+                          (scheduleState as ScheduleTableState).busTables),
+                  ShuttleUnavailable(),
+                ],
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20.0),
-        ),
-        child: BlocBuilder<ScheduleBloc, ScheduleState>(
-          builder: (context, scheduleState) {
-            if (scheduleState is ScheduleTimelineState ||
-                scheduleState is ScheduleTableState) {
-              return Scaffold(
-                appBar: panelAppBar(
-                    scheduleState.isBus,
-                    BlocProvider.of<ScheduleBloc>(context).panelController,
-                    BlocProvider.of<ScheduleBloc>(context).tabController,
-                    _tabs) as PreferredSizeWidget?,
-                body: TabBarView(
-                  controller:
-                      BlocProvider.of<ScheduleBloc>(context).tabController,
-                  children: scheduleState is ScheduleTimelineState
-                      ? [
-                          // timeline widgets
-                          BusTimeline(
-                            panelController:
-                                BlocProvider.of<ScheduleBloc>(context)
-                                    .panelController,
-                            busTables: scheduleState.busTables,
-                          ),
-                          ShuttleUnavailable(),
-                        ]
-                      : [
-                          // table widgets
-                          BusTable(
-                              timetableMap:
-                                  (scheduleState as ScheduleTableState)
-                                      .busTables),
-                          ShuttleUnavailable(),
-                        ],
-                ),
-                floatingActionButton: FloatingActionButton(
-                  heroTag: "switch_schedule_view_button",
-                  child: Icon(scheduleState is ScheduleTimelineState
-                      ? Icons.toc
-                      : Icons.timeline),
-                  elevation: 5.0,
-                  onPressed: () {
-                    if (scheduleState is ScheduleTimelineState)
-                      BlocProvider.of<ScheduleBloc>(context)
-                          .add(ScheduleViewChangeEvent(isTimeline: false));
-                    else if (scheduleState is ScheduleTableState)
-                      BlocProvider.of<ScheduleBloc>(context)
-                          .add(ScheduleViewChangeEvent(isTimeline: true));
-                  },
-                ),
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ));
+    return BlocBuilder<ScheduleBloc, ScheduleState>(
+      builder: (context, scheduleState) {
+        if (scheduleState is ScheduleTimelineState ||
+            scheduleState is ScheduleTableState) {
+          return ClipRRect(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(20.0),
+            ),
+            child: Scaffold(
+              body: Column(
+                children: [
+                  panelAppBar(context, scheduleState),
+                  Showcase(
+                    key: showcaseTransportTab,
+                    description: SLIDING_PAGE_TAB_SHOWCASE_MESSAGE,
+                    child: TabBar(
+                      controller:
+                          BlocProvider.of<ScheduleBloc>(context).tabController,
+                      tabs: _tabs,
+                    ),
+                  ),
+                  panelBody(context, scheduleState)
+                ],
+              ),
+              floatingActionButton: FloatingActionButton(
+                heroTag: "switch_schedule_view_button",
+                child: Icon(scheduleState is ScheduleTimelineState
+                    ? Icons.toc
+                    : Icons.timeline),
+                elevation: 5.0,
+                onPressed: () {
+                  if (scheduleState is ScheduleTimelineState)
+                    BlocProvider.of<ScheduleBloc>(context)
+                        .add(ScheduleViewChangeEvent(isTimeline: false));
+                  else if (scheduleState is ScheduleTableState)
+                    BlocProvider.of<ScheduleBloc>(context)
+                        .add(ScheduleViewChangeEvent(isTimeline: true));
+                },
+              ),
+            ),
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
   }
 }
