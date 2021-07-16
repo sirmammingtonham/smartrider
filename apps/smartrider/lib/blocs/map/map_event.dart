@@ -27,16 +27,21 @@ class MapTypeChangeEvent extends MapEvent {
 }
 
 class MapSaferideSelectionEvent extends MapEvent {
-  final LatLng? coord;
-  const MapSaferideSelectionEvent({required this.coord});
+  final SaferideSelectingState saferideState;
+  const MapSaferideSelectionEvent({required this.saferideState});
+
+  LatLng get pickupLatLng => LatLng(
+      saferideState.pickupPoint.latitude, saferideState.pickupPoint.longitude);
+  LatLng get dropLatLng => LatLng(
+      saferideState.dropPoint.latitude, saferideState.dropPoint.longitude);
 
   @override
-  List<Object?> get props => [coord];
+  List<Object?> get props => [saferideState];
 }
 
 class MapMoveEvent extends MapEvent {
-  final double? zoomLevel;
-  const MapMoveEvent({this.zoomLevel});
+  final double zoomLevel;
+  const MapMoveEvent({required this.zoomLevel});
 
   @override
   List<Object?> get props => [zoomLevel];

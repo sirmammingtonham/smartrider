@@ -89,8 +89,9 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       case SaferidePickingUpEvent:
         {
           yield SaferidePickingUpState(
-              licensePlate: (event as SaferidePickingUpEvent).licensePlate,
-              phoneNumber: event.driverPhone,
+              vehicleId: (event as SaferidePickingUpEvent).vehicleId,
+              licensePlate: event.licensePlate,
+              phoneNumber: event.phoneNumber,
               driverName: event.driverName,
               queuePosition: event.queuePosition,
               estimatedPickup: event.estimatedPickup);
@@ -151,12 +152,12 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       case 'PICKING_UP':
         {
           final vehicle = await order.vehicleRef!.get();
-          print(vehicle.get('current_driver').runtimeType);
           final currentDriver =
               (vehicle.get('current_driver') as Map<String, dynamic>);
           add(SaferidePickingUpEvent(
+              vehicleId: vehicle.id,
               driverName: currentDriver['name']!,
-              driverPhone: currentDriver['phone_number']!,
+              phoneNumber: currentDriver['phone_number']!,
               licensePlate: vehicle.get('license_plate'),
               queuePosition: order.queuePosition ?? -1,
               estimatedPickup: order.estimatedPickup));
@@ -251,10 +252,10 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     }
 
     yield SaferideSelectingState(
-      pickupPoint: pickupPoint,
-      pickupDescription: pickupDescription,
-      dropPoint: dropoffPoint,
-      dropDescription: dropoffDescription,
+      pickupPoint: pickupPoint!,
+      pickupDescription: pickupDescription!,
+      dropPoint: dropoffPoint!,
+      dropDescription: dropoffDescription!,
       queuePosition: 0, //
     );
   }

@@ -24,6 +24,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:shared/util/strings.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:showcaseview/showcaseview.dart';
+import 'package:sizer/sizer.dart';
 
 String computeUsername(String name) {
   //compute initials to be displayed on search bar
@@ -111,7 +112,7 @@ class SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.only(top: 2.h),
         child: MultiBlocBuilder(
           blocs: [
             BlocProvider.of<SaferideBloc>(context),
@@ -130,7 +131,7 @@ class SearchBarState extends State<SearchBar> {
               case SaferideNoState:
                 return searchBar(prefState);
               case SaferideSelectingState:
-                return pickupDropoffSelectWidget(
+                return saferideSelectionWidget(
                     context, saferideState as SaferideSelectingState);
               case SaferideWaitingState:
               case SaferidePickingUpState:
@@ -155,7 +156,7 @@ class SearchBarState extends State<SearchBar> {
           borderRadius: BorderRadius.circular(10.0),
           elevation: 6.0,
           child: Row(
-mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Showcase(
                   key: showcaseSettings,
@@ -237,42 +238,48 @@ mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         ),
       );
 
-  Widget pickupDropoffSelectWidget(
+  Widget saferideSelectionWidget(
           BuildContext context, SaferideSelectingState saferideState) =>
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
-        child: Card(
-          elevation: 6.0,
-          child: Column(mainAxisSize: MainAxisSize.max, children: [
-            ListTile(
-              leading: Container(
-                height: double.infinity,
-                child: Icon(Icons.add_location_alt_rounded),
-              ),
-              title: Text(saferideState.pickupDescription!),
-              subtitle: const Text('Pickup location'),
-              onTap: () {
-                _showAutocomplete("Enter pickup address", isPickup: true);
-              },
+      Column(
+        children: [
+          Card(
+            margin: EdgeInsets.symmetric(horizontal: 10.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
             ),
-            Divider(height: 0),
-            ListTile(
-              leading: Container(
+            elevation: 6.0,
+            child: Column(mainAxisSize: MainAxisSize.max, children: [
+              ListTile(
+                leading: Container(
                   height: double.infinity,
-                  child: Icon(Icons.wrong_location_rounded)),
-              title: Text(saferideState.dropDescription!),
-              subtitle: const Text('Dropoff location'),
-              trailing: IconButton(
-                icon: Icon(Icons.cancel),
-                onPressed: () {
-                  BlocProvider.of<SaferideBloc>(context).add(SaferideNoEvent());
+                  child: Icon(Icons.add_location_alt_rounded),
+                ),
+                title: Text(saferideState.pickupDescription),
+                subtitle: const Text('Pickup location'),
+                onTap: () {
+                  _showAutocomplete("Enter pickup address", isPickup: true);
                 },
               ),
-              onTap: () {
-                _showAutocomplete("Enter dropoff address", isPickup: false);
-              },
-            )
-          ]),
-        ),
+              Divider(height: 0),
+              ListTile(
+                leading: Container(
+                    height: double.infinity,
+                    child: Icon(Icons.wrong_location_rounded)),
+                title: Text(saferideState.dropDescription),
+                subtitle: const Text('Dropoff location'),
+                trailing: IconButton(
+                  icon: Icon(Icons.cancel),
+                  onPressed: () {
+                    BlocProvider.of<SaferideBloc>(context)
+                        .add(SaferideNoEvent());
+                  },
+                ),
+                onTap: () {
+                  _showAutocomplete("Enter dropoff address", isPickup: false);
+                },
+              )
+            ]),
+          ),
+        ],
       );
 }

@@ -38,21 +38,30 @@ class SaferideWaitingEvent extends SaferideEvent {
 }
 
 class SaferidePickingUpEvent extends SaferideEvent {
-  final String licensePlate;
+  final String vehicleId;
   final String driverName;
-  final String driverPhone;
+  final String phoneNumber;
+  final String licensePlate;
   final int queuePosition;
   final Timestamp? estimatedPickup;
+
   const SaferidePickingUpEvent(
-      {required this.licensePlate,
+      {required this.vehicleId,
       required this.driverName,
-      required this.driverPhone,
+      required this.phoneNumber,
+      required this.licensePlate,
       required this.queuePosition,
       required this.estimatedPickup});
 
   @override
-  List<Object?> get props =>
-      [licensePlate, driverName, queuePosition, estimatedPickup];
+  List<Object?> get props => [
+        vehicleId,
+        driverName,
+        phoneNumber,
+        licensePlate,
+        queuePosition,
+        estimatedPickup
+      ];
 }
 
 class SaferideDroppingOffEvent extends SaferideEvent {

@@ -15,10 +15,10 @@ class SaferideNoState extends SaferideState {}
 class SaferideLoadingState extends SaferideState {}
 
 class SaferideSelectingState extends SaferideState {
-  final GeoPoint? pickupPoint;
-  final GeoPoint? dropPoint;
-  final String? pickupDescription;
-  final String? dropDescription;
+  final GeoPoint pickupPoint;
+  final GeoPoint dropPoint;
+  final String pickupDescription;
+  final String dropDescription;
   final int queuePosition;
 
   const SaferideSelectingState(
@@ -50,23 +50,30 @@ class SaferideWaitingState extends SaferideState {
 }
 
 class SaferidePickingUpState extends SaferideState {
+  final String vehicleId;
   final String driverName;
   final String phoneNumber;
   final String licensePlate;
   final int queuePosition;
   final Timestamp? estimatedPickup;
-  // phone number too
 
   const SaferidePickingUpState(
-      {required this.driverName,
+      {required this.vehicleId,
+      required this.driverName,
       required this.phoneNumber,
       required this.licensePlate,
       required this.queuePosition,
       required this.estimatedPickup});
 
   @override
-  List<Object?> get props =>
-      [driverName, phoneNumber, licensePlate, queuePosition, estimatedPickup];
+  List<Object?> get props => [
+        vehicleId,
+        driverName,
+        phoneNumber,
+        licensePlate,
+        queuePosition,
+        estimatedPickup
+      ];
 }
 
 class SaferideDroppingOffState extends SaferideState {

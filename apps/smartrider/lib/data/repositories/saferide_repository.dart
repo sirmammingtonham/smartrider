@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
-
+import 'package:shared/models/saferide/position_data.dart';
 import '../providers/saferide_provider.dart';
 
 class SaferideRepository {
@@ -25,4 +24,7 @@ class SaferideRepository {
 
   Future<DocumentSnapshot> getOrder(String orderId) async =>
       _saferideProvider.getOrder(orderId);
+
+  Stream<List<PositionData>> getSaferideLocationsStream() =>
+      _saferideProvider.getSaferideLocationsStream();
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared/models/saferide/position_data.dart';
 
 // saferide models
 // import 'package:shared/models/saferide/order.dart';
@@ -7,6 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class SaferideProvider {
   final CollectionReference orders =
       FirebaseFirestore.instance.collection('orders');
+  final CollectionReference vehicles =
+      FirebaseFirestore.instance.collection('vehicles');
 
   String? orderId;
 
@@ -47,4 +50,8 @@ class SaferideProvider {
     Query query = orders.where('status', isEqualTo: 'WAITING');
     return (await query.get()).size;
   }
+
+  Stream<List<PositionData>> getSaferideLocationsStream() =>
+      vehicles.snapshots().map((snap) =>
+          snap.docs.map((doc) => PositionData.fromDocSnapshot(doc)).toList());
 }
