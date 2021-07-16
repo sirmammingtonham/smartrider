@@ -141,7 +141,7 @@ class PanelPage extends StatelessWidget {
               floatingActionButton: FloatingActionButton(
                 heroTag: "switch_schedule_view_button",
                 child: Icon(scheduleState is ScheduleTimelineState
-                    ? Icons.toc
+                    ? Icons.table_view
                     : Icons.timeline),
                 elevation: 5.0,
                 onPressed: () {

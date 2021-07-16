@@ -16,6 +16,8 @@ import 'package:shared/util/multi_bloc_builder.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/widgets/legend.dart';
+import 'package:sizer/sizer.dart';
+import 'custom_widgets/expandable_fab.dart';
 
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
@@ -29,6 +31,32 @@ final CameraPosition kInitialPosition = const CameraPosition(
 
 class SmartriderMap extends StatelessWidget {
   const SmartriderMap();
+
+  Widget viewFab(IconData icon) => SizedBox(
+        height: 20.h,
+        width: 20.w,
+        child: ExpandableFab(
+          icon: icon,
+          distance: 19.w,
+          children: [
+            ActionButton(
+              tooltip: 'Bus View',
+              // onPressed: () => _showAction(context, 0),
+              icon: const Icon(Icons.directions_bus),
+            ),
+            ActionButton(
+              tooltip: 'Shuttle View',
+              // onPressed: () => _showAction(context, 1),
+              icon: const Icon(Icons.airport_shuttle),
+            ),
+            ActionButton(
+              tooltip: 'Saferide View',
+              // onPressed: () => _showAction(context, 2),
+              icon: const Icon(Icons.local_taxi),
+            ),
+          ],
+        ),
+      );
 
   Widget mapUI(
       {required BuildContext context,
@@ -99,28 +127,30 @@ class SmartriderMap extends StatelessWidget {
         right: 20.0,
         bottom: 190.0,
         child: Showcase(
-            key: showcaseViewChange,
-            description: VIEW_CHANGE_BUTTON_SHOWCASE_MESSAGE,
-            shapeBorder: CircleBorder(),
-            child: FloatingActionButton(
-              child: Icon(
-                mapState is MapLoadedState && mapState.isBus!
-                    ? Icons.airport_shuttle
-                    : Icons.directions_bus,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? Colors.black87
-                    : Theme.of(context).accentColor,
-              ),
-              backgroundColor: Theme.of(context).brightness == Brightness.light
-                  ? Colors.white
-                  : Colors.white70,
-              onPressed: () {
-                BlocProvider.of<MapBloc>(context).add(MapTypeChangeEvent());
-                BlocProvider.of<ScheduleBloc>(context)
-                    .add(ScheduleTypeChangeEvent());
-              },
-              heroTag: "mapViewChangeButton",
-            )),
+          key: showcaseViewChange,
+          description: VIEW_CHANGE_BUTTON_SHOWCASE_MESSAGE,
+          shapeBorder: CircleBorder(),
+          child: viewFab(Icons.layers),
+// FloatingActionButton(
+//               child: Icon(
+//                 mapState is MapLoadedState && mapState.isBus!
+//                     ? Icons.airport_shuttle
+//                     : Icons.directions_bus,
+//                 color: Theme.of(context).brightness == Brightness.light
+//                     ? Colors.black87
+//                     : Theme.of(context).accentColor,
+//               ),
+//               backgroundColor: Theme.of(context).brightness == Brightness.light
+//                   ? Colors.white
+//                   : Colors.white70,
+//               onPressed: () {
+//                 BlocProvider.of<MapBloc>(context).add(MapTypeChangeEvent());
+//                 BlocProvider.of<ScheduleBloc>(context)
+//                     .add(ScheduleTypeChangeEvent());
+//               },
+//               heroTag: "mapViewChangeButton",
+//             )
+        ),
       );
     }
 

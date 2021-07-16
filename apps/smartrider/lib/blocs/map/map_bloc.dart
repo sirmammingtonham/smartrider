@@ -1,6 +1,6 @@
 // implementation imports
 import 'dart:async';
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared/models/bus/bus_realtime_update.dart';
@@ -351,13 +351,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   ) {
     // https://gitlab.com/PraveenKishore/maps_curved_line
     List<LatLng> path = [];
-    double angle = pi / 2;
+    double angle = math.pi / 2;
     double SE =
         SphericalUtils.computeDistanceBetween(pickupLocation, destLocation)
             as double;
     double ME = SE / 2.0;
-    double R = ME / sin(angle / 2);
-    double MO = R * cos(angle / 2);
+    double R = ME / math.sin(angle / 2);
+    double MO = R * math.cos(angle / 2);
 
     double heading =
         SphericalUtils.computeHeading(pickupLocation, destLocation) as double;
@@ -376,7 +376,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     double initialHeading =
         SphericalUtils.computeHeading(oCoordinate, destLocation) as double;
-    double degree = (180.0 * angle) / pi;
+    double degree = (180.0 * angle) / math.pi;
 
     for (int i = 1; i <= num; i++) {
       double step = i.toDouble() * (degree / num.toDouble());
