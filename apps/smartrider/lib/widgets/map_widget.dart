@@ -1,6 +1,5 @@
 // ui imports
 import 'package:flutter/material.dart';
-// import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 // map imports
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -9,7 +8,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
-import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:shared/util/messages.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
 
@@ -32,26 +30,30 @@ final CameraPosition kInitialPosition = const CameraPosition(
 class SmartriderMap extends StatelessWidget {
   const SmartriderMap();
 
-  Widget viewFab(IconData icon) => SizedBox(
-        height: 20.h,
-        width: 20.w,
+  Widget viewFab(BuildContext context, IconData icon) => SizedBox(
+        height: 16.h,
+        width: 16.h,
         child: ExpandableFab(
+          // TODO: color of selected one should be different
           icon: icon,
           distance: 19.w,
           children: [
             ActionButton(
               tooltip: 'Bus View',
-              // onPressed: () => _showAction(context, 0),
+              onPressed: () => BlocProvider.of<MapBloc>(context)
+                  .add(MapViewChangeEvent(newView: MapView.kBusView)),
               icon: const Icon(Icons.directions_bus),
             ),
             ActionButton(
               tooltip: 'Shuttle View',
-              // onPressed: () => _showAction(context, 1),
+              onPressed: () => BlocProvider.of<MapBloc>(context)
+                  .add(MapViewChangeEvent(newView: MapView.kShuttleView)),
               icon: const Icon(Icons.airport_shuttle),
             ),
             ActionButton(
               tooltip: 'Saferide View',
-              // onPressed: () => _showAction(context, 2),
+              onPressed: () => BlocProvider.of<MapBloc>(context)
+                  .add(MapViewChangeEvent(newView: MapView.kSaferideView)),
               icon: const Icon(Icons.local_taxi),
             ),
           ],
@@ -61,7 +63,7 @@ class SmartriderMap extends StatelessWidget {
   Widget mapUI(
       {required BuildContext context,
       required SaferideState saferideState,
-      required MapState mapState}) {
+      required MapLoadedState mapState}) {
     Widget map;
     Widget? viewButton;
     Widget locationButton = Positioned(
@@ -88,39 +90,33 @@ class SmartriderMap extends StatelessWidget {
           )),
     );
 
-    if (mapState is MapErrorState) {
-      map = Center(
-        child: Text(mapState.error.toString()),
-      );
-    } else {
-      map = GoogleMap(
-        onMapCreated: (controller) {
-          BlocProvider.of<MapBloc>(context)
-              .updateController(context, controller);
-        },
-        initialCameraPosition: kInitialPosition,
-        compassEnabled: false,
-        mapToolbarEnabled: false,
-        cameraTargetBounds: CameraTargetBounds(rpiBounds),
-        minMaxZoomPreference: MinMaxZoomPreference(14.0, 18.0),
-        rotateGesturesEnabled: true,
-        scrollGesturesEnabled: true,
-        tiltGesturesEnabled: true,
-        zoomGesturesEnabled: true,
-        indoorViewEnabled: true,
-        myLocationEnabled: true,
-        myLocationButtonEnabled: false,
-        trafficEnabled: false,
-        polylines: mapState is MapLoadedState ? mapState.polylines : {},
-        markers: mapState is MapLoadedState ? mapState.markers : {},
-        zoomControlsEnabled: false,
-        onCameraMove: (position) {
-          BlocProvider.of<MapBloc>(context)
-              .add(MapMoveEvent(zoomLevel: position.zoom));
-        },
-        mapType: MapType.normal,
-      );
-    }
+    map = GoogleMap(
+      onMapCreated: (controller) {
+        BlocProvider.of<MapBloc>(context).updateController(context, controller);
+      },
+      initialCameraPosition: kInitialPosition,
+      compassEnabled: false,
+      mapToolbarEnabled: false,
+      cameraTargetBounds: CameraTargetBounds(rpiBounds),
+      minMaxZoomPreference: MinMaxZoomPreference(14.0, 18.0),
+      rotateGesturesEnabled: true,
+      scrollGesturesEnabled: true,
+      tiltGesturesEnabled: true,
+      zoomGesturesEnabled: true,
+      indoorViewEnabled: true,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+      trafficEnabled: false,
+      polylines: mapState is MapLoadedState ? mapState.polylines : {},
+      markers: mapState is MapLoadedState ? mapState.markers : {},
+      zoomControlsEnabled: false,
+      onCameraMove: (position) {
+        BlocProvider.of<MapBloc>(context)
+            .add(MapMoveEvent(zoomLevel: position.zoom));
+      },
+      mapType: MapType.normal,
+    );
+
     if (saferideState is SaferideInitialState ||
         saferideState is SaferideNoState) {
       viewButton = Positioned(
@@ -130,26 +126,7 @@ class SmartriderMap extends StatelessWidget {
           key: showcaseViewChange,
           description: VIEW_CHANGE_BUTTON_SHOWCASE_MESSAGE,
           shapeBorder: CircleBorder(),
-          child: viewFab(Icons.layers),
-// FloatingActionButton(
-//               child: Icon(
-//                 mapState is MapLoadedState && mapState.isBus!
-//                     ? Icons.airport_shuttle
-//                     : Icons.directions_bus,
-//                 color: Theme.of(context).brightness == Brightness.light
-//                     ? Colors.black87
-//                     : Theme.of(context).accentColor,
-//               ),
-//               backgroundColor: Theme.of(context).brightness == Brightness.light
-//                   ? Colors.white
-//                   : Colors.white70,
-//               onPressed: () {
-//                 BlocProvider.of<MapBloc>(context).add(MapTypeChangeEvent());
-//                 BlocProvider.of<ScheduleBloc>(context)
-//                     .add(ScheduleTypeChangeEvent());
-//               },
-//               heroTag: "mapViewChangeButton",
-//             )
+          child: viewFab(context, Icons.layers),
         ),
       );
     }
@@ -184,17 +161,26 @@ class SmartriderMap extends StatelessWidget {
         builder: (context, states) {
           final saferideState = states.get<SaferideState>();
           final mapState = states.get<MapState>();
-          // return ModalProgressHUD(
-          //   inAsyncCall: mapState is MapLoadingState,
-          //   progressIndicator: CircularProgressIndicator(),
-          //   color: Theme.of(context).backgroundColor,
-          //   opacity: 0.7,
-          //   child:
-          return mapUI(
-              context: context,
-              saferideState: saferideState,
-              mapState: mapState);
-          // );
+
+          switch (mapState.runtimeType) {
+            case MapLoadingState:
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            case MapLoadedState:
+              return mapUI(
+                  context: context,
+                  saferideState: saferideState,
+                  mapState: mapState as MapLoadedState);
+            case MapErrorState:
+            default:
+              // TODO: crashlytics
+              return Container(
+                child: Center(
+                  child: Text('ERROR IN MAP BLOC'),
+                ),
+              );
+          }
         });
   }
 }

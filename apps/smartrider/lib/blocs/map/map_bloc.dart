@@ -42,6 +42,8 @@ import 'package:shared/util/spherical_utils.dart';
 part 'map_event.dart';
 part 'map_state.dart';
 
+enum MapView { kBusView, kShuttleView, kSaferideView }
+
 // TODO: Document this absolute fucking unit
 
 final LatLngBounds rpiBounds = LatLngBounds(
@@ -57,7 +59,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final SaferideBloc saferideBloc;
 
   double _zoomLevel = 14.0;
-  bool _isBus = true;
+  MapView _currentView = MapView.kBusView;
 
   Map<String?, bool?>? _enabledShuttles = {};
   Map<String, bool>? _enabledBuses = {};
@@ -165,6 +167,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   GoogleMapController? get controller => _controller;
+  MapView get mapView => _currentView;
 
   updateController(BuildContext context, GoogleMapController controller) {
     _controller = controller;
@@ -191,10 +194,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           yield* _mapUpdateRequestedToState();
         }
         break;
-      case MapTypeChangeEvent:
+      case MapViewChangeEvent:
         {
-          _isBus = !_isBus;
-          yield* _mapUpdateRequestedToState();
+          if ((event as MapViewChangeEvent).newView != _currentView) {
+            _currentView = event.newView;
+            yield* _mapUpdateRequestedToState();
+          }
         }
         break;
       case MapSaferideSelectionEvent:
@@ -218,28 +223,34 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     yield MapLoadingState();
 
     // Stopwatch stopwatch = new Stopwatch()..start();
-
-    if (_isBus) {
-      _busRoutes = await busRepo.getRoutes;
-      _busShapes = await busRepo.getPolylines;
-      _busUpdates = await busRepo.getRealtimeUpdate;
-      prefsBloc.add(PrefsUpdateEvent()); // just to get enabled bus routes
-    } else {
-      _shuttleRoutes = await shuttleRepo.getRoutes;
-      _shuttleStops = await shuttleRepo.getStops;
-      _shuttleUpdates = await shuttleRepo.getUpdates;
-
-      if (!shuttleRepo.isConnected!) {
-        // needed or else we will continuously update the unavailable shuttle service
-        _updateTimer.cancel();
-        yield MapErrorState(error: SRError.NETWORK_ERROR);
-        return;
-      }
-
-      prefsBloc.add(InitActiveRoutesEvent(_shuttleRoutes.values
-          .toList())); // update preferences with currently active routes
+    switch (_currentView) {
+      case MapView.kBusView:
+        {
+          _busRoutes = await busRepo.getRoutes;
+          _busShapes = await busRepo.getPolylines;
+          _busUpdates = await busRepo.getRealtimeUpdate;
+          prefsBloc.add(PrefsUpdateEvent()); // just to get enabled bus routes
+        }
+        break;
+      case MapView.kShuttleView:
+        {
+          _shuttleRoutes = await shuttleRepo.getRoutes;
+          _shuttleStops = await shuttleRepo.getStops;
+          _shuttleUpdates = await shuttleRepo.getUpdates;
+          if (!shuttleRepo.isConnected!) {
+            // needed or else we will continuously update the unavailable shuttle service
+            _updateTimer.cancel();
+            yield MapErrorState(error: SRError.NETWORK_ERROR);
+            return;
+          }
+          // update preferences with currently active routes
+          prefsBloc.add(InitActiveRoutesEvent(_shuttleRoutes.values.toList()));
+        }
+        break;
+      case MapView.kSaferideView:
+        {}
+        break;
     }
-
     // print('got the stuff in ${stopwatch.elapsed} seconds');
 
     _getEnabledMarkers();
@@ -249,7 +260,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         polylines: _currentPolylines,
         markers:
             _currentMarkers.followedBy(_getMarkerClusters(_zoomLevel)).toSet(),
-        isBus: _isBus);
+        mapView: _currentView);
   }
 
   Stream<MapState> _mapSaferideSelectionToState(
@@ -290,8 +301,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         ),
       );
 
-    print(_currentMarkers);
-
     _currentPolylines.add(Polyline(
         polylineId: PolylineId("fancy_line"),
         width: 5,
@@ -305,23 +314,30 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     scrollToCurrentLocation();
 
     yield MapLoadedState(
-        polylines: _currentPolylines, markers: _currentMarkers, isBus: false);
+        polylines: _currentPolylines,
+        markers: _currentMarkers,
+        mapView: MapView.kSaferideView);
   }
 
   Stream<MapState> _mapUpdateRequestedToState() async* {
-    if (_isBus) {
-      _busUpdates = await busRepo.getRealtimeUpdate;
-    } else {
-      if (_shuttleRoutes.isEmpty) {
-        yield* _mapDataRequestedToState();
-        return;
-      }
-      _shuttleUpdates = await shuttleRepo.getUpdates;
-    }
-
-    if (!_isBus && !shuttleRepo.isConnected!) {
-      yield MapErrorState(error: SRError.NETWORK_ERROR);
-      return;
+    switch (_currentView) {
+      case MapView.kBusView:
+        {
+          _busUpdates = await busRepo.getRealtimeUpdate;
+        }
+        break;
+      case MapView.kShuttleView:
+        {
+          if (_shuttleRoutes.isEmpty) {
+            yield* _mapDataRequestedToState();
+            return;
+          }
+          _shuttleUpdates = await shuttleRepo.getUpdates;
+        }
+        break;
+      case MapView.kSaferideView:
+        {}
+        break;
     }
 
     _getEnabledMarkers();
@@ -331,7 +347,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         polylines: _currentPolylines,
         markers:
             _currentMarkers.followedBy(_getMarkerClusters(_zoomLevel)).toSet(),
-        isBus: _isBus);
+        mapView: _currentView);
   }
 
   Stream<MapState> _mapMoveToState() async* {
@@ -339,7 +355,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         polylines: _currentPolylines,
         markers:
             _getMarkerClusters(_zoomLevel).followedBy(_currentMarkers).toSet(),
-        isBus: _isBus);
+        mapView: _currentView);
   }
 
   /// non-state related functions
@@ -573,22 +589,31 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Set<Polyline> _getEnabledPolylines() {
     _currentPolylines.clear();
-    if (_isBus) {
-      _enabledBuses!.forEach((id, enabled) {
-        if (enabled) {
-          if (_busShapes[id] != null) {
-            _currentPolylines.addAll(_busShapes[id]!.getPolylines);
-          }
+    switch (_currentView) {
+      case MapView.kBusView:
+        {
+          _enabledBuses!.forEach((id, enabled) {
+            if (enabled) {
+              if (_busShapes[id] != null) {
+                _currentPolylines.addAll(_busShapes[id]!.getPolylines);
+              }
+            }
+          });
         }
-      });
-    } else {
-      _enabledShuttles!.forEach((id, enabled) {
-        if (enabled!) {
-          _currentPolylines.add(_shuttleRoutes[id]!.getPolyline);
+        break;
+      case MapView.kShuttleView:
+        {
+          _enabledShuttles!.forEach((id, enabled) {
+            if (enabled!) {
+              _currentPolylines.add(_shuttleRoutes[id]!.getPolyline);
+            }
+          });
         }
-      });
+        break;
+      case MapView.kSaferideView:
+        {}
+        break;
     }
-
     return _currentPolylines;
   }
 
@@ -596,45 +621,59 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _currentMarkers.clear();
     _mapMarkers.clear();
 
-    if (_isBus) {
-      List<String> defaultRoutes = busRepo.getDefaultRoutes;
-      defaultRoutes.forEach((routeId) {
-        _busUpdates[routeId]?.forEach((update) {
-          _currentMarkers.add(_busUpdateToMarker(update));
-        });
-      });
+    switch (_currentView) {
+      case MapView.kBusView:
+        {
+          /// add bus realtime update markers
+          busRepo.getDefaultRoutes.forEach((routeId) {
+            _busUpdates[routeId]?.forEach((update) {
+              _currentMarkers.add(_busUpdateToMarker(update));
+            });
+          });
 
-      _enabledBuses!.forEach((route, enabled) {
-        if (enabled) {
-          if (_busRoutes[route] != null) {
-            _busRoutes[route]!.stops!.forEach(
-                (stop) => _mapMarkers.add(_busStopToMarkerCluster(stop)));
-          }
-        }
-      });
-    } else {
-      for (var update in _shuttleUpdates!) {
-        _currentMarkers.add(_shuttleUpdateToMarker(update));
-      }
-
-      var shuttleMarkerMap = {
-        for (var stop in _shuttleStops!) stop.id: _shuttleStopToMarker(stop)
-      };
-
-      _enabledShuttles!.forEach((route, enabled) {
-        if (enabled!) {
-          _shuttleRoutes[route]!.stopIds!.forEach((id) {
-            if (shuttleMarkerMap[id] != null) {
-              _currentMarkers.add(shuttleMarkerMap[id]!);
+          /// add bus stop markers
+          _enabledBuses!.forEach((route, enabled) {
+            if (enabled) {
+              if (_busRoutes[route] != null) {
+                _busRoutes[route]!.stops!.forEach(
+                    (stop) => _mapMarkers.add(_busStopToMarkerCluster(stop)));
+              }
             }
           });
         }
-      });
-    }
+        break;
+      case MapView.kShuttleView:
+        {
+          /// add shuttle realtime update markers
+          for (final update in _shuttleUpdates!) {
+            _currentMarkers.add(_shuttleUpdateToMarker(update));
+          }
 
-    /// convert cache of saferide positions to markers
-    _currentMarkers.addAll(_saferideUpdates.values
-        .map((status) => _saferideVehicleToMarker(status)));
+          /// add shuttle stop markers
+          final shuttleMarkerMap = {
+            for (final stop in _shuttleStops!)
+              stop.id: _shuttleStopToMarker(stop)
+          };
+
+          _enabledShuttles!.forEach((route, enabled) {
+            if (enabled!) {
+              _shuttleRoutes[route]!.stopIds!.forEach((id) {
+                if (shuttleMarkerMap[id] != null) {
+                  _currentMarkers.add(shuttleMarkerMap[id]!);
+                }
+              });
+            }
+          });
+        }
+        break;
+      case MapView.kSaferideView:
+        {
+          /// convert cache of saferide positions to markers
+          _currentMarkers.addAll(_saferideUpdates.values
+              .map((status) => _saferideVehicleToMarker(status)));
+        }
+        break;
+    }
 
     return _currentMarkers;
   }

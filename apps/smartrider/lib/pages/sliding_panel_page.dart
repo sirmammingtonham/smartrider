@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:sizer/sizer.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
 
 // bloc stuff
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
@@ -31,7 +32,6 @@ class PanelPage extends StatelessWidget {
       pc.animatePanelToPosition(pc.isPanelClosed ? 1 : 0);
     }
 
-
     final icon = InkWell(
       onTap: animatePanel,
       child: Icon(
@@ -43,7 +43,7 @@ class PanelPage extends StatelessWidget {
 
     final title = Center(
       child: Text(
-        scheduleState.isBus ? 'Bus Schedules' : 'Shuttle Schedules',
+        'Schedules',
         style: TextStyle(
           fontSize: 20.sp,
           color: Colors.white,
@@ -147,10 +147,10 @@ class PanelPage extends StatelessWidget {
                 onPressed: () {
                   if (scheduleState is ScheduleTimelineState)
                     BlocProvider.of<ScheduleBloc>(context)
-                        .add(ScheduleViewChangeEvent(isTimeline: false));
+                        .add(ScheduleTypeChangeEvent(isTimeline: false));
                   else if (scheduleState is ScheduleTableState)
                     BlocProvider.of<ScheduleBloc>(context)
-                        .add(ScheduleViewChangeEvent(isTimeline: true));
+                        .add(ScheduleTypeChangeEvent(isTimeline: true));
                 },
               ),
             ),

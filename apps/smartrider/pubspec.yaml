@@ -1,7 +1,7 @@
 name: smartrider
 description: A new Flutter project.
 
-publish_to: 'none'
+publish_to: "none"
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -16,7 +16,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -56,7 +56,6 @@ dependencies:
   intl: ^0.17.0
   flutter_svg: ^0.22.0
   sizer: ^2.0.13
-  # modal_progress_hud: ^0.1.3
   table_sticky_headers: ^2.0.0
   showcaseview: ^1.0.0
   device_preview: ^0.7.4
@@ -68,7 +67,6 @@ dependencies:
   flutter_bloc: ^7.0.1
   equatable: ^2.0.2
   shared_preferences: ^2.0.6
-
 
 dev_dependencies:
   dependency_validator: ^3.0.0
@@ -83,15 +81,14 @@ flutter:
   uses-material-design: true
 
   assets:
-
-# jsons
+    # jsons
     - assets/map_styles/light.json
     - assets/map_styles/aubergine.json
 
-# map icons
+    # map icons
     - assets/map_icons/
 
-#onboarding 
+    #onboarding
     - assets/onboarding_images/
   fonts:
     - family: SR_Icons

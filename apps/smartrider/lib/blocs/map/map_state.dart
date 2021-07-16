@@ -14,12 +14,12 @@ class MapLoadingState extends MapState {
 class MapLoadedState extends MapState {
   final Set<Polyline> polylines;
   final Set<Marker> markers;
-  final bool? isBus;
+  final MapView mapView;
   const MapLoadedState(
-      {required this.polylines, required this.markers, required this.isBus});
+      {required this.polylines, required this.markers, required this.mapView});
 
   @override
-  List<Object> get props => [polylines, markers];
+  List<Object> get props => [polylines, markers, mapView];
 }
 
 class MapErrorState extends MapState {

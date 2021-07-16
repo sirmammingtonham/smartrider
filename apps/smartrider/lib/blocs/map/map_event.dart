@@ -19,11 +19,12 @@ class MapUpdateEvent extends MapEvent {
   List<Object?> get props => [zoomLevel];
 }
 
-class MapTypeChangeEvent extends MapEvent {
-  const MapTypeChangeEvent();
+class MapViewChangeEvent extends MapEvent {
+  final MapView newView;
+  const MapViewChangeEvent({required this.newView});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [newView];
 }
 
 class MapSaferideSelectionEvent extends MapEvent {

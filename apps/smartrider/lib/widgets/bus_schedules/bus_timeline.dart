@@ -115,7 +115,7 @@ class BusTimelineState extends State<BusTimeline>
 
       /// The list of bus stops to be displayed.
       Container(
-        height: 60.h,
+        height: 63.h,
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[

@@ -1,33 +1,30 @@
 part of 'schedule_bloc.dart';
 
 abstract class ScheduleState extends Equatable {
-  final bool isBus = true;
   const ScheduleState();
   @override
-  List<Object?> get props => [isBus];
+  List<Object?> get props => [];
 }
 
 class ScheduleInitialState extends ScheduleState {
-  final bool isBus = true;
   @override
-  List<Object> get props => [isBus];
+  List<Object> get props => [];
 }
 
 class ScheduleTimelineState extends ScheduleState {
-  // final Map<String, BusRoute> busRoutes;
   final Map<String?, BusTimetable>? busTables;
-  final bool isBus;
-  const ScheduleTimelineState({required this.busTables, required this.isBus});
+  final Object? shuttleTables; // placeholder
+  const ScheduleTimelineState({required this.busTables, required this.shuttleTables});
 
   @override
-  List<Object?> get props => [this.busTables, this.isBus];
+  List<Object?> get props => [this.busTables];
 }
 
 class ScheduleTableState extends ScheduleState {
   final Map<String?, BusTimetable>? busTables;
-  final bool isBus;
-  const ScheduleTableState({required this.busTables, required this.isBus});
+  final Object? shuttleTables; // placeholder
+  const ScheduleTableState({required this.busTables, required this.shuttleTables});
 
   @override
-  List<Object?> get props => [this.busTables, this.isBus];
+  List<Object?> get props => [this.busTables];
 }

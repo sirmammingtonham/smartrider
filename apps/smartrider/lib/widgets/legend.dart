@@ -1,11 +1,11 @@
 import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/util/messages.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:showcaseview/showcaseview.dart';
-import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
 class Legend extends StatefulWidget {
   _LegendState createState() => _LegendState();
@@ -51,6 +51,7 @@ class _LegendState extends State<Legend> {
         ),
       );
   Widget shuttleLegend(BuildContext context) => Container();
+  Widget saferideLegend(BuildContext context) => Container();
 
   Widget button(BuildContext context) => Showcase(
       key: showcaseLegend,
@@ -76,7 +77,24 @@ class _LegendState extends State<Legend> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ScheduleBloc, ScheduleState>(builder: (context, state) {
+    return BlocBuilder<MapBloc, MapState>(builder: (context, state) {
+      final Widget legend;
+      if (state is MapLoadedState) {
+        switch (state.mapView) {
+          case MapView.kBusView:
+            legend = busLegend(context);
+            break;
+          case MapView.kShuttleView:
+            legend = shuttleLegend(context);
+            break;
+          case MapView.kSaferideView:
+            legend = saferideLegend(context);
+            break;
+        }
+      } else {
+        legend = button(context);
+      }
+
       return Positioned(
         left: 20.0,
         bottom: 120.0,
@@ -88,9 +106,7 @@ class _LegendState extends State<Legend> {
             scale: animation,
             alignment: Alignment.bottomLeft,
           ),
-          child: _isExpanded
-              ? (state.isBus ? busLegend(context) : shuttleLegend(context))
-              : button(context),
+          child: _isExpanded ? legend : button(context),
         ),
       );
     });

@@ -6,6 +6,7 @@ import 'package:shared/models/bus/bus_timetable.dart';
 // loading custom widgets and data
 import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
 import 'package:smartrider/widgets/custom_widgets/custom_sticky_table.dart';
+import 'package:sizer/sizer.dart';
 //import 'package:sticky_headers/sticky_headers.dart';
 //import 'package:table_sticky_headers/table_sticky_headers.dart';
 
@@ -26,7 +27,7 @@ class BusTableState extends State<BusTable>
     Tab(text: 'Express Shuttle'),
   ];
   TabController? _tabController;
-
+  //TODO: overswipe on right switches to shuttle view
   @override
   void initState() {
     super.initState();
@@ -57,7 +58,7 @@ class BusTableState extends State<BusTable>
         controller: _tabController,
       ),
       Container(
-        height: MediaQuery.of(context).size.height * 0.7,
+        height: 63.h,
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[

@@ -10,21 +10,21 @@ class ScheduleInitEvent extends ScheduleEvent {
 
   const ScheduleInitEvent(
       {required this.panelController, required this.tabController});
-      
+
   @override
   List<Object?> get props => [panelController, tabController];
 }
 
-class ScheduleTypeChangeEvent extends ScheduleEvent {
-  ScheduleTypeChangeEvent();
+class ScheduleViewChangeEvent extends ScheduleEvent {
+  const ScheduleViewChangeEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class ScheduleViewChangeEvent extends ScheduleEvent {
+class ScheduleTypeChangeEvent extends ScheduleEvent {
   final bool isTimeline;
-  ScheduleViewChangeEvent({required this.isTimeline});
+  const ScheduleTypeChangeEvent({required this.isTimeline});
 
   @override
   List<Object> get props => [this.isTimeline];
