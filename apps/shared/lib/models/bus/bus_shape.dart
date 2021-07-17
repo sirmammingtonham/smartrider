@@ -32,15 +32,15 @@ class BusShape {
     /// check if single linestring or multi-linestring and handle differently
     if (json['type'] == 'LineString') {
       final linestring = <LatLng>[];
-      for (final List<double> p in json['coordinates'] as List) {
-        linestring.add(LatLng(p[1], p[0]));
+      for (final point in json['coordinates'] as List) {
+        linestring.add(LatLng((point as List)[1], point[0]));
       }
       coordinates!.add(linestring);
     } else {
-      for (final List<List<double>> l in json['coordinates'] as List) {
+      for (final line in json['coordinates'] as List) {
         final linestring = <LatLng>[];
-        for (final p in l) {
-          linestring.add(LatLng(p[1], p[0]));
+        for (final point in line) {
+          linestring.add(LatLng((point as List)[1], point[0]));
         }
         coordinates!.add(linestring);
       }

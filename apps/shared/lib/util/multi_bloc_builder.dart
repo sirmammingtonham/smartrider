@@ -1,21 +1,17 @@
 // https://github.com/Usorsoft/flutter_multi_bloc_builder
 
-library flutter_multi_bloc_builder;
-
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MultiBlocBuilder extends StatefulWidget {
-  /// [MultiBlocBuilder] handles building a widget by
-  /// observing states of various [Bloc]s
-  /// and should be used in combination with the
-  /// [flutter_bloc](https://pub.dev/packages/flutter_bloc) package.
-  /// Specify the bloc to observed via the [blocs] parameter.
-  /// The [builder] rebuilds each time a state change occurs
-  ///and provides a context ([BuildContext]) and the states ([BlocStates]).
+  /// [MultiBlocBuilder] handles building a widget by observig state of variouse
+  /// [Bloc]s and should be used in combination with the
+  /// [flutter_bloc](https://pub.dev/packages/flutter_bloc) package. Specify the
+  /// bloc to observed via the [blocs] parameter. The [builder] rebuilds each
+  /// time a state change occurs and provides a context ([BuildContext]) and the
+  /// states ([BlocStates]).
   ///
   /// How to use:
   /// ```
@@ -31,9 +27,9 @@ class MultiBlocBuilder extends StatefulWidget {
   ///     final state3 = states.get<MyBloc3State>();
   ///
   ///     if (state1 is Loading || state2 is Loading || state3 is Loading) {
-  ///       return Text('Loading');
+  ///       return Text("Loading");
   ///     } else {
-  ///       return Text('SHow some content');
+  ///       return Text("SHow some content");
   ///     }
   ///   }
   /// );
@@ -60,6 +56,7 @@ class _MultiBlocState extends State<MultiBlocBuilder> {
   @override
   void initState() {
     super.initState();
+
     for (final bloc in widget._blocs) {
       final subscription =
           bloc.stream.listen((dynamic state) => setState(() {}));
@@ -69,27 +66,26 @@ class _MultiBlocState extends State<MultiBlocBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    final states = widget._blocs.map<Bloc>((Bloc bloc) => bloc.state).toList();
+    final states = widget._blocs.map<dynamic>((bloc) => bloc.state).toList();
     return widget._builder(context, BlocStates._private(states));
   }
 
   @override
   void dispose() {
-    super.dispose();
     for (final subscription in _stateSubscriptions) {
       subscription.cancel();
     }
+    super.dispose();
   }
 }
 
-/// [BlocStates] serves as a container of
-/// [dynamic] objects (usually bloc states).
-/// It is part of the [MultiBlocProvider] package and therefore mainly used
-/// to provide a varety of bloc states via the
-/// [MultiBlocBuilder._builder] function.
+/// [BlocStates] serves as a container of [dynamic] objects (usually bloc
+/// states). It is part of the [MultiBlocProvider] package and therefore mainly
+/// used to provide a varety of bloc states via the [MultiBlocBuilder._builder]
+/// function.
 ///
-/// A bloc states can be retrieved via the [get] method
-/// and the wanted type like this:
+/// A bloc states can be retrieved via the [get] method and the wanted type like
+/// this:
 /// ```
 /// final exampeState = blocStates.get<ExampleState>();
 /// ```
@@ -99,17 +95,17 @@ class BlocStates {
   BlocStates._private(List states) {
     _stateContainer.addAll(states);
   }
+  final List _stateContainer = <dynamic>[];
 
-  final List _stateContainer = <List>[];
-
-  /// Retrieves the first object that matches the generic or null
-  /// if no machting object available.
-  /// __NOTE:__ Please ensure that [BlocStates] doesn't contain
-  /// multiple objects of the same type.
+  /// Retrieves the first object that matches the generic or null if no machting
+  /// object available. __NOTE:__ Please ensure that [BlocStates] doesn't
+  /// contain multiple objects of the same type.
   ///
   /// How to use:
   /// ```
   /// final exampeState = blocStates.get<ExampleState>();
   /// ```
-  T get<T>() => _stateContainer.firstWhere((dynamic entry) => (entry is T));
+  T get<T>() => _stateContainer.firstWhere(
+        (dynamic entry) => (entry is T),
+      );
 }
