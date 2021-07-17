@@ -7,8 +7,6 @@ abstract class SaferideState extends Equatable {
   List<Object?> get props => [];
 }
 
-class SaferideInitialState extends SaferideState {}
-
 /// State for when no safe ride display is needed
 class SaferideNoState extends SaferideState {}
 
@@ -27,6 +25,10 @@ class SaferideSelectingState extends SaferideState {
       required this.pickupDescription,
       required this.dropDescription,
       required this.queuePosition});
+
+  LatLng get pickupLatLng =>
+      LatLng(pickupPoint.latitude, pickupPoint.longitude);
+  LatLng get dropLatLng => LatLng(dropPoint.latitude, dropPoint.longitude);
 
   @override
   List<Object?> get props => [

@@ -30,126 +30,123 @@ final CameraPosition kInitialPosition = const CameraPosition(
 class SmartriderMap extends StatelessWidget {
   const SmartriderMap();
 
-  Widget viewFab(BuildContext context, IconData icon) => SizedBox(
-        height: 16.h,
-        width: 16.h,
-        child: ExpandableFab(
-          // TODO: color of selected one should be different
-          icon: icon,
-          distance: 19.w,
-          children: [
-            ActionButton(
-              tooltip: 'Bus View',
-              onPressed: () => BlocProvider.of<MapBloc>(context)
-                  .add(MapViewChangeEvent(newView: MapView.kBusView)),
-              icon: const Icon(Icons.directions_bus),
-            ),
-            ActionButton(
-              tooltip: 'Shuttle View',
-              onPressed: () => BlocProvider.of<MapBloc>(context)
-                  .add(MapViewChangeEvent(newView: MapView.kShuttleView)),
-              icon: const Icon(Icons.airport_shuttle),
-            ),
-            ActionButton(
-              tooltip: 'Saferide View',
-              onPressed: () => BlocProvider.of<MapBloc>(context)
-                  .add(MapViewChangeEvent(newView: MapView.kSaferideView)),
-              icon: const Icon(Icons.local_taxi),
-            ),
-          ],
-        ),
+  /// the google map (background of stack)
+  Widget map(BuildContext context, MapState state) => GoogleMap(
+        onMapCreated: (controller) {
+          BlocProvider.of<MapBloc>(context)
+              .updateController(context, controller);
+        },
+        initialCameraPosition: kInitialPosition,
+        compassEnabled: false,
+        mapToolbarEnabled: false,
+        cameraTargetBounds: CameraTargetBounds(rpiBounds),
+        minMaxZoomPreference: MinMaxZoomPreference(14.0, 18.0),
+        rotateGesturesEnabled: true,
+        scrollGesturesEnabled: true,
+        tiltGesturesEnabled: true,
+        zoomGesturesEnabled: true,
+        indoorViewEnabled: true,
+        myLocationEnabled: true,
+        myLocationButtonEnabled: false,
+        trafficEnabled: false,
+        polylines: state is MapLoadedState ? state.polylines : {},
+        markers: state is MapLoadedState ? state.markers : {},
+        zoomControlsEnabled: false,
+        onCameraMove: (position) {
+          BlocProvider.of<MapBloc>(context)
+              .add(MapMoveEvent(zoomLevel: position.zoom));
+        },
+        mapType: MapType.normal,
       );
 
-  Widget mapUI(
-      {required BuildContext context,
-      required SaferideState saferideState,
-      required MapLoadedState mapState}) {
-    Widget map;
-    Widget? viewButton;
-    Widget locationButton = Positioned(
-      right: 20.0,
-      bottom: saferideState is SaferideSelectingState ? 160.0 : 120.0,
-      child: Showcase(
-          key: showcaseLocation,
-          description: LOCATION_BUTTON_SHOWCASE_MESSAGE,
-          shapeBorder: CircleBorder(),
-          child: FloatingActionButton(
-            child: Icon(
-              Icons.gps_fixed,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black87
-                  : Colors.white70,
-            ),
-            backgroundColor: Theme.of(context).brightness == Brightness.light
-                ? Colors.white
-                : null,
-            onPressed: () {
-              BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
-            },
-            heroTag: "scrollToLocButton",
-          )),
-    );
-
-    map = GoogleMap(
-      onMapCreated: (controller) {
-        BlocProvider.of<MapBloc>(context).updateController(context, controller);
-      },
-      initialCameraPosition: kInitialPosition,
-      compassEnabled: false,
-      mapToolbarEnabled: false,
-      cameraTargetBounds: CameraTargetBounds(rpiBounds),
-      minMaxZoomPreference: MinMaxZoomPreference(14.0, 18.0),
-      rotateGesturesEnabled: true,
-      scrollGesturesEnabled: true,
-      tiltGesturesEnabled: true,
-      zoomGesturesEnabled: true,
-      indoorViewEnabled: true,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      trafficEnabled: false,
-      polylines: mapState is MapLoadedState ? mapState.polylines : {},
-      markers: mapState is MapLoadedState ? mapState.markers : {},
-      zoomControlsEnabled: false,
-      onCameraMove: (position) {
-        BlocProvider.of<MapBloc>(context)
-            .add(MapMoveEvent(zoomLevel: position.zoom));
-      },
-      mapType: MapType.normal,
-    );
-
-    if (saferideState is SaferideInitialState ||
-        saferideState is SaferideNoState) {
-      viewButton = Positioned(
-        right: 20.0,
-        bottom: 190.0,
-        child: Showcase(
-          key: showcaseViewChange,
-          description: VIEW_CHANGE_BUTTON_SHOWCASE_MESSAGE,
-          shapeBorder: CircleBorder(),
-          child: viewFab(context, Icons.layers),
-        ),
-      );
-    }
-
-    return Stack(alignment: Alignment.topCenter, children: <Widget>[
-      map,
-      Positioned(
-        right: 180,
-        bottom: 350,
-        child: Showcase(
-            key: showcaseMap,
-            title: MAP_SHOWCASE_TITLE,
-            description: MAP_SHOWCASE_MESSAGE,
-            child: SizedBox(
-              height: 400,
-              width: 300,
-            )),
+  /// the expanding floating action button to switch views
+  Widget viewFab(BuildContext context, IconData icon) {
+    final mapBloc = BlocProvider.of<MapBloc>(context);
+    return SizedBox(
+      height: 16.h,
+      width: 16.h,
+      child: ExpandableFab(
+        icon: icon,
+        distance: 19.w,
+        children: [
+          ActionButton(
+            tooltip: 'Bus View',
+            onPressed: () =>
+                mapBloc.add(MapViewChangeEvent(newView: MapView.kBusView)),
+            isSelected: mapBloc.mapView == MapView.kBusView,
+            icon: Icon(Icons.directions_bus),
+          ),
+          ActionButton(
+            tooltip: 'Shuttle View',
+            onPressed: () =>
+                mapBloc.add(MapViewChangeEvent(newView: MapView.kShuttleView)),
+            isSelected: mapBloc.mapView == MapView.kShuttleView,
+            icon: Icon(Icons.airport_shuttle),
+          ),
+          ActionButton(
+            tooltip: 'Saferide View',
+            onPressed: () =>
+                mapBloc.add(MapViewChangeEvent(newView: MapView.kSaferideView)),
+            isSelected: mapBloc.mapView == MapView.kSaferideView,
+            icon: Icon(Icons.local_taxi),
+          ),
+        ],
       ),
-      Legend(),
-      viewButton ?? Container(),
-      locationButton
-    ]);
+    );
   }
+
+  /// the button that focuses map to your location
+  Widget locationButton(BuildContext context, SaferideState state) => Showcase(
+        key: showcaseLocation,
+        description: LOCATION_BUTTON_SHOWCASE_MESSAGE,
+        shapeBorder: CircleBorder(),
+        child: FloatingActionButton(
+          child: Icon(
+            Icons.gps_fixed,
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.black87
+                : Colors.white70,
+          ),
+          backgroundColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.white
+              : null,
+          onPressed: () {
+            BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
+          },
+          heroTag: "scrollToLocButton",
+        ),
+      );
+
+  /// the stack that places all the map components together
+  Widget mapStack(
+          {required SaferideState state,
+          required Widget background,
+          required Widget viewFab,
+          required Widget locationButton}) =>
+      Stack(alignment: Alignment.topCenter, children: <Widget>[
+        background,
+        Positioned(
+          right: 180,
+          bottom: 350,
+          child: Showcase(
+              key: showcaseMap,
+              title: MAP_SHOWCASE_TITLE,
+              description: MAP_SHOWCASE_MESSAGE,
+              child: SizedBox(
+                height: 400,
+                width: 300,
+              )),
+        ),
+        Positioned(left: 20.0, bottom: 120.0, child: Legend()),
+        Positioned(
+            right: 20.0,
+            bottom: state is SaferideSelectingState ? 240.0 : 190.0,
+            child: viewFab),
+        Positioned(
+            right: 20.0,
+            bottom: state is SaferideSelectingState ? 160.0 : 120.0,
+            child: locationButton)
+      ]);
 
   @override
   Widget build(BuildContext context) {
@@ -168,11 +165,22 @@ class SmartriderMap extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             case MapLoadedState:
-              return mapUI(
-                  context: context,
-                  saferideState: saferideState,
-                  mapState: mapState as MapLoadedState);
+              return mapStack(
+                  state: saferideState,
+                  background: map(context, mapState),
+                  viewFab: viewFab(context, Icons.layers),
+                  locationButton: locationButton(context, saferideState));
             case MapErrorState:
+              // TODO: crashlytics
+              return mapStack(
+                  state: saferideState,
+                  background: Container(
+                    child: Center(
+                      child: Text((mapState as MapErrorState).error.toString()),
+                    ),
+                  ),
+                  viewFab: viewFab(context, Icons.layers),
+                  locationButton: locationButton(context, saferideState));
             default:
               // TODO: crashlytics
               return Container(

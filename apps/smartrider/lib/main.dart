@@ -28,13 +28,12 @@ import 'package:smartrider/pages/onboarding.dart';
 // test imports
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-//TODO: fix pickup address
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  AwesomeNotifications().initialize(
-    // set the icon to null if you want to use the default app icon
-    'resource://drawable/res_app_icon',
+  await AwesomeNotifications().initialize(
+    null, // default app icon
     [
       NotificationChannel(
           channelKey: 'basic_channel',
@@ -170,14 +169,6 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
       },
     );
   } else {
-    return GestureDetector(
-        onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
-
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        },
-        child: MaterialApp(home: CircularProgressIndicator()));
+    return MaterialApp(home: CircularProgressIndicator());
   }
 }

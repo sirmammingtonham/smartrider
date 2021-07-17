@@ -19,6 +19,5 @@ class ShuttleRepository {
   Future<List<ShuttleStop>?> get getStops async => _shuttleProvider.getStops();
   Future<List<ShuttleUpdate>?> get getUpdates async =>
       _shuttleProvider.getUpdates();
-  // Future<LatLng> get getLocation async => _shuttleProvider.getLocation();
-  bool? get isConnected => _shuttleProvider.getIsConnected;
+  bool get isConnected => _shuttleProvider.isConnected;
 }

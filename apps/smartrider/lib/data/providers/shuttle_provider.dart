@@ -13,7 +13,7 @@ import 'package:shared/models/shuttle/shuttle_eta.dart';
 /// This class contains methods for providing data to Repository
 class ShuttleProvider {
   /// Boolean to determine if the app is connected to network
-  bool? isConnected;
+  bool isConnected = false;
 
   /// This function will fetch the data from the JSON API and return a decoded
   Future<http.Response?> fetch(String type) async {
@@ -27,14 +27,13 @@ class ShuttleProvider {
         isConnected = true;
       }
     } catch (error) {
+// TODO: crashlytics
       isConnected = false;
       print(error);
     }
     //print("App has polled $type API: $isConnected");
     return response;
   }
-
-  bool? get getIsConnected => isConnected;
 
   /// Getter method to retrieve the list of routes
   Future<Map<String?, ShuttleRoute>> getRoutes() async {

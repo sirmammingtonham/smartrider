@@ -95,19 +95,15 @@ class _LegendState extends State<Legend> {
         legend = button(context);
       }
 
-      return Positioned(
-        left: 20.0,
-        bottom: 120.0,
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 250),
-          transitionBuilder: (Widget child, Animation<double> animation) =>
-              ScaleTransition(
-            child: child,
-            scale: animation,
-            alignment: Alignment.bottomLeft,
-          ),
-          child: _isExpanded ? legend : button(context),
+      return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 250),
+        transitionBuilder: (Widget child, Animation<double> animation) =>
+            ScaleTransition(
+          child: child,
+          scale: animation,
+          alignment: Alignment.bottomLeft,
         ),
+        child: _isExpanded ? legend : button(context),
       );
     });
   }

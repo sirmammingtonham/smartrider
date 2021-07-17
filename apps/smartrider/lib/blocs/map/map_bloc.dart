@@ -45,13 +45,16 @@ part 'map_state.dart';
 enum MapView { kBusView, kShuttleView, kSaferideView }
 
 // TODO: Document this absolute fucking unit
-
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
   northeast: const LatLng(42.751583, -73.616713),
 );
 
 class MapBloc extends Bloc<MapEvent, MapState> {
+  static const UPDATE_FREQUENCY =
+      const Duration(seconds: 5); // update every 5 sec
+  late final Timer _updateTimer;
+
   final ShuttleRepository shuttleRepo;
   final BusRepository busRepo;
   final SaferideRepository saferideRepo;
@@ -66,18 +69,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   GoogleMapController? _controller;
 
-  Map<String?, BusRoute> _busRoutes = {};
-  Map<String?, BusShape> _busShapes = {};
-  Map<String, List<BusRealtimeUpdate>> _busUpdates = {};
+  Map<String?, BusRoute> _busRoutes = {}; // contains stops
+  Map<String?, BusShape> _busShapes = {}; // contains polylines
+  Map<String, List<BusRealtimeUpdate>> _busUpdates = {}; // realtime updates
 
-  Map<String?, ShuttleRoute> _shuttleRoutes = {};
-  List<ShuttleStop>? _shuttleStops = [];
-  List<ShuttleUpdate>? _shuttleUpdates = [];
+  Map<String?, ShuttleRoute> _shuttleRoutes = {}; // contains polylines
+  List<ShuttleStop>? _shuttleStops = []; // contains stops
+  List<ShuttleUpdate>? _shuttleUpdates = []; // realtime updates
 
-  final List<MarkerCluster> _mapMarkers = [];
+  final List<MarkerCluster> _markerClusters = [];
 
   final Map<String, PositionData> _saferideUpdates = {};
-  // SaferideSelectingState? _saferideSelectionState;
+  final Set<Marker> _saferideMarkers = <Marker>{};
+  final Set<Polyline> _saferidePolylines = <Polyline>{};
   String? _pickupVehicleId;
 
   final Set<Marker> _currentMarkers = <Marker>{};
@@ -86,7 +90,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   late final BitmapDescriptor _shuttleStopIcon,
       _busStopIcon,
       _saferideUpdateIcon, // generic saferide
-      _saferidePickingUpIcon, // saferide that is assigned to your order
+      _saferidePickupUpdateIcon, // saferide that is assigned to your order
       _pickupIcon,
       _dropoffIcon;
 
@@ -96,10 +100,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   late Fluster<MarkerCluster> fluster;
   late final String _lightMapStyle;
   late final String _darkMapStyle;
-
-  static const _updateRefreshDelay =
-      const Duration(seconds: 3); // update every 3 sec
-  late Timer _updateTimer;
 
   /// MapBloc named constructor
   MapBloc(
@@ -131,33 +131,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
     });
 
-    saferideBloc.stream.listen((saferideState) {
-      switch (saferideState.runtimeType) {
-        case SaferideSelectingState:
-          {
-            add(MapSaferideSelectionEvent(
-                saferideState: saferideState as SaferideSelectingState));
-          }
-          break;
-        case SaferidePickingUpState:
-          {
-            _pickupVehicleId = (state as SaferidePickingUpState).vehicleId;
-          }
-          break;
-        case SaferideNoState:
-          {
-            scrollToCurrentLocation();
-            add(MapUpdateEvent(zoomLevel: _zoomLevel));
-          }
-      }
-    });
-
-    /// update vehicle positions in our cache
-    saferideRepo.getSaferideLocationsStream().listen((positions) {
-      positions.forEach((position) {
-        if (position.active) _saferideUpdates[position.id] = position;
-      });
-    });
+    saferideBloc.stream.listen((saferideState) => add(MapSaferideEvent()));
   }
 
   @override
@@ -183,8 +157,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       case MapInitEvent:
         {
           await _initMapElements();
-          _updateTimer = Timer.periodic(_updateRefreshDelay,
-              (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
           yield* _mapDataRequestedToState();
         }
         break;
@@ -202,16 +174,23 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           }
         }
         break;
-      case MapSaferideSelectionEvent:
+      case MapSaferideEvent:
         {
-          yield* _mapSaferideSelectionToState(
-              event as MapSaferideSelectionEvent);
+          // switch map to saferide view
+          // which also calls _mapUpdateRequestedToState
+          // which then fills in the data for the saferide view
+          add(MapViewChangeEvent(newView: MapView.kSaferideView));
         }
         break;
       case MapMoveEvent:
         {
           _zoomLevel = (event as MapMoveEvent).zoomLevel;
-          yield* _mapMoveToState();
+          yield MapLoadedState(
+              polylines: _currentPolylines,
+              markers: _getMarkerClusters(_zoomLevel)
+                  .followedBy(_currentMarkers)
+                  .toSet(),
+              mapView: _currentView);
         }
         break;
       default:
@@ -220,7 +199,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   Stream<MapState> _mapDataRequestedToState() async* {
-    yield MapLoadingState();
+    // yield MapLoadingState();
 
     // Stopwatch stopwatch = new Stopwatch()..start();
     switch (_currentView) {
@@ -235,20 +214,27 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       case MapView.kShuttleView:
         {
           _shuttleRoutes = await shuttleRepo.getRoutes;
-          _shuttleStops = await shuttleRepo.getStops;
-          _shuttleUpdates = await shuttleRepo.getUpdates;
-          if (!shuttleRepo.isConnected!) {
-            // needed or else we will continuously update the unavailable shuttle service
-            _updateTimer.cancel();
+          // try to fetch, then check if shuttle repo is connected
+          if (!shuttleRepo.isConnected) {
             yield MapErrorState(error: SRError.NETWORK_ERROR);
             return;
           }
+          _shuttleStops = await shuttleRepo.getStops;
+          _shuttleUpdates = await shuttleRepo.getUpdates;
+
           // update preferences with currently active routes
           prefsBloc.add(InitActiveRoutesEvent(_shuttleRoutes.values.toList()));
         }
         break;
       case MapView.kSaferideView:
-        {}
+        {
+          /// update vehicle positions in our cache
+          saferideRepo.getSaferideLocationsStream().listen((positions) {
+            positions.forEach((position) {
+              if (position.active) _saferideUpdates[position.id] = position;
+            });
+          });
+        }
         break;
     }
     // print('got the stuff in ${stopwatch.elapsed} seconds');
@@ -261,62 +247,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         markers:
             _currentMarkers.followedBy(_getMarkerClusters(_zoomLevel)).toSet(),
         mapView: _currentView);
-  }
-
-  Stream<MapState> _mapSaferideSelectionToState(
-      MapSaferideSelectionEvent event) async* {
-    scrollToLocation(event.dropLatLng);
-
-    _updateTimer.cancel(); //TODO:!! make sure this doesnt break anything
-    _currentPolylines.clear();
-    _currentMarkers.clear();
-    _mapMarkers.clear();
-    _currentMarkers
-      ..add(
-        Marker(
-          icon: _pickupIcon,
-          infoWindow: InfoWindow(title: "Pickup Point"),
-          markerId: MarkerId("saferide_pickup"),
-          position: event.pickupLatLng,
-          onTap: () {
-            _controller!.animateCamera(
-              CameraUpdate.newCameraPosition(CameraPosition(
-                  target: event.pickupLatLng, zoom: 18, tilt: 50)),
-            );
-          },
-        ),
-      )
-      ..add(
-        Marker(
-          icon: _dropoffIcon,
-          infoWindow: InfoWindow(title: "Dropoff Point"),
-          markerId: MarkerId("saferide_dropoff"),
-          position: event.dropLatLng,
-          onTap: () {
-            _controller!.animateCamera(
-              CameraUpdate.newCameraPosition(
-                  CameraPosition(target: event.dropLatLng, zoom: 18, tilt: 50)),
-            );
-          },
-        ),
-      );
-
-    _currentPolylines.add(Polyline(
-        polylineId: PolylineId("fancy_line"),
-        width: 5,
-        color: Colors.blueGrey,
-        patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
-        points: _drawFancyLine(event.pickupLatLng, event.dropLatLng)));
-
-    _currentMarkers.addAll(_saferideUpdates.values
-        .map((status) => _saferideVehicleToMarker(status)));
-
-    scrollToCurrentLocation();
-
-    yield MapLoadedState(
-        polylines: _currentPolylines,
-        markers: _currentMarkers,
-        mapView: MapView.kSaferideView);
   }
 
   Stream<MapState> _mapUpdateRequestedToState() async* {
@@ -336,7 +266,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
         break;
       case MapView.kSaferideView:
-        {}
+        {
+          await _mapSaferideStateToData();
+        }
         break;
     }
 
@@ -350,12 +282,79 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         mapView: _currentView);
   }
 
-  Stream<MapState> _mapMoveToState() async* {
-    yield MapLoadedState(
-        polylines: _currentPolylines,
-        markers:
-            _getMarkerClusters(_zoomLevel).followedBy(_currentMarkers).toSet(),
-        mapView: _currentView);
+  /// fills the appriate data structures with relevant saferide markers/polylines
+  /// so they can be displayed through the mapUpdateToState
+  Future<void> _mapSaferideStateToData() async {
+    final saferideState = saferideBloc.state;
+    switch (saferideState.runtimeType) {
+      case SaferideNoState:
+        {
+          scrollToCurrentLocation();
+          _saferideMarkers.clear();
+          _saferidePolylines.clear();
+        }
+        break;
+      case SaferideSelectingState:
+        {
+          _saferideMarkers
+            ..add(
+              Marker(
+                icon: _pickupIcon,
+                infoWindow: InfoWindow(title: "Pickup Point"),
+                markerId: MarkerId("saferide_pickup"),
+                position:
+                    (saferideState as SaferideSelectingState).pickupLatLng,
+                onTap: () {
+                  _controller!.animateCamera(
+                    CameraUpdate.newCameraPosition(CameraPosition(
+                        target: saferideState.pickupLatLng,
+                        zoom: 18,
+                        tilt: 50)),
+                  );
+                },
+              ),
+            )
+            ..add(
+              Marker(
+                icon: _dropoffIcon,
+                infoWindow: InfoWindow(title: "Dropoff Point"),
+                markerId: MarkerId("saferide_dropoff"),
+                position: saferideState.dropLatLng,
+                onTap: () {
+                  _controller!.animateCamera(
+                    CameraUpdate.newCameraPosition(CameraPosition(
+                        target: saferideState.dropLatLng, zoom: 18, tilt: 50)),
+                  );
+                },
+              ),
+            );
+
+          _saferidePolylines
+            ..add(Polyline(
+                polylineId: PolylineId("fancy_line"),
+                width: 5,
+                color: Colors.blueGrey,
+                patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
+                points: _drawFancyLine(
+                    saferideState.pickupLatLng, saferideState.dropLatLng)));
+
+          scrollToCurrentLocation(zoom: 16);
+        }
+        break;
+      case SaferidePickingUpState:
+        {
+          _pickupVehicleId =
+              (saferideState as SaferidePickingUpState).vehicleId;
+//TODO: we should do something like focus the map on the pickup vehicle as it drives to you
+        }
+        break;
+      case SaferideDroppingOffState:
+        {}
+        break;
+      default:
+        {}
+        break;
+    }
   }
 
   /// non-state related functions
@@ -439,7 +438,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
   }
 
-  void scrollToLocation(LatLng loc, {double zoom = 18, double tilt = 50}) {
+  void scrollToLatLng(LatLng loc, {double zoom = 18, double tilt = 50}) {
     _controller!.animateCamera(
       CameraUpdate.newCameraPosition(
           CameraPosition(target: loc, zoom: zoom, tilt: tilt)),
@@ -448,6 +447,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   /// helper functions
   Future<void> _initMapElements() async {
+    _updateTimer = Timer.periodic(UPDATE_FREQUENCY,
+        (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+
     final stopMarkerSize = Size(60.sp, 60.sp);
     final vehicleUpdateSize = Size(80.sp, 80.sp);
 
@@ -467,10 +469,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         'assets/map_icons/marker_saferide.svg',
         color: Color(0xe7343f),
         size: vehicleUpdateSize);
-    _saferidePickingUpIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/map_icons/marker_saferide.svg',
-        color: Color(0xffbb24),
-        size: vehicleUpdateSize);
+    _saferidePickupUpdateIcon =
+        await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+            'assets/map_icons/marker_saferide.svg',
+            color: Color(0xffbb24),
+            size: vehicleUpdateSize);
 
     // TODO: can probably move this somewhere better
     final shuttleColors = {
@@ -514,7 +517,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Marker _saferideVehicleToMarker(PositionData position) => Marker(
       icon: position.id == _pickupVehicleId
-          ? _saferidePickingUpIcon
+          ? _saferidePickupUpdateIcon
           : _saferideUpdateIcon,
       infoWindow: InfoWindow(title: 'Safe Ride going ${position.mph} mph'),
       markerId: MarkerId(position.id),
@@ -611,7 +614,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
         break;
       case MapView.kSaferideView:
-        {}
+        {
+          _currentPolylines.addAll(_saferidePolylines);
+        }
         break;
     }
     return _currentPolylines;
@@ -619,7 +624,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Set<Marker?> _getEnabledMarkers() {
     _currentMarkers.clear();
-    _mapMarkers.clear();
+    _markerClusters.clear();
 
     switch (_currentView) {
       case MapView.kBusView:
@@ -635,8 +640,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _enabledBuses!.forEach((route, enabled) {
             if (enabled) {
               if (_busRoutes[route] != null) {
-                _busRoutes[route]!.stops!.forEach(
-                    (stop) => _mapMarkers.add(_busStopToMarkerCluster(stop)));
+                _busRoutes[route]!.stops!.forEach((stop) =>
+                    _markerClusters.add(_busStopToMarkerCluster(stop)));
               }
             }
           });
@@ -671,6 +676,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           /// convert cache of saferide positions to markers
           _currentMarkers.addAll(_saferideUpdates.values
               .map((status) => _saferideVehicleToMarker(status)));
+
+          /// add extra markers (i.e. destination/pickup)
+          _currentMarkers.addAll(_saferideMarkers);
         }
         break;
     }
@@ -685,7 +693,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       radius: 450, // increase for more aggressive clustering vice versa
       extent: 2048, // Tile extent. Radius is calculated with it.
       nodeSize: 64, // Size of the KD-tree leaf node.
-      points: _mapMarkers, // The list of markers created before
+      points: _markerClusters, // The list of markers created before
       createCluster: (
         // Create cluster marker
         BaseCluster? cluster,

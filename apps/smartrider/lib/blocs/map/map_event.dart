@@ -27,17 +27,11 @@ class MapViewChangeEvent extends MapEvent {
   List<Object> get props => [newView];
 }
 
-class MapSaferideSelectionEvent extends MapEvent {
-  final SaferideSelectingState saferideState;
-  const MapSaferideSelectionEvent({required this.saferideState});
-
-  LatLng get pickupLatLng => LatLng(
-      saferideState.pickupPoint.latitude, saferideState.pickupPoint.longitude);
-  LatLng get dropLatLng => LatLng(
-      saferideState.dropPoint.latitude, saferideState.dropPoint.longitude);
+class MapSaferideEvent extends MapEvent {
+  const MapSaferideEvent();
 
   @override
-  List<Object?> get props => [saferideState];
+  List<Object?> get props => [];
 }
 
 class MapMoveEvent extends MapEvent {

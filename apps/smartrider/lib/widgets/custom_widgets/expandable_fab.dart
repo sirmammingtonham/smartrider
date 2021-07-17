@@ -2,24 +2,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-// ExpandableFab(
-//         distance: 112.0,
-//         children: [
-//           ActionButton(
-//             onPressed: () => _showAction(context, 0),
-//             icon: const Icon(Icons.format_size),
-//           ),
-//           ActionButton(
-//             onPressed: () => _showAction(context, 1),
-//             icon: const Icon(Icons.insert_photo),
-//           ),
-//           ActionButton(
-//             onPressed: () => _showAction(context, 2),
-//             icon: const Icon(Icons.videocam),
-//           ),
-//         ],
-//       ),
-
 @immutable
 class ExpandableFab extends StatefulWidget {
   const ExpandableFab({
@@ -155,7 +137,10 @@ class _ExpandableFabState extends State<ExpandableFab>
           child: FloatingActionButton(
             backgroundColor: Colors.white,
             onPressed: _toggle,
-            child: Icon(widget.icon, color: Colors.black87,),
+            child: Icon(
+              widget.icon,
+              color: Colors.black87,
+            ),
           ),
         ),
       ),
@@ -210,10 +195,13 @@ class ActionButton extends StatelessWidget {
     Key? key,
     this.tooltip,
     this.onPressed,
+    required this.isSelected,
     required this.icon,
   }) : super(key: key);
+
   final String? tooltip;
   final VoidCallback? onPressed;
+  final bool isSelected;
   final Widget icon;
 
   @override
@@ -222,10 +210,18 @@ class ActionButton extends StatelessWidget {
       shape: const CircleBorder(),
       clipBehavior: Clip.antiAlias,
       elevation: 4.0,
-      child: IconButton(
-        tooltip: tooltip,
-        onPressed: onPressed,
-        icon: icon,
+      child: Container(
+        decoration: isSelected
+            ? BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(width: 3, color: Colors.blueAccent),
+              )
+            : null,
+        child: IconButton(
+          tooltip: tooltip,
+          onPressed: onPressed,
+          icon: icon,
+        ),
       ),
       // ),
     );

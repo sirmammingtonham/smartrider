@@ -270,7 +270,7 @@ class BusTimelineState extends State<BusTimeline>
           .scheduleBusAlarm(stopTime![1], busStop!);
     } else if (choice == choices[1]) {
       this.widget.panelController.animatePanelToPosition(0);
-      BlocProvider.of<MapBloc>(context).scrollToLocation(busStop!.latLng);
+      BlocProvider.of<MapBloc>(context).scrollToLatLng(busStop!.latLng);
     }
   }
 }

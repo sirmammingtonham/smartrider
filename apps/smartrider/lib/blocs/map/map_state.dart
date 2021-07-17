@@ -27,5 +27,5 @@ class MapErrorState extends MapState {
   const MapErrorState({required this.error});
 
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [error.toString()];
 }
