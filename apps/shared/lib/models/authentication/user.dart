@@ -1,11 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SRUser {
-  final String uid;
-  final String name;
-  final String email;
-  final String phoneNumber; //TODO: authentication for phone number?
-
   const SRUser({
     required this.uid,
     required this.name,
@@ -26,4 +21,10 @@ class SRUser {
     //     email: snap.get('email'),
     //     phoneNumber: snap.get('phone'));
   }
+
+  final String uid;
+  final String name;
+  final String email;
+  final String phoneNumber; //TODO: authentication for phone number?
+
 }

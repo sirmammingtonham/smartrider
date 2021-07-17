@@ -12,14 +12,14 @@ part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
+  AuthenticationBloc({required this.authRepository, required this.locationBloc})
+      : super(const AuthenticationLoggedOutState()) {
+    add(AuthenticationStartedEvent());
+  }
+
   final AuthenticationRepository authRepository;
   final LocationBloc locationBloc;
   late final SharedPreferences sharedPrefs;
-
-  AuthenticationBloc({required this.authRepository, required this.locationBloc})
-      : super(AuthenticationLoggedOutState()) {
-    add(AuthenticationStartedEvent());
-  }
 
   @override
   Stream<AuthenticationState> mapEventToState(
@@ -50,15 +50,15 @@ class AuthenticationBloc
   Stream<AuthenticationState> _mapAuthenticationLoginToState(
       AuthenticationLoginEvent event) async* {
     try {
-      Driver user = await authRepository.tryLogin(
+      final user = await authRepository.tryLogin(
           name: event.driverName,
           vehicleId: event.vehicleId,
           password: event.password,
           phoneNumber: event.phoneNumber);
       locationBloc.add(LocationStartTrackingEvent(vehicleRef: user.vehicleRef));
-      sharedPrefs.setString('driver_name', event.driverName);
-      sharedPrefs.setString('phone_number', event.phoneNumber);
-      sharedPrefs.setString('vehicle_id', event.vehicleId);
+      await sharedPrefs.setString('driver_name', event.driverName);
+      await sharedPrefs.setString('phone_number', event.phoneNumber);
+      await sharedPrefs.setString('vehicle_id', event.vehicleId);
       yield AuthenticationLoggedInState(user: user);
     } on AuthenticationException catch (error) {
       yield AuthenticationFailureState(errorMessage: error.message);

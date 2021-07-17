@@ -1,196 +1,117 @@
-// ui dependencies
-import 'dart:ui';
+// // ui dependencies import 'dart:ui';
 
-import 'package:flutter/material.dart';
-// import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+// import 'package:flutter/material.dart'; // import
+// 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-// loading custom widgets and data
-import 'package:shared/util/data.dart';
+// // loading custom widgets and data import 'package:shared/util/data.dart';
 
-class ShuttleTable extends StatefulWidget {
-  final Function? containsFilter;
-  final Function? jumpMap;
-  ShuttleTable({Key? key, this.containsFilter, this.jumpMap}) : super(key: key);
-  @override
-  ShuttleTableState createState() => ShuttleTableState();
-}
+// class ShuttleTable extends StatefulWidget {const ShuttleTable({Key? key,
+//   this.containsFilter, this.jumpMap}) : super(key: key); final Function?
+//   containsFilter; final Function? jumpMap;
 
-class ShuttleTableState extends State<ShuttleTable>
-    with SingleTickerProviderStateMixin {
-  final List<Widget> shuttleTabs = [
-    const Tab(text: 'SOUTH'),
-    const Tab(text: 'NORTH'),
-    const Tab(text: 'WEST'),
-    const Tab(text: 'WEEKEND'),
-  ];
-  TabController? _tabController;
+//   @override ShuttleTableState createState() => ShuttleTableState();
+// }
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(vsync: this, length: shuttleTabs.length);
-    _tabController!.addListener(() {
-      _handleTabSelection();
-    });
-  }
+// class ShuttleTableState extends State<ShuttleTable> with
+//     SingleTickerProviderStateMixin {final List<Widget> shuttleTabs = [const
+//     Tab(text: 'SOUTH'), const Tab(text: 'NORTH'), const Tab(text: 'WEST'),
+//     const Tab(text: 'WEEKEND'),
+//   ];
+//   TabController? _tabController;
 
-  void _handleTabSelection() {
-    setState(() {});
-  }
+//   @override void initState() {super.initState(); _tabController =
+//   TabController(vsync: this, length: shuttleTabs.length);
+//   _tabController!.addListener(_handleTabSelection);
+//   }
 
-  Color _getTabColor(TabController tc) {
-    if (tc.index == 0) {
-      return Colors.green;
-    } else if (tc.index == 1) {
-      return Colors.red;
-    } else if (tc.index == 2) {
-      return Colors.blue;
-    } else {
-      return Colors.orange;
-    }
-  }
+//   void _handleTabSelection() {setState(() {});
+//   }
 
-  @override
-  void dispose() {
-    _tabController!.dispose();
-    super.dispose();
-  }
+//   Color _getTabColor(TabController tc) {if (tc.index == 0) {return
+//     Colors.green;} else if (tc.index == 1) {return Colors.red;} else if
+//     (tc.index == 2) {return Colors.blue;} else {return Colors.orange;
+//     }
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: Column(children: <Widget>[
-        TabBar(
-          indicatorColor: _getTabColor(_tabController!),
-          isScrollable: true,
-          tabs: shuttleTabs,
-          // unselectedLabelColor: Colors.white.withOpacity(0.3),
-          labelColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.black
-              : null,
-          unselectedLabelColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.black
-              : null,
-          controller: _tabController,
-        ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: TabBarView(
-            controller: _tabController,
-            children: <Widget>[
-              shuttleList(0, widget.containsFilter, widget.jumpMap),
-              shuttleList(1, widget.containsFilter, widget.jumpMap),
-              shuttleList(2, widget.containsFilter, widget.jumpMap),
-              shuttleList(3, widget.containsFilter, widget.jumpMap),
-            ],
-          ),
-        )
-      ]),
-    );
-  }
-}
+//   @override void dispose() {_tabController!.dispose(); super.dispose();
+//   }
 
-Widget shuttleList(int idx, Function? _containsFilter, Function? _jumpMap) {
-  var curStopList = shuttleStopLists[idx];
-  // var curTimeList = shuttleTimeLists[idx];
-  return
-      // CustomStickyHeadersTable(
-      //   columnsLength: busStopLists[idx].length,
-      //   rowsLength:
-      //       (busTimeLists[idx].length / busStopLists[idx].length + 1).truncate(),
-      //   columnsTitleBuilder: (i) => Text(curStopList[i % curStopList.length][0]),
-      //   //rowsTitleBuilder: (i) => Text('Times:'),
-      //   contentCellBuilder: (i, j) => Text('6:30pm'),
-      //   legendCell: Text('Bus Stops'),
-      // );
+//   @override Widget build(BuildContext context) {return Material(child:
+//   Column(children: <Widget>[TabBar(indicatorColor:
+//   _getTabColor(_tabController!), isScrollable: true, tabs: shuttleTabs, //
+//   unselectedLabelColor: Colors.white.withOpacity(0.3), labelColor:
+//   Theme.of(context).brightness == Brightness.light? Colors.black : null,
+//   unselectedLabelColor: Theme.of(context).brightness == Brightness.light?
+//   Colors.black : null, controller: _tabController,
+//         ),
+//         SizedBox(
+//           height: MediaQuery.of(context).size.height * 0.7,
+//           child: TabBarView(
+//             controller: _tabController,
+//             children: <Widget>[
+//               shuttleList(0, widget.containsFilter, widget.jumpMap),
+//               shuttleList(1, widget.containsFilter, widget.jumpMap),
+//               shuttleList(2, widget.containsFilter, widget.jumpMap),
+//               shuttleList(3, widget.containsFilter, widget.jumpMap),
+//             ],
+//           ),
+//         )
+//       ]),
+//     );
+//   }
+// }
 
-      Scaffold(
-          body: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: List.generate(
-                        shuttleStopLists[idx].length,
-                        (index) => Container(
-                            alignment: Alignment.center,
-                            width: 98,
-                            height: 30,
-                            child: SizedBox(
-                              child: Text(
-                                curStopList[index % curStopList.length][0],
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            )),
-                      ),
-                    ),
-                    // DataTable(
-                    //     columnSpacing: 50,
-                    //     columns: List<DataColumn>.generate(
-                    //         busStopLists[idx].length,
-                    //         (index) => DataColumn(
-                    //               label: Flexible(
-                    //                   child: Text(curStopList[
-                    //                       index % curStopList.length][0])),
-                    //             )),
-                    //     rows: <DataRow>[
-                    //       DataRow(
-                    //           cells: List<DataCell>.generate(
-                    //               busStopLists[idx].length,
-                    //               (datIdx) => DataCell(Text('6:30pm'))))
-                    //     ]),
-                    Flexible(
-                        child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: DataTable(
-                                columnSpacing: 50,
-                                columns: List<DataColumn>.generate(
-                                    shuttleStopLists[idx].length,
-                                    (index) => const DataColumn(
-                                          label: Flexible(
-                                              child: const Text('6:30pm')),
-                                        )),
-                                rows: List<DataRow>.generate(
-                                    (shuttleTimeLists[idx].length /
-                                                shuttleStopLists[idx].length +
-                                            1)
-                                        .truncate(),
-                                    (index) => DataRow(
-                                        cells: List<DataCell>.generate(
-                                            shuttleStopLists[idx].length,
-                                            (datIdx) => const DataCell(
-                                                Text('6:30pm')))))))),
-                  ])));
-
-  // ScrollablePositionedList.builder(
-  //   itemCount: shuttleTimeLists[idx].length,
-  //   initialScrollIndex: _getTimeIndex(shuttleTimeLists[idx]),
-  //   itemBuilder: (context, index) {
-  //     var curStopList = shuttleStopLists[idx];
-  //     var curTimeList = shuttleTimeLists[idx];
-  //     // if (!_containsFilter(curStopList, curTimeList, index) ||
-  //     //     curTimeList[index] == '- - - -') {
-  //     //   return null;
-  //     // }
-  //     return Card(
-  //       child: ListTile(
-  //         leading: Icon(Icons.airport_shuttle),
-  //         title: Text(curStopList[index % curStopList.length][0]),
-  //         subtitle: Text(curTimeList[index]),
-  //         trailing: Icon(Icons.arrow_forward),
-  //         onTap: () {
-  //           // _jumpMap(double.parse(curStopList[index % curStopList.length][1]),
-  //           //     double.parse(curStopList[index % curStopList.length][2]));
-  //         },
-  //       ),
-  //     );
-  //   },
-  // );
-}
+// Widget shuttleList(int idx, Function? _containsFilter, Function? _jumpMap)
+//   {final curStopList = shuttleStopLists[idx]; return Scaffold(body:
+//   SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+//   Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const
+//   SizedBox(height: 5,
+//           ),
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.start,
+//             children: List.generate(
+//               shuttleStopLists[idx].length,
+//               (index) => Container(
+//                   alignment: Alignment.center,
+//                   width: 98,
+//                   height: 30,
+//                   child: SizedBox(
+//                     child: Text(
+//                       curStopList[index % curStopList.length][0],
+//                       textAlign: TextAlign.center,
+//                       style: const TextStyle(fontWeight: FontWeight.bold),
+//                     ),
+//                   )),
+//             ),
+//           ),
+//           Flexible(
+//             child: SingleChildScrollView(
+//               scrollDirection: Axis.vertical,
+//               child: DataTable(
+//                 columnSpacing: 50,
+//                 columns: List<DataColumn>.generate(
+//                     shuttleStopLists[idx].length,
+//                     (index) => const DataColumn(
+//                           label: Flexible(child: Text('6:30pm')),
+//                         )),
+//                 rows: List<DataRow>.generate(
+//                   (shuttleTimeLists[idx].length / shuttleStopLists[idx].length +
+//                           1)
+//                       .truncate(),
+//                   (index) => DataRow(
+//                     cells: List<DataCell>.generate(
+//                       shuttleStopLists[idx].length,
+//                       (datIdx) => const DataCell(
+//                         Text('6:30pm'),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     ),
+//   );
+// }

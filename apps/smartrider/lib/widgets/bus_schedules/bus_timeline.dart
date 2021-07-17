@@ -12,6 +12,7 @@ import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/widgets/custom_widgets/custom_painters.dart';
 import 'package:sizer/sizer.dart';
+import 'package:shared/models/tuple.dart';
 
 // loading custom widgets and data
 import 'package:smartrider/widgets/custom_widgets/custom_expansion_tile.dart';
@@ -24,18 +25,18 @@ const List<String> choices = [
 
 /// Creates an object that contains all the busses and their respective stops.
 class BusTimeline extends StatefulWidget {
-  final PanelController panelController;
-  final ScrollController scrollController;
-  // final Map<String, BusRoute> busRoutes;
-  final Map<String?, BusTimetable>? busTables;
-
-  BusTimeline(
+  const BusTimeline(
       {Key? key,
       required this.panelController,
       required this.scrollController,
       // @required this.busRoutes,
       required this.busTables})
       : super(key: key);
+  final PanelController panelController;
+  final ScrollController scrollController;
+  // final Map<String, BusRoute> busRoutes;
+  final Map<String?, BusTimetable>? busTables;
+
   @override
   BusTimelineState createState() => BusTimelineState();
 }
@@ -89,8 +90,8 @@ class BusTimelineState extends State<BusTimeline>
     super.dispose();
   }
 
-  /// Builds each tab for each bus and also accounts for the users
-  /// light preferences.
+  /// Builds each tab for each bus and also accounts for the users light
+  /// preferences.
   @override
   Widget build(BuildContext context) {
     /// Controls the format (tabs on top, list of bus stops on bottom).
@@ -98,9 +99,9 @@ class BusTimelineState extends State<BusTimeline>
       /// The tab bar displayed when the bus icon is selected.
       Showcase(
         key: showcaseBusTab,
-        description: BUS_TAB_SHOWCASE_MESSAGE,
+        description: busTabShowcaseMessage,
         child: TabBar(
-          indicatorColor: BUS_COLORS.values.toList()[_tabController.index],
+          indicatorColor: busColors.values.toList()[_tabController.index],
           isScrollable: true,
           tabs: busTabs,
           labelColor: Theme.of(context).brightness == Brightness.light
@@ -130,16 +131,16 @@ class BusTimelineState extends State<BusTimeline>
   }
 
   Widget busExpansionTile(int index, List<TimetableStop> busStops,
-      List<List<dynamic>> stopTimes, String routeId) {
+      List<Tuple<String, int>> stopTimes, String routeId) {
     return CustomExpansionTile(
       title: Text(busStops[index].stopName),
-      subtitle: Text('Next Arrival: ${stopTimes[0][0]}'),
+      subtitle: Text('Next Arrival: ${stopTimes[0].first}'),
       tilePadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
 
       /// Controls the leading circle icon in front of each bus stop.
       leading: CustomPaint(
           painter: FillPainter(
-              circleColor: BUS_COLORS[routeId],
+              circleColor: busColors[routeId],
               lineColor: Theme.of(context).primaryColorLight,
               first: index == 0,
               last: index == busStops.length - 1),
@@ -172,53 +173,55 @@ class BusTimelineState extends State<BusTimeline>
               margin: const EdgeInsets.only(left: 34.5),
               constraints: const BoxConstraints.expand(width: 8),
             ),
-            title: Container(
-              child: RefreshIndicator(
-                onRefresh: () =>
-                    Future.delayed(const Duration(seconds: 1), () => '1'),
-                displacement: 1,
+            title: RefreshIndicator(
+              onRefresh: () =>
+                  Future.delayed(const Duration(seconds: 1), () => '1'),
+              displacement: 1,
 
-                /// A list of the upcoming bus stop arrivals.
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  itemCount: stopTimes.length,
-                  itemExtent: 50,
-                  itemBuilder: (BuildContext context, int timeIndex) {
-                    if (stopTimes[timeIndex][0] == '-') {
-                      return Container(); // return empty container if stop not available
-                    }
+              /// A list of the upcoming bus stop arrivals.
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemCount: stopTimes.length,
+                itemExtent: 50,
+                itemBuilder: (BuildContext context, int timeIndex) {
+                  if (stopTimes[timeIndex].first == '-') {
+                    // return empty container if stop not available
+                    return Container();
+                  }
 
-                    String subText;
-                    if (stopTimes[timeIndex][1] / 3600 > 1) {
-                      num time = (stopTimes[timeIndex][1] / 3600).truncate();
-                      subText = 'In $time ${time > 1 ? 'hours' : 'hour'}';
-                    } else {
-                      num time = (stopTimes[timeIndex][1] / 60).truncate();
-                      subText = 'In $time ${time > 1 ? 'minutes' : 'minute'}';
-                    }
+                  String subText;
+                  if (stopTimes[timeIndex].second / 3600 > 1) {
+                    final num time =
+                        (stopTimes[timeIndex].second / 3600).truncate();
+                    subText = 'In $time ${time > 1 ? 'hours' : 'hour'}';
+                  } else {
+                    final num time =
+                        (stopTimes[timeIndex].second / 60).truncate();
+                    subText = 'In $time ${time > 1 ? 'minutes' : 'minute'}';
+                  }
 
-                    /// The container in which the bus stop arrival times are displayed.
-                    return ListTile(
-                      dense: true,
-                      leading: const Icon(Icons.access_time,
-                          size:
-                              20), // TODO: change icon if bus is within 5 minutes
-                      title: Text(
-                        stopTimes[timeIndex][0],
-                        style: const TextStyle(fontSize: 15),
-                      ),
-                      subtitle: Text(subText),
-                      trailing: PopupMenuButton<String>(
-                          onSelected: (choice) => _handlePopupSelection(
-                              choice, busStops[index], stopTimes[timeIndex]),
-                          itemBuilder: (BuildContext context) => choices
-                              .map((choice) => PopupMenuItem<String>(
-                                  value: choice, child: Text(choice)))
-                              .toList()),
-                    );
-                  },
-                ),
+                  /// The container in which the bus stop arrival times are
+                  /// displayed.
+                  return ListTile(
+                    dense: true,
+                    leading: const Icon(Icons.access_time,
+                        size:
+                            20), // TODO: change icon if bus is within 5 minutes
+                    title: Text(
+                      stopTimes[timeIndex].first,
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                    subtitle: Text(subText),
+                    trailing: PopupMenuButton<String>(
+                        onSelected: (choice) => _handlePopupSelection(
+                            choice, busStops[index], stopTimes[timeIndex]),
+                        itemBuilder: (BuildContext context) => choices
+                            .map((choice) => PopupMenuItem<String>(
+                                value: choice, child: Text(choice)))
+                            .toList()),
+                  );
+                },
               ),
             ),
           ),
@@ -227,14 +230,14 @@ class BusTimelineState extends State<BusTimeline>
     );
   }
 
-  /// Builds the buslist widget which contains all the stops and
-  /// useful user information like the next arrival.
+  /// Builds the buslist widget which contains all the stops and useful user
+  /// information like the next arrival.
   Widget busList(String routeId) {
     // check if schedule is unavailable
     if (!widget.busTables!.containsKey(routeId)) {
-      return BusUnavailable();
+      return const BusUnavailable();
     }
-    var busStops = widget.busTables![routeId]!.stops!;
+    final busStops = widget.busTables![routeId]!.stops!;
 
     /// Returns the scrollable list for our bus stops to be contained in.
     // return ScrollablePositionedList.builder(
@@ -243,31 +246,29 @@ class BusTimelineState extends State<BusTimeline>
       controller: _scrollController,
       itemCount: busStops.length,
       itemBuilder: (context, index) {
-        final stopTimes = widget
-            .busTables![routeId]!
+        final stopTimes = widget.busTables![routeId]!
             .getClosestTimes(index)
-            .where((stopPair) => stopPair[1] != -1)
+            .where((stopPair) => stopPair.second != -1)
             .toList();
         return index == 0
             ? busExpansionTile(index, busStops, stopTimes, routeId)
             : busExpansionTile(index, busStops, stopTimes, routeId);
 
-        /// showcase doesn't work because of duplicate global keys
-        /// (it tries to use the same global key despite there being multiple tabs)
-        // TODO: fix dis
-        // Showcase(
-        //   key: GlobalKey(debugLabel: 'bruh2'),//showcaseTimeline,
-        //   description: TIMELINE_ITEM_SHOWCASE_MESSAGE,
-        //   child: busExpansionTile(index, busStops, stopTimes, routeId))
+        /// showcase doesn't work because of duplicate global keys (it tries to
+        /// use the same global key despite there being multiple tabs)
+        // TODO: fix dis Showcase(key: GlobalKey(debugLabel:
+        // 'bruh2'),//showcaseTimeline, description:
+        // TIMELINE_ITEM_SHOWCASE_MESSAGE, child: busExpansionTile(index,
+        // busStops, stopTimes, routeId))
       },
     );
   }
 
   void _handlePopupSelection(
-      String choice, TimetableStop? busStop, List<dynamic>? stopTime) {
+      String choice, TimetableStop? busStop, Tuple<String, int>? stopTime) {
     if (choice == choices[0]) {
       BlocProvider.of<ScheduleBloc>(context)
-          .scheduleBusAlarm(stopTime![1], busStop!);
+          .scheduleBusAlarm(stopTime!.second, busStop!);
     } else if (choice == choices[1]) {
       widget.panelController.animatePanelToPosition(0);
       BlocProvider.of<MapBloc>(context).scrollToLatLng(busStop!.latLng);

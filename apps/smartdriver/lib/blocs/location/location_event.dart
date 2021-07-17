@@ -8,8 +8,8 @@ abstract class LocationEvent extends Equatable {
 }
 
 class LocationStartTrackingEvent extends LocationEvent {
-  final DocumentReference vehicleRef;
   const LocationStartTrackingEvent({required this.vehicleRef});
+  final DocumentReference vehicleRef;
 
   @override
   List<Object> get props => [vehicleRef];

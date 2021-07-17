@@ -36,7 +36,7 @@ class BusRoute {
 
     startDate = json['start_date'];
     endDate = json['end_date'];
-    stops = json['stops'].map<BusStopSimplified>(
+    stops = (json['stops'] as List).map<BusStopSimplified>(
         (dynamic stop) => BusStopSimplified.fromJson(stop));
   }
 

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+// TODO: rework themes, add const constructors
 import 'package:flutter/material.dart';
 
 final ThemeData darkTheme = ThemeData(

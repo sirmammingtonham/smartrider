@@ -2,8 +2,8 @@ library table_sticky_headers;
 
 import 'package:flutter/material.dart';
 
-/// Table with sticky headers. Whenever you scroll content horizontally
-/// or vertically - top and left headers always stay.
+/// Table with sticky headers. Whenever you scroll content horizontally or
+/// vertically - top and left headers always stay.
 class CustomStickyHeader extends StatefulWidget {
   CustomStickyHeader({
     Key? key,
@@ -21,12 +21,12 @@ class CustomStickyHeader extends StatefulWidget {
     /// and returns String for column title
     required this.columnsTitleBuilder,
 
-    /// Builder for row titles. Takes index of content row as parameter
-    /// and returns String for row title
+    /// Builder for row titles. Takes index of content row as parameter and
+    /// returns String for row title
     //@required this.rowsTitleBuilder,
 
-    /// Builder for content cell. Takes index for content column first,
-    /// index for content row second and returns String for cell
+    /// Builder for content cell. Takes index for content column first, index
+    /// for content row second and returns String for cell
     required this.contentCellBuilder,
 
     /// Table cell dimensions
@@ -64,7 +64,7 @@ class CustomStickyHeader extends StatefulWidget {
     }
     if (cellAlignments.contentCellAlignments != null) {
       assert(cellAlignments.contentCellAlignments!.length == rowsLength);
-      for (int i = 0; i < cellAlignments.contentCellAlignments!.length; i++) {
+      for (var i = 0; i < cellAlignments.contentCellAlignments!.length; i++) {
         assert(
             cellAlignments.contentCellAlignments![i].length == columnsLength);
       }
@@ -92,8 +92,8 @@ class CustomStickyHeader extends StatefulWidget {
 }
 
 class _CustomStickyHeaderState extends State<CustomStickyHeader> {
-  // final ScrollController _verticalTitleController = ScrollController();
-  // final ScrollController _verticalBodyController = ScrollController();
+  // final ScrollController _verticalTitleController = ScrollController(); final
+  // ScrollController _verticalBodyController = ScrollController();
 
   final ScrollController _horizontalBodyController = ScrollController();
   final ScrollController _horizontalTitleController = ScrollController();
@@ -104,8 +104,9 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
   @override
   void initState() {
     super.initState();
-    // _verticalSyncController = _SyncScrollController(
-    //     [_verticalTitleController, _verticalBodyController]);
+    // _verticalSyncController =
+    //     _SyncScrollController([_verticalTitleController,
+    //     _verticalBodyController]);
     _horizontalSyncController = _SyncScrollController(
         [_horizontalTitleController, _horizontalBodyController]);
   }
@@ -116,14 +117,11 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
       children: <Widget>[
         Row(
           children: <Widget>[
-            // STICKY LEGEND
-            // Container(
-            //   width: widget.cellDimensions.stickyLegendWidth,
-            //   height: widget.cellDimensions.stickyLegendHeight,
-            //   alignment: widget.cellAlignments.stickyLegendAlignment,
-            //   child: FittedBox(
-            //     fit: widget.cellFit,
-            //     child: widget.legendCell,
+            // STICKY LEGEND Container(width:
+            // widget.cellDimensions.stickyLegendWidth, height:
+            // widget.cellDimensions.stickyLegendHeight, alignment:
+            // widget.cellAlignments.stickyLegendAlignment, child:
+            // FittedBox(fit: widget.cellFit, child: widget.legendCell,
             //   ),
             // ),
             // STICKY ROW
@@ -166,35 +164,27 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // STICKY COLUMN
-              // NotificationListener<ScrollNotification>(
-              //   child: SingleChildScrollView(
-              //     child: Column(
-              //       children: List.generate(
-              //         widget.rowsLength,
-              //         (i) => Container(
-              //           width: widget.cellDimensions.stickyLegendWidth,
-              //           height: widget.cellDimensions.rowHeights != null
-              //               ? widget.cellDimensions.rowHeights[i]
-              //               : widget.cellDimensions.contentCellHeight,
-              //           alignment:
-              //               widget.cellAlignments.stickyColumnAlignments != null
-              //                   ? widget
-              //                       .cellAlignments.stickyColumnAlignments[i]
-              //                   : widget.cellAlignments.stickyColumnAlignment,
-              //           child: FittedBox(
-              //             fit: widget.cellFit,
-              //             child: widget.rowsTitleBuilder(i),
+              // STICKY COLUMN NotificationListener<ScrollNotification>(child:
+              // SingleChildScrollView(child: Column(children:
+              // List.generate(widget.rowsLength, (i) => Container(width:
+              // widget.cellDimensions.stickyLegendWidth, height:
+              // widget.cellDimensions.rowHeights != null?
+              // widget.cellDimensions.rowHeights[i] :
+              // widget.cellDimensions.contentCellHeight, alignment:
+              // widget.cellAlignments.stickyColumnAlignments != null? widget
+              // .cellAlignments.stickyColumnAlignments[i] :
+              // widget.cellAlignments.stickyColumnAlignment, child:
+              // FittedBox(fit: widget.cellFit, child:
+              // widget.rowsTitleBuilder(i),
               //           ),
               //         ),
               //       ),
               //     ),
               //     controller: _verticalTitleController,
               //   ),
-              //   onNotification: (ScrollNotification notification) {
-              //     _verticalSyncController.processNotification(
-              //         notification, _verticalTitleController);
-              //     return true;
+              //   onNotification: (ScrollNotification notification)
+              //     {_verticalSyncController.processNotification(notification,
+              //     _verticalTitleController); return true;
               //   },
               // ),
               // CONTENT
@@ -411,12 +401,12 @@ class CellAlignments {
 
   /// Different alignment for each column.
   const CellAlignments.variableColumnAlignment({
-    /// Different alignment for each column (for content only).
-    /// Length of list must match columnsLength.
+    /// Different alignment for each column (for content only). Length of list
+    /// must match columnsLength.
     required this.columnAlignments,
 
-    /// Different alignment for each sticky row cell.
-    /// Length of list must match columnsLength.
+    /// Different alignment for each sticky row cell. Length of list must match
+    /// columnsLength.
     required this.stickyRowAlignments,
 
     /// Same alignment for each sticky column cell.
@@ -432,12 +422,12 @@ class CellAlignments {
 
   /// Different alignment for each row.
   const CellAlignments.variableRowAlignment({
-    /// Different alignment for each row (for content only).
-    /// Length of list must match rowsLength.
+    /// Different alignment for each row (for content only). Length of list must
+    /// match rowsLength.
     required this.rowAlignments,
 
-    /// Different alignment for each sticky column cell.
-    /// Length of list must match rowsLength.
+    /// Different alignment for each sticky column cell. Length of list must
+    /// match rowsLength.
     required this.stickyColumnAlignments,
 
     /// Same alignment for each sticky row cell.
@@ -453,16 +443,16 @@ class CellAlignments {
 
   /// Different alignment for every cell.
   const CellAlignments.variable({
-    /// Different alignment for each content cell.
-    /// Dimensions of array must match rowsLength x columnsLength.
+    /// Different alignment for each content cell. Dimensions of array must
+    /// match rowsLength x columnsLength.
     required this.contentCellAlignments,
 
-    /// Different alignment for each sticky column cell.
-    /// Length of list must match rowsLength.
+    /// Different alignment for each sticky column cell. Length of list must
+    /// match rowsLength.
     required this.stickyColumnAlignments,
 
-    /// Different alignment for each sticky row cell.
-    /// Length of list must match columnsLength.
+    /// Different alignment for each sticky row cell. Length of list must match
+    /// columnsLength.
     required this.stickyRowAlignments,
 
     /// Alignment for the sticky legend cell.
@@ -489,8 +479,7 @@ class CellAlignments {
 /// SyncScrollController keeps scroll controllers in sync.
 class _SyncScrollController {
   _SyncScrollController(List<ScrollController> controllers) {
-    controllers
-        .forEach((controller) => _registeredScrollControllers.add(controller));
+    controllers.forEach(_registeredScrollControllers.add);
   }
 
   final List<ScrollController> _registeredScrollControllers = [];
@@ -514,7 +503,7 @@ class _SyncScrollController {
       }
 
       if (notification is ScrollUpdateNotification) {
-        for (ScrollController controller in _registeredScrollControllers) {
+        for (final controller in _registeredScrollControllers) {
           if (identical(_scrollingController, controller)) continue;
           controller.jumpTo(_scrollingController!.offset);
         }

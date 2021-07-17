@@ -44,11 +44,11 @@ void main() async {
     ],
   );
 
-  // String host = defaultTargetPlatform == TargetPlatform.android
+  // final host = defaultTargetPlatform == TargetPlatform.android
   //     ? '10.0.2.2:8080'
   //     : 'localhost:8080';
+//FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
 
-  // FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
   final app = SmartRider(
       authRepo: AuthRepository.create(),
       busRepo: await BusRepository.create(),
@@ -64,17 +64,17 @@ void main() async {
 }
 
 class SmartRider extends StatefulWidget {
-  final AuthRepository authRepo;
-  final BusRepository busRepo;
-  final ShuttleRepository shuttleRepo;
-  final SaferideRepository saferideRepo;
-
-  SmartRider({
+  const SmartRider({
+    Key? key,
     required this.authRepo,
     required this.busRepo,
     required this.shuttleRepo,
     required this.saferideRepo,
-  });
+  }) : super(key: key);
+  final AuthRepository authRepo;
+  final BusRepository busRepo;
+  final ShuttleRepository shuttleRepo;
+  final SaferideRepository saferideRepo;
 
   @override
   _SmartRiderState createState() => _SmartRiderState();
@@ -159,8 +159,8 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
           home: ShowCaseWidget(
             builder: Builder(
                 builder: (context) => state.firstLaunch!
-                    ? OnboardingScreen()
-                    : WelcomeScreen(homePage: HomePage())),
+                    ? const OnboardingScreen()
+                    : const WelcomeScreen(homePage: HomePage())),
             autoPlay: true,
             autoPlayDelay: const Duration(seconds: 10),
           ),

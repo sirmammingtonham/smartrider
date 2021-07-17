@@ -16,8 +16,8 @@ class BusRealtimeUpdate {
     return BusRealtimeUpdate(
         objName: json['objName'],
         id: json['id'],
-        lat: json['lat'].toDouble(),
-        lng: json['lng'].toDouble(),
+        lat: json['lat'], //TODO: !!!!
+        lng: json['lng'],
         bearing: json['bearing'],
         routeId: json['route_id'],
         stopId: json['stop_id'],

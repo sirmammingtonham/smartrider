@@ -14,10 +14,12 @@ import 'package:sizer/sizer.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(SmartDriver());
+  runApp(const SmartDriver());
 }
 
 class SmartDriver extends StatefulWidget {
+  const SmartDriver({Key? key}) : super(key: key);
+
   @override
   _SmartDriverState createState() => _SmartDriverState();
 }
@@ -59,7 +61,8 @@ class _SmartDriverState extends State<SmartDriver> with WidgetsBindingObserver {
       case AppLifecycleState.detached:
       case AppLifecycleState.paused:
         // switch driver to unavailable if app is detached
-        // since we need to make sure we don't assign riders to unavailable drivers
+        // since we need to make sure we don't assign
+        // riders to unavailable drivers
         await orderBloc.updateAvailibility(false);
         break;
     }
@@ -96,14 +99,10 @@ class _SmartDriverState extends State<SmartDriver> with WidgetsBindingObserver {
                         title:
                             (state as AuthenticationLoggedInState).user.name);
                   case AuthenticationFailureState:
-                    return Container(
-                      child: Text(
-                          (state as AuthenticationFailureState).errorMessage),
-                    );
+                    return Text(
+                        (state as AuthenticationFailureState).errorMessage);
                   default:
-                    return Container(
-                      child: Text('AUTH BLOC ERROR'),
-                    );
+                    return const Text('AUTH BLOC ERROR');
                 }
               },
             ),

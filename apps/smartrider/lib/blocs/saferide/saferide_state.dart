@@ -13,18 +13,17 @@ class SaferideNoState extends SaferideState {}
 class SaferideLoadingState extends SaferideState {}
 
 class SaferideSelectingState extends SaferideState {
-  final GeoPoint pickupPoint;
-  final GeoPoint dropPoint;
-  final String pickupDescription;
-  final String dropDescription;
-  final int queuePosition;
-
   const SaferideSelectingState(
       {required this.pickupPoint,
       required this.dropPoint,
       required this.pickupDescription,
       required this.dropDescription,
       required this.queuePosition});
+  final GeoPoint pickupPoint;
+  final GeoPoint dropPoint;
+  final String pickupDescription;
+  final String dropDescription;
+  final int queuePosition;
 
   LatLng get pickupLatLng =>
       LatLng(pickupPoint.latitude, pickupPoint.longitude);
@@ -41,24 +40,16 @@ class SaferideSelectingState extends SaferideState {
 }
 
 class SaferideWaitingState extends SaferideState {
-  final int queuePosition;
-  final Timestamp? estimatedPickup;
-
   const SaferideWaitingState(
       {required this.queuePosition, this.estimatedPickup});
+  final int queuePosition;
+  final Timestamp? estimatedPickup;
 
   @override
   List<Object?> get props => [queuePosition, estimatedPickup];
 }
 
 class SaferidePickingUpState extends SaferideState {
-  final String vehicleId;
-  final String driverName;
-  final String phoneNumber;
-  final String licensePlate;
-  final int queuePosition;
-  final Timestamp? estimatedPickup;
-
   const SaferidePickingUpState(
       {required this.vehicleId,
       required this.driverName,
@@ -66,6 +57,12 @@ class SaferidePickingUpState extends SaferideState {
       required this.licensePlate,
       required this.queuePosition,
       required this.estimatedPickup});
+  final String vehicleId;
+  final String driverName;
+  final String phoneNumber;
+  final String licensePlate;
+  final int queuePosition;
+  final Timestamp? estimatedPickup;
 
   @override
   List<Object?> get props => [
@@ -86,19 +83,17 @@ class SaferideDroppingOffState extends SaferideState {
 }
 
 class SaferideCancelledState extends SaferideState {
-  final String reason;
-
   const SaferideCancelledState({required this.reason});
+  final String reason;
 
   @override
   List<Object?> get props => [reason];
 }
 
 class SaferideErrorState extends SaferideState {
+  const SaferideErrorState({required this.status, required this.message});
   final String status;
   final String? message;
-
-  const SaferideErrorState({required this.status, required this.message});
 
   @override
   List<Object?> get props => [status, message];

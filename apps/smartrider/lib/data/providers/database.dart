@@ -5,7 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
   DatabaseService({this.usid});
-  //unique user id, will be generated from authorization class after a user successfully logs in
+  //unique user id, will be generated from authorization class
+  //after a user successfully logs in
   final String? usid;
   //reference to the user collection in the database
   final CollectionReference _userCollection =

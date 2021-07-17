@@ -1,6 +1,40 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared/models/tuple.dart';
 
 class BusTimetable {
+  BusTimetable(
+      {this.routeId,
+      this.directionId,
+      this.directionName,
+      this.label,
+      this.startDate,
+      this.endDate,
+      this.serviceId,
+      this.includeDates,
+      this.excludeDates,
+      this.stops,
+      this.formatted});
+
+  BusTimetable.fromJson(Map<String, dynamic> json) {
+    routeId = json['route_id'];
+    directionId = json['direction_id'];
+    directionName = json['direction_name'];
+    label = json['label'];
+    startDate = json['start_date'];
+    endDate = json['end_date'];
+    serviceId = json['service_id'];
+
+    includeDates = (json['include_dates'] as List).cast<String>();
+    excludeDates = (json['exclude_dates'] as List).cast<String>();
+
+    stops = (json['stops'] as List).map<TimetableStop>((dynamic table) {
+      return TimetableStop.fromJson(table);
+    }).toList();
+
+    formatted = (json['formatted'] as List).cast<String>();
+    timestamps = (json['timestamps'] as List).cast<int>();
+  }
+
   String? routeId;
   int? directionId;
   String? directionName;
@@ -14,19 +48,6 @@ class BusTimetable {
   List<TimetableStop>? stops;
   List<String>? formatted;
   List<int>? timestamps;
-
-  BusTimetable(
-      {this.routeId,
-      this.directionId,
-      this.directionName,
-      this.label,
-      this.startDate,
-      this.endDate,
-      this.serviceId,
-      this.includeDates,
-      this.excludeDates,
-      this.stops,
-      this.formatted});
 
   int get numColumns => stops!.length;
   int get numRows => (formatted!.length / stops!.length).truncate();
@@ -66,18 +87,18 @@ class BusTimetable {
     return def;
   }
 
-  /// returns a list of [string, int] pairs, string represents a formatted time and
-  /// int represents
-  Iterable<List<dynamic>> getClosestTimes(int i) {
-    int now = DateTime.now().hour * 3600 +
+  /// returns a list of [string, int] pairs, string
+  /// representing a formatted time string and the int representation
+  Iterable<Tuple<String, int>> getClosestTimes(int i) {
+    final now = DateTime.now().hour * 3600 +
         DateTime.now().minute * 60 +
         DateTime.now().second;
 
-    int min = 0;
+    var min = 0;
 
-    for (int j = 0; j < numRows; ++j) {
+    for (var j = 0; j < numRows; ++j) {
       // check if current difference is less than previous minimum
-      bool isLower =
+      final isLower =
           (getTimestamp(i, j) - now).abs() < (getTimestamp(i, min) - now).abs();
 
       if (getTimestamp(i, j) > now && isLower) {
@@ -100,53 +121,30 @@ class BusTimetable {
     }
 
     return List.generate(offsetLength, (index) => index)
-        .map((offset) => <dynamic>[
-              getTime(i, min + offset),
-              now < getTimestamp(i, min + offset)
-                  ? getTimestamp(i, min + offset) - now
-                  : 86400 -
-                      now +
-                      getTimestamp(i, min + offset) // 86400 seconds in a day
-            ]);
-  }
-
-  BusTimetable.fromJson(Map<String, dynamic> json) {
-    routeId = json['route_id'];
-    directionId = json['direction_id'];
-    directionName = json['direction_name'];
-    label = json['label'];
-    startDate = json['start_date'];
-    endDate = json['end_date'];
-    serviceId = json['service_id'];
-
-    includeDates = json['include_dates'].cast<String>();
-    excludeDates = json['exclude_dates'].cast<String>();
-
-    stops = json['stops'].map<TimetableStop>((dynamic table) {
-      return TimetableStop.fromJson(table);
-    }).toList();
-
-    formatted = json['formatted'].cast<String>();
-    timestamps = json['timestamps'].cast<int>();
+        .map<Tuple<String, int>>((offset) => Tuple(
+            first: getTime(i, min + offset),
+            second: now < getTimestamp(i, min + offset)
+                ? getTimestamp(i, min + offset) - now
+                : 86400 - now + getTimestamp(i, min + offset)));
   }
 
   /// pass in value has to be [stopID, stopTime]
   // ignore: non_constant_identifier_names
-  void UpdateWithRealtime(Map<String, String>? realtimeMap) {
+  void updateWithRealtime(Map<String, String>? realtimeMap) {
     // TO-DO update
     //  timeslots (rows), stopoffset (cols)
     if (realtimeMap != null && realtimeMap.length == numColumns) {
       realtimeMap.forEach((id, newtime) {
-        int stopIndex = getStopIndex(id);
+        final stopIndex = getStopIndex(id);
         if (stopIndex != -1) {
-          int now = DateTime.now().hour * 3600 +
+          final now = DateTime.now().hour * 3600 +
               DateTime.now().minute * 60 +
               DateTime.now().second;
-          int min = 0;
+          var min = 0;
 
-          for (int j = 0; j < numRows; ++j) {
+          for (var j = 0; j < numRows; ++j) {
             // check if current difference is less than previous minimum
-            bool isLower = (getTimestamp(stopIndex, j) - now).abs() <
+            final isLower = (getTimestamp(stopIndex, j) - now).abs() <
                 (getTimestamp(stopIndex, min) - now).abs();
 
             if (getTimestamp(stopIndex, j) > now && isLower) {
@@ -185,24 +183,24 @@ class BusTimetable {
 }
 
 class TimetableStop {
-  final String stopId;
-  final double stopLat;
-  final double stopLon;
-  final String stopName;
-
   TimetableStop(
       {required this.stopId,
       required this.stopLat,
       required this.stopLon,
       required this.stopName});
 
-  LatLng get latLng => LatLng(stopLat, stopLon);
-
   factory TimetableStop.fromJson(Map<String, dynamic> json) => TimetableStop(
       stopId: json['stop_id'],
       stopLat: json['stop_lat'],
       stopLon: json['stop_lon'],
       stopName: json['stop_name']);
+
+  final String stopId;
+  final double stopLat;
+  final double stopLon;
+  final String stopName;
+
+  LatLng get latLng => LatLng(stopLat, stopLon);
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};

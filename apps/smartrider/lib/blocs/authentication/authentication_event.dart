@@ -13,8 +13,9 @@ class AuthenticationStarted extends AuthenticationEvent {}
 class AuthenticationDelete extends AuthenticationEvent {}
 
 class AuthenticationLoggedIn extends AuthenticationEvent {
-  final String email, pass, role;
   const AuthenticationLoggedIn(this.email, this.pass, this.role);
+  final String email, pass, role;
+
   @override
   String get getemail => email;
   @override
@@ -26,12 +27,12 @@ class AuthenticationLoggedIn extends AuthenticationEvent {
 class AuthenticationLoggedOut extends AuthenticationEvent {}
 
 class AuthenticationSignUp extends AuthenticationEvent {
-  final String email, name, pass, rin, role;
   const AuthenticationSignUp(
       this.email, this.name, this.pass, this.rin, this.role);
+  final String email, name, pass, rin, role;
 }
 
 class AuthentificationResetPass extends AuthenticationEvent {
-  final String? email;
   const AuthentificationResetPass(this.email);
+  final String? email;
 }

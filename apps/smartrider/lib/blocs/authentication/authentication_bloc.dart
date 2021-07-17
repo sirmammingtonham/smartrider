@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:smartrider/data/repositories/authentication_repository.dart';
 import 'package:smartrider/data/providers/database.dart';
 part 'authentication_event.dart';
@@ -10,11 +11,10 @@ part 'authentication_state.dart';
 //TODO: rework this mess
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final AuthRepository _authRepository;
-
   AuthenticationBloc({required AuthRepository authRepository})
       : _authRepository = authRepository,
         super(AuthenticationInit());
+  final AuthRepository _authRepository;
 
   @override
   Stream<AuthenticationState> mapEventToState(
@@ -83,21 +83,22 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> _mapAuthenticationSignUpToState(
       String e, String n, String p, String r, String role) async* {
-    dynamic result = await _authRepository.signUp(e, p);
+    final dynamic result = await _authRepository.signUp(e, p);
 
     switch (result.runtimeType) {
       case UserCredential:
         {
-          User user = result.user;
-          await DatabaseService(usid: user.uid).updateUserData(user.email, role,
+          final user = (result as UserCredential).user;
+          await DatabaseService(usid: user?.uid).updateUserData(
+              user?.email, role,
               rin: r,
               name: n); // usertype will be student for now, modify later
-          await user.sendEmailVerification();
+          await user?.sendEmailVerification();
           yield AwaitEmailVerify();
         }
         break;
       default:
-        yield AuthenticationFailure(result.message);
+        yield AuthenticationFailure((result as PlatformException).message);
     }
   }
 }

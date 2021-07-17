@@ -9,10 +9,15 @@ part 'location_event.dart';
 part 'location_state.dart';
 
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
+  LocationBloc() : super(LocationNotTrackingState());
   StreamSubscription<Position>? positionStream;
   late DocumentReference vehicleRef;
 
-  LocationBloc() : super(LocationNotTrackingState());
+  @override
+  Future<void> close() async {
+    await positionStream?.cancel();
+    await super.close();
+  }
 
   void positionListener(Position position) {
     print('${position.latitude}, ${position.longitude}');
@@ -42,7 +47,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
         break;
       case LocationStopTrackingEvent:
         {
-          if (positionStream != null) await positionStream!.cancel();
+          await positionStream?.cancel();
         }
         break;
     }

@@ -100,14 +100,14 @@ class PanelPage extends StatelessWidget {
                     scrollController: panelScrollController,
                     busTables: scheduleState.busTables,
                   ),
-                  ShuttleUnavailable(),
+                 const  ShuttleUnavailable(),
                 ]
               : [
                   // table widgets
                   BusTable(
                       timetableMap:
                           (scheduleState as ScheduleTableState).busTables),
-                  ShuttleUnavailable(),
+                  const ShuttleUnavailable(),
                 ],
         ),
       );
@@ -128,7 +128,7 @@ class PanelPage extends StatelessWidget {
                   panelAppBar(context, scheduleState),
                   Showcase(
                     key: showcaseTransportTab,
-                    description: SLIDING_PAGE_TAB_SHOWCASE_MESSAGE,
+                    description: slidingPageTabShowcaseMessage,
                     child: TabBar(
                       controller:
                           BlocProvider.of<ScheduleBloc>(context).tabController,

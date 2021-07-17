@@ -3,12 +3,13 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:flutter/services.dart' show rootBundle;
 
 /// Color extension:
 /// Allows us to convert colors to hex string
 extension ColorExtended on Color {
-  /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
+  /// Prefixes a hash sign if [leadingHashSign]
+  /// is set to `true` (default is `true`).
   String toHex({bool leadingHashSign = true}) => '${leadingHashSign ? '#' : ''}'
       '${alpha.toRadixString(16).padLeft(2, '0')}'
       '${red.toRadixString(16).padLeft(2, '0')}'
@@ -38,7 +39,8 @@ extension ColorExtended on Color {
 ///
 /// Needed because the google maps flutter plugin sux
 class BitmapHelper {
-  /// Takes the path to an svg file [svgAssetLink] and optional [color] and [size]
+  /// Takes the path to an svg file [svgAssetLink]
+  ///and optional [color] and [size]
   /// returns: a bitmap descriptor of the svg
   static Future<BitmapDescriptor> getBitmapDescriptorFromSvgAsset(
       String svgAssetLink,
@@ -47,7 +49,7 @@ class BitmapHelper {
     final svgImage = await _getSvgImageFromAssets(svgAssetLink, color, size);
     // final sizedSvgImage = await _getSizedSvgImage(svgImage);
 
-    final ByteData? pngSizedBytes =
+    final pngSizedBytes =
         await (svgImage.toByteData(format: ui.ImageByteFormat.png));
     if (pngSizedBytes != null) {
       final unit8List = pngSizedBytes.buffer.asUint8List();
@@ -58,22 +60,21 @@ class BitmapHelper {
 
   static Future<ui.Image> _getSvgImageFromAssets(
       String svgAssetLink, Color? color, Size? targetSize) async {
-    String svgString = await rootBundle.loadString(svgAssetLink);
+    var svgString = await rootBundle.loadString(svgAssetLink);
 
     if (color != null) {
       svgString =
           svgString.replaceAll("fill='#fff'", "fill='${color.toHex()}'");
     }
 
-    DrawableRoot drawableRoot = await svg.fromSvgString(svgString, svgString);
+    final drawableRoot = await svg.fromSvgString(svgString, svgString);
 
-    // https://medium.com/@thinkdigitalsoftware/null-aware-operators-in-dart-53ffb8ae80bb
     final width = targetSize?.width ?? 50 * ui.window.devicePixelRatio;
     final height = targetSize?.height ?? 50 * ui.window.devicePixelRatio;
 
-    ui.Picture picture = drawableRoot.toPicture(size: Size(width, height));
+    final picture = drawableRoot.toPicture(size: Size(width, height));
 
-    ui.Image image = await picture.toImage(width.toInt(), height.toInt());
+    final image = await picture.toImage(width.toInt(), height.toInt());
     return image;
   }
 }

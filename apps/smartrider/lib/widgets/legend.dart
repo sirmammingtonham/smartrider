@@ -8,6 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class Legend extends StatefulWidget {
+  const Legend({Key? key}) : super(key: key);
+
+  @override
   _LegendState createState() => _LegendState();
 }
 
@@ -41,10 +44,10 @@ class _LegendState extends State<Legend> {
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Column(
               children: [
-                legendTile('Route 87', BUS_COLORS['87']!),
-                legendTile('Route 286', BUS_COLORS['286']!),
-                legendTile('Route 289', BUS_COLORS['289']!),
-                legendTile('CDTA Express', BUS_COLORS['288']!),
+                legendTile('Route 87', busColors['87']!),
+                legendTile('Route 286', busColors['286']!),
+                legendTile('Route 289', busColors['289']!),
+                legendTile('CDTA Express', busColors['288']!),
               ],
             ),
           ),
@@ -55,7 +58,7 @@ class _LegendState extends State<Legend> {
 
   Widget button(BuildContext context) => Showcase(
       key: showcaseLegend,
-      description: LEGEND_BUTTON_SHOWCASE_MESSAGE,
+      description: legendButtonShowcaseMessage,
       shapeBorder: const CircleBorder(),
       child: FloatingActionButton(
         backgroundColor: Theme.of(context).brightness == Brightness.light

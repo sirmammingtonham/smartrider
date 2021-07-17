@@ -3,9 +3,8 @@ import 'package:shared/models/saferide/position_data.dart';
 import '../providers/saferide_provider.dart';
 
 class SaferideRepository {
-  final _saferideProvider = SaferideProvider();
-
   SaferideRepository.create();
+  final _saferideProvider = SaferideProvider();
 
   Future<Stream<DocumentSnapshot>> createNewOrder(
           {required DocumentReference user,

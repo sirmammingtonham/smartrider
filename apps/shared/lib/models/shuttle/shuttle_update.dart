@@ -1,5 +1,34 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class ShuttleUpdate {
+  /// Uses a super constructor to define lat/lng attributes
+  ShuttleUpdate(
+      {this.latitude,
+      this.longitude,
+      this.id,
+      this.trackerId,
+      this.heading,
+      this.speed,
+      this.time,
+      this.created,
+      this.vehicleId,
+      this.routeId});
+
+  factory ShuttleUpdate.fromJson(Map<String, dynamic> json) {
+    return ShuttleUpdate(
+      id: json['id'],
+      trackerId: json['tracker_id'],
+      heading: (json['heading'] as num).toDouble(),
+      speed: json['speed'],
+      time: json['time'],
+      created: json['created'],
+      vehicleId: json['vehicle_id'],
+      routeId: json['route_id'] ?? -1, // -1 instead of null
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+    );
+  }
+
   /// ID of the update
   int? id;
 
@@ -27,35 +56,6 @@ class ShuttleUpdate {
   /// lng and lat
   dynamic latitude;
   dynamic longitude;
-  /// Uses a super constructor to define lat/lng attributes
-  ShuttleUpdate(
-      {this.latitude,
-      this.longitude,
-      this.id,
-      this.trackerId,
-      this.heading,
-      this.speed,
-      this.time,
-      this.created,
-      this.vehicleId,
-      this.routeId});
 
   LatLng get getLatLng => LatLng(latitude, longitude);
-
-  factory ShuttleUpdate.fromJson(Map<String, dynamic> json) {
-    return ShuttleUpdate(
-      id: json['id'],
-      trackerId: json['tracker_id'],
-      heading: (json['heading'] as num).toDouble(),
-      speed: json['speed'],
-      time: json['time'],
-      created: json['created'],
-      vehicleId: json['vehicle_id'],
-      routeId: json['route_id'] ?? -1, // -1 instead of null
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-    );
-  }
-
-
 }

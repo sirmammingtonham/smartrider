@@ -11,8 +11,8 @@ import 'package:sizer/sizer.dart';
 //import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class BusTable extends StatefulWidget {
+  const BusTable({Key? key, required this.timetableMap}) : super(key: key);
   final Map<String?, BusTimetable>? timetableMap;
-  BusTable({Key? key, required this.timetableMap}) : super(key: key);
 
   @override
   BusTableState createState() => BusTableState();
@@ -74,10 +74,10 @@ class BusTableState extends State<BusTable>
 
   Widget busList(String routeId) {
     if (!widget.timetableMap!.containsKey(routeId)) {
-      return BusUnavailable();
+      return const BusUnavailable();
     }
 
-    final BusTimetable table = widget.timetableMap![routeId]!;
+    final table = widget.timetableMap![routeId]!;
 
     return Scaffold(
         body: CustomStickyHeader(

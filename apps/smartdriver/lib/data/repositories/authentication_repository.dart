@@ -25,10 +25,10 @@ class AuthenticationRepository {
   }
 
 Future<void> setAvailibility(bool available) async {
-    authProvider.setAvailibility(available);
+    await authProvider.setAvailibility(available);
   }
 
   Future<void> tryLogout() async {
-    authProvider.tryLogout();
+    await authProvider.tryLogout();
   }
 }

@@ -1,11 +1,4 @@
 class ShuttleVehicle {
-  int? id;
-  String? name;
-  String? created;
-  String? updated;
-  bool? enabled;
-  String? trackerId;
-
   ShuttleVehicle(
       {this.id,
       this.name,
@@ -22,6 +15,13 @@ class ShuttleVehicle {
     enabled = json['enabled'];
     trackerId = json['tracker_id'];
   }
+
+  int? id;
+  String? name;
+  String? created;
+  String? updated;
+  bool? enabled;
+  String? trackerId;
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};

@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import 'package:shared/util/messages.dart';
+// import 'package:shared/util/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 import 'package:sizer/sizer.dart';
@@ -117,10 +117,10 @@ class _HomePageState extends State<_HomePage>
           top: Radius.circular(20.0),
         ),
         // stack the search bar widget over the map ui
-        body: Stack(children: <Widget>[
-          const SmartriderMap(),
+        body: Stack(children: const <Widget>[
+          SmartriderMap(),
           SearchBar(),
-          const SaferideStatusWidget()
+          SaferideStatusWidget()
         ]),
         panelBuilder: (sc) => PanelPage(panelScrollController: sc),
       );
@@ -163,15 +163,16 @@ class _HomePageState extends State<_HomePage>
                     KeyboardVisibilityController()
                         .onChange
                         .listen((bool visible) {
-                      if (visible && saferideState is SaferideNoState)
+                      if (visible && saferideState is SaferideNoState) {
                         _panelController.hide();
-                      else
+                      } else {
                         _panelController.show();
+                      }
                     });
                     return _slidingPanel(saferideState, prefState, context);
                   }
                 case PrefsSavingState:
-                  return const Center(child: const CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 default:
                   return const Center(child: Text('oh poops'));
               }

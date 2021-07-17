@@ -20,6 +20,5 @@ class SmartriderIcons {
 
   static const _kFontFam = 'SR_Icons';
 
-  static const IconData Settings =
-      const IconData(0xe800, fontFamily: _kFontFam);
+  static const IconData settingsIcon = IconData(0xe800, fontFamily: _kFontFam);
 }

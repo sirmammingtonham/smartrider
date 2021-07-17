@@ -6,27 +6,28 @@ import 'package:flutter/material.dart';
 import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
 
 class Login extends StatelessWidget {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _vehicleController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
   Login({
+    Key? key,
     String? driverName,
     String? phoneNumber,
     String? vehicleId,
-  }) {
+  }) : super(key: key) {
     _nameController.text = driverName ?? '';
     _phoneController.text = phoneNumber ?? '';
     _vehicleController.text = vehicleId ?? '';
   }
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _vehicleController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('smartdriver'),
+        title: const Text('smartdriver'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -39,7 +40,7 @@ class Login extends StatelessWidget {
               Container(height: 5.h),
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Name',
                     hintText: 'Name that will be displayed to users'),
@@ -48,7 +49,7 @@ class Login extends StatelessWidget {
               TextFormField(
                 controller: _phoneController,
                 obscureText: false,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Phone #',
                     hintText: 'Your phone number'),
@@ -57,14 +58,14 @@ class Login extends StatelessWidget {
               TextFormField(
                 controller: _vehicleController,
                 obscureText: false,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(), labelText: 'Vehicle ID'),
               ),
               Container(height: 3.h),
               TextFormField(
                 controller: _passwordController,
                 obscureText: false,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(), labelText: 'Password'),
               ),
               Container(height: 3.h),
@@ -84,7 +85,7 @@ class Login extends StatelessWidget {
                       password: _passwordController.text.trim(),
                     ));
                   },
-                  child: Text(
+                  child: const Text(
                     'Login',
                     style: TextStyle(color: Colors.white, fontSize: 25),
                   ),

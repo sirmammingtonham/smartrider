@@ -43,7 +43,7 @@ class BusProvider {
   // we need to await in the constructor, so doing it like this
   // allows for the factory to wait for initialization
   Future<void> _init() async {
-    var routes = await _firestore
+    final routes = await _firestore
         .collection('routes')
         .where('route_short_name', whereIn: shortRouteIds)
         .get();
@@ -95,14 +95,14 @@ class BusProvider {
 
   /// Returns a [Map] of [BusStop] objects.
   Future<Map<String, BusStop>> getStops() async {
-    QuerySnapshot response = await _firestore
+    final response = await _firestore
         .collection('stops')
         .where('route_ids', arrayContainsAny: _defaultRoutes)
         .get();
 
     final stopsMap = <String, BusStop>{
       for (final doc in response.docs)
-        doc['stop_id']: BusStop.fromJson(doc.data() as Map<String, dynamic>)
+        doc['stop_id']: BusStop.fromJson(doc.data())
     };
 
     return stopsMap;
@@ -189,7 +189,7 @@ class BusProvider {
         final entry = BusTimetable.fromJson(table.data()!);
         String id = route.get('route_id');
         id = id.split('-')[0];
-        entry.UpdateWithRealtime(realtimeTable[id]);
+        entry.updateWithRealtime(realtimeTable[id]);
         // check if today is in exclusive dates
         final now = DateTime.now();
         final formatter = DateFormat.yMMMMd('en_US');
@@ -198,7 +198,7 @@ class BusProvider {
           // special case: today is excluded
           // search through other possible days
           // for inclusive dates that contains today
-          var possibleDays = ['weekday', 'saturday', 'sunday'];
+          final possibleDays = ['weekday', 'saturday', 'sunday'];
           for (final d in possibleDays) {
             if (d != day) {
               table = await route.reference
@@ -206,7 +206,7 @@ class BusProvider {
                   .doc('0')
                   .get();
               if (table.data() != null) {
-                var temp = BusTimetable.fromJson(table.data()!);
+                final temp = BusTimetable.fromJson(table.data()!);
                 if (temp.includeDates!.contains(today) &&
                     !temp.excludeDates!.contains(today)) {
                   // check for exclusive just in case

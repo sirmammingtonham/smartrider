@@ -4,6 +4,13 @@ import 'package:flutter/material.dart';
 /// schedule list for each bus. This particular class is responsible
 /// for the first stop.
 class FillPainter extends CustomPainter {
+  const FillPainter(
+      {this.circleColor,
+      this.lineColor,
+      this.first = false,
+      this.last = false,
+      this.overflow = 30.0})
+      : super();
   final Color? circleColor;
   final Color? lineColor;
   final bool first;
@@ -12,14 +19,6 @@ class FillPainter extends CustomPainter {
   /// WARNING: Default value for overflow may need to be changed based on how
   /// much space the names of the
   final double overflow;
-
-  FillPainter(
-      {this.circleColor,
-      this.lineColor,
-      this.first = false,
-      this.last = false,
-      this.overflow = 30.0})
-      : super();
 
   /// Controls how the circle and lines are drawn.
   @override
@@ -39,19 +38,21 @@ class FillPainter extends CustomPainter {
       canvas.drawLine(Offset(size.width / 2, size.height / 2 - 15.0),
           Offset(size.width / 2, -overflow), line);
     } else {
-      canvas.drawLine(Offset(size.width / 2, (size.height / 2) - 15.0),
-          Offset(size.width / 2, -overflow), line);
-      canvas.drawLine(Offset(size.width / 2, (size.height / 2) + 15.0),
-          Offset(size.width / 2, size.height + overflow), line);
+      canvas
+        ..drawLine(Offset(size.width / 2, (size.height / 2) - 15.0),
+            Offset(size.width / 2, -overflow), line)
+        ..drawLine(Offset(size.width / 2, (size.height / 2) + 15.0),
+            Offset(size.width / 2, size.height + overflow), line);
     }
 
     // set the color property of the paint
-    paint.color = circleColor!;
-    paint.style = PaintingStyle.stroke;
-    paint.strokeWidth = 3.0;
+    paint
+      ..color = circleColor!
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.0;
 
     // center of the canvas is (x,y) => (width/2, height/2)
-    var center = Offset(size.width / 2, size.height / 2);
+    final center = Offset(size.width / 2, size.height / 2);
 
     canvas.drawCircle(center, 11.0, paint);
   }
@@ -64,18 +65,18 @@ class FillPainter extends CustomPainter {
 /// schedule list for each bus. This particular class is responsible
 /// for all stops but the first.
 class StrokePainter extends CustomPainter {
-  final Color? circleColor;
-  final Color? lineColor;
-  final bool last;
-  StrokePainter({
+  const StrokePainter({
     this.circleColor,
     this.lineColor,
     this.last = false,
   }) : super();
+  final Color? circleColor;
+  final Color? lineColor;
+  final bool last;
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint line = Paint()
+    final line = Paint()
       ..color = lineColor!
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.fill

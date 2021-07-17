@@ -50,7 +50,8 @@ dependencies:
   sizer: ^2.0.13
 
 dev_dependencies:
-  very_good_analysis: ^2.1.0 # lint rules
+  very_good_analysis: ^2.1.0
+  
   flutter_test:
     sdk: flutter
 

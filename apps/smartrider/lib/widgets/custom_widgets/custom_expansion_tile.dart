@@ -1,6 +1,6 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// Copyright 2014 The Flutter Authors. All rights reserved. Use of this source
+// code is governed by a BSD-style license that can be found in the LICENSE
+// file.
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +10,11 @@ const Duration _kExpand = Duration(milliseconds: 200);
 /// A single-line [ListTile] with a trailing button that expands or collapses
 /// the tile to reveal or hide the [children].
 ///
-/// This widget is typically used with [ListView] to create an
-/// 'expand / collapse' list entry. When used with scrolling widgets like
-/// [ListView], a unique [PageStorageKey] must be specified to enable the
-/// [CustomExpansionTile] to save and restore its expanded state when it is scrolled
-/// in and out of view.
+/// This widget is typically used with [ListView] to create an 'expand /
+/// collapse' list entry. When used with scrolling widgets like [ListView], a
+/// unique [PageStorageKey] must be specified to enable the
+/// [CustomExpansionTile] to save and restore its expanded state when it is
+/// scrolled in and out of view.
 ///
 /// See also:
 ///
@@ -23,9 +23,9 @@ const Duration _kExpand = Duration(milliseconds: 200);
 ///  * The 'Expand/collapse' section of
 ///    <https://material.io/guidelines/components/lists-controls.html>.
 class CustomExpansionTile extends StatefulWidget {
-  /// Creates a single-line [ListTile] with a trailing button that expands or collapses
-  /// the tile to reveal or hide the [children]. The [initiallyExpanded] property must
-  /// be non-null.
+  /// Creates a single-line [ListTile] with a trailing button that expands or
+  /// collapses the tile to reveal or hide the [children]. The
+  /// [initiallyExpanded] property must be non-null.
   const CustomExpansionTile({
     Key? key,
     this.leading,
@@ -43,8 +43,9 @@ class CustomExpansionTile extends StatefulWidget {
     this.childrenPadding,
   })  : assert(
           expandedCrossAxisAlignment != CrossAxisAlignment.baseline,
-          'CrossAxisAlignment.baseline is not supported since the expanded children '
-          'are aligned in a column, not a row. Try to use another constant.',
+          'CrossAxisAlignment.baseline is not supported '
+          'since the expanded children are aligned in a column, not a row. '
+          'Try to use another constant.',
         ),
         super(key: key);
 
@@ -66,8 +67,8 @@ class CustomExpansionTile extends StatefulWidget {
   /// Called when the tile expands or collapses.
   ///
   /// When the tile starts expanding, this function is called with the value
-  /// true. When the tile starts collapsing, this function is called with
-  /// the value false.
+  /// true. When the tile starts collapsing, this function is called with the
+  /// value false.
   final ValueChanged<bool>? onExpansionChanged;
 
   /// The widgets that are displayed when the tile expands.
@@ -81,60 +82,70 @@ class CustomExpansionTile extends StatefulWidget {
   /// A widget to display instead of a rotating arrow icon.
   final Widget? trailing;
 
-  /// Specifies if the list tile is initially expanded (true) or collapsed (false, the default).
+  /// Specifies if the list tile is initially expanded (true) or collapsed
+  /// (false, the default).
   final bool initiallyExpanded;
 
-  /// Specifies whether the state of the children is maintained when the tile expands and collapses.
+  /// Specifies whether the state of the children is maintained when the tile
+  /// expands and collapses.
   ///
   /// When true, the children are kept in the tree while the tile is collapsed.
-  /// When false (default), the children are removed from the tree when the tile is
-  /// collapsed and recreated upon expansion.
+  /// When false (default), the children are removed from the tree when the tile
+  /// is collapsed and recreated upon expansion.
   final bool maintainState;
 
   /// Specifies padding for the [ListTile].
   ///
-  /// Analogous to [ListTile.contentPadding], this property defines the insets for
-  /// the [leading], [title], [subtitle] and [trailing] widgets. It does not inset
-  /// the expanded [children] widgets.
+  /// Analogous to [ListTile.contentPadding], this property defines the insets
+  /// for the [leading], [title], [subtitle] and [trailing] widgets. It does not
+  /// inset the expanded [children] widgets.
   ///
-  /// When the value is null, the tile's padding is `EdgeInsets.symmetric(horizontal: 16.0)`.
+  /// When the value is null, the tile's padding is
+  /// `EdgeInsets.symmetric(horizontal: 16.0)`.
   final EdgeInsetsGeometry? tilePadding;
 
   /// Specifies the alignment of [children], which are arranged in a column when
   /// the tile is expanded.
   ///
   /// The internals of the expanded tile make use of a [Column] widget for
-  /// [children], and [Align] widget to align the column. The `expandedAlignment`
-  /// parameter is passed directly into the [Align].
+  /// [children], and [Align] widget to align the column. The
+  /// `expandedAlignment` parameter is passed directly into the [Align].
   ///
   /// Modifying this property controls the alignment of the column within the
   /// expanded tile, not the alignment of [children] widgets within the column.
   /// To align each child within [children], see [expandedCrossAxisAlignment].
   ///
-  /// The width of the column is the width of the widest child widget in [children].
+  /// The width of the column is the width of the widest child widget in
+  /// [children].
   ///
-  /// When the value is null, the value of `expandedAlignment` is [Alignment.center].
+  /// When the value is null, the value of `expandedAlignment` is
+  /// [Alignment.center].
   final Alignment? expandedAlignment;
 
-  /// Specifies the alignment of each child within [children] when the tile is expanded.
+  /// Specifies the alignment of each child within [children] when the tile is
+  /// expanded.
   ///
   /// The internals of the expanded tile make use of a [Column] widget for
-  /// [children], and the `crossAxisAlignment` parameter is passed directly into the [Column].
+  /// [children], and the `crossAxisAlignment` parameter is passed directly into
+  /// the [Column].
   ///
   /// Modifying this property controls the cross axis alignment of each child
   /// within its [Column]. Note that the width of the [Column] that houses
-  /// [children] will be the same as the widest child widget in [children]. It is
-  /// not necessarily the width of [Column] is equal to the width of expanded tile.
+  /// [children] will be the same as the widest child widget in [children]. It
+  /// is not necessarily the width of [Column] is equal to the width of expanded
+  /// tile.
   ///
-  /// To align the [Column] along the expanded tile, use the [expandedAlignment] property
-  /// instead.
+  /// To align the [Column] along the expanded tile, use the [expandedAlignment]
+  /// property instead.
   ///
-  /// When the value is null, the value of `expandedCrossAxisAlignment` is [CrossAxisAlignment.center].
+  /// When the value is null, the value of `expandedCrossAxisAlignment` is
+  /// [CrossAxisAlignment.center].
   final CrossAxisAlignment? expandedCrossAxisAlignment;
 
   /// Specifies padding for [children].
   ///
-  /// When the value is null, the value of `childrenPadding` is [EdgeInsets.zero].
+  /// When the value is null, the value of `childrenPadding` is
+  /// [EdgeInsets.zero].
   final EdgeInsetsGeometry? childrenPadding;
 
   @override
@@ -143,8 +154,8 @@ class CustomExpansionTile extends StatefulWidget {
 
 class _ExpansionTileState extends State<CustomExpansionTile>
     with SingleTickerProviderStateMixin {
-  // static final Animatable<double> _easeOutTween =
-  //     CurveTween(curve: Curves.easeOut);
+  // static final Animatable<double> _easeOutTween = CurveTween(curve:
+  //     Curves.easeOut);
   static final Animatable<double> _easeInTween =
       CurveTween(curve: Curves.easeIn);
   static final Animatable<double> _halfTween =
@@ -203,46 +214,45 @@ class _ExpansionTileState extends State<CustomExpansionTile>
       }
       PageStorage.of(context)?.writeState(context, _isExpanded);
     });
-    if (widget.onExpansionChanged != null)
+    if (widget.onExpansionChanged != null) {
       widget.onExpansionChanged!(_isExpanded);
+    }
   }
 
   Widget _buildChildren(BuildContext context, Widget? child) {
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTileTheme.merge(
-            iconColor: _iconColor.value,
-            textColor: _headerColor.value,
-            child: ListTile(
-              onTap: _handleTap,
-              contentPadding: widget.tilePadding,
-              leading: widget.leading,
-              title: widget.title,
-              subtitle: widget.subtitle,
-              trailing: widget.trailing ??
-                  RotationTransition(
-                    turns: _iconTurns,
-                    child: const Icon(Icons.expand_more),
-                  ),
-            ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        ListTileTheme.merge(
+          iconColor: _iconColor.value,
+          textColor: _headerColor.value,
+          child: ListTile(
+            onTap: _handleTap,
+            contentPadding: widget.tilePadding,
+            leading: widget.leading,
+            title: widget.title,
+            subtitle: widget.subtitle,
+            trailing: widget.trailing ??
+                RotationTransition(
+                  turns: _iconTurns,
+                  child: const Icon(Icons.expand_more),
+                ),
           ),
-          ClipRect(
-            child: Align(
-              alignment: widget.expandedAlignment ?? Alignment.center,
-              heightFactor: _heightFactor.value,
-              child: child,
-            ),
+        ),
+        ClipRect(
+          child: Align(
+            alignment: widget.expandedAlignment ?? Alignment.center,
+            heightFactor: _heightFactor.value,
+            child: child,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   @override
   void didChangeDependencies() {
-    final ThemeData theme = Theme.of(context);
+    final theme = Theme.of(context);
     _borderColorTween.end = theme.dividerColor;
     _headerColorTween
       ..begin = theme.textTheme.subtitle1!.color
@@ -256,8 +266,8 @@ class _ExpansionTileState extends State<CustomExpansionTile>
 
   @override
   Widget build(BuildContext context) {
-    final bool closed = !_isExpanded && _controller.isDismissed;
-    final bool shouldRemoveChildren = closed && !widget.maintainState;
+    final closed = !_isExpanded && _controller.isDismissed;
+    final shouldRemoveChildren = closed && !widget.maintainState;
 
     final Widget result = Offstage(
         offstage: closed,

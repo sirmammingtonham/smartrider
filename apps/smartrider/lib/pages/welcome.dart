@@ -107,22 +107,12 @@ class _SignupUIState extends State<SignupUI> {
 
   /*
 
-  Widget logo() {
-    return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: 220,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-                child: Container(
-              child: Align(
-                child: Container(
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.white),
-                  width: 150,
-                  height: 150,
+  Widget logo() {return Padding(padding: EdgeInsets.only(top:
+    MediaQuery.of(context).size.height * 0.15), child: Container(width:
+    MediaQuery.of(context).size.width, height: 220, child: Stack(children:
+    <Widget>[Positioned(child: Container(child: Align(child:
+    Container(decoration: BoxDecoration(shape: BoxShape.circle, color:
+    Colors.white), width: 150, height: 150,
                 ),
               ),
               height: 154,
@@ -222,8 +212,7 @@ class _SignupUIState extends State<SignupUI> {
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
-              color: Theme.of(context)
-                  .errorColor, // literally nothing, gave it errColor because its called 'errorBorder'
+              color: Theme.of(context).errorColor,
               width: 2,
             ),
           ),
@@ -271,9 +260,8 @@ class _SignupUIState extends State<SignupUI> {
       Color fillColor, Color textColor, void Function() function) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-          //highlightElevation: 0.0,
-          // splashColor: splashColor,
-          // highlightColor: highlightColor,
+          //highlightElevation: 0.0, splashColor: splashColor, highlightColor:
+          // highlightColor,
           elevation: 0.0,
           primary: fillColor,
           shape: RoundedRectangleBorder(
@@ -296,10 +284,8 @@ class _SignupUIState extends State<SignupUI> {
             _emailController.text, _passwordController.text, role),
       );
 
-      // _email = _emailController.text;
-      // _password = _passwordController.text;
-      // _emailController.clear();
-      // _passwordController.clear();
+      // _email = _emailController.text; _password = _passwordController.text;
+      // _emailController.clear(); _passwordController.clear();
     }
   }
 
@@ -314,12 +300,9 @@ class _SignupUIState extends State<SignupUI> {
             _emailController.text, _passwordController.text, role),
       );
 
-      // _email = _emailController.text;
-      // _password = _passwordController.text;
-      // _rin = _rinController.text;
-      // _emailController.clear();
-      // _passwordController.clear();
-      // _rinController.clear();
+      // _email = _emailController.text; _password = _passwordController.text;
+      // _rin = _rinController.text; _emailController.clear();
+      // _passwordController.clear(); _rinController.clear();
     }
   }
 
@@ -381,8 +364,8 @@ class _SignupUIState extends State<SignupUI> {
                               icon: const Icon(
                                 Icons.keyboard_arrow_down,
                                 size: 40.0,
-                                // color: Theme.of(context)
-                                //     .accentColor, // back (X) icon color
+                                // color: Theme.of(context) .accentColor, //
+                                //     back (X) icon color
                               ),
                             )))
                   ],
@@ -399,14 +382,10 @@ class _SignupUIState extends State<SignupUI> {
                         child: Stack(
                           children: const <Widget>[
                             /*
-                                Positioned(
-                                child: Align(
-                                  child: Container(
-                                    width: 130,
-                                    height: 130,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Theme.of(context).accentColor),
+                                Positioned(child: Align(child: Container(width:
+                                130, height: 130, decoration:
+                                BoxDecoration(shape: BoxShape.circle, color:
+                                Theme.of(context).accentColor),
                                   ),
                                   alignment: Alignment.center,
                                 ),
@@ -519,14 +498,10 @@ class _SignupUIState extends State<SignupUI> {
                       child: Stack(
                         children: const <Widget>[
                           /*
-                            Positioned(
-                              child: Align(
-                                child: Container(
-                                  width: 130,
-                                  height: 130,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Theme.of(context).primaryColor),
+                            Positioned(child: Align(child: Container(width: 130,
+                              height: 130, decoration: BoxDecoration(shape:
+                              BoxShape.circle, color:
+                              Theme.of(context).primaryColor),
                                 ),
                                 alignment: Alignment.center,
                               ),
@@ -545,17 +520,10 @@ class _SignupUIState extends State<SignupUI> {
                             ),
                           ),
                           /*
-                            Positioned(
-                              child: Align(
-                                child: Container(
-                                  padding: EdgeInsets.only(top: 55, left: 20),
-                                  width: 130,
-                                  child: Text(
-                                    'ster',
-                                    style: TextStyle(
-                                      fontSize: 60,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                            Positioned(child: Align(child: Container(padding:
+                              EdgeInsets.only(top: 55, left: 20), width: 130,
+                              child: Text('ster', style: TextStyle(fontSize: 60,
+                              fontWeight: FontWeight.bold, color: Colors.white,
                                     ),
                                   ),
                                 ),
@@ -566,11 +534,8 @@ class _SignupUIState extends State<SignupUI> {
                         ],
                       ),
                     ),
-                    /*     === DEPRECIATED ===
-                      Padding(
-                        padding: EdgeInsets.only(
-                          bottom: 20,
-                          top: 25,
+                    /*     === DEPRECIATED === Padding(padding:
+                      EdgeInsets.only(bottom: 20, top: 25,
                         ),
                         child: _input(Icon(Icons.contacts), 'RIN',
                             _rinController, false, _rinValidation),
@@ -634,11 +599,9 @@ class _SignupUIState extends State<SignupUI> {
     /*
       Area to implement bypass if auto signed in
 
-      return Scaffold(
-        body: BlocListener<AuthenticationBloc, AuthenticationState>(
-            listener: (context, state) {
-      if (state is AuthenticationSuccess) {
-        return homePage;
+      return Scaffold(body: BlocListener<AuthenticationBloc,
+        AuthenticationState>(listener: (context, state) {if (state is
+        AuthenticationSuccess) {return homePage;
       }})
 
     */
@@ -647,22 +610,16 @@ class _SignupUIState extends State<SignupUI> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         key: _scaffoldKey,
-        // backgroundColor:
-        //     Theme.of(context).primaryColor, // main welcome screen color
+        // backgroundColor: Theme.of(context).primaryColor, // main welcome
+        //     screen color
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             logo(),
             /*
-            Padding(
-                padding: EdgeInsets.only(top: 15),
-                child: Align(
-                  child: Text(
-                    'SMARTRIDER',
-                    style: TextStyle(
-                      fontSize: 45,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).accentColor,
+            Padding(padding: EdgeInsets.only(top: 15), child: Align(child:
+                Text('SMARTRIDER', style: TextStyle(fontSize: 45, fontWeight:
+                FontWeight.bold, color: Theme.of(context).accentColor,
                     ),
                   ),
                   alignment: Alignment.center,
@@ -696,18 +653,16 @@ class _SignupUIState extends State<SignupUI> {
             ),
 
             /*
-            Padding(
-              child: Container(
-                child: OutlineButton(
-                  highlightedBorderColor: Theme.of(context).accentColor,
-                  borderSide: BorderSide(
-                      color: Theme.of(context).accentColor, width: 2.0), //color of border on register button
-                  highlightElevation: 0.0,
-                  splashColor: Theme.of(context).primaryColorDark, // splash when tapped color
-                  highlightColor: Theme.of(context).primaryColorDark, // register button on press and hold
-                  color: Theme.of(context).accentColor, // color of: idk
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+            Padding(child: Container(child:
+              OutlineButton(highlightedBorderColor:
+              Theme.of(context).accentColor, borderSide: BorderSide(color:
+              Theme.of(context).accentColor, width: 2.0), //color of border on
+              register button highlightElevation: 0.0, splashColor:
+              Theme.of(context).primaryColorDark, // splash when tapped color
+              highlightColor: Theme.of(context).primaryColorDark, // register
+              button on press and hold color: Theme.of(context).accentColor, //
+              color of: idk shape: RoundedRectangleBorder(borderRadius:
+              BorderRadius.circular(30.0),
                   ),
                   child: Text(
                     'REGISTER',

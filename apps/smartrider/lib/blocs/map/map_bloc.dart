@@ -38,7 +38,6 @@ import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/models/saferide/position_data.dart';
 // import 'package:shared/util/math_util.dart';
 import 'package:shared/util/spherical_utils.dart';
-import 'package:very_good_analysis/very_good_analysis.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -220,7 +219,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
         break;
       default:
-        yield const MapErrorState(error: SRError.BLOC_ERROR);
+        yield const MapErrorState(error: SRError.blocErorr);
     }
   }
 
@@ -243,7 +242,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _shuttleRoutes = await shuttleRepo.getRoutes;
           // try to fetch, then check if shuttle repo is connected
           if (!shuttleRepo.isConnected) {
-            yield const MapErrorState(error: SRError.NETWORK_ERROR);
+            yield const MapErrorState(error: SRError.networkError);
             return;
           }
           _shuttleStops = await shuttleRepo.getStops;
@@ -371,7 +370,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         {
           _pickupVehicleId =
               (saferideState as SaferidePickingUpState).vehicleId;
-//TODO: we should do something like focus the map on the pickup vehicle as it drives to you
+//TODO: we should do something like focus the map on the pickup vehicle
         }
         break;
       case SaferideDroppingOffState:
@@ -444,23 +443,23 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final loc = LatLng(currentLocation.latitude, currentLocation.longitude);
 
     if (rpiBounds.contains(loc)) {
-      unawaited(_controller!.animateCamera(
+      await _controller!.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: loc,
             zoom: zoom,
           ),
         ),
-      ));
+      );
     } else {
-      unawaited(_controller!.animateCamera(
+      await _controller!.animateCamera(
         CameraUpdate.newCameraPosition(
           const CameraPosition(
             target: LatLng(42.729280, -73.679056),
             zoom: 15.0,
           ),
         ),
-      ));
+      );
     }
   }
 
@@ -519,7 +518,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     for (final id in [87, 286, 289, 288]) {
       _updateIcons[id] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
           'assets/map_icons/marker_vehicle.svg',
-          color: BUS_COLORS[id.toString()]!.lighten(0.15),
+          color: busColors[id.toString()]!.lighten(0.15),
           size: vehicleUpdateSize);
     }
 

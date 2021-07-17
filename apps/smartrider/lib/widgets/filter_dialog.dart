@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class FilterDialog extends StatefulWidget {
+  const FilterDialog({Key? key, this.stops, this.controller}) : super(key: key);
   final List<List<String>>? stops;
   final TextEditingController? controller;
-  // ValueChanged<String> updateTime, updateStop;
-  FilterDialog({Key? key, this.stops, this.controller}) : super(key: key);
+
   @override
   _FilterDialogState createState() => _FilterDialogState();
 }
@@ -56,8 +56,8 @@ class _FilterDialogState extends State<FilterDialog> {
                                 onSubmitted: (query) {
                                   Navigator.pop(context);
                                 },
-                                decoration:
-                                    const InputDecoration(hintText: 'Filter Results'),
+                                decoration: const InputDecoration(
+                                    hintText: 'Filter Results'),
                               ),
                             )),
                             IconButton(
@@ -78,11 +78,12 @@ class _FilterDialogState extends State<FilterDialog> {
                           shrinkWrap: true,
                           itemCount: widget.stops!.length + 1,
                           itemBuilder: (context, index) {
-                            // hack that allows us to show the last list item without clipping
+                            // hack that allows us to show the last list item
+                            // without clipping
                             if (index == widget.stops!.length) {
                               return const SizedBox(height: 20);
                             }
-                            String stopName = widget.stops![index][0];
+                            final stopName = widget.stops![index][0];
                             return ListTile(
                               leading: const Icon(Icons.departure_board),
                               title: Text(stopName),

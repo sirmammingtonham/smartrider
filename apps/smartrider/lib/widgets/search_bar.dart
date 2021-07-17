@@ -29,14 +29,16 @@ import 'package:sizer/sizer.dart';
 String computeUsername(String name) {
   //compute initials to be displayed on search bar
   var counter = 1;
-  while (double.tryParse(name[name.indexOf('@') - counter]) != null)
+  while (double.tryParse(name[name.indexOf('@') - counter]) != null) {
     counter += 1;
+  }
 
   return (name[name.indexOf('@') - counter] + name[0]).toUpperCase();
 }
 
 class SearchBar extends StatefulWidget {
-  SearchBar();
+  const SearchBar({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => SearchBarState();
 }
@@ -45,10 +47,10 @@ late String username;
 String? email;
 
 class SearchBarState extends State<SearchBar> {
+  SearchBarState();
   String? name;
   String? role;
-  final places = GoogleMapsPlaces(apiKey: GOOGLE_API_KEY);
-  SearchBarState();
+  final places = GoogleMapsPlaces(apiKey: googleApiKey);
 
   @override
   void initState() {
@@ -57,7 +59,7 @@ class SearchBarState extends State<SearchBar> {
 
   void _showAutocomplete(String message, {required bool isPickup}) async {
     // TODO: rework this to be less hardcoded...
-    showDialog<Widget>(
+    await showDialog<Widget>(
         context: context,
         builder: (context) {
           return Align(
@@ -77,7 +79,9 @@ class SearchBarState extends State<SearchBar> {
                             contentPadding: const EdgeInsets.only(left: 10),
                             hintText: message)),
                     suggestionsCallback: (pattern) async {
-                      if (pattern.isEmpty) return const Iterable<Prediction>.empty();
+                      if (pattern.isEmpty) {
+                        return const Iterable<Prediction>.empty();
+                      }
                       return (await places.autocomplete(pattern,
                               location:
                                   Location(lat: 42.729980, lng: -73.676682),
@@ -90,7 +94,8 @@ class SearchBarState extends State<SearchBar> {
                       return ListTile(
                         leading: const Icon(Icons.location_on),
                         title: Text(suggestion.description!),
-                        // subtitle: Text('${suggestion.distanceMeters!} m away'),
+                        // subtitle: Text('${suggestion.distanceMeters!} m
+                        // away'),
                       );
                     },
                     onSuggestionSelected: (Prediction suggestion) {
@@ -160,24 +165,25 @@ class SearchBarState extends State<SearchBar> {
             children: <Widget>[
               Showcase(
                   key: showcaseSettings,
-                  description: SETTINGS_SHOWCASE_MESSAGE,
+                  description: settingsShowcaseMessage,
                   shapeBorder: const RoundedRectangleBorder(),
                   child: IconButton(
-                    icon: const Icon(SmartriderIcons.Settings),
+                    icon: const Icon(SmartriderIcons.settingsIcon),
                     onPressed: () {
                       Navigator.push<SettingsPage>(context,
                           MaterialPageRoute(builder: (context) {
-                        return SettingsPage();
+                        return const SettingsPage();
                       }));
                     },
                   )),
               Showcase(
                 key: showcaseSearch,
-                description: SEARCHBAR_SHOWCASE_MESSAGE,
+                description: searchbarShowcaseMessage,
                 shapeBorder: const RoundedRectangleBorder(),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width - 150,
-                  // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
+                  // creates the autocomplete field (requires strings.dart in
+                  // the utils folder to contain the api key)
                   child: TypeAheadField(
                     hideOnLoading: true,
                     textFieldConfiguration: const TextFieldConfiguration(
@@ -186,7 +192,9 @@ class SearchBarState extends State<SearchBar> {
                             border: OutlineInputBorder(),
                             hintText: 'Need a safe ride?')),
                     suggestionsCallback: (pattern) async {
-                      if (pattern.isEmpty) return const Iterable<Prediction>.empty();
+                      if (pattern.isEmpty) {
+                        return const Iterable<Prediction>.empty();
+                      }
                       return (await places.autocomplete(pattern,
                               location:
                                   Location(lat: 42.729980, lng: -73.676682),
@@ -199,7 +207,8 @@ class SearchBarState extends State<SearchBar> {
                       return ListTile(
                         leading: const Icon(Icons.location_on),
                         title: Text(suggestion.description!),
-                        // subtitle: Text('${suggestion.distanceMeters!} m away'),
+                        // subtitle: Text('${suggestion.distanceMeters!} m
+                        // away'),
                       );
                     },
                     onSuggestionSelected: (Prediction suggestion) {
@@ -212,13 +221,14 @@ class SearchBarState extends State<SearchBar> {
               ),
               Showcase(
                 key: showcaseProfile,
-                description: PROFILE_SHOWCASE_MESSAGE,
+                description: profileShowcaseMessage,
                 shapeBorder: const CircleBorder(),
                 child: CircleAvatar(
                   backgroundColor: Theme.of(context).buttonColor,
                   child: IconButton(
                     icon: Text(computeUsername(name!),
-                        style: const TextStyle(fontSize: 15, color: Colors.white70)),
+                        style: const TextStyle(
+                            fontSize: 15, color: Colors.white70)),
                     onPressed: () {
                       Navigator.push<ProfilePage>(
                           context,
@@ -250,9 +260,9 @@ class SearchBarState extends State<SearchBar> {
             elevation: 6.0,
             child: Column(mainAxisSize: MainAxisSize.max, children: [
               ListTile(
-                leading: SizedBox(
+                leading: const SizedBox(
                   height: double.infinity,
-                  child: const Icon(Icons.add_location_alt_rounded),
+                  child: Icon(Icons.add_location_alt_rounded),
                 ),
                 title: Text(saferideState.pickupDescription),
                 subtitle: const Text('Pickup location'),
@@ -262,9 +272,9 @@ class SearchBarState extends State<SearchBar> {
               ),
               const Divider(height: 0),
               ListTile(
-                leading: SizedBox(
+                leading: const SizedBox(
                     height: double.infinity,
-                    child: const Icon(Icons.wrong_location_rounded)),
+                    child: Icon(Icons.wrong_location_rounded)),
                 title: Text(saferideState.dropDescription),
                 subtitle: const Text('Dropoff location'),
                 trailing: IconButton(

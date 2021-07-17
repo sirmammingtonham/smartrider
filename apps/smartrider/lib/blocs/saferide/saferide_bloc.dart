@@ -18,8 +18,8 @@ import 'package:shared/models/saferide/order.dart';
 part 'saferide_event.dart';
 part 'saferide_state.dart';
 
-// BIG TODO: use shared prefs or look up in the database if the user has called a ride
-// so they dont reset when they leave and reopen the app
+// BIG TODO: use shared prefs or look up in the database if the user has called
+// a ride so they dont reset when they leave and reopen the app
 class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   SaferideBloc(
       {required this.prefsBloc,
@@ -46,7 +46,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     });
   }
 
-  final places = GoogleMapsPlaces(apiKey: GOOGLE_API_KEY);
+  final places = GoogleMapsPlaces(apiKey: googleApiKey);
   final PrefsBloc prefsBloc;
   final SaferideRepository saferideRepo;
   final AuthRepository authRepo;
@@ -119,8 +119,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     }
   }
 
-  /// attempts to cancel saferide
-  /// true if successful, false if fail
+  /// attempts to cancel saferide true if successful, false if fail
   Stream<SaferideState> _mapCancelToState(
       SaferideUserCancelledEvent event) async* {
     await saferideRepo.cancelOrder();
@@ -237,8 +236,8 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
           pickupDetails!.result.geometry!.location.lng);
     }
 
-    /// if they didn't enter a pickup location,
-    ///we just use their current location
+    /// if they didn't enter a pickup location, we just use their current
+    ///location
     if (pickupDetails == null) {
       try {
         final currentLocation = await Geolocator.getCurrentPosition(

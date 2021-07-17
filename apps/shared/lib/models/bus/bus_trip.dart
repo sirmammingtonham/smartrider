@@ -1,17 +1,6 @@
 /// Bus Trip model:
 /// Contains data for individual trips
 class BusTrip {
-  String? tripId;
-  String? routeId;
-  String? serviceId;
-  String? tripHeadsign;
-  Null tripShortName;
-  int? directionId;
-  Null blockId;
-  String? shapeId;
-  int? wheelchairAccessible;
-  int? bikesAllowed;
-
   BusTrip(
       {this.tripId,
       this.routeId,
@@ -29,13 +18,24 @@ class BusTrip {
     routeId = json['route_id'];
     serviceId = json['service_id'];
     tripHeadsign = json['trip_headsign'];
-    tripShortName = json['trip_short_name'];
+    // tripShortName = json['trip_short_name'];
     directionId = json['direction_id'];
-    blockId = json['block_id'];
+    // blockId = json['block_id'];
     shapeId = json['shape_id'];
     wheelchairAccessible = json['wheelchair_accessible'];
     bikesAllowed = json['bikes_allowed'];
   }
+
+  String? tripId;
+  String? routeId;
+  String? serviceId;
+  String? tripHeadsign;
+  void tripShortName;
+  int? directionId;
+  void blockId;
+  String? shapeId;
+  int? wheelchairAccessible;
+  int? bikesAllowed;
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
@@ -43,9 +43,9 @@ class BusTrip {
     data['route_id'] = routeId;
     data['service_id'] = serviceId;
     data['trip_headsign'] = tripHeadsign;
-    data['trip_short_name'] = tripShortName;
+    // data['trip_short_name'] = tripShortName;
     data['direction_id'] = directionId;
-    data['block_id'] = blockId;
+    // data['block_id'] = blockId;
     data['shape_id'] = shapeId;
     data['wheelchair_accessible'] = wheelchairAccessible;
     data['bikes_allowed'] = bikesAllowed;

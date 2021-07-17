@@ -15,7 +15,8 @@ class SaferideProvider {
 
   // Map<String?, Driver>? _driversMap;
 
-  //fill in the fields specified in order.dart with the orders collection in the firebase
+  // fill in the fields specified in order.dart
+  // with the orders collection in the firebase
   Future<Stream<DocumentSnapshot>> createOrder(
       {required DocumentReference user,
       required String pickupAddress,

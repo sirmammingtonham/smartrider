@@ -6,11 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:smartrider/widgets/search_bar.dart';
 
-// import 'package:firebase_storage/firebase_storage.dart'; // For File Upload To Firestore
-// import 'package:image_picker/image_picker.dart'; // For Image Picker
-// import 'package:path/path.dart' as Path;
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:url_launcher/url_launcher.dart';
+// import 'package:firebase_storage/firebase_storage.dart'; // For File Upload
+// To Firestore import 'package:image_picker/image_picker.dart'; // For Image
+// Picker import 'package:path/path.dart' as Path; import
+// 'package:cloud_firestore/cloud_firestore.dart'; import
+// 'package:url_launcher/url_launcher.dart';
 
 // import 'dart:io';
 import 'package:smartrider/pages/issue_request.dart';
@@ -46,58 +46,45 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    //This is for the futre
-    // File _image; // Used only if you need a single picture
+    //This is for the futre File _image; // Used only if you need a single
+    // picture
 
-    // Future<String> uploadFile(File _image) async {
-    //   StorageReference storageReference = FirebaseStorage.instance
-    //       .ref()
-    //       .child('profiles/${Path.basename(_image.path)}');
-    //   StorageUploadTask uploadTask = storageReference.putFile(_image);
-    //   await uploadTask.onComplete;
-    //   print('File Uploaded');
-    //   String returnURL;
-    //   await storageReference.getDownloadURL().then((fileURL) {
-    //     returnURL = fileURL;
+    // Future<String> uploadFile(File _image) async {StorageReference
+    //   storageReference = FirebaseStorage.instance .ref()
+    //   .child('profiles/${Path.basename(_image.path)}'); StorageUploadTask
+    //   uploadTask = storageReference.putFile(_image); await
+    //   uploadTask.onComplete; print('File Uploaded'); String returnURL; await
+    //   storageReference.getDownloadURL().then((fileURL) {returnURL = fileURL;
     //   });
     //   return returnURL;
     // }
 
-    // Future getImage(bool gallery) async {
-    //   ImagePicker picker = ImagePicker();
-    //   PickedFile pickedFile;
-    //   // Let user select photo from gallery
-    //   if (gallery) {
-    //     pickedFile = await picker.getImage(
-    //       source: ImageSource.gallery,
+    // Future getImage(bool gallery) async {ImagePicker picker = ImagePicker();
+    //   PickedFile pickedFile; // Let user select photo from gallery if
+    //   (gallery) {pickedFile = await picker.getImage(source:
+    //   ImageSource.gallery,
     //     );
     //   }
-    //   // Otherwise open camera to get new photo
-    //   else {
-    //     pickedFile = await picker.getImage(
-    //       source: ImageSource.camera,
+    //   // Otherwise open camera to get new photo else {pickedFile = await
+    //   picker.getImage(source: ImageSource.camera,
     //     );
     //   }
 
-    //   setState(() {
-    //     if (pickedFile != null) {
-    //       _image =
-    //           File(pickedFile.path); // Use if you only need a single picture
-    //       uploadFile(_image);
-    //     } else {
-    //       print('No image selected.');
+    //   setState(() {if (pickedFile != null) {_image = File(pickedFile.path);
+    //     // Use if you only need a single picture uploadFile(_image);} else
+    //     {print('No image selected.');
     //     }
     //   });
     // }
 
-    // FOR THE FUTURE: The easiest way so far to load the background image as
-    // a URL. For now, I have hardcoded a profile picture just for the value.
-    // The user's profile picture should be stored in FireBase. Then, after it
-    // is stored, whenever the profile page is clicked, there should be a call
-    // to the database with the link of the profile pic. Replace _profilePic
-    // with that result.
+    // FOR THE FUTURE: The easiest way so far to load the background image as a
+    // URL. For now, I have hardcoded a profile picture just for the value. The
+    // user's profile picture should be stored in FireBase. Then, after it is
+    // stored, whenever the profile page is clicked, there should be a call to
+    // the database with the link of the profile pic. Replace _profilePic with
+    // that result.
 
-    var _profilePic = '';
+    const _profilePic = '';
     return MaterialApp(
         home: Scaffold(
           body: Column(
@@ -122,7 +109,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 // Adds space between BACK button and SIGN OUT button.
                 const Padding(
-                  /// WARNING: padding should be fixed to adjust to screen width.
+                  /// WARNING: padding should be fixed to adjust to screen
+                  /// width.
                   padding: EdgeInsets.symmetric(horizontal: 100.0),
                 ),
                 // Sign Out button
@@ -177,7 +165,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: CircleAvatar(
                       radius: 60,
                       backgroundColor: Theme.of(context).backgroundColor,
-                      backgroundImage: NetworkImage(_profilePic),
+                      backgroundImage: const NetworkImage(_profilePic),
                       child: (_profilePic == '')
                           ? Text(username,
                               style: TextStyle(
@@ -195,8 +183,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 180,
                   child: ListView(
                     // Keeps list from scrolling (if more attributes are added,
-                    // we should make the profile page scrollable and reveal
-                    // the action buttons as the user scrolls down)
+                    // we should make the profile page scrollable and reveal the
+                    // action buttons as the user scrolls down)
                     padding: const EdgeInsets.symmetric(vertical: 0.0),
                     children: <Widget>[
                       // Describes the role
@@ -230,7 +218,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       AuthenticationLoggedOut(),
                     );
                     Navigator.of(context).pop();
-                    // Will show a small pop up to tell users the email has been sent
+                    // Will show a small pop up to tell users the email has been
+                    // sent
                     showDialog<AlertDialog>(
                       context: context,
                       barrierDismissible: true, // user must tap button!
@@ -253,11 +242,11 @@ class _ProfilePageState extends State<ProfilePage> {
               // Report Bug Button
               ElevatedButton(
                   onPressed: () {
-                    // launch(
-                    //'https://github.com/sirmammingtonham/smartrider/issues/new?assignees=&labels=bug&template=bug-report---.md&title=%F0%9F%90%9B+Bug+Report%3A+%5BIssue+Title%5D');
+                    // launch('https://github.com/sirmammingtonham/smartrider/issues/new?assignees=&labels=bug&template=bug-report---.md&title=%F0%9F%90%9B+Bug+Report%3A+%5BIssue+Title%5D');
                     Navigator.push<IssueRequest>(
                       context,
-                      MaterialPageRoute(builder: (context) => IssueRequest()),
+                      MaterialPageRoute(
+                          builder: (context) => const IssueRequest()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -271,7 +260,8 @@ class _ProfilePageState extends State<ProfilePage> {
               // Delete Account Button
               ElevatedButton(
                   onPressed: () {
-                    //Show a box to ask user if they really want to delete their account
+                    //Show a box to ask user if they really want to delete their
+                    //account
                     showDialog<AlertDialog>(
                       context: context,
                       barrierDismissible:
@@ -283,7 +273,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           actions: [
                             TextButton(
                                 onPressed: () {
-                                  //If the user chooses yes, we will call the authentification delete function
+                                  //If the user chooses yes, we will call the
+                                  //authentification delete function
                                   BlocProvider.of<AuthenticationBloc>(context)
                                       .add(
                                     AuthenticationDelete(),

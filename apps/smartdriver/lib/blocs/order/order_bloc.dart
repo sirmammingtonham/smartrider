@@ -13,21 +13,26 @@ part 'order_exception.dart';
 part 'order_state.dart';
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
+  OrderBloc(
+      {required this.authenticationRepository, required this.orderRepository})
+      : super(const OrderWaitingState()) {
+    orderSubscription = orderRepository.orderStream.listen(orderListener);
+  }
   final AuthenticationRepository authenticationRepository;
   final OrderRepository orderRepository;
   late final StreamSubscription orderSubscription;
 
-  OrderBloc(
-      {required this.authenticationRepository, required this.orderRepository})
-      : super(OrderWaitingState()) {
-    orderSubscription = orderRepository.orderStream.listen(orderListener);
+  @override
+  Future<void> close() async {
+    await orderSubscription.cancel();
+    await super.close();
   }
 
   /// listens to changes in order collection and updates the state
   Future<void> orderListener(
       QuerySnapshot<Map<String, dynamic>> collectionSnapshot) async {
     if (state is OrderWaitingState) {
-      Iterable<Order> orders = collectionSnapshot.docs
+      final orders = collectionSnapshot.docs
           .map((orderSnap) => Order.fromSnapshot(orderSnap));
       if (orders.isNotEmpty) {
         add(OrderQueueUpdateEvent(latest: orders.first, queue: orders.skip(1)));
@@ -38,9 +43,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   Future<void> updateAvailibility(bool available) async {
     if (available && state is OrderWaitingState) {
       // only set state to available if we don't already have an accepted order
-      authenticationRepository.setAvailibility(true);
+      await authenticationRepository.setAvailibility(true);
     } else if (!available) {
-      authenticationRepository.setAvailibility(false);
+      await authenticationRepository.setAvailibility(false);
     }
   }
 
@@ -79,7 +84,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
   Stream<OrderState> _mapQueueUpdateToState(
       OrderQueueUpdateEvent event) async* {
-    SRUser rider = SRUser.fromSnapshot(await event.latest.rider.get());
+    final rider = SRUser.fromSnapshot(await event.latest.rider.get());
     yield OrderWaitingState(
         latest: event.latest, latestRider: rider, queue: event.queue);
   }
@@ -109,19 +114,19 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
   Stream<OrderState> _mapOrderUserCancelledToState(
       OrderUserCancelledEvent event) async* {
-    yield OrderErrorState(error: SRError.USER_CANCELLED_ERROR);
-    yield OrderWaitingState();
+    yield const OrderErrorState(error: SRError.userCancelledError);
+    yield const OrderWaitingState();
   }
 
   Stream<OrderState> _mapOrderDriverCancelledToState(
       OrderDriverCancelledEvent event) async* {
     await orderRepository.cancelOrder(authenticationRepository.currentDriver!,
         event.orderRef, event.cancellationReason);
-    yield OrderWaitingState();
+    yield const OrderWaitingState();
   }
 
   Stream<OrderState> _mapOrderErrorToState(OrderErrorEvent event) async* {
     yield OrderErrorState(error: event.error);
-    yield OrderWaitingState();
+    yield const OrderWaitingState();
   }
 }

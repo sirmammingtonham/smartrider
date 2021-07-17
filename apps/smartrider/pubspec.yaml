@@ -68,10 +68,8 @@ dependencies:
   equatable: ^2.0.2
   shared_preferences: ^2.0.6
 
-  #linting
-  very_good_analysis: ^2.1.0
-
 dev_dependencies:
+  very_good_analysis: ^2.1.0
   dependency_validator: ^3.0.0
   flutter_test:
     sdk: flutter

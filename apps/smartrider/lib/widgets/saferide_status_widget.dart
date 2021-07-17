@@ -14,7 +14,7 @@ import 'package:shared/util/num_to_ordinal.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SaferideStatusWidget extends StatelessWidget {
-  const SaferideStatusWidget();
+  const SaferideStatusWidget({Key? key}) : super(key: key);
 
   /// widget when user is still selecting pickup/dropoff
   Widget _selectionWidget(BuildContext context, SaferideSelectingState state) =>
@@ -35,7 +35,8 @@ class SaferideStatusWidget extends StatelessWidget {
                       const SizedBox(height: 5),
                       Center(
                         child: Text(
-                          '${state.queuePosition + 1}${(state.queuePosition + 1).toOrdinal()} in line',
+                          '${state.queuePosition + 1}'
+                          '${(state.queuePosition + 1).toOrdinal()} in line',
                           style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -169,7 +170,7 @@ class SaferideStatusWidget extends StatelessWidget {
                         subtitle: const Text('Driver'),
                         trailing: const Icon(Icons.call),
                         onTap: () {
-                        launch('tel://${state.phoneNumber}');
+                          launch('tel://${state.phoneNumber}');
                         },
                       ),
                       const Divider(
@@ -177,8 +178,7 @@ class SaferideStatusWidget extends StatelessWidget {
                       ),
                       ListTile(
                         leading: const Icon(Icons.drive_eta),
-                        title: const Text(
-                            'TODO: replace with brand of car?'),
+                        title: const Text('TODO: replace with brand of car?'),
                         trailing: Text(state.licensePlate),
                       ),
                       ElevatedButton(

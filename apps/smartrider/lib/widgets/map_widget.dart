@@ -22,13 +22,14 @@ final LatLngBounds rpiBounds = LatLngBounds(
   northeast: const LatLng(42.751583, -73.616713),
 );
 
-final CameraPosition kInitialPosition = const CameraPosition(
+const CameraPosition kInitialPosition = CameraPosition(
   target: LatLng(42.729280, -73.679056),
   zoom: 15.0,
 );
 
 class SmartriderMap extends StatelessWidget {
-  const SmartriderMap();
+    const SmartriderMap({Key? key}) : super(key: key);
+
 
   /// the google map (background of stack)
   Widget map(BuildContext context, MapState state) => GoogleMap(
@@ -71,22 +72,22 @@ class SmartriderMap extends StatelessWidget {
         children: [
           ActionButton(
             tooltip: 'Bus View',
-            onPressed: () =>
-                mapBloc.add(const MapViewChangeEvent(newView: MapView.kBusView)),
+            onPressed: () => mapBloc
+                .add(const MapViewChangeEvent(newView: MapView.kBusView)),
             isSelected: mapBloc.mapView == MapView.kBusView,
             icon: const Icon(Icons.directions_bus),
           ),
           ActionButton(
             tooltip: 'Shuttle View',
-            onPressed: () =>
-                mapBloc.add(const MapViewChangeEvent(newView: MapView.kShuttleView)),
+            onPressed: () => mapBloc
+                .add(const MapViewChangeEvent(newView: MapView.kShuttleView)),
             isSelected: mapBloc.mapView == MapView.kShuttleView,
             icon: const Icon(Icons.airport_shuttle),
           ),
           ActionButton(
             tooltip: 'Saferide View',
-            onPressed: () =>
-                mapBloc.add(const MapViewChangeEvent(newView: MapView.kSaferideView)),
+            onPressed: () => mapBloc
+                .add(const MapViewChangeEvent(newView: MapView.kSaferideView)),
             isSelected: mapBloc.mapView == MapView.kSaferideView,
             icon: const Icon(Icons.local_taxi),
           ),
@@ -98,7 +99,7 @@ class SmartriderMap extends StatelessWidget {
   /// the button that focuses map to your location
   Widget locationButton(BuildContext context, SaferideState state) => Showcase(
         key: showcaseLocation,
-        description: LOCATION_BUTTON_SHOWCASE_MESSAGE,
+        description: locationButtonShowcaseMessage,
         shapeBorder: const CircleBorder(),
         child: FloatingActionButton(
           backgroundColor: Theme.of(context).brightness == Brightness.light
@@ -130,14 +131,14 @@ class SmartriderMap extends StatelessWidget {
           bottom: 350,
           child: Showcase(
               key: showcaseMap,
-              title: MAP_SHOWCASE_TITLE,
-              description: MAP_SHOWCASE_MESSAGE,
+              title: mapShowcaseTitle,
+              description: mapShowcaseMessage,
               child: const SizedBox(
                 height: 400,
                 width: 300,
               )),
         ),
-        Positioned(left: 20.0, bottom: 120.0, child: Legend()),
+        const Positioned(left: 20.0, bottom: 120.0, child: Legend()),
         Positioned(
             right: 20.0,
             bottom: state is SaferideSelectingState ? 240.0 : 190.0,
@@ -174,19 +175,15 @@ class SmartriderMap extends StatelessWidget {
               // TODO: crashlytics
               return mapStack(
                   state: saferideState,
-                  background: Container(
-                    child: Center(
-                      child: Text((mapState as MapErrorState).error.toString()),
-                    ),
+                  background: Center(
+                    child: Text((mapState as MapErrorState).error.toString()),
                   ),
                   viewFab: viewFab(context, Icons.layers),
                   locationButton: locationButton(context, saferideState));
             default:
               // TODO: crashlytics
-              return Container(
-                child: const Center(
-                  child: Text('ERROR IN MAP BLOC'),
-                ),
+              return const Center(
+                child: Text('ERROR IN MAP BLOC'),
               );
           }
         });

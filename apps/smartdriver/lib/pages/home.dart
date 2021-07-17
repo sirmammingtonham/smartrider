@@ -7,7 +7,7 @@ import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
 import 'package:smartdriver/blocs/order/order_bloc.dart';
 
 class Home extends StatefulWidget {
-  Home({Key? key, required this.title}) : super(key: key);
+  const Home({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -23,7 +23,7 @@ class _HomeState extends State<Home> {
           return Dialog(
               child: Card(
                   child: TextFormField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Reason for cancellation.',
                 hintText: 'Reason for cancellation.'),
@@ -42,12 +42,12 @@ class _HomeState extends State<Home> {
         child: Column(
           children: [
             SizedBox(height: 25.h),
-            Text(
+            const Text(
               'Waiting for First Rider',
               style: TextStyle(fontSize: 36),
             ),
             SizedBox(height: 8.h),
-            CircularProgressIndicator()
+            const CircularProgressIndicator()
           ],
         ),
       );
@@ -58,7 +58,8 @@ class _HomeState extends State<Home> {
         child: Column(
           children: [
             /// card showing the most recent order they can accept
-            /// might want to have the card be the only part that changes with bloc, idk
+            /// might want to have the card be the only
+            /// part that changes with bloc, idk
             Card(
               margin: EdgeInsets.symmetric(vertical: 3.h),
               elevation: 1,
@@ -67,31 +68,32 @@ class _HomeState extends State<Home> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Center(
+                    const Center(
                       child: Text(
                         'New Rider Waiting!',
                         style: TextStyle(
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 8,
                     ),
                     ListTile(
-                      visualDensity: VisualDensity(horizontal: 0, vertical: -4),
-                      leading: Icon(Icons.face),
+                      visualDensity:
+                          const VisualDensity(horizontal: 0, vertical: -4),
+                      leading: const Icon(Icons.face),
                       title: Text(state.latestRider!.name),
-                      subtitle: Text('Rider\'s name'),
+                      subtitle: const Text('Rider\'s name'),
                     ),
                     ListTile(
-                      leading: Icon(Icons.add_location_alt_rounded),
+                      leading: const Icon(Icons.add_location_alt_rounded),
                       title: Text(state.latest!.pickupAddress),
-                      subtitle: Text('Pickup'),
+                      subtitle: const Text('Pickup'),
                     ),
                     ListTile(
-                      leading: Icon(Icons.wrong_location_rounded),
+                      leading: const Icon(Icons.wrong_location_rounded),
                       title: Text(state.latest!.dropoffAddress),
-                      subtitle: Text('Dropoff'),
+                      subtitle: const Text('Dropoff'),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -122,7 +124,7 @@ class _HomeState extends State<Home> {
             /// spacer
             Container(height: 1.h),
 
-            Center(
+            const Center(
               child: Text(
                 'Riders in Queue: ${0}',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -136,7 +138,7 @@ class _HomeState extends State<Home> {
                     .map((order) => ListTile(
                         title: Text(order.rider.id),
                         subtitle: Text(order.status),
-                        trailing: Icon(Icons.bookmark)))
+                        trailing: const Icon(Icons.bookmark)))
                     .toList())
           ],
         ),
@@ -157,22 +159,23 @@ class _HomeState extends State<Home> {
             Center(
               child: Text(
                 'Picking up ${state.rider.name}',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             ListTile(
-              visualDensity: VisualDensity(horizontal: 0, vertical: -4),
-              leading: Icon(Icons.face),
+              visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+              leading: const Icon(Icons.face),
               title: Text(state.rider.name),
-              subtitle: Text('Rider\'s name'),
+              subtitle: const Text('Rider\'s name'),
             ),
             ListTile(
-              leading: Icon(Icons.add_location_alt_rounded),
+              leading: const Icon(Icons.add_location_alt_rounded),
               title: Text(state.order.pickupAddress),
-              subtitle: Text('Tap to Map to Pickup'),
+              subtitle: const Text('Tap to Map to Pickup'),
               onTap: () {
                 MapsLauncher.launchCoordinates(state.order.pickupPoint.latitude,
                     state.order.pickupPoint.longitude);
@@ -217,22 +220,23 @@ class _HomeState extends State<Home> {
             Center(
               child: Text(
                 'Dropping off ${state.rider.name}',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             ListTile(
-              visualDensity: VisualDensity(horizontal: 0, vertical: -4),
-              leading: Icon(Icons.face),
+              visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+              leading: const Icon(Icons.face),
               title: Text(state.rider.name),
-              subtitle: Text('Rider\'s name'),
+              subtitle: const Text('Rider\'s name'),
             ),
             ListTile(
-              leading: Icon(Icons.wrong_location_rounded),
+              leading: const Icon(Icons.wrong_location_rounded),
               title: Text(state.order.dropoffAddress),
-              subtitle: Text('Tap to Map to Dropoff'),
+              subtitle: const Text('Tap to Map to Dropoff'),
               onTap: () {
                 MapsLauncher.launchQuery(state.order.dropoffAddress);
               },
@@ -283,10 +287,10 @@ class _HomeState extends State<Home> {
             'Logout',
             style: TextStyle(fontSize: 12.sp),
           ),
-          trailing: Icon(Icons.logout),
+          trailing: const Icon(Icons.logout),
           onTap: () {
             BlocProvider.of<AuthenticationBloc>(context)
-                .add(AuthenticationLogoutEvent());
+                .add(const AuthenticationLogoutEvent());
           },
         )
       ]));
@@ -307,7 +311,7 @@ class _HomeState extends State<Home> {
             case OrderDroppingOffState:
               return droppingOffStateWidget(state as OrderDroppingOffState);
             case OrderCancelledState:
-              return Placeholder();
+              return const Placeholder();
             case OrderErrorState:
               {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -316,14 +320,14 @@ class _HomeState extends State<Home> {
                   action: SnackBarAction(
                     label: 'REPORT',
                     onPressed: () {
-                      //TODO: add anonymous github issue request or firebase crashlytics
+//TODO: add anonymous github issue request or firebase crashlytics
                     },
                   ),
                 ));
               }
               return Container();
             default:
-              return Placeholder();
+              return const Placeholder();
           }
         }));
   }

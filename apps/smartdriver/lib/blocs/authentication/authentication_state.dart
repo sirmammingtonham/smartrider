@@ -8,27 +8,25 @@ abstract class AuthenticationState extends Equatable {
 }
 
 class AuthenticationLoggedInState extends AuthenticationState {
-  final Driver user;
-
   const AuthenticationLoggedInState({required this.user});
+  final Driver user;
 
   @override
   List<Object?> get props => [user];
 }
 
 class AuthenticationLoggedOutState extends AuthenticationState {
-  final String? driverName, phoneNumber, vehicleId;
   const AuthenticationLoggedOutState(
       {this.driverName, this.phoneNumber, this.vehicleId});
+  final String? driverName, phoneNumber, vehicleId;
 
   @override
   List<Object?> get props => [driverName, phoneNumber, vehicleId];
 }
 
 class AuthenticationFailureState extends AuthenticationState {
-  final String errorMessage;
-
   const AuthenticationFailureState({required this.errorMessage});
+  final String errorMessage;
 
   @override
   List<Object?> get props => [errorMessage];

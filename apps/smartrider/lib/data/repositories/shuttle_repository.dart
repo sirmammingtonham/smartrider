@@ -9,9 +9,8 @@ import '../providers/shuttle_provider.dart';
 /// Repo class that retrieves data from provider class methods and
 /// distributes the data to BLoC pattern
 class ShuttleRepository {
-  final _shuttleProvider = ShuttleProvider();
-
   ShuttleRepository.create();
+  final _shuttleProvider = ShuttleProvider();
 
 //  void get openSocket => _shuttleProvider.openSocket();
   Future<Map<String?, ShuttleRoute>> get getRoutes async =>

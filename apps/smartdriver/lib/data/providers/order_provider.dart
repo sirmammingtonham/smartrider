@@ -3,9 +3,11 @@ import 'package:shared/models/saferide/driver.dart';
 import 'package:shared/models/saferide/order.dart';
 
 class OrderProvider {
-  final FirebaseFirestore firestore;
   // dependency injection for unit testing
-  OrderProvider({required this.firestore});
+  const OrderProvider({required this.firestore});
+
+  final FirebaseFirestore firestore;
+
 
   Stream<QuerySnapshot<Map<String, dynamic>>> get orderStream => firestore
       .collection('orders')
