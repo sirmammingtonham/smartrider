@@ -3,8 +3,6 @@ import 'package:shared/models/bus/bus_route.dart';
 import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/models/bus/bus_stop.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
-import 'package:shared/models/bus/bus_trip_update.dart';
-import 'package:shared/models/bus/bus_vehicle_update.dart';
 
 import '../providers/bus_provider.dart';
 
@@ -37,12 +35,6 @@ class BusRepository {
 
   Future<Map<String?, BusTimetable>> get getTimetables async =>
       _busProvider.getBusTimetable();
-
-  Future<List<BusTripUpdate>> get getTripUpdates async =>
-      _busProvider.getTripUpdates();
-
-  Future<List<BusVehicleUpdate>> get getUpdates async =>
-      _busProvider.getVehicleUpdates();
 
   Future<Map<String, List<BusRealtimeUpdate>>> get getRealtimeUpdate async =>
       _busProvider.getBusRealtimeUpdates();

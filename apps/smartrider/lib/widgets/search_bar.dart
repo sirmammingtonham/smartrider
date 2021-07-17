@@ -61,11 +61,11 @@ class SearchBarState extends State<SearchBar> {
         context: context,
         builder: (context) {
           return Align(
-            alignment: Alignment(0, -0.98),
+            alignment: const Alignment(0, -0.98),
             child: Material(
               color: Colors.transparent,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Card(
                   elevation: 6.0,
                   child: TypeAheadField(
@@ -73,11 +73,11 @@ class SearchBarState extends State<SearchBar> {
                     textFieldConfiguration: TextFieldConfiguration(
                         autofocus: false,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.only(left: 10),
+                            border: const OutlineInputBorder(),
+                            contentPadding: const EdgeInsets.only(left: 10),
                             hintText: message)),
                     suggestionsCallback: (pattern) async {
-                      if (pattern.isEmpty) return Iterable<Prediction>.empty();
+                      if (pattern.isEmpty) return const Iterable<Prediction>.empty();
                       return (await places.autocomplete(pattern,
                               location:
                                   Location(lat: 42.729980, lng: -73.676682),
@@ -88,7 +88,7 @@ class SearchBarState extends State<SearchBar> {
                     },
                     itemBuilder: (context, Prediction suggestion) {
                       return ListTile(
-                        leading: Icon(Icons.location_on),
+                        leading: const Icon(Icons.location_on),
                         title: Text(suggestion.description!),
                         // subtitle: Text('${suggestion.distanceMeters!} m away'),
                       );
@@ -139,9 +139,9 @@ class SearchBarState extends State<SearchBar> {
                 return Container();
               case SaferideCancelledState:
               case SaferideErrorState:
-                return Placeholder(); //TODO: fill out these widgets
+                return const Placeholder(); //TODO: fill out these widgets
               default:
-                return Text('saferide state type error');
+                return const Text('saferide state type error');
             }
           },
         ),
@@ -150,7 +150,7 @@ class SearchBarState extends State<SearchBar> {
   }
 
   Widget searchBar(PrefsState prefsState) => Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
         height: 55,
         child: Material(
           borderRadius: BorderRadius.circular(10.0),
@@ -161,9 +161,9 @@ class SearchBarState extends State<SearchBar> {
               Showcase(
                   key: showcaseSettings,
                   description: SETTINGS_SHOWCASE_MESSAGE,
-                  shapeBorder: RoundedRectangleBorder(),
+                  shapeBorder: const RoundedRectangleBorder(),
                   child: IconButton(
-                    icon: Icon(SmartriderIcons.Settings),
+                    icon: const Icon(SmartriderIcons.Settings),
                     onPressed: () {
                       Navigator.push<SettingsPage>(context,
                           MaterialPageRoute(builder: (context) {
@@ -174,19 +174,19 @@ class SearchBarState extends State<SearchBar> {
               Showcase(
                 key: showcaseSearch,
                 description: SEARCHBAR_SHOWCASE_MESSAGE,
-                shapeBorder: RoundedRectangleBorder(),
-                child: Container(
+                shapeBorder: const RoundedRectangleBorder(),
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width - 150,
                   // creates the autocomplete field (requires strings.dart in the utils folder to contain the api key)
                   child: TypeAheadField(
                     hideOnLoading: true,
-                    textFieldConfiguration: TextFieldConfiguration(
+                    textFieldConfiguration: const TextFieldConfiguration(
                         autofocus: false,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             hintText: 'Need a safe ride?')),
                     suggestionsCallback: (pattern) async {
-                      if (pattern.isEmpty) return Iterable<Prediction>.empty();
+                      if (pattern.isEmpty) return const Iterable<Prediction>.empty();
                       return (await places.autocomplete(pattern,
                               location:
                                   Location(lat: 42.729980, lng: -73.676682),
@@ -197,7 +197,7 @@ class SearchBarState extends State<SearchBar> {
                     },
                     itemBuilder: (context, Prediction suggestion) {
                       return ListTile(
-                        leading: Icon(Icons.location_on),
+                        leading: const Icon(Icons.location_on),
                         title: Text(suggestion.description!),
                         // subtitle: Text('${suggestion.distanceMeters!} m away'),
                       );
@@ -213,12 +213,12 @@ class SearchBarState extends State<SearchBar> {
               Showcase(
                 key: showcaseProfile,
                 description: PROFILE_SHOWCASE_MESSAGE,
-                shapeBorder: CircleBorder(),
+                shapeBorder: const CircleBorder(),
                 child: CircleAvatar(
                   backgroundColor: Theme.of(context).buttonColor,
                   child: IconButton(
                     icon: Text(computeUsername(name!),
-                        style: TextStyle(fontSize: 15, color: Colors.white70)),
+                        style: const TextStyle(fontSize: 15, color: Colors.white70)),
                     onPressed: () {
                       Navigator.push<ProfilePage>(
                           context,
@@ -243,39 +243,39 @@ class SearchBarState extends State<SearchBar> {
       Column(
         children: [
           Card(
-            margin: EdgeInsets.symmetric(horizontal: 10.0),
+            margin: const EdgeInsets.symmetric(horizontal: 10.0),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),
             elevation: 6.0,
             child: Column(mainAxisSize: MainAxisSize.max, children: [
               ListTile(
-                leading: Container(
+                leading: SizedBox(
                   height: double.infinity,
-                  child: Icon(Icons.add_location_alt_rounded),
+                  child: const Icon(Icons.add_location_alt_rounded),
                 ),
                 title: Text(saferideState.pickupDescription),
                 subtitle: const Text('Pickup location'),
                 onTap: () {
-                  _showAutocomplete("Enter pickup address", isPickup: true);
+                  _showAutocomplete('Enter pickup address', isPickup: true);
                 },
               ),
-              Divider(height: 0),
+              const Divider(height: 0),
               ListTile(
-                leading: Container(
+                leading: SizedBox(
                     height: double.infinity,
-                    child: Icon(Icons.wrong_location_rounded)),
+                    child: const Icon(Icons.wrong_location_rounded)),
                 title: Text(saferideState.dropDescription),
                 subtitle: const Text('Dropoff location'),
                 trailing: IconButton(
-                  icon: Icon(Icons.cancel),
+                  icon: const Icon(Icons.cancel),
                   onPressed: () {
                     BlocProvider.of<SaferideBloc>(context)
                         .add(SaferideNoEvent());
                   },
                 ),
                 onTap: () {
-                  _showAutocomplete("Enter dropoff address", isPickup: false);
+                  _showAutocomplete('Enter dropoff address', isPickup: false);
                 },
               )
             ]),

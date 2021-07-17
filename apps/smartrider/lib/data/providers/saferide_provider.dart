@@ -36,8 +36,8 @@ class SaferideProvider {
   }
 
   Future<void> cancelOrder() async {
-    if (this.orderId != null) {
-      DocumentReference ref = orders.doc(this.orderId);
+    if (orderId != null) {
+      final ref = orders.doc(orderId);
       await ref.delete();
     }
   }
@@ -47,7 +47,7 @@ class SaferideProvider {
   }
 
   Future<int> getQueueSize() async {
-    Query query = orders.where('status', isEqualTo: 'WAITING');
+    final query = orders.where('status', isEqualTo: 'WAITING');
     return (await query.get()).size;
   }
 

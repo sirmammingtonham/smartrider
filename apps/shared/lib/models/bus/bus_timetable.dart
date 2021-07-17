@@ -33,19 +33,19 @@ class BusTimetable {
 
 // change time from cdta to match time format of our database
   String formatTime(String oldtime) {
-    String ampm, hour, minute = "am";
-    ampm = "am";
-    List<String> times = oldtime.split(":");
-    int inthour = int.parse(times[0]);
+    String ampm, hour, minute = 'am';
+    ampm = 'am';
+    final times = oldtime.split(':');
+    final inthour = int.parse(times[0]);
     if (inthour >= 12) {
-      ampm = "pm";
+      ampm = 'pm';
       if (inthour > 12) {
         times[0] = (inthour - 12).toString();
       }
     }
     hour = times[0];
     minute = times[1];
-    String newtime = hour + ":" + minute + ampm;
+    final newtime = '$hour:$minute$ampm';
     return newtime;
   }
 
@@ -59,7 +59,7 @@ class BusTimetable {
 
   // return the index of stop in stops given its id
   int getStopIndex(String stopid) {
-    int def = -1;
+    var def = -1;
     stops?.asMap().forEach((key, stop) {
       if (stop.stopId == stopid) def = key;
     });
@@ -99,14 +99,15 @@ class BusTimetable {
       offsetLength = 5;
     }
 
-    return List.generate(offsetLength, (index) => index).map((offset) => <dynamic>[
-          getTime(i, min + offset),
-          now < getTimestamp(i, min + offset)
-              ? getTimestamp(i, min + offset) - now
-              : 86400 -
-                  now +
-                  getTimestamp(i, min + offset) // 86400 seconds in a day
-        ]);
+    return List.generate(offsetLength, (index) => index)
+        .map((offset) => <dynamic>[
+              getTime(i, min + offset),
+              now < getTimestamp(i, min + offset)
+                  ? getTimestamp(i, min + offset) - now
+                  : 86400 -
+                      now +
+                      getTimestamp(i, min + offset) // 86400 seconds in a day
+            ]);
   }
 
   BusTimetable.fromJson(Map<String, dynamic> json) {
@@ -153,7 +154,7 @@ class BusTimetable {
             }
           }
           setTime(stopIndex, min, formatTime(newtime));
-          // print(stopIndex.toString() + ":" + newtime);
+          // print(stopIndex.toString() + ':' + newtime);
         } else {
           print("stop doesn't exist");
         }
@@ -162,7 +163,7 @@ class BusTimetable {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final data = <String, dynamic>{};
     data['route_id'] = routeId;
     data['direction_id'] = directionId;
     data['direction_name'] = directionName;
@@ -204,7 +205,7 @@ class TimetableStop {
       stopName: json['stop_name']);
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final data = <String, dynamic>{};
     data['stop_id'] = stopId;
     data['stop_lat'] = stopLat;
     data['stop_lon'] = stopLon;

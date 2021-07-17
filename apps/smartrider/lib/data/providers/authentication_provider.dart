@@ -5,12 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthProvider {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  Future<UserCredential> signInWithCredentials(String email, String password) async {
+  Future<UserCredential> signInWithCredentials(
+      String email, String password) async {
     // try {
-      return await _firebaseAuth.signInWithEmailAndPassword(
-        email: email.trim(),
-        password: password,
-      );
+    return await _firebaseAuth.signInWithEmailAndPassword(
+      email: email.trim(),
+      password: password,
+    );
     // } on PlatformException catch (e) {
     //   print(e);
     //   return e;

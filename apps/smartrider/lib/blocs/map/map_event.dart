@@ -12,16 +12,18 @@ class MapInitEvent extends MapEvent {
 }
 
 class MapUpdateEvent extends MapEvent {
-  final double? zoomLevel;
   const MapUpdateEvent({required this.zoomLevel});
+
+  final double? zoomLevel;
 
   @override
   List<Object?> get props => [zoomLevel];
 }
 
 class MapViewChangeEvent extends MapEvent {
-  final MapView newView;
   const MapViewChangeEvent({required this.newView});
+
+  final MapView newView;
 
   @override
   List<Object> get props => [newView];
@@ -35,16 +37,18 @@ class MapSaferideEvent extends MapEvent {
 }
 
 class MapMoveEvent extends MapEvent {
-  final double zoomLevel;
   const MapMoveEvent({required this.zoomLevel});
+
+  final double zoomLevel;
 
   @override
   List<Object?> get props => [zoomLevel];
 }
 
 class MapErrorEvent extends MapEvent {
-  final String? message;
   const MapErrorEvent({this.message});
+
+  final String? message;
 
   @override
   List<Object> get props => [];

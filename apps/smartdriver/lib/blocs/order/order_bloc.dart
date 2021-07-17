@@ -26,7 +26,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   /// listens to changes in order collection and updates the state
   Future<void> orderListener(
       QuerySnapshot<Map<String, dynamic>> collectionSnapshot) async {
-    if (this.state is OrderWaitingState) {
+    if (state is OrderWaitingState) {
       Iterable<Order> orders = collectionSnapshot.docs
           .map((orderSnap) => Order.fromSnapshot(orderSnap));
       if (orders.isNotEmpty) {
@@ -36,7 +36,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   }
 
   Future<void> updateAvailibility(bool available) async {
-    if (available && this.state is OrderWaitingState) {
+    if (available && state is OrderWaitingState) {
       // only set state to available if we don't already have an accepted order
       authenticationRepository.setAvailibility(true);
     } else if (!available) {
@@ -73,7 +73,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         yield* _mapOrderErrorToState(event as OrderErrorEvent);
         break;
       default:
-        throw Exception("bruh");
+        throw Exception('bruh');
     }
   }
 
@@ -104,7 +104,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       OrderReachedDropoffEvent event) async* {
     await orderRepository.reachedDropoffOrder(
         authenticationRepository.currentDriver!, event.order.orderRef);
-    yield OrderWaitingState();
+    yield const OrderWaitingState();
   }
 
   Stream<OrderState> _mapOrderUserCancelledToState(

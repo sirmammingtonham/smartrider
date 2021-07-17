@@ -97,20 +97,20 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         TextButton(
-                          child: const Text('ACCEPT'),
                           onPressed: () {
                             BlocProvider.of<OrderBloc>(context).add(
                                 OrderAcceptedEvent(
                                     order: state.latest!,
                                     rider: state.latestRider!));
                           },
+                          child: const Text('ACCEPT'),
                         ),
                         const SizedBox(width: 8),
                         // should we even allow a driver to decline/cancel before accepting?
                         TextButton(
-                            child: const Text('DECLINE'),
                             onPressed: () async => await showCancellationDialog(
-                                state.latest!.orderRef)),
+                                state.latest!.orderRef),
+                            child: const Text('DECLINE')),
                         const SizedBox(width: 8),
                       ],
                     ),
@@ -182,19 +182,19 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 TextButton(
-                  child: const Text('REACHED PICKUP'),
                   onPressed: () {
                     //TODO: maybe require a confirmation dialogue?
                     BlocProvider.of<OrderBloc>(context).add(
                         OrderReachedPickupEvent(
                             order: state.order, rider: state.rider));
                   },
+                  child: const Text('REACHED PICKUP'),
                 ),
                 const SizedBox(width: 8),
                 TextButton(
-                  child: const Text('CANCEL'),
                   onPressed: () async =>
                       await showCancellationDialog(state.order.orderRef),
+                  child: const Text('CANCEL'),
                 ),
                 const SizedBox(width: 8),
               ],
@@ -241,19 +241,19 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 TextButton(
-                  child: const Text('REACHED DROPOFF'),
                   onPressed: () {
                     //TODO: maybe require a confirmation dialogue?
                     BlocProvider.of<OrderBloc>(context).add(
                         OrderReachedDropoffEvent(
                             order: state.order, rider: state.rider));
                   },
+                  child: const Text('REACHED DROPOFF'),
                 ),
                 const SizedBox(width: 8),
                 TextButton(
-                  child: const Text('CANCEL'),
                   onPressed: () async =>
                       await showCancellationDialog(state.order.orderRef),
+                  child: const Text('CANCEL'),
                 ),
                 const SizedBox(width: 8),
               ],

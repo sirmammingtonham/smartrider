@@ -24,7 +24,7 @@
 //   http.Response response = await http
 //       .get('http://64.128.172.149:8080/gtfsrealtime/VehiclePositions');
 
-//   // var routes = ["87", "286", "289"];
+//   // var routes = ['87', '286', '289'];
 //   // List<BusVehicleUpdate> vehicleUpdatesList = response != null
 //   //     ? FeedMessage.fromBuffer(response.bodyBytes)
 //   //         .entity
@@ -57,7 +57,7 @@
 // //   http.Response response =
 // //       await http.get('http://64.128.172.149:8080/gtfsrealtime/TripUpdates');
 
-// //   // var routes = ["87", "286", "289"];
+// //   // var routes = ['87', '286', '289'];
 // //   List<BusTripUpdate> tripUpdatesList = response != null
 // //       ? FeedMessage.fromBuffer(response.bodyBytes)
 // //           .entity

@@ -10,10 +10,10 @@ class SaferideNoEvent extends SaferideEvent {
 }
 
 class SaferideSelectingEvent extends SaferideEvent {
+  const SaferideSelectingEvent({this.pickupPrediction, this.dropoffPrediction});
+
   final Prediction? pickupPrediction;
   final Prediction? dropoffPrediction;
-
-  const SaferideSelectingEvent({this.pickupPrediction, this.dropoffPrediction});
 
   @override
   List<Object?> get props => [pickupPrediction, dropoffPrediction];
@@ -27,24 +27,17 @@ class SaferideConfirmedEvent extends SaferideEvent {
 }
 
 class SaferideWaitingEvent extends SaferideEvent {
-  final int queuePosition;
-  final Timestamp? estimatedPickup;
-
   const SaferideWaitingEvent(
       {required this.queuePosition, required this.estimatedPickup});
+
+  final int queuePosition;
+  final Timestamp? estimatedPickup;
 
   @override
   List<Object?> get props => [queuePosition, estimatedPickup];
 }
 
 class SaferidePickingUpEvent extends SaferideEvent {
-  final String vehicleId;
-  final String driverName;
-  final String phoneNumber;
-  final String licensePlate;
-  final int queuePosition;
-  final Timestamp? estimatedPickup;
-
   const SaferidePickingUpEvent(
       {required this.vehicleId,
       required this.driverName,
@@ -52,6 +45,13 @@ class SaferidePickingUpEvent extends SaferideEvent {
       required this.licensePlate,
       required this.queuePosition,
       required this.estimatedPickup});
+
+  final String vehicleId;
+  final String driverName;
+  final String phoneNumber;
+  final String licensePlate;
+  final int queuePosition;
+  final Timestamp? estimatedPickup;
 
   @override
   List<Object?> get props => [
@@ -79,8 +79,9 @@ class SaferideUserCancelledEvent extends SaferideEvent {
 }
 
 class SaferideDriverCancelledEvent extends SaferideEvent {
-  final String reason;
   const SaferideDriverCancelledEvent({required this.reason});
+
+  final String reason;
 
   @override
   List<Object> get props => [];

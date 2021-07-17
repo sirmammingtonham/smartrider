@@ -40,7 +40,7 @@ class SmartriderMap extends StatelessWidget {
         compassEnabled: false,
         mapToolbarEnabled: false,
         cameraTargetBounds: CameraTargetBounds(rpiBounds),
-        minMaxZoomPreference: MinMaxZoomPreference(14.0, 18.0),
+        minMaxZoomPreference: const MinMaxZoomPreference(14.0, 18.0),
         rotateGesturesEnabled: true,
         scrollGesturesEnabled: true,
         tiltGesturesEnabled: true,
@@ -72,23 +72,23 @@ class SmartriderMap extends StatelessWidget {
           ActionButton(
             tooltip: 'Bus View',
             onPressed: () =>
-                mapBloc.add(MapViewChangeEvent(newView: MapView.kBusView)),
+                mapBloc.add(const MapViewChangeEvent(newView: MapView.kBusView)),
             isSelected: mapBloc.mapView == MapView.kBusView,
-            icon: Icon(Icons.directions_bus),
+            icon: const Icon(Icons.directions_bus),
           ),
           ActionButton(
             tooltip: 'Shuttle View',
             onPressed: () =>
-                mapBloc.add(MapViewChangeEvent(newView: MapView.kShuttleView)),
+                mapBloc.add(const MapViewChangeEvent(newView: MapView.kShuttleView)),
             isSelected: mapBloc.mapView == MapView.kShuttleView,
-            icon: Icon(Icons.airport_shuttle),
+            icon: const Icon(Icons.airport_shuttle),
           ),
           ActionButton(
             tooltip: 'Saferide View',
             onPressed: () =>
-                mapBloc.add(MapViewChangeEvent(newView: MapView.kSaferideView)),
+                mapBloc.add(const MapViewChangeEvent(newView: MapView.kSaferideView)),
             isSelected: mapBloc.mapView == MapView.kSaferideView,
-            icon: Icon(Icons.local_taxi),
+            icon: const Icon(Icons.local_taxi),
           ),
         ],
       ),
@@ -99,21 +99,21 @@ class SmartriderMap extends StatelessWidget {
   Widget locationButton(BuildContext context, SaferideState state) => Showcase(
         key: showcaseLocation,
         description: LOCATION_BUTTON_SHOWCASE_MESSAGE,
-        shapeBorder: CircleBorder(),
+        shapeBorder: const CircleBorder(),
         child: FloatingActionButton(
-          child: Icon(
-            Icons.gps_fixed,
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.black87
-                : Colors.white70,
-          ),
           backgroundColor: Theme.of(context).brightness == Brightness.light
               ? Colors.white
               : null,
           onPressed: () {
             BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
           },
-          heroTag: "scrollToLocButton",
+          heroTag: 'scrollToLocButton',
+          child: Icon(
+            Icons.gps_fixed,
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.black87
+                : Colors.white70,
+          ),
         ),
       );
 
@@ -132,7 +132,7 @@ class SmartriderMap extends StatelessWidget {
               key: showcaseMap,
               title: MAP_SHOWCASE_TITLE,
               description: MAP_SHOWCASE_MESSAGE,
-              child: SizedBox(
+              child: const SizedBox(
                 height: 400,
                 width: 300,
               )),
@@ -161,7 +161,7 @@ class SmartriderMap extends StatelessWidget {
 
           switch (mapState.runtimeType) {
             case MapLoadingState:
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             case MapLoadedState:
@@ -184,7 +184,7 @@ class SmartriderMap extends StatelessWidget {
             default:
               // TODO: crashlytics
               return Container(
-                child: Center(
+                child: const Center(
                   child: Text('ERROR IN MAP BLOC'),
                 ),
               );

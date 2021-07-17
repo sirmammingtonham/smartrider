@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smartrider/data/providers/authentication_provider.dart';
 
 class AuthRepository {
-  final AuthProvider _authProvider = AuthProvider();
-
   AuthRepository.create();
+
+  final AuthProvider _authProvider = AuthProvider();
 
   Future<UserCredential> signInWithCredentials(
       String email, String password) async {

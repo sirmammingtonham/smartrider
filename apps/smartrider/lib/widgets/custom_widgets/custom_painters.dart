@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Creates our "lines and circles" on the left hand side of the
+/// Creates our 'lines and circles' on the left hand side of the
 /// schedule list for each bus. This particular class is responsible
 /// for the first stop.
 class FillPainter extends CustomPainter {
@@ -26,7 +26,7 @@ class FillPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint();
     // cascade notation, look it up it's pretty cool
-    Paint line = new Paint()
+    final line = Paint()
       ..color = lineColor!
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.fill
@@ -60,7 +60,7 @@ class FillPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
-/// Creates our "lines and circles" on the left hand side of the
+/// Creates our 'lines and circles' on the left hand side of the
 /// schedule list for each bus. This particular class is responsible
 /// for all stops but the first.
 class StrokePainter extends CustomPainter {
@@ -75,14 +75,14 @@ class StrokePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint line = new Paint()
+    Paint line = Paint()
       ..color = lineColor!
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.fill
       ..strokeWidth = 6;
 
     if (!last) {
-      canvas.drawLine(Offset(38.5, size.height), Offset(38.5, 0), line);
+      canvas.drawLine(Offset(38.5, size.height), const Offset(38.5, 0), line);
     }
   }
 

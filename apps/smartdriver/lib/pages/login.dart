@@ -26,7 +26,7 @@ class Login extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("smartdriver"),
+        title: Text('smartdriver'),
       ),
       body: SingleChildScrollView(
         child: Padding(

@@ -15,6 +15,8 @@ import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 // import 'package:showcaseview/showcaseview.dart';
 
 class SettingsPage extends StatefulWidget {
+  const SettingsPage({Key? key}) : super(key: key);
+
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
@@ -39,16 +41,16 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<PrefsBloc, PrefsState>(builder: (context, state) {
       if (state is PrefsLoadingState) {
-        return Scaffold(
+        return const Scaffold(
           body: Center(child: CircularProgressIndicator()),
         );
       } else if (state is PrefsLoadedState) {
         return SettingsWidget(
             state: state, auth: auth, setState: () => setState(() {}));
       } else if (state is PrefsSavingState) {
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       } else {
-        return Center(child: Text("uh oh"));
+        return const Center(child: Text('uh oh'));
       }
     });
   }
@@ -56,10 +58,11 @@ class _SettingsPageState extends State<SettingsPage> {
 
 class SettingsWidget extends StatelessWidget {
   const SettingsWidget({
+    Key? key,
     required this.state,
     required this.auth,
     required this.setState,
-  }) : super();
+  }) : super(key: key);
   final PrefsLoadedState state;
   final AuthRepository auth;
   final VoidCallback setState;
@@ -70,13 +73,13 @@ class SettingsWidget extends StatelessWidget {
   */
   Widget cardBuilder(List<Widget> switchList) {
     return Container(
-      margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+      margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
       child: Material(
         elevation: 5,
         borderRadius: BorderRadius.circular(20.0),
         child: Container(
-          padding: EdgeInsets.only(right: 10, left: 10),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.only(right: 10, left: 10),
+          decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           child: Center(
             child: Column(children: switchList),
@@ -90,7 +93,7 @@ class SettingsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(15.0),
             ),
@@ -100,14 +103,14 @@ class SettingsWidget extends StatelessWidget {
           leading: Padding(
               padding: const EdgeInsets.only(bottom: 15),
               child: IconButton(
-                icon: Icon(Icons.arrow_back_ios),
+                icon: const Icon(Icons.arrow_back_ios),
                 tooltip: 'Go back',
                 onPressed: () {
                   Navigator.pop(context);
                 },
               )),
           // title
-          title: Text(
+          title: const Text(
             'Settings',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
           ),
@@ -115,10 +118,10 @@ class SettingsWidget extends StatelessWidget {
         body: ListView(children: <Widget>[
           // GENERAL SETTINGS
           Container(
-            margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-            child: Center(
+            margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
+            child: const Center(
               child: Padding(
-                  padding: const EdgeInsets.only(top: 25),
+                  padding: EdgeInsets.only(top: 25),
                   child: Text(
                     'General',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
@@ -127,7 +130,7 @@ class SettingsWidget extends StatelessWidget {
           ),
           cardBuilder([
             SwitchListTile(
-              title: Text('Push Notifications'),
+              title: const Text('Push Notifications'),
               value: state.prefs.getBool('pushNotifications')!,
               onChanged: (bool value) {
                 state.prefs.setBool('pushNotifications', value);
@@ -138,7 +141,7 @@ class SettingsWidget extends StatelessWidget {
             Builder(
                 builder: (context) => SwitchListTile(
                       activeColor: Theme.of(context).toggleableActiveColor,
-                      title: Text('Lights Out'),
+                      title: const Text('Lights Out'),
                       value: state.prefs.getBool('darkMode')!,
                       onChanged: (bool value) {
                         state.prefs.setBool('darkMode', value);
@@ -151,8 +154,8 @@ class SettingsWidget extends StatelessWidget {
           ]),
           // SHUTTLE SETTINGS
           Container(
-            margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-            child: Center(
+            margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
+            child: const Center(
               child: Text(
                 'Shuttle Settings',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
@@ -161,15 +164,15 @@ class SettingsWidget extends StatelessWidget {
           ),
           if (state.shuttles.keys.isEmpty)
             Container(
-              margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
+              margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
               child: Material(
                 elevation: 5,
                 borderRadius: BorderRadius.circular(20.0),
                 child: Container(
-                  padding: EdgeInsets.only(right: 10, left: 10),
-                  decoration: BoxDecoration(
+                  padding: const EdgeInsets.only(right: 10, left: 10),
+                  decoration: const BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'Shuttles are not loaded, try switching views to load',
                       style:
@@ -195,8 +198,8 @@ class SettingsWidget extends StatelessWidget {
 
           // BUS SETTINGS
           Container(
-            margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-            child: Center(
+            margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
+            child: const Center(
               child: Text(
                 'Bus Settings',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
@@ -219,8 +222,8 @@ class SettingsWidget extends StatelessWidget {
 
           // SAFE RIDE SETTINGS
           Container(
-            margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
-            child: Center(
+            margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
+            child: const Center(
               child: Text(
                 'Safe Ride Settings',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
@@ -234,10 +237,6 @@ class SettingsWidget extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(25.0),
                   child: ElevatedButton(
-                      child: Text(
-                        'SIGN OUT',
-                        style: Theme.of(context).textTheme.button,
-                      ),
                       onPressed: () {
                         BlocProvider.of<AuthenticationBloc>(context).add(
                           AuthenticationLoggedOut(),
@@ -246,7 +245,11 @@ class SettingsWidget extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(20.0)))),
+                              borderRadius: BorderRadius.circular(20.0))),
+                      child: Text(
+                        'SIGN OUT',
+                        style: Theme.of(context).textTheme.button,
+                      )),
                 ),
               ],
             ),

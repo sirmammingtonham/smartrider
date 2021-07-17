@@ -32,19 +32,19 @@ class BusShape {
     int i = 0;
     return coordinates!
         .map((linestring) => Polyline(
-            polylineId: PolylineId('${this.routeId}${i++}'),
-            color: BUS_COLORS[this.routeShortName!]!.withAlpha(255),
-            width: BUS_WIDTHS[this.routeShortName!]!,
-            zIndex: BUS_INDICIES[this.routeShortName!]!,
+            polylineId: PolylineId('$routeId${i++}'),
+            color: BUS_COLORS[routeShortName!]!.withAlpha(255),
+            width: BUS_WIDTHS[routeShortName!]!,
+            zIndex: BUS_INDICIES[routeShortName!]!,
             // patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
             points: linestring))
         .toList();
   }
 
   BusShape.fromJson(Map<String, dynamic> json) {
-    this.routeId = json['properties']['route_id'];
-    this.routeShortName = routeId!.substring(0, routeId!.indexOf('-'));
-    this.coordinates = [];
+    routeId = json['properties']['route_id'];
+    routeShortName = routeId!.substring(0, routeId!.indexOf('-'));
+    coordinates = [];
 
     // check if single linestring or multi-linestring and handle differently
     if (json['type'] == 'LineString') {
@@ -65,9 +65,9 @@ class BusShape {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['properties'] = {'route_id': this.routeId};
-    data['coordinates'] = this.coordinates;
+    final data = <String, dynamic>{};
+    data['properties'] = {'route_id': routeId};
+    data['coordinates'] = coordinates;
     return data;
   }
 }

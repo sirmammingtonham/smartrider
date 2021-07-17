@@ -30,9 +30,9 @@ class MultiBlocBuilder extends StatefulWidget {
   ///     final state3 = states.get<MyBloc3State>();
   ///
   ///     if (state1 is Loading || state2 is Loading || state3 is Loading) {
-  ///       return Text("Loading");
+  ///       return Text('Loading');
   ///     } else {
-  ///       return Text("SHow some content");
+  ///       return Text('SHow some content');
   ///     }
   ///   }
   /// );

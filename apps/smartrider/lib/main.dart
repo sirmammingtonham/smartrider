@@ -39,7 +39,7 @@ void main() async {
           channelKey: 'basic_channel',
           channelName: 'Basic notifications',
           channelDescription: 'Notification channel for basic tests',
-          defaultColor: Color(0xFF9D50DD),
+          defaultColor: const Color(0xFF9D50DD),
           ledColor: Colors.white)
     ],
   );
@@ -49,7 +49,7 @@ void main() async {
   //     : 'localhost:8080';
 
   // FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
-  SmartRider app = SmartRider(
+  final app = SmartRider(
       authRepo: AuthRepository.create(),
       busRepo: await BusRepository.create(),
       shuttleRepo: ShuttleRepository.create(),
@@ -113,7 +113,7 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     return MultiBlocProvider(
       providers: [
         BlocProvider<PrefsBloc>(
-          create: (context) => PrefsBloc()..add(LoadPrefsEvent()),
+          create: (context) => PrefsBloc()..add(const LoadPrefsEvent()),
         ),
         BlocProvider<AuthenticationBloc>(
             create: (context) =>
@@ -139,8 +139,7 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
           ),
         ),
       ],
-      child: BlocBuilder<PrefsBloc, PrefsState>(
-          builder: (context, state) => _buildWithTheme(context, state)),
+      child: const BlocBuilder<PrefsBloc, PrefsState>(builder: _buildWithTheme),
     );
   }
 }
@@ -163,12 +162,12 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
                     ? OnboardingScreen()
                     : WelcomeScreen(homePage: HomePage())),
             autoPlay: true,
-            autoPlayDelay: Duration(seconds: 10),
+            autoPlayDelay: const Duration(seconds: 10),
           ),
         );
       },
     );
   } else {
-    return MaterialApp(home: CircularProgressIndicator());
+    return const MaterialApp(home: CircularProgressIndicator());
   }
 }

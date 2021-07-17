@@ -62,7 +62,7 @@ class BitmapHelper {
 
     if (color != null) {
       svgString =
-          svgString.replaceAll('fill="#fff"', 'fill="${color.toHex()}"');
+          svgString.replaceAll("fill='#fff'", "fill='${color.toHex()}'");
     }
 
     DrawableRoot drawableRoot = await svg.fromSvgString(svgString, svgString);

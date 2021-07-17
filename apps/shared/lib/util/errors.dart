@@ -4,7 +4,7 @@ class SRError {
   const SRError({required this.code, required this.message});
 
   String toString() {
-    return '${message} (Error code: ${code})';
+    return '$message (Error code: $code)';
   }
 
   static const BLOC_ERROR = SRError(

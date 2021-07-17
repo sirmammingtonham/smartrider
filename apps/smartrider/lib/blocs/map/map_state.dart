@@ -12,19 +12,21 @@ class MapLoadingState extends MapState {
 }
 
 class MapLoadedState extends MapState {
+  const MapLoadedState(
+      {required this.polylines, required this.markers, required this.mapView});
+
   final Set<Polyline> polylines;
   final Set<Marker> markers;
   final MapView mapView;
-  const MapLoadedState(
-      {required this.polylines, required this.markers, required this.mapView});
 
   @override
   List<Object> get props => [polylines, markers, mapView];
 }
 
 class MapErrorState extends MapState {
-  final SRError error;
   const MapErrorState({required this.error});
+
+  final SRError error;
 
   @override
   List<Object> get props => [error.toString()];

@@ -2,8 +2,8 @@ part of 'authentication_bloc.dart';
 
 abstract class AuthenticationEvent extends Equatable {
   const AuthenticationEvent();
-  String get getemail => "";
-  String get getpass => "";
+  String get getemail => '';
+  String get getpass => '';
   @override
   List<Object> get props => [];
 }

@@ -30,10 +30,10 @@ class ShuttleRoute {
       this.schedule});
 
   Polyline get getPolyline => Polyline(
-        polylineId: PolylineId(this.name!),
-        color: this.color!,
+        polylineId: PolylineId(name!),
+        color: color!,
         width: 4,
-        points: this.points!.map((points) => points.getLatLng).toList(),
+        points: points!.map((points) => points.getLatLng).toList(),
       );
 
   ShuttleRoute.fromJson(Map<String, dynamic> json) {
@@ -49,35 +49,35 @@ class ShuttleRoute {
     if (json['points'] != null) {
       points = [];
       json['points'].forEach((dynamic v) {
-        points!.add(new Point.fromJson(v));
+        points!.add(Point.fromJson(v));
       });
     }
     active = json['active'];
     if (json['schedule'] != null) {
       schedule = [];
       json['schedule'].forEach((dynamic v) {
-        schedule!.add(new Schedule.fromJson(v));
+        schedule!.add(Schedule.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['description'] = this.description;
-    data['enabled'] = this.enabled;
-    data['color'] = this.color;
-    data['width'] = this.width;
-    data['stop_ids'] = this.stopIds;
-    data['created'] = this.created;
-    data['updated'] = this.updated;
-    if (this.points != null) {
-      data['points'] = this.points!.map((v) => v.toJson()).toList();
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['description'] = description;
+    data['enabled'] = enabled;
+    data['color'] = color;
+    data['width'] = width;
+    data['stop_ids'] = stopIds;
+    data['created'] = created;
+    data['updated'] = updated;
+    if (points != null) {
+      data['points'] = points!.map((v) => v.toJson()).toList();
     }
-    data['active'] = this.active;
-    if (this.schedule != null) {
-      data['schedule'] = this.schedule!.map((v) => v.toJson()).toList();
+    data['active'] = active;
+    if (schedule != null) {
+      data['schedule'] = schedule!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -97,9 +97,9 @@ class Point {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['latitude'] = this.latitude;
-    data['longitude'] = this.longitude;
+    final data = <String, dynamic>{};
+    data['latitude'] = latitude;
+    data['longitude'] = longitude;
     return data;
   }
 }
@@ -130,13 +130,13 @@ class Schedule {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['route_id'] = this.routeId;
-    data['start_day'] = this.startDay;
-    data['start_time'] = this.startTime;
-    data['end_day'] = this.endDay;
-    data['end_time'] = this.endTime;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['route_id'] = routeId;
+    data['start_day'] = startDay;
+    data['start_time'] = startTime;
+    data['end_day'] = endDay;
+    data['end_time'] = endTime;
     return data;
   }
 }

@@ -51,7 +51,7 @@ class BusStop {
       this.shapeIds,
       this.tripIds});
 
-  LatLng get getLatLng => LatLng(this.stopLat!, this.stopLon!);
+  LatLng get getLatLng => LatLng(stopLat!, stopLon!);
 
   BusStop.fromJson(Map<String, dynamic> json) {
     stopId = json['stop_id'];
@@ -80,29 +80,29 @@ class BusStop {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['stop_id'] = this.stopId;
-    data['stop_code'] = this.stopCode;
-    data['stop_name'] = this.stopName;
-    data['tts_stop_name'] = this.ttsStopName;
-    data['stop_desc'] = this.stopDesc;
-    data['stop_lat'] = this.stopLat;
-    data['stop_lon'] = this.stopLon;
-    data['zone_id'] = this.zoneId;
-    data['stop_url'] = this.stopUrl;
-    data['location_type'] = this.locationType;
-    data['parent_station'] = this.parentStation;
-    data['stop_timezone'] = this.stopTimezone;
-    data['wheelchair_boarding'] = this.wheelchairBoarding;
-    data['level_id'] = this.levelId;
-    data['platform_code'] = this.platformCode;
-    data['arrival_times'] = this.arrivalTimes;
-    data['departure_times'] = this.departureTimes;
-    data['stop_sequence'] = this.stopSequence;
+    final data = <String, dynamic>{};
+    data['stop_id'] =  stopId;
+    data['stop_code'] =  stopCode;
+    data['stop_name'] =  stopName;
+    data['tts_stop_name'] =  ttsStopName;
+    data['stop_desc'] =  stopDesc;
+    data['stop_lat'] =  stopLat;
+    data['stop_lon'] =  stopLon;
+    data['zone_id'] =  zoneId;
+    data['stop_url'] =  stopUrl;
+    data['location_type'] =  locationType;
+    data['parent_station'] =  parentStation;
+    data['stop_timezone'] =  stopTimezone;
+    data['wheelchair_boarding'] =  wheelchairBoarding;
+    data['level_id'] =  levelId;
+    data['platform_code'] =  platformCode;
+    data['arrival_times'] =  arrivalTimes;
+    data['departure_times'] =  departureTimes;
+    data['stop_sequence'] =  stopSequence;
 
-    data['route_ids'] = this.routeIds;
-    data['shape_ids'] = this.shapeIds;
-    data['trip_ids'] = this.tripIds;
+    data['route_ids'] =  routeIds;
+    data['shape_ids'] =  shapeIds;
+    data['trip_ids'] =  tripIds;
     return data;
   }
 }

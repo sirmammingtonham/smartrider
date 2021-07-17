@@ -21,17 +21,17 @@ class BusTable extends StatefulWidget {
 class BusTableState extends State<BusTable>
     with SingleTickerProviderStateMixin {
   final List<Widget> busTabs = [
-    Tab(text: 'Route 87'),
-    Tab(text: 'Route 286'),
-    Tab(text: 'Route 289'),
-    Tab(text: 'Express Shuttle'),
+    const Tab(text: 'Route 87'),
+    const Tab(text: 'Route 286'),
+    const Tab(text: 'Route 289'),
+    const Tab(text: 'Express Shuttle'),
   ];
   TabController? _tabController;
   //TODO: overswipe on right switches to shuttle view
   @override
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, length: busTabs.length);
+    _tabController = TabController(vsync: this, length: busTabs.length);
   }
 
   @override
@@ -57,7 +57,7 @@ class BusTableState extends State<BusTable>
             : null,
         controller: _tabController,
       ),
-      Container(
+      SizedBox(
         height: 63.h,
         child: TabBarView(
           controller: _tabController,
@@ -73,11 +73,11 @@ class BusTableState extends State<BusTable>
   }
 
   Widget busList(String routeId) {
-    if (!this.widget.timetableMap!.containsKey(routeId)) {
+    if (!widget.timetableMap!.containsKey(routeId)) {
       return BusUnavailable();
     }
 
-    final BusTimetable table = this.widget.timetableMap![routeId]!;
+    final BusTimetable table = widget.timetableMap![routeId]!;
 
     return Scaffold(
         body: CustomStickyHeader(
@@ -90,10 +90,10 @@ class BusTableState extends State<BusTable>
           child: SizedBox(
             child: Text(table.stops![i].stopName,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold)),
+                style: const TextStyle(fontWeight: FontWeight.bold)),
           )),
       contentCellBuilder: (i, j) => Text(table.getTime(i, j)),
-      cellDimensions: CellDimensions.fixed(
+      cellDimensions: const CellDimensions.fixed(
           contentCellWidth: 100,
           contentCellHeight: 50,
           stickyLegendWidth: 100,

@@ -44,10 +44,10 @@ class BusTimeline extends StatefulWidget {
 class BusTimelineState extends State<BusTimeline>
     with SingleTickerProviderStateMixin {
   final List<Widget> busTabs = [
-    Tab(text: 'Route 87'),
-    Tab(text: 'Route 286'),
-    Tab(text: 'Route 289'),
-    Tab(text: 'Express Shuttle'),
+    const Tab(text: 'Route 87'),
+    const Tab(text: 'Route 286'),
+    const Tab(text: 'Route 289'),
+    const Tab(text: 'Express Shuttle'),
   ];
 
   late final TabController _tabController;
@@ -68,7 +68,7 @@ class BusTimelineState extends State<BusTimeline>
     });
 
     // we need to disable to scroll controller when the user is switching tabs
-    // so we dont get the annoying asf "multiple scroll view" error
+    // so we dont get the annoying asf 'multiple scroll view' error
     _scrollController = widget.scrollController;
     _tabController.animation?.addListener(() {
       if (_tabController.animation!.value % 1 == 0.0) {
@@ -114,7 +114,7 @@ class BusTimelineState extends State<BusTimeline>
       ),
 
       /// The list of bus stops to be displayed.
-      Container(
+      SizedBox(
         height: 63.h,
         child: TabBarView(
           controller: _tabController,
@@ -129,11 +129,12 @@ class BusTimelineState extends State<BusTimeline>
     ]);
   }
 
-  Widget busExpansionTile(int index, List<TimetableStop> busStops, List<List<dynamic>> stopTimes, String routeId) {
+  Widget busExpansionTile(int index, List<TimetableStop> busStops,
+      List<List<dynamic>> stopTimes, String routeId) {
     return CustomExpansionTile(
       title: Text(busStops[index].stopName),
       subtitle: Text('Next Arrival: ${stopTimes[0][0]}'),
-      tilePadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      tilePadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
 
       /// Controls the leading circle icon in front of each bus stop.
       leading: CustomPaint(
@@ -142,13 +143,13 @@ class BusTimelineState extends State<BusTimeline>
               lineColor: Theme.of(context).primaryColorLight,
               first: index == 0,
               last: index == busStops.length - 1),
-          child: Container(
+          child: const SizedBox(
             height: 50,
             width: 45,
           )),
       trailing: isExpandedList[index]
-          ? Text('Hide Arrivals -')
-          : Text('Show Arrivals +'),
+          ? const Text('Hide Arrivals -')
+          : const Text('Show Arrivals +'),
       onExpansionChanged: (value) {
         setState(() {
           isExpandedList[index] = value;
@@ -169,12 +170,12 @@ class BusTimelineState extends State<BusTimeline>
             contentPadding: EdgeInsets.zero,
             leading: Container(
               margin: const EdgeInsets.only(left: 34.5),
-              constraints: BoxConstraints.expand(width: 8),
+              constraints: const BoxConstraints.expand(width: 8),
             ),
             title: Container(
               child: RefreshIndicator(
                 onRefresh: () =>
-                    Future.delayed(const Duration(seconds: 1), () => "1"),
+                    Future.delayed(const Duration(seconds: 1), () => '1'),
                 displacement: 1,
 
                 /// A list of the upcoming bus stop arrivals.
@@ -191,21 +192,21 @@ class BusTimelineState extends State<BusTimeline>
                     String subText;
                     if (stopTimes[timeIndex][1] / 3600 > 1) {
                       num time = (stopTimes[timeIndex][1] / 3600).truncate();
-                      subText = "In $time ${time > 1 ? 'hours' : 'hour'}";
+                      subText = 'In $time ${time > 1 ? 'hours' : 'hour'}';
                     } else {
                       num time = (stopTimes[timeIndex][1] / 60).truncate();
-                      subText = "In $time ${time > 1 ? 'minutes' : 'minute'}";
+                      subText = 'In $time ${time > 1 ? 'minutes' : 'minute'}';
                     }
 
                     /// The container in which the bus stop arrival times are displayed.
                     return ListTile(
                       dense: true,
-                      leading: Icon(Icons.access_time,
+                      leading: const Icon(Icons.access_time,
                           size:
                               20), // TODO: change icon if bus is within 5 minutes
                       title: Text(
                         stopTimes[timeIndex][0],
-                        style: TextStyle(fontSize: 15),
+                        style: const TextStyle(fontSize: 15),
                       ),
                       subtitle: Text(subText),
                       trailing: PopupMenuButton<String>(
@@ -242,8 +243,7 @@ class BusTimelineState extends State<BusTimeline>
       controller: _scrollController,
       itemCount: busStops.length,
       itemBuilder: (context, index) {
-        final stopTimes = this
-            .widget
+        final stopTimes = widget
             .busTables![routeId]!
             .getClosestTimes(index)
             .where((stopPair) => stopPair[1] != -1)
@@ -269,7 +269,7 @@ class BusTimelineState extends State<BusTimeline>
       BlocProvider.of<ScheduleBloc>(context)
           .scheduleBusAlarm(stopTime![1], busStop!);
     } else if (choice == choices[1]) {
-      this.widget.panelController.animatePanelToPosition(0);
+      widget.panelController.animatePanelToPosition(0);
       BlocProvider.of<MapBloc>(context).scrollToLatLng(busStop!.latLng);
     }
   }

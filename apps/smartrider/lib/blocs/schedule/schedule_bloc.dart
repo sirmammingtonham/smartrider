@@ -19,13 +19,6 @@ part 'schedule_event.dart';
 part 'schedule_state.dart';
 
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
-  final BusRepository busRepo;
-  final MapBloc mapBloc;
-  late final PanelController _panelController;
-  late final TabController _tabController;
-
-  late bool _isTimeline;
-
   ScheduleBloc({required this.mapBloc, required this.busRepo})
       : super(ScheduleInitialState()) {
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
@@ -38,6 +31,13 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     _isTimeline = true;
   }
 
+  final BusRepository busRepo;
+  final MapBloc mapBloc;
+  late final PanelController _panelController;
+  late final TabController _tabController;
+
+  late bool _isTimeline;
+
   PanelController get panelController => _panelController;
   TabController get tabController => _tabController;
 
@@ -45,7 +45,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   Map<String?, BusTimetable>? busTables;
 
   Future<void> scheduleBusAlarm(int secondsFromNow, TimetableStop stop) async {
-    AwesomeNotifications().createNotification(
+    await AwesomeNotifications().createNotification(
         content: NotificationContent(
             id: 10,
             channelKey: 'basic_channel',
@@ -57,7 +57,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
 
   Future<void> scheduleShuttleAlarm(
       int secondsFromNow, ShuttleStop stop) async {
-    AwesomeNotifications().createNotification(
+    await AwesomeNotifications().createNotification(
         content: NotificationContent(
             id: 10,
             channelKey: 'basic_channel',
@@ -67,12 +67,13 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
             interval: secondsFromNow, repeats: false, allowWhileIdle: true));
   }
 
+  @override
   Stream<ScheduleState> mapEventToState(ScheduleEvent event) async* {
     switch (event.runtimeType) {
       case ScheduleInitEvent:
         {
           _tabController = (event as ScheduleInitEvent).tabController
-            ..addListener(() => add(ScheduleViewChangeEvent()));
+            ..addListener(() => add(const ScheduleViewChangeEvent()));
           _panelController = event.panelController;
           busTables = await busRepo.getTimetables;
           yield* _mapScheduleTimelineToState();

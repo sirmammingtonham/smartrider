@@ -18,17 +18,17 @@ class ShuttleTable extends StatefulWidget {
 class ShuttleTableState extends State<ShuttleTable>
     with SingleTickerProviderStateMixin {
   final List<Widget> shuttleTabs = [
-    Tab(text: 'SOUTH'),
-    Tab(text: 'NORTH'),
-    Tab(text: 'WEST'),
-    Tab(text: 'WEEKEND'),
+    const Tab(text: 'SOUTH'),
+    const Tab(text: 'NORTH'),
+    const Tab(text: 'WEST'),
+    const Tab(text: 'WEEKEND'),
   ];
   TabController? _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, length: shuttleTabs.length);
+    _tabController = TabController(vsync: this, length: shuttleTabs.length);
     _tabController!.addListener(() {
       _handleTabSelection();
     });
@@ -73,15 +73,15 @@ class ShuttleTableState extends State<ShuttleTable>
               : null,
           controller: _tabController,
         ),
-        Container(
+        SizedBox(
           height: MediaQuery.of(context).size.height * 0.7,
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
-              shuttleList(0, this.widget.containsFilter, this.widget.jumpMap),
-              shuttleList(1, this.widget.containsFilter, this.widget.jumpMap),
-              shuttleList(2, this.widget.containsFilter, this.widget.jumpMap),
-              shuttleList(3, this.widget.containsFilter, this.widget.jumpMap),
+              shuttleList(0, widget.containsFilter, widget.jumpMap),
+              shuttleList(1, widget.containsFilter, widget.jumpMap),
+              shuttleList(2, widget.containsFilter, widget.jumpMap),
+              shuttleList(3, widget.containsFilter, widget.jumpMap),
             ],
           ),
         )
@@ -99,8 +99,8 @@ Widget shuttleList(int idx, Function? _containsFilter, Function? _jumpMap) {
       //   rowsLength:
       //       (busTimeLists[idx].length / busStopLists[idx].length + 1).truncate(),
       //   columnsTitleBuilder: (i) => Text(curStopList[i % curStopList.length][0]),
-      //   //rowsTitleBuilder: (i) => Text("Times:"),
-      //   contentCellBuilder: (i, j) => Text("6:30pm"),
+      //   //rowsTitleBuilder: (i) => Text('Times:'),
+      //   contentCellBuilder: (i, j) => Text('6:30pm'),
       //   legendCell: Text('Bus Stops'),
       // );
 
@@ -110,7 +110,7 @@ Widget shuttleList(int idx, Function? _containsFilter, Function? _jumpMap) {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Row(
@@ -125,7 +125,8 @@ Widget shuttleList(int idx, Function? _containsFilter, Function? _jumpMap) {
                               child: Text(
                                 curStopList[index % curStopList.length][0],
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                               ),
                             )),
                       ),
@@ -152,9 +153,9 @@ Widget shuttleList(int idx, Function? _containsFilter, Function? _jumpMap) {
                                 columnSpacing: 50,
                                 columns: List<DataColumn>.generate(
                                     shuttleStopLists[idx].length,
-                                    (index) => DataColumn(
-                                          label:
-                                              Flexible(child: Text("6:30pm")),
+                                    (index) => const DataColumn(
+                                          label: Flexible(
+                                              child: const Text('6:30pm')),
                                         )),
                                 rows: List<DataRow>.generate(
                                     (shuttleTimeLists[idx].length /
@@ -164,8 +165,8 @@ Widget shuttleList(int idx, Function? _containsFilter, Function? _jumpMap) {
                                     (index) => DataRow(
                                         cells: List<DataCell>.generate(
                                             shuttleStopLists[idx].length,
-                                            (datIdx) =>
-                                                DataCell(Text('6:30pm')))))))),
+                                            (datIdx) => const DataCell(
+                                                Text('6:30pm')))))))),
                   ])));
 
   // ScrollablePositionedList.builder(
@@ -175,7 +176,7 @@ Widget shuttleList(int idx, Function? _containsFilter, Function? _jumpMap) {
   //     var curStopList = shuttleStopLists[idx];
   //     var curTimeList = shuttleTimeLists[idx];
   //     // if (!_containsFilter(curStopList, curTimeList, index) ||
-  //     //     curTimeList[index] == "- - - -") {
+  //     //     curTimeList[index] == '- - - -') {
   //     //   return null;
   //     // }
   //     return Card(

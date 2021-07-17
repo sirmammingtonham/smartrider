@@ -32,7 +32,7 @@ void main() async {
   // });
 
   // updates.forEach((key, value) {
-  //   print("key:  " + key + "    " + "bearing:   " + "${value.length}");
+  //   print('key:  ' + key + '    ' + 'bearing:   ' + '${value.length}');
   //   value.forEach((element) {
   //     print(element.bearing);
   //   });
@@ -53,7 +53,7 @@ void main() async {
   //    return MapEntry(key, (value as String));
   //    });
   // data.forEach((key, value) {
-  //   print(key + "<--key  value-->" + value);
+  //   print(key + '<--key  value-->' + value);
   // });
   const shortRouteIds = [
     '87',
@@ -63,24 +63,24 @@ void main() async {
   ];
   final now = DateTime.now();
   final milliseconds = now.millisecondsSinceEpoch;
-  Map<String, Map<String, String>> ret = new Map();
-  for (String route in shortRouteIds) {
-    http.Response response = await http.get(Uri.parse(
+  final ret = <String, Map<String, String>>{};
+  for (final route in shortRouteIds) {
+    final response = await http.get(Uri.parse(
         'https://www.cdta.org/apicache/routebus_${route}_0.json?_=$milliseconds'));
     if (response.statusCode == 200) {
-      Map<String, String> data =
+      final data =
           (jsonDecode(response.body) as Map<String, dynamic>)
               .map((key, dynamic value) {
         return MapEntry(key, (value as String));
       });
       ret[route] = data;
     } else {
-      print(route + "not available");
+      print('${route}not available');
     }
   }
   print(ret.toString());
 
-  // DateTime date= DateFormat.Hm().parse("21:45");
+  // DateTime date= DateFormat.Hm().parse('21:45');
   // String d = DateFormat.Hm().format(date);
   // print(d);
 }

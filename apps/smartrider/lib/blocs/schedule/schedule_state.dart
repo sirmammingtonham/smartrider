@@ -12,19 +12,23 @@ class ScheduleInitialState extends ScheduleState {
 }
 
 class ScheduleTimelineState extends ScheduleState {
+  const ScheduleTimelineState(
+      {required this.busTables, required this.shuttleTables});
+
   final Map<String?, BusTimetable>? busTables;
   final Object? shuttleTables; // placeholder
-  const ScheduleTimelineState({required this.busTables, required this.shuttleTables});
 
   @override
-  List<Object?> get props => [this.busTables];
+  List<Object?> get props => [busTables];
 }
 
 class ScheduleTableState extends ScheduleState {
+  const ScheduleTableState(
+      {required this.busTables, required this.shuttleTables});
+
   final Map<String?, BusTimetable>? busTables;
   final Object? shuttleTables; // placeholder
-  const ScheduleTableState({required this.busTables, required this.shuttleTables});
 
   @override
-  List<Object?> get props => [this.busTables];
+  List<Object?> get props => [busTables];
 }

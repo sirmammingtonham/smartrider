@@ -86,7 +86,7 @@ class _ExpandableFabState extends State<ExpandableFab>
           elevation: 4.0,
           child: InkWell(
             onTap: _toggle,
-            child: Padding(
+            child: const Padding(
               padding: const EdgeInsets.all(8.0),
               child: Icon(
                 Icons.close,

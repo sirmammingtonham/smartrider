@@ -14,6 +14,8 @@ part 'prefs_event.dart';
 part 'prefs_state.dart';
 
 class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
+  PrefsBloc() : super(const PrefsLoadingState());
+
   /// ShuttleBloc named constructor
   late SharedPreferences _sharedPrefs;
   late bool hideInactiveRoutes;
@@ -26,8 +28,6 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
     '289': 'Route 289',
     '288': 'CDTA Express Shuttle',
   };
-
-  PrefsBloc() : super(PrefsLoadingState());
 
   String? getCurrentOrderId() {
     return _sharedPrefs.getString('current_order');
@@ -58,19 +58,19 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
           };
           _sharedPrefs = await SharedPreferences.getInstance();
           if (!_sharedPrefs.containsKey('firstTimeLoad')) {
-            _sharedPrefs.setBool('firstTimeLoad', true);
+            await _sharedPrefs.setBool('firstTimeLoad', true);
           }
           if (!_sharedPrefs.containsKey('firstSlideUp')) {
-            _sharedPrefs.setBool('firstSlideUp', true);
+            await _sharedPrefs.setBool('firstSlideUp', true);
           }
           if (!_sharedPrefs.containsKey('firstLaunch')) {
-            _sharedPrefs.setBool('firstLaunch', true);
+            await _sharedPrefs.setBool('firstLaunch', true);
           }
           if (!_sharedPrefs.containsKey('darkMode')) {
-            _sharedPrefs.setBool('darkMode', false);
+            await _sharedPrefs.setBool('darkMode', false);
           }
           if (!_sharedPrefs.containsKey('pushNotifications')) {
-            _sharedPrefs.setBool('pushNotifications', true);
+            await _sharedPrefs.setBool('pushNotifications', true);
           }
           // modify active routes on app launch
           yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
@@ -78,14 +78,15 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
         break;
       case SavePrefsEvent:
         {
-          yield PrefsSavingState();
-          _sharedPrefs.setBool((event as SavePrefsEvent).name!, event.val);
+          yield const PrefsSavingState();
+          await _sharedPrefs.setBool(
+              (event as SavePrefsEvent).name!, event.val);
           yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
         }
         break;
       case PrefsUpdateEvent:
         {
-          yield PrefsChangedState();
+          yield const PrefsChangedState();
           yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
         }
         break;
@@ -93,28 +94,28 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
         {
           if (hideInactiveRoutes) {
             hideInactiveRoutes = false;
-            (event as InitActiveRoutesEvent).routes.forEach((route) {
+            for (final route in (event as InitActiveRoutesEvent).routes) {
               _shuttles[route.name] = route.active;
-            });
+            }
           }
-          yield PrefsChangedState();
+          yield const PrefsChangedState();
           yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
         }
         break;
       case OnboardingComplete:
         {
-          _sharedPrefs.setBool('firstLaunch', false);
+          await _sharedPrefs.setBool('firstLaunch', false);
           yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
         }
         break;
       case ThemeChangedEvent:
         {
-          yield PrefsChangedState();
+          yield const PrefsChangedState();
           yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
         }
         break;
       default:
-        yield PrefsErrorState(message: "something wrong with prefs_bloc");
+        yield const PrefsErrorState(message: 'something wrong with prefs_bloc');
     }
   }
 }

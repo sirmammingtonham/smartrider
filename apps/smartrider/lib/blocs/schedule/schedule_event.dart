@@ -5,11 +5,11 @@ abstract class ScheduleEvent extends Equatable {
 }
 
 class ScheduleInitEvent extends ScheduleEvent {
-  final PanelController panelController;
-  final TabController tabController;
-
   const ScheduleInitEvent(
       {required this.panelController, required this.tabController});
+
+  final PanelController panelController;
+  final TabController tabController;
 
   @override
   List<Object?> get props => [panelController, tabController];
@@ -23,9 +23,10 @@ class ScheduleViewChangeEvent extends ScheduleEvent {
 }
 
 class ScheduleTypeChangeEvent extends ScheduleEvent {
-  final bool isTimeline;
   const ScheduleTypeChangeEvent({required this.isTimeline});
 
+  final bool isTimeline;
+
   @override
-  List<Object> get props => [this.isTimeline];
+  List<Object> get props => [isTimeline];
 }

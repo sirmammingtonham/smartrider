@@ -38,17 +38,17 @@ class BusTrip {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['trip_id'] = this.tripId;
-    data['route_id'] = this.routeId;
-    data['service_id'] = this.serviceId;
-    data['trip_headsign'] = this.tripHeadsign;
-    data['trip_short_name'] = this.tripShortName;
-    data['direction_id'] = this.directionId;
-    data['block_id'] = this.blockId;
-    data['shape_id'] = this.shapeId;
-    data['wheelchair_accessible'] = this.wheelchairAccessible;
-    data['bikes_allowed'] = this.bikesAllowed;
+    final data = <String, dynamic>{};
+    data['trip_id'] = tripId;
+    data['route_id'] = routeId;
+    data['service_id'] = serviceId;
+    data['trip_headsign'] = tripHeadsign;
+    data['trip_short_name'] = tripShortName;
+    data['direction_id'] = directionId;
+    data['block_id'] = blockId;
+    data['shape_id'] = shapeId;
+    data['wheelchair_accessible'] = wheelchairAccessible;
+    data['bikes_allowed'] = bikesAllowed;
     return data;
   }
 }

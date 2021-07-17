@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 /* Contains functions for handling the database */
 
 class DatabaseService {
+  DatabaseService({this.usid});
   //unique user id, will be generated from authorization class after a user successfully logs in
   final String? usid;
   //reference to the user collection in the database
@@ -12,9 +13,9 @@ class DatabaseService {
   //referencing all rpi shuttles collection  (for future use)
   // final CollectionReference _shuttleCollection =
   //     FirebaseFirestore.instance.collection('active_shuttles');
-  DatabaseService({this.usid});
+
   Future updateUserData(String? email, String userType,
-      {String rin = "0", String? name}) async {
+      {String rin = '0', String? name}) async {
     //Updates the user data for the user corresponding to the usid
     return await _userCollection.doc(usid).set({
       'email': name,
@@ -25,7 +26,7 @@ class DatabaseService {
   }
 
   Future<String?> getUserRole() async {
-    DocumentSnapshot snapshot = await _userCollection.doc(usid).get();
+    final snapshot = await _userCollection.doc(usid).get();
     if (snapshot.exists) {
       return snapshot.get('userType')?.toString();
     } else {
@@ -42,7 +43,7 @@ class DatabaseService {
   //         email: doc['email'],
   //         rin: doc['rin'],
   //         userType: doc['userType'],
-  //         name: doc["name"]);
+  //         name: doc['name']);
   //   }).toList();
   // }
 
@@ -67,7 +68,7 @@ class DatabaseService {
   //     data = ds.data;
   //     return data;
   //   }).catchError((e) {
-  //     print("Error Found: $e"); //Prints the error
+  //     print('Error Found: $e'); //Prints the error
   //     return null;
   //   });
 

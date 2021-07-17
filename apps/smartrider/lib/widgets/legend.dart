@@ -16,7 +16,7 @@ class _LegendState extends State<Legend> {
 
   Widget legendTile(String title, Color color, {String? subtitle}) => ListTile(
         dense: true,
-        visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+        visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
         leading: Icon(
           Icons.trip_origin,
           color: color,
@@ -34,11 +34,11 @@ class _LegendState extends State<Legend> {
         child: Container(
           height: 150,
           width: 175,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(20))),
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 10),
+            padding: const EdgeInsets.symmetric(vertical: 10),
             child: Column(
               children: [
                 legendTile('Route 87', BUS_COLORS['87']!),
@@ -56,14 +56,8 @@ class _LegendState extends State<Legend> {
   Widget button(BuildContext context) => Showcase(
       key: showcaseLegend,
       description: LEGEND_BUTTON_SHOWCASE_MESSAGE,
-      shapeBorder: CircleBorder(),
+      shapeBorder: const CircleBorder(),
       child: FloatingActionButton(
-        child: Icon(
-          Icons.help_outline,
-          color: Theme.of(context).brightness == Brightness.light
-              ? Colors.black87
-              : Theme.of(context).accentColor,
-        ),
         backgroundColor: Theme.of(context).brightness == Brightness.light
             ? Colors.white
             : Colors.white70,
@@ -72,7 +66,13 @@ class _LegendState extends State<Legend> {
             _isExpanded = true;
           });
         },
-        heroTag: "legendViewButton",
+        heroTag: 'legendViewButton',
+        child: Icon(
+          Icons.help_outline,
+          color: Theme.of(context).brightness == Brightness.light
+              ? Colors.black87
+              : Theme.of(context).accentColor,
+        ),
       ));
 
   @override
@@ -99,9 +99,9 @@ class _LegendState extends State<Legend> {
         duration: const Duration(milliseconds: 250),
         transitionBuilder: (Widget child, Animation<double> animation) =>
             ScaleTransition(
-          child: child,
           scale: animation,
           alignment: Alignment.bottomLeft,
+          child: child,
         ),
         child: _isExpanded ? legend : button(context),
       );

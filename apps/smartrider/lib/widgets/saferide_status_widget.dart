@@ -25,18 +25,18 @@ class SaferideStatusWidget extends StatelessWidget {
             child: Container(
                 decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(18.0),
                     )),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Column(
                     children: <Widget>[
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Center(
                         child: Text(
                           '${state.queuePosition + 1}${(state.queuePosition + 1).toOrdinal()} in line',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Colors.white),
@@ -45,7 +45,7 @@ class SaferideStatusWidget extends StatelessWidget {
                       Builder(builder: (context) {
                         // TODO: is this accurate?
                         if (state.queuePosition > 7) {
-                          return Padding(
+                          return const Padding(
                             padding: EdgeInsets.only(top: 5),
                             child: Center(
                               child: Text(
@@ -58,15 +58,19 @@ class SaferideStatusWidget extends StatelessWidget {
                             ),
                           );
                         } else {
-                          return SizedBox.shrink();
+                          return const SizedBox.shrink();
                         }
                       }),
-                      SizedBox(height: 14),
+                      const SizedBox(height: 14),
                       ElevatedButton(
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 Theme.of(context).buttonColor)),
-                        child: FractionallySizedBox(
+                        onPressed: () {
+                          BlocProvider.of<SaferideBloc>(context)
+                              .add(const SaferideConfirmedEvent());
+                        },
+                        child: const FractionallySizedBox(
                           widthFactor: 0.6,
                           child: Text(
                             'CONFIRM PICKUP',
@@ -74,10 +78,6 @@ class SaferideStatusWidget extends StatelessWidget {
                             style: TextStyle(fontSize: 15),
                           ),
                         ),
-                        onPressed: () {
-                          BlocProvider.of<SaferideBloc>(context)
-                              .add(SaferideConfirmedEvent());
-                        },
                       )
                     ],
                   ),
@@ -94,15 +94,15 @@ class SaferideStatusWidget extends StatelessWidget {
             child: Container(
                 decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(18.0),
                     )),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Column(
                     children: <Widget>[
-                      SizedBox(height: 5),
-                      Center(
+                      const SizedBox(height: 5),
+                      const Center(
                         child: Text(
                           'TODO: waiting countdown',
                           style: TextStyle(
@@ -112,14 +112,18 @@ class SaferideStatusWidget extends StatelessWidget {
                         ),
                       ),
                       ListTile(
-                        leading: Icon(Icons.hourglass_top),
+                        leading: const Icon(Icons.hourglass_top),
                         title: Text('${state.queuePosition} in line'),
                       ),
                       ElevatedButton(
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 Theme.of(context).accentColor)),
-                        child: FractionallySizedBox(
+                        onPressed: () {
+                          BlocProvider.of<SaferideBloc>(context)
+                              .add(const SaferideUserCancelledEvent());
+                        },
+                        child: const FractionallySizedBox(
                           widthFactor: 0.6,
                           child: Text(
                             'CANCEL',
@@ -127,10 +131,6 @@ class SaferideStatusWidget extends StatelessWidget {
                             style: TextStyle(fontSize: 15),
                           ),
                         ),
-                        onPressed: () {
-                          BlocProvider.of<SaferideBloc>(context)
-                              .add(SaferideUserCancelledEvent());
-                        },
                       )
                     ],
                   ),
@@ -146,15 +146,15 @@ class SaferideStatusWidget extends StatelessWidget {
             child: Container(
                 decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(18.0),
                     )),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Column(
                     children: <Widget>[
-                      SizedBox(height: 5),
-                      Center(
+                      const SizedBox(height: 5),
+                      const Center(
                         child: Text(
                           'TODO: waiting countdown',
                           style: TextStyle(
@@ -164,20 +164,20 @@ class SaferideStatusWidget extends StatelessWidget {
                         ),
                       ),
                       ListTile(
-                        leading: Icon(Icons.face),
+                        leading: const Icon(Icons.face),
                         title: Text(state.driverName),
-                        subtitle: Text('Driver'),
-                        trailing: Icon(Icons.call),
+                        subtitle: const Text('Driver'),
+                        trailing: const Icon(Icons.call),
                         onTap: () {
                         launch('tel://${state.phoneNumber}');
                         },
                       ),
-                      Divider(
+                      const Divider(
                         height: 0,
                       ),
                       ListTile(
-                        leading: Icon(Icons.drive_eta),
-                        title: Text(
+                        leading: const Icon(Icons.drive_eta),
+                        title: const Text(
                             'TODO: replace with brand of car?'),
                         trailing: Text(state.licensePlate),
                       ),
@@ -185,7 +185,11 @@ class SaferideStatusWidget extends StatelessWidget {
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 Theme.of(context).accentColor)),
-                        child: FractionallySizedBox(
+                        onPressed: () {
+                          BlocProvider.of<SaferideBloc>(context)
+                              .add(const SaferideUserCancelledEvent());
+                        },
+                        child: const FractionallySizedBox(
                           widthFactor: 0.6,
                           child: Text(
                             'CANCEL',
@@ -193,10 +197,6 @@ class SaferideStatusWidget extends StatelessWidget {
                             style: TextStyle(fontSize: 15),
                           ),
                         ),
-                        onPressed: () {
-                          BlocProvider.of<SaferideBloc>(context)
-                              .add(SaferideUserCancelledEvent());
-                        },
                       )
                     ],
                   ),
@@ -213,15 +213,15 @@ class SaferideStatusWidget extends StatelessWidget {
             child: Container(
                 decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(18.0),
                     )),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Column(
                     children: <Widget>[
-                      SizedBox(height: 5),
-                      Center(
+                      const SizedBox(height: 5),
+                      const Center(
                         child: Text(
                           'On your way!',
                           style: TextStyle(
@@ -230,14 +230,18 @@ class SaferideStatusWidget extends StatelessWidget {
                               color: Colors.white),
                         ),
                       ),
-                      Divider(
+                      const Divider(
                         height: 0,
                       ),
                       ElevatedButton(
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 Theme.of(context).accentColor)),
-                        child: FractionallySizedBox(
+                        onPressed: () {
+                          BlocProvider.of<SaferideBloc>(context)
+                              .add(SaferideNoEvent());
+                        },
+                        child: const FractionallySizedBox(
                           widthFactor: 0.6,
                           child: Text(
                             'View Schedules',
@@ -245,10 +249,6 @@ class SaferideStatusWidget extends StatelessWidget {
                             style: TextStyle(fontSize: 15),
                           ),
                         ),
-                        onPressed: () {
-                          BlocProvider.of<SaferideBloc>(context)
-                              .add(SaferideNoEvent());
-                        },
                       )
                     ],
                   ),

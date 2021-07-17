@@ -12,20 +12,20 @@ class ShuttleEta {
     if (json['stop_etas'] != null) {
       stopEtas = [];
       json['stop_etas'].forEach((dynamic v) {
-        stopEtas!.add(new StopEtas.fromJson(v));
+        stopEtas!.add(StopEtas.fromJson(v));
       });
     }
     updated = json['updated'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['vehicle_id'] = this.vehicleId;
-    data['route_id'] = this.routeId;
-    if (this.stopEtas != null) {
-      data['stop_etas'] = this.stopEtas!.map((v) => v.toJson()).toList();
+    final data = <String, dynamic>{};
+    data['vehicle_id'] = vehicleId;
+    data['route_id'] = routeId;
+    if (stopEtas != null) {
+      data['stop_etas'] = stopEtas!.map((v) => v.toJson()).toList();
     }
-    data['updated'] = this.updated;
+    data['updated'] = updated;
     return data;
   }
 }
@@ -44,10 +44,10 @@ class StopEtas {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['stop_id'] = this.stopId;
-    data['eta'] = this.eta;
-    data['arriving'] = this.arriving;
+    final data = <String, dynamic>{};
+    data['stop_id'] = stopId;
+    data['eta'] = eta;
+    data['arriving'] = arriving;
     return data;
   }
 }

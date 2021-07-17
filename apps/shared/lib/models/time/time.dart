@@ -7,41 +7,41 @@ class time extends Comparable<time> {
   String? str;
   time({this.str, this.isMilitary = true}) {
     // default constructor
-    int first = str!.indexOf(":");
-    int second = str!.lastIndexOf(":");
-    this.hour = int.parse(str!.substring(0, first));
-    this.minute = int.parse(str!.substring(first + 1, second));
+    int first = str!.indexOf(':');
+    int second = str!.lastIndexOf(':');
+    hour = int.parse(str!.substring(0, first));
+    minute = int.parse(str!.substring(first + 1, second));
     this.second = int.parse(str!.substring(second + 1));
   }
 
   time.copyContructor({this.hour, this.minute, this.second, this.isMilitary}) {
-    this.str =
-        "${this.hour.toString().padLeft(2, "0")}:${this.minute.toString().padLeft(2, "0")}:${this.second.toString().padLeft(2, "0")}";
+    str =
+        '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}:${second.toString().padLeft(2, '0')}';
   }
 
   @override
   int compareTo(time other) {
     // return positive if current is larger than other can be used with .sort
-    return (this.hour! * 3600 + this.minute! * 60 + this.second!) -
+    return (hour! * 3600 + minute! * 60 + second!) -
         (other.hour! * 3600 + other.minute! * 60 + other.second!);
   }
 
   time operator +(time other) {
     return time.copyContructor(
-        hour: this.hour! + other.hour!,
-        minute: this.minute! + other.minute!,
-        second: this.second! + other.second!,
-        isMilitary: this.isMilitary);
+        hour: hour! + other.hour!,
+        minute: minute! + other.minute!,
+        second: second! + other.second!,
+        isMilitary: isMilitary);
   }
 
   time operator -(time other) {
     return time.copyContructor(
-        hour: this.hour! - other.hour!,
-        minute: this.minute! - other.minute!,
-        second: this.second! - other.second!,
-        isMilitary: this.isMilitary);
+        hour: hour! - other.hour!,
+        minute: minute! - other.minute!,
+        second: second! - other.second!,
+        isMilitary: isMilitary);
   }
 
   @override
-  String toString() => this.str!;
+  String toString() => str!;
 }

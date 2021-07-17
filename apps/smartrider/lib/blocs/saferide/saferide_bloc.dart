@@ -21,18 +21,6 @@ part 'saferide_state.dart';
 // BIG TODO: use shared prefs or look up in the database if the user has called a ride
 // so they dont reset when they leave and reopen the app
 class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
-  final places = new GoogleMapsPlaces(apiKey: GOOGLE_API_KEY);
-  final PrefsBloc prefsBloc;
-  final SaferideRepository saferideRepo;
-  final AuthRepository authRepo;
-
-  DocumentReference? currentOrder;
-  PlacesDetailsResponse? dropoffDetails, pickupDetails;
-  String? dropoffAddress, pickupAddress;
-  String? dropoffDescription, pickupDescription;
-  GeoPoint? dropoffPoint, pickupPoint;
-  StreamSubscription? orderSubscription;
-
   SaferideBloc(
       {required this.prefsBloc,
       required this.saferideRepo,
@@ -42,7 +30,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       switch (state.runtimeType) {
         case PrefsLoadedState:
           {
-            String? orderId = prefsBloc.getCurrentOrderId();
+            final orderId = prefsBloc.getCurrentOrderId();
             if (orderId != null) {
               final snap = await saferideRepo.getOrder(orderId);
               if (snap.exists) {
@@ -58,11 +46,25 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     });
   }
 
+  final places = GoogleMapsPlaces(apiKey: GOOGLE_API_KEY);
+  final PrefsBloc prefsBloc;
+  final SaferideRepository saferideRepo;
+  final AuthRepository authRepo;
+
+  DocumentReference? currentOrder;
+  PlacesDetailsResponse? dropoffDetails, pickupDetails;
+  String? dropoffAddress, pickupAddress;
+  String? dropoffDescription, pickupDescription;
+  GeoPoint? dropoffPoint, pickupPoint;
+  StreamSubscription? orderSubscription;
+
   @override
   Future<void> close() {
+    orderSubscription?.cancel();
     return super.close();
   }
 
+  @override
   Stream<SaferideState> mapEventToState(SaferideEvent event) async* {
     switch (event.runtimeType) {
       case SaferideNoEvent:
@@ -100,7 +102,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         break;
       case SaferideDroppingOffEvent:
         {
-          yield SaferideDroppingOffState();
+          yield const SaferideDroppingOffState();
         }
         break;
       case SaferideUserCancelledEvent:
@@ -127,9 +129,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
 
   Future<void> endSubscription() async {
     prefsBloc.setCurrentOrderId(null);
-    if (orderSubscription != null) {
-      await orderSubscription!.cancel();
-    }
+    await orderSubscription?.cancel();
   }
 
   /// listens to the order status and creates events accordingly
@@ -166,7 +166,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         break;
       case 'DROPPING_OFF':
         {
-          add(SaferideDroppingOffEvent());
+          add(const SaferideDroppingOffEvent());
         }
         break;
       case 'CANCELLED':
@@ -214,7 +214,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
 
       orderSubscription = order.listen(orderListener);
     } else {
-      yield SaferideErrorState(message: 'bruh', status: 'bruh');
+      yield const SaferideErrorState(message: 'bruh', status: 'bruh');
     }
   }
 
@@ -237,15 +237,17 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
           pickupDetails!.result.geometry!.location.lng);
     }
 
-    /// if they didn't enter a pickup location, we just use their current location
+    /// if they didn't enter a pickup location,
+    ///we just use their current location
     if (pickupDetails == null) {
       try {
-        Position currentLocation = await Geolocator.getCurrentPosition(
+        final currentLocation = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.best);
         pickupPoint =
             GeoPoint(currentLocation.latitude, currentLocation.longitude);
+        // try to get this in a way that google maps can use
         pickupAddress =
-            '${currentLocation.latitude}, ${currentLocation.longitude}'; // try to get this in a way that google maps can use
+            '${currentLocation.latitude}, ${currentLocation.longitude}';
         pickupDescription = 'Current Location';
       } on PermissionDeniedException catch (_) {
         pickupDescription = 'Enter Pickup Location';

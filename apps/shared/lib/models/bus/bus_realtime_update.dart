@@ -1,16 +1,4 @@
 class BusRealtimeUpdate {
-  String objName;
-  String id;
-  double lat;
-  double lng;
-  String bearing;
-  String routeId;
-  String stopId;
-  String stopName;
-  String tripId;
-  String directionId;
-  String tripHeadsign;
-
   BusRealtimeUpdate(
       {required this.objName,
       required this.id,
@@ -39,19 +27,31 @@ class BusRealtimeUpdate {
         tripHeadsign: json['trip_headsign']);
   }
 
+  String objName;
+  String id;
+  double lat;
+  double lng;
+  String bearing;
+  String routeId;
+  String stopId;
+  String stopName;
+  String tripId;
+  String directionId;
+  String tripHeadsign;
+
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['objName'] = this.objName;
-    data['id'] = this.id;
-    data['lat'] = this.lat;
-    data['lng'] = this.lng;
-    data['bearing'] = this.bearing;
-    data['route_id'] = this.routeId;
-    data['stop_id'] = this.stopId;
-    data['stop_name'] = this.stopName;
-    data['trip_id'] = this.tripId;
-    data['direction_id'] = this.directionId;
-    data['trip_headsign'] = this.tripHeadsign;
+    final data = <String, dynamic>{};
+    data['objName'] = objName;
+    data['id'] = id;
+    data['lat'] = lat;
+    data['lng'] = lng;
+    data['bearing'] = bearing;
+    data['route_id'] = routeId;
+    data['stop_id'] = stopId;
+    data['stop_name'] = stopName;
+    data['trip_id'] = tripId;
+    data['direction_id'] = directionId;
+    data['trip_headsign'] = tripHeadsign;
     return data;
   }
 }

@@ -25,7 +25,7 @@ class _FilterDialogState extends State<FilterDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(18.0))),
         child: FractionallySizedBox(
             heightFactor: 0.7,
@@ -33,9 +33,9 @@ class _FilterDialogState extends State<FilterDialog> {
               ListView(
                   physics: const NeverScrollableScrollPhysics(),
                   children: <Widget>[
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
                       height: 64,
                       child: Material(
                         borderRadius: BorderRadius.circular(10.0),
@@ -43,12 +43,13 @@ class _FilterDialogState extends State<FilterDialog> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            IconButton(
+                            const IconButton(
                               icon: Icon(Icons.search),
                               onPressed: null,
                             ),
                             Expanded(
                                 child: Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
                               child: TextField(
                                 controller: widget.controller,
                                 autofocus: false,
@@ -56,12 +57,11 @@ class _FilterDialogState extends State<FilterDialog> {
                                   Navigator.pop(context);
                                 },
                                 decoration:
-                                    InputDecoration(hintText: "Filter Results"),
+                                    const InputDecoration(hintText: 'Filter Results'),
                               ),
-                              padding: const EdgeInsets.only(right: 8.0),
                             )),
                             IconButton(
-                              icon: Icon(Icons.cancel),
+                              icon: const Icon(Icons.cancel),
                               onPressed: () {
                                 widget.controller!.text = '';
                                 Navigator.pop(context);
@@ -71,7 +71,7 @@ class _FilterDialogState extends State<FilterDialog> {
                         ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       height: 400,
                       child: ListView.builder(
                           scrollDirection: Axis.vertical,
@@ -80,13 +80,13 @@ class _FilterDialogState extends State<FilterDialog> {
                           itemBuilder: (context, index) {
                             // hack that allows us to show the last list item without clipping
                             if (index == widget.stops!.length) {
-                              return SizedBox(height: 20);
+                              return const SizedBox(height: 20);
                             }
                             String stopName = widget.stops![index][0];
                             return ListTile(
-                              leading: Icon(Icons.departure_board),
+                              leading: const Icon(Icons.departure_board),
                               title: Text(stopName),
-                              trailing: Icon(Icons.search),
+                              trailing: const Icon(Icons.search),
                               onTap: () {
                                 widget.controller!.text = stopName;
                                 Navigator.pop(context);
@@ -102,7 +102,7 @@ class _FilterDialogState extends State<FilterDialog> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Icon(Icons.arrow_back),
+                    child: const Icon(Icons.arrow_back),
                   )),
             ])));
   }

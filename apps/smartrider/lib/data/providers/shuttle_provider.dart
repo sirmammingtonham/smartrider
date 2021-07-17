@@ -31,7 +31,7 @@ class ShuttleProvider {
       isConnected = false;
       print(error);
     }
-    //print("App has polled $type API: $isConnected");
+    //print('App has polled $type API: $isConnected');
     return response;
   }
 
@@ -118,7 +118,7 @@ class ShuttleProvider {
     ///
     ///     return etas;
     var response = await fetch('eta');
-    List<ShuttleEta> etas = [];
+    final etas = <ShuttleEta>[];
     Map<String, dynamic> etamap =
         (response != null ? (json.decode(response.body))! : <dynamic>[]);
     etamap.forEach((String key, dynamic value) {

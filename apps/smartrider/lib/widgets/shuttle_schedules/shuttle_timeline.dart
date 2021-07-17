@@ -18,7 +18,6 @@ import 'package:smartrider/widgets/custom_widgets/custom_expansion_tile.dart';
 
 import 'package:smartrider/widgets/custom_widgets/custom_painters.dart';
 
-
 const List<String> choices = [
   'Set Reminder',
   'See on map',
@@ -37,10 +36,10 @@ class ShuttleTimeline extends StatefulWidget {
 class ShuttleTimelineState extends State<ShuttleTimeline>
     with SingleTickerProviderStateMixin {
   final List<Widget> shuttleTabs = [
-    Tab(text: 'SOUTH'),
-    Tab(text: 'NORTH'),
-    Tab(text: 'WEST'),
-    Tab(text: 'WEEKEND'),
+    const Tab(text: 'SOUTH'),
+    const Tab(text: 'NORTH'),
+    const Tab(text: 'WEST'),
+    const Tab(text: 'WEEKEND'),
   ];
 
   static const List<Color> SHUTTLE_COLORS = [
@@ -87,7 +86,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
             : null,
         controller: _tabController,
       ),
-      Container(
+      SizedBox(
         height: MediaQuery.of(context).size.height * 0.7,
         child: TabBarView(
           controller: _tabController,
@@ -111,22 +110,22 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
         var curStopList = shuttleStopLists[idx];
         return CustomExpansionTile(
           title: Text(curStopList[index % curStopList.length][0]),
-          subtitle: Text('Info unavailable'),
+          subtitle: const Text('Info unavailable'),
           leading: CustomPaint(
               painter: FillPainter(
                   circleColor: SHUTTLE_COLORS[_tabController!.index],
                   lineColor: Theme.of(context).primaryColorLight,
                   first: index == 0,
                   last: index == curStopList.length - 1),
-              child: Container(
+              child: SizedBox(
                 height: 50,
                 width: 45,
               )),
           trailing:
               //toggle()
               isExpandedList[index % curStopList.length]
-                  ? Text('Hide Arrivals -')
-                  : Text('Show Arrivals +'),
+                  ? const Text('Hide Arrivals -')
+                  : const Text('Show Arrivals +'),
           onExpansionChanged: (value) {
             setState(() {
               isExpandedList[index % curStopList.length] = value;
@@ -143,12 +142,12 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                   contentPadding: EdgeInsets.zero,
                   leading: Container(
                     margin: const EdgeInsets.only(left: 34.5),
-                    constraints: BoxConstraints.expand(width: 8),
+                    constraints: const BoxConstraints.expand(width: 8),
                   ),
                   title: Container(
                     child: RefreshIndicator(
                       onRefresh: () =>
-                          Future.delayed(const Duration(seconds: 1), () => "1"),
+                          Future.delayed(const Duration(seconds: 1), () => '1'),
                       displacement: 1,
                       child: ListView.builder(
                         shrinkWrap: true,
@@ -173,12 +172,12 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
                           //Duration difference = shuttleTime.difference(currentTime);
                           return ListTile(
                             dense: true,
-                            leading: Icon(Icons.access_time, size: 20),
+                            leading: const Icon(Icons.access_time, size: 20),
                             title: Text(
-                              '${shuttleTimeLists[idx][timeIndex]}',
-                              style: TextStyle(fontSize: 15),
+                              shuttleTimeLists[idx][timeIndex],
+                              style: const TextStyle(fontSize: 15),
                             ),
-                            subtitle: Text('Info unavailable'),
+                            subtitle: const Text('Info unavailable'),
                             trailing: PopupMenuButton<String>(
                                 onSelected: (choice) =>
                                     _handlePopupSelection(choice),
@@ -203,7 +202,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
       // BlocProvider.of<ScheduleBloc>(context)
       //     .scheduleAlarm(stopTime[1], 'busStop.stopName', isShuttle: true);
     } else if (choice == choices[1]) {
-      this.widget.panelController.animatePanelToPosition(0);
+      widget.panelController.animatePanelToPosition(0);
       // BlocProvider.of<MapBloc>(context).scrollToLocation();
     }
   }
@@ -220,7 +219,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
 //     var t = time.replaceAll(':', '.');
 //     double? compTime = double.tryParse(t.substring(0, t.length - 2));
 //     if (compTime == null) return;
-//     if (t.endsWith('pm') && !t.startsWith("12")) {
+//     if (t.endsWith('pm') && !t.startsWith('12')) {
 //       compTime += 12.0;
 //     }
 //     if ((curTime - compTime).abs() < min) {

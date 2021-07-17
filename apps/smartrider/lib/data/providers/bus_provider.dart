@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:shared/models/bus/pb/gtfs-realtime.pb.dart';
 
 /// static gtfs models
 import 'package:shared/models/bus/bus_route.dart';
@@ -13,10 +12,6 @@ import 'package:shared/models/bus/bus_stop.dart';
 import 'package:shared/models/bus/bus_trip.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
 
-/// realtime gtfs models
-import 'package:shared/models/bus/bus_trip_update.dart';
-import 'package:shared/models/bus/bus_vehicle_update.dart';
-
 /// A provider for Bus data.
 ///
 /// Implemented as a collection of functions that utilizes the cloud
@@ -24,12 +19,15 @@ import 'package:shared/models/bus/bus_vehicle_update.dart';
 /// Each member function queries the firestore and returns
 /// a map containing route names and their relevent bus data object.
 class BusProvider {
+  BusProvider() {
+    _providerHasLoaded = _init();
+  }
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Map<String?, String?>? routeMapping;
-
-  List<String?>? _defaultRoutes;
-  Future? _providerHasLoaded;
+  late final Map<String, String> routeMapping;
+  late final Future _providerHasLoaded;
+  late final List<String?> _defaultRoutes;
 
   static const shortRouteIds = [
     '87',
@@ -38,29 +36,25 @@ class BusProvider {
     '288', // cdta express shuttle
   ];
 
-  BusProvider() {
-    _providerHasLoaded = _init();
-  }
-
   List<String> getShortRoutes() {
     return shortRouteIds;
   }
 
-  // we need to await in the constructor, so doing it like this allows for the factory to wait for initialization
+  // we need to await in the constructor, so doing it like this
+  // allows for the factory to wait for initialization
   Future<void> _init() async {
     var routes = await _firestore
         .collection('routes')
         .where('route_short_name', whereIn: shortRouteIds)
         .get();
 
-    routeMapping = Map.fromIterable(routes.docs,
-        key: (dynamic doc) => doc['route_id'],
-        value: (dynamic doc) => doc['route_short_name']);
-
-    _defaultRoutes = routeMapping!.keys.toList();
+    routeMapping = <String, String>{
+      for (final doc in routes.docs) doc['route_id']: doc['route_short_name']
+    };
+    _defaultRoutes = routeMapping.keys.toList();
   }
 
-  Future? get waitForLoad => _providerHasLoaded;
+  Future get waitForLoad => _providerHasLoaded;
 
   /// Fetchs data from the JSON API and returns a decoded JSON.
   Future<QuerySnapshot> fetch(String collection,
@@ -71,101 +65,74 @@ class BusProvider {
         .get();
   }
 
-  // /// The status of the most recent [fetch] call.
-  // bool get getIsConnected => isConnected;
-
   /// Returns a [Map] of <[BusRoute.routeShortName], [BusRoute]>  pairs.
-  Future<Map<String?, BusRoute>> getRoutes() async {
-    QuerySnapshot response =
+  Future<Map<String, BusRoute>> getRoutes() async {
+    final response =
         await fetch('routes', idField: 'route_id', routes: _defaultRoutes);
 
-    Map<String?, BusRoute> routeMap = Map.fromIterable(response.docs,
-        key: (dynamic doc) => doc['route_short_name'],
-        value: (dynamic doc) => BusRoute.fromJson(doc.data()));
+    final routeMap = <String, BusRoute>{
+      for (final doc in response.docs)
+        doc['route_short_name']:
+            BusRoute.fromJson(doc.data() as Map<String, dynamic>)
+    };
 
     return routeMap;
   }
 
   /// Returns a [Map] of [BusShape] objects.
-  Future<Map<String?, BusShape>> getPolylines() async {
-    QuerySnapshot response =
+  Future<Map<String, BusShape>> getPolylines() async {
+    final response =
         await fetch('polylines', idField: 'route_id', routes: _defaultRoutes);
 
-    Map<String?, BusShape> shapesMap = Map.fromIterable(response.docs,
-        key: (dynamic doc) => routeMapping![doc['route_id']],
-        value: (dynamic doc) => BusShape.fromJson(json.decode(doc['geoJSON'])));
+    final shapesMap = <String, BusShape>{
+      for (final doc in response.docs)
+        routeMapping[doc['route_id']]!:
+            BusShape.fromJson(json.decode(doc['geoJSON']))
+    };
+
     return shapesMap;
   }
 
   /// Returns a [Map] of [BusStop] objects.
-  Future<Map<String?, BusStop>> getStops() async {
+  Future<Map<String, BusStop>> getStops() async {
     QuerySnapshot response = await _firestore
         .collection('stops')
         .where('route_ids', arrayContainsAny: _defaultRoutes)
         .get();
 
-    Map<String?, BusStop> stopsMap = Map.fromIterable(response.docs,
-        key: (dynamic doc) => doc['stop_id'],
-        value: (dynamic doc) => BusStop.fromJson(doc.data()));
+    final stopsMap = <String, BusStop>{
+      for (final doc in response.docs)
+        doc['stop_id']: BusStop.fromJson(doc.data() as Map<String, dynamic>)
+    };
 
     return stopsMap;
   }
 
   /// Returns a [List] of [BusTrip] objects.
-  Future<Map<String?, BusTrip>> getTrips() async {
-    QuerySnapshot response =
+  Future<Map<String, BusTrip>> getTrips() async {
+    final response =
         await fetch('trips', idField: 'route_id', routes: _defaultRoutes);
 
-    Map<String?, BusTrip> tripList = Map.fromIterable(response.docs,
-        key: (dynamic doc) => routeMapping![doc['route_id']],
-        value: (dynamic doc) => BusTrip.fromJson(doc.data()));
+    final tripList = <String, BusTrip>{
+      for (final doc in response.docs)
+        routeMapping[doc['route_id']]!:
+            BusTrip.fromJson(doc.data() as Map<String, dynamic>)
+    };
 
     return tripList;
-  }
-
-  /// Returns a [List] of [BusTripUpdate] objects.
-  Future<List<BusTripUpdate>> getTripUpdates() async {
-    http.Response response = await http
-        .get(Uri.parse('http://64.128.172.149:8080/gtfsrealtime/TripUpdates'));
-
-    // var routes = ["87", "286", "289", "288"];
-    List<BusTripUpdate> tripUpdatesList =
-        FeedMessage.fromBuffer(response.bodyBytes)
-            .entity
-            .map((entity) => BusTripUpdate.fromPBEntity(entity))
-            // .where((update) =>
-            // trips.contains(update.id)) // check if trip id is active
-            .toList();
-    return tripUpdatesList;
-  }
-
-  /// Returns a [List] of [BusVehicleUpdate] objects.
-  Future<List<BusVehicleUpdate>> getVehicleUpdates() async {
-    http.Response response = await http.get(
-        Uri.parse('http://64.128.172.149:8080/gtfsrealtime/VehiclePositions'));
-
-    List<BusVehicleUpdate> vehicleUpdatesList =
-        FeedMessage.fromBuffer(response.bodyBytes)
-            .entity
-            .map((entity) => BusVehicleUpdate.fromPBEntity(entity))
-            .where((update) => _defaultRoutes!
-                .map((str) => str!.split('-')[0])
-                .contains(update.routeId))
-            .toList();
-    return vehicleUpdatesList;
   }
 
 // TO-DO get realtime timetable updates of all routes
   Future<Map<String, Map<String, String>>> getTimetableRealtime() async {
     final now = DateTime.now();
     final milliseconds = now.millisecondsSinceEpoch;
-    Map<String, Map<String, String>> ret = new Map();
-    for (String route in shortRouteIds) {
-      http.Response response = await http.get(Uri.parse(
+    final ret = <String, Map<String, String>>{};
+    for (final route in shortRouteIds) {
+      final response = await http.get(Uri.parse(
           'https://www.cdta.org/apicache/routebus_${route}_0.json?_=$milliseconds'));
       if (response.statusCode == 200) {
         // filter out null values from json response and convert to map
-        Map<String, String> data = {};
+        final data = <String, String>{};
         (jsonDecode(response.body) as Map<String, dynamic>)
             .forEach((String key, dynamic value) {
           if (value != null) {
@@ -178,60 +145,61 @@ class BusProvider {
     return ret;
   }
 
-  /// Returns a [Map] of <route_name, List<[BusRealtimeUpdate]>>  realtime update includes
+  /// Returns a [Map] of <route_name, List<[BusRealtimeUpdate]>>
+  /// realtime update includes
   /// the realtime positions and bearings of the buses obtained from cdta api
   Future<Map<String, List<BusRealtimeUpdate>>> getBusRealtimeUpdates() async {
     final now = DateTime.now();
     final milliseconds = now.millisecondsSinceEpoch;
-    http.Response response = await http.get(
+    final response = await http.get(
         Uri.parse('https://www.cdta.org/realtime/buses.json?$milliseconds'));
-    Map<String, List<BusRealtimeUpdate>> updates =
-        Map<String, List<BusRealtimeUpdate>>();
-    (jsonDecode(response.body) as List).forEach((dynamic element) {
-      BusRealtimeUpdate update = BusRealtimeUpdate.fromJson(element);
+    final updates = <String, List<BusRealtimeUpdate>>{};
+    for (final element in jsonDecode(response.body)) {
+      final update = BusRealtimeUpdate.fromJson(element);
       if (shortRouteIds.contains(update.routeId)) {
         if (updates[update.routeId] == null) {
           updates[update.routeId] = [];
         }
         updates[update.routeId]?.add(update);
       }
-    });
+    }
+
     return updates;
   }
 
   /// Returns a [Map] of <route_name,[BusTimetable]>
-  Future<Map<String?, BusTimetable>> getBusTimetable() async {
-    String day = DateFormat('EEEE').format(DateTime.now());
+  Future<Map<String, BusTimetable>> getBusTimetable() async {
+    var day = DateFormat('EEEE').format(DateTime.now());
     const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
     if (weekdays.contains(day)) {
-      day = "weekday";
+      day = 'weekday';
     }
-    QuerySnapshot response = await _firestore
+    final response = await _firestore
         .collection('timetables')
         .where('route_id', whereIn: _defaultRoutes)
         .get();
-    Map<String?, BusTimetable> timetableMap = {};
-    Map<String, Map<String, String>> realtimeTable =
-        await this.getTimetableRealtime();
+    final timetableMap = <String, BusTimetable>{};
+    final realtimeTable = await getTimetableRealtime();
 
     // since timetables are nested in subcollection we have to retrieve those
-    for (QueryDocumentSnapshot route in response.docs) {
+    for (final route in response.docs) {
       var table =
           await route.reference.collection(day.toLowerCase()).doc('0').get();
       if (table.data() != null) {
-        BusTimetable entry = BusTimetable.fromJson(table.data()!);
+        final entry = BusTimetable.fromJson(table.data()!);
         String id = route.get('route_id');
-        id = id.split("-")[0];
+        id = id.split('-')[0];
         entry.UpdateWithRealtime(realtimeTable[id]);
         // check if today is in exclusive dates
-        final DateTime now = DateTime.now();
-        final DateFormat formatter = DateFormat.yMMMMd('en_US');
-        final String today = formatter.format(now);
+        final now = DateTime.now();
+        final formatter = DateFormat.yMMMMd('en_US');
+        final today = formatter.format(now);
         if (entry.excludeDates!.contains(today)) {
           // special case: today is excluded
-          // search through other possible days for inclusive dates that contains today
+          // search through other possible days
+          // for inclusive dates that contains today
           var possibleDays = ['weekday', 'saturday', 'sunday'];
-          for (String d in possibleDays) {
+          for (final d in possibleDays) {
             if (d != day) {
               table = await route.reference
                   .collection(d.toLowerCase())
@@ -242,8 +210,9 @@ class BusProvider {
                 if (temp.includeDates!.contains(today) &&
                     !temp.excludeDates!.contains(today)) {
                   // check for exclusive just in case
-                  // replace today's schedule with another day's (e.g: today is a weekday, but uses sunday schedule)
-                  timetableMap[routeMapping![route.get('route_id')]] = temp;
+                  // replace today's schedule with another day's
+                  // (e.g: today is a weekday, but uses sunday schedule)
+                  timetableMap[routeMapping[route.get('route_id')]!] = temp;
                   break;
                 }
               }
@@ -251,7 +220,7 @@ class BusProvider {
           }
         } else {
           // normal case: today not in exclude dates
-          timetableMap[routeMapping![route.get('route_id')]] = entry;
+          timetableMap[routeMapping[route.get('route_id')]!] = entry;
         }
 
         // TO-DO update the timetable with cdta api

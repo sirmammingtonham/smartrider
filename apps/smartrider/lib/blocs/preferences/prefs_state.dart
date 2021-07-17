@@ -18,13 +18,13 @@ class PrefsLoadingState extends PrefsState {
 
 /// This class represents what user will see when data is fetched
 class PrefsLoadedState extends PrefsState {
+  const PrefsLoadedState(this.prefs, this.shuttles, this.buses,
+      {this.modifyActiveRoutes = false});
+
   final SharedPreferences prefs;
   final Map<String?, bool?> shuttles;
   final Map<String, bool> buses;
   final bool modifyActiveRoutes;
-
-  const PrefsLoadedState(this.prefs, this.shuttles, this.buses,
-      {this.modifyActiveRoutes: false});
 
   ThemeData get theme => prefs.getBool('darkMode')! ? darkTheme : lightTheme;
 
@@ -32,12 +32,12 @@ class PrefsLoadedState extends PrefsState {
 
   @override
   List<Object?> get props => [
-        this.shuttles,
-        this.buses,
-        this.modifyActiveRoutes,
-        this.prefs.getBool('pushNotifications'),
-        this.prefs.getBool('darkMode'),
-        this.prefs.getBool('firstLaunch')
+        shuttles,
+        buses,
+        modifyActiveRoutes,
+        prefs.getBool('pushNotifications'),
+        prefs.getBool('darkMode'),
+        prefs.getBool('firstLaunch')
       ];
 }
 
@@ -56,8 +56,9 @@ class PrefsSavingState extends PrefsState {
 
 // This class represents what user will see when there is an error
 class PrefsErrorState extends PrefsState {
-  final String? message;
   const PrefsErrorState({this.message});
+
+  final String? message;
 
   @override
   List<Object?> get props => [message];

@@ -11,7 +11,7 @@ const Duration _kExpand = Duration(milliseconds: 200);
 /// the tile to reveal or hide the [children].
 ///
 /// This widget is typically used with [ListView] to create an
-/// "expand / collapse" list entry. When used with scrolling widgets like
+/// 'expand / collapse' list entry. When used with scrolling widgets like
 /// [ListView], a unique [PageStorageKey] must be specified to enable the
 /// [CustomExpansionTile] to save and restore its expanded state when it is scrolled
 /// in and out of view.
@@ -20,7 +20,7 @@ const Duration _kExpand = Duration(milliseconds: 200);
 ///
 ///  * [ListTile], useful for creating expansion tile [children] when the
 ///    expansion tile represents a sublist.
-///  * The "Expand/collapse" section of
+///  * The 'Expand/collapse' section of
 ///    <https://material.io/guidelines/components/lists-controls.html>.
 class CustomExpansionTile extends StatefulWidget {
   /// Creates a single-line [ListTile] with a trailing button that expands or collapses
@@ -260,13 +260,13 @@ class _ExpansionTileState extends State<CustomExpansionTile>
     final bool shouldRemoveChildren = closed && !widget.maintainState;
 
     final Widget result = Offstage(
+        offstage: closed,
         child: TickerMode(
+          enabled: !closed,
           child: Padding(
               padding: widget.childrenPadding ?? EdgeInsets.zero,
               child: widget.children[0]),
-          enabled: !closed,
-        ),
-        offstage: closed);
+        ));
 
     return AnimatedBuilder(
       animation: _controller.view,

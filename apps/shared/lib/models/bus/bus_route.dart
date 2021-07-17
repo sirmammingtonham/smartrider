@@ -3,23 +3,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 /// Bus route model:
 /// Contains data related to individual routes
 class BusRoute {
-  String? routeId;
-  String? agencyId;
-  String? routeShortName;
-  String? routeLongName;
-  String? routeDesc;
-  int? routeType;
-  String? routeUrl;
-  String? routeColor;
-  String? routeTextColor;
-  int? routeSortOrder;
-  int? continuousPickup;
-  int? continuousDropOff;
-
-  int? startDate;
-  int? endDate;
-  Iterable<BusStopSimplified>? stops;
-
   BusRoute(
       {this.routeId,
       this.agencyId,
@@ -37,17 +20,6 @@ class BusRoute {
       this.endDate,
       this.stops});
 
-  List<BusStopSimplified> get forwardStops =>
-      stops!.where((stop) => stop.stopSeq0 != -1).toList()
-        ..sort((first, second) {
-          return first.stopSeq0!.compareTo(second.stopSeq0!);
-        });
-  List<BusStopSimplified> get reverseStops =>
-      stops!.where((stop) => stop.stopSeq1 != -1).toList()
-        ..sort((first, second) {
-          return first.stopSeq1!.compareTo(second.stopSeq1!);
-        });
-
   BusRoute.fromJson(Map<String, dynamic> json) {
     routeId = json['route_id'];
     agencyId = json['agency_id'];
@@ -64,70 +36,97 @@ class BusRoute {
 
     startDate = json['start_date'];
     endDate = json['end_date'];
-    stops = json['stops']
-        .map<BusStopSimplified>((dynamic stop) => BusStopSimplified.fromJson(stop));
+    stops = json['stops'].map<BusStopSimplified>(
+        (dynamic stop) => BusStopSimplified.fromJson(stop));
   }
 
+  String? routeId;
+  String? agencyId;
+  String? routeShortName;
+  String? routeLongName;
+  String? routeDesc;
+  int? routeType;
+  String? routeUrl;
+  String? routeColor;
+  String? routeTextColor;
+  int? routeSortOrder;
+  int? continuousPickup;
+  int? continuousDropOff;
+
+  int? startDate;
+  int? endDate;
+  Iterable<BusStopSimplified>? stops;
+
+  List<BusStopSimplified> get forwardStops =>
+      stops!.where((stop) => stop.stopSeq0 != -1).toList()
+        ..sort((first, second) {
+          return first.stopSeq0.compareTo(second.stopSeq0);
+        });
+  List<BusStopSimplified> get reverseStops =>
+      stops!.where((stop) => stop.stopSeq1 != -1).toList()
+        ..sort((first, second) {
+          return first.stopSeq1.compareTo(second.stopSeq1);
+        });
+
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['route_id'] = this.routeId;
-    data['agency_id'] = this.agencyId;
-    data['route_short_name'] = this.routeShortName;
-    data['route_long_name'] = this.routeLongName;
-    data['route_desc'] = this.routeDesc;
-    data['route_type'] = this.routeType;
-    data['route_url'] = this.routeUrl;
-    data['route_color'] = this.routeColor;
-    data['route_text_color'] = this.routeTextColor;
-    data['route_sort_order'] = this.routeSortOrder;
-    data['continuous_pickup'] = this.continuousPickup;
-    data['continuous_drop_off'] = this.continuousDropOff;
-    data['start_date'] = this.startDate;
-    data['end_date'] = this.endDate;
-    data['stops'] = this.stops;
+    final data = <String, dynamic>{};
+    data['route_id'] = routeId;
+    data['agency_id'] = agencyId;
+    data['route_short_name'] = routeShortName;
+    data['route_long_name'] = routeLongName;
+    data['route_desc'] = routeDesc;
+    data['route_type'] = routeType;
+    data['route_url'] = routeUrl;
+    data['route_color'] = routeColor;
+    data['route_text_color'] = routeTextColor;
+    data['route_sort_order'] = routeSortOrder;
+    data['continuous_pickup'] = continuousPickup;
+    data['continuous_drop_off'] = continuousDropOff;
+    data['start_date'] = startDate;
+    data['end_date'] = endDate;
+    data['stops'] = stops;
     return data;
   }
 }
 
 class BusStopSimplified {
-  String? stopId;
-  String? stopName;
-  double? stopLat;
-  double? stopLon;
-  int? stopSeq0;
-  int? stopSeq1;
+  const BusStopSimplified(
+      {required this.stopId,
+      required this.stopName,
+      required this.stopLat,
+      required this.stopLon,
+      required this.stopSeq0,
+      required this.stopSeq1});
 
-  BusStopSimplified(
-      {this.stopId,
-      this.stopName,
-      this.stopLat,
-      this.stopLon,
-      this.stopSeq0,
-      this.stopSeq1});
+  factory BusStopSimplified.fromJson(Map<String, dynamic> json) =>
+      BusStopSimplified(
+          stopId: json['stop_id'],
+          stopName: json['stop_name'],
+          stopLat: json['stop_lat'],
+          stopLon: json['stop_lon'],
+          stopSeq0: json['stop_sequence_0'],
+          stopSeq1: json['stop_sequence_1']);
 
-  LatLng get getLatLng => LatLng(this.stopLat!, this.stopLon!);
+  final String stopId;
+  final String stopName;
+  final double stopLat;
+  final double stopLon;
+  final int stopSeq0;
+  final int stopSeq1;
 
-  BusStopSimplified.fromJson(Map<String, dynamic> json) {
-    stopId = json['stop_id'];
-    stopName = json['stop_name'];
-    stopLat = json['stop_lat'];
-    stopLon = json['stop_lon'];
-
-    stopSeq0 = json['stop_sequence_0'];
-    stopSeq1 = json['stop_sequence_1'];
-  }
+  LatLng get getLatLng => LatLng(stopLat, stopLon);
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['stop_id'] = this.stopId;
+    final data = <String, dynamic>{};
+    data['stop_id'] = stopId;
 
-    data['stop_name'] = this.stopName;
+    data['stop_name'] = stopName;
 
-    data['stop_lat'] = this.stopLat;
-    data['stop_lon'] = this.stopLon;
+    data['stop_lat'] = stopLat;
+    data['stop_lon'] = stopLon;
 
-    data['stop_sequence_0'] = this.stopSeq0;
-    data['stop_sequence_1'] = this.stopSeq1;
+    data['stop_sequence_0'] = stopSeq0;
+    data['stop_sequence_1'] = stopSeq1;
     return data;
   }
 }

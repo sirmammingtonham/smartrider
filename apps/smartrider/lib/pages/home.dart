@@ -39,19 +39,21 @@ GlobalKey showcaseTimeline = GlobalKey();
 
 /// Default page that is displayed once the user logs in.
 class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
+
   static const String route = '/';
 
   /// Builds our Home Page by calling the constructor for
   /// the class that builds the homepage.
   @override
   Widget build(BuildContext context) {
-    return _HomePage();
+    return const _HomePage();
   }
 }
 
 /// Class that represents the HomePage.
 class _HomePage extends StatefulWidget {
-  _HomePage();
+  const _HomePage();
 
   /// Grabs the current state of the HomePage
   /// given from dynamic data.
@@ -70,7 +72,7 @@ class _HomePageState extends State<_HomePage>
     super.initState();
     _panelController = PanelController();
     _tabController = TabController(vsync: this, length: 2);
-    BlocProvider.of<MapBloc>(context).add(MapInitEvent());
+    BlocProvider.of<MapBloc>(context).add(const MapInitEvent());
     BlocProvider.of<ScheduleBloc>(context).add(ScheduleInitEvent(
         panelController: _panelController, tabController: _tabController));
   }
@@ -111,14 +113,14 @@ class _HomePageState extends State<_HomePage>
         renderPanelSheet: false,
         backdropEnabled: true,
         parallaxOffset: .1,
-        borderRadius: BorderRadius.vertical(
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(20.0),
         ),
         // stack the search bar widget over the map ui
         body: Stack(children: <Widget>[
-          SmartriderMap(),
+          const SmartriderMap(),
           SearchBar(),
-          SaferideStatusWidget()
+          const SaferideStatusWidget()
         ]),
         panelBuilder: (sc) => PanelPage(panelScrollController: sc),
       );
@@ -152,7 +154,7 @@ class _HomePageState extends State<_HomePage>
 
               switch (prefState.runtimeType) {
                 case PrefsLoadingState:
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
 
                 case PrefsLoadedState:
                   {
@@ -169,9 +171,9 @@ class _HomePageState extends State<_HomePage>
                     return _slidingPanel(saferideState, prefState, context);
                   }
                 case PrefsSavingState:
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: const CircularProgressIndicator());
                 default:
-                  return Center(child: Text("oh poops"));
+                  return const Center(child: Text('oh poops'));
               }
             }));
   }

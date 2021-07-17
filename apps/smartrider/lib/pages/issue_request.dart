@@ -35,10 +35,10 @@ class Post {
 
   /// Returns a new Map object using values from this Post object.
   Map toMap() {
-    Map map = new Map<String, dynamic>();
-    map["title"] = title;
-    map["body"] = body;
-    map["labels"] = labels;
+    Map map = <String, dynamic>{};
+    map['title'] = title;
+    map['body'] = body;
+    map['labels'] = labels;
     return map;
   }
 }
@@ -76,7 +76,7 @@ class IssueRequest extends StatefulWidget {
 
   /// Sets the state of the issue request page.
   @override
-  _IssueRequestState createState() => new _IssueRequestState();
+  _IssueRequestState createState() => _IssueRequestState();
 }
 
 /// Represents the current state of the Issue Request Page.
@@ -85,22 +85,22 @@ class _IssueRequestState extends State<IssueRequest> {
   bool? valuefirst = false;
 
   /// Value of the type-of-request dropdown
-  String? dropdownValue = "Bug";
+  String? dropdownValue = 'Bug';
 
   /// HTTP Post created once one is created.
   Future? post;
 
   /// Value of the title TextField. Represents the title of the bug/feature
   /// that the user is requesting.
-  String title = "";
+  String title = '';
 
   /// Value of the description TextField. Represents the description of the
   /// bug/feature that the user is requesting.
-  String description = "";
+  String description = '';
 
   // The POST URL that the GitHub API submits to.
   String postUrl =
-      "https://api.github.com/repos/sirmammingtonham/smartrider/issues";
+      'https://api.github.com/repos/sirmammingtonham/smartrider/issues';
 
   /// Builds the IssueRequest page.
   @override
@@ -116,14 +116,14 @@ class _IssueRequestState extends State<IssueRequest> {
           // in a column for layout purposes.
           child: Column(children: [
         // Vertical margin for elements.
-        new Padding(
+        const Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
         ),
         // Organizes back button in a Row layout.
         Row(
           children: [
             // Horizonal left margin between screen and back button.
-            new Padding(
+            const Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5.0),
             ),
             // Back button
@@ -141,31 +141,31 @@ class _IssueRequestState extends State<IssueRequest> {
         Row(
           children: [
             // Left margin between screen and Title label.
-            new Padding(
+            const Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
             ),
             // Controls appearance of the title label.
-            Text("Title:", style: Theme.of(context).textTheme.headline6),
+            Text('Title:', style: Theme.of(context).textTheme.headline6),
           ],
         ),
         // Container for the title description label, used for layout purposes.
         Row(
           children: [
             // Left margin between screen and title description.
-            new Padding(
+            const Padding(
               padding: const EdgeInsets.symmetric(horizontal: 11.0),
             ),
             // Controls appearance of the title description label.
-            Text("Enter a brief description of your request.",
+            Text('Enter a brief description of your request.',
                 style: Theme.of(context).textTheme.bodyText1),
           ],
         ),
         // Vertical margin between title description label and input field.
-        Padding(
+        const Padding(
           padding: const EdgeInsets.symmetric(vertical: 3.0),
         ),
         // Container for the title TextField, in which the user enters a title.
-        Container(
+        SizedBox(
             // Proportions of the text field
             width: 330.0,
             height: 50.0,
@@ -174,11 +174,11 @@ class _IssueRequestState extends State<IssueRequest> {
             child: TextField(
                 // Controls appearance of title TextField.
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Title",
+                  border: const OutlineInputBorder(),
+                  hintText: 'Title',
                   hintStyle: TextStyle(color: Colors.grey[600]),
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                 ),
                 style: TextStyle(
                     color: Theme.of(context).accentTextTheme.bodyText1!.color),
@@ -192,12 +192,12 @@ class _IssueRequestState extends State<IssueRequest> {
         Row(
           children: [
             // Left margin between edge of screen and description title.
-            new Padding(
+            const Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
             ),
             // The actual description title label
             Text(
-              "Description:",
+              'Description:',
               style: Theme.of(context).textTheme.headline6,
             )
           ],
@@ -208,16 +208,16 @@ class _IssueRequestState extends State<IssueRequest> {
           children: [
             // Left margin between edge of screen and the Description label's
             // description.
-            new Padding(
+            const Padding(
               padding: const EdgeInsets.symmetric(horizontal: 11.0),
             ),
             // The actual description for the description
-            Text("Summarize your request.",
+            Text('Summarize your request.',
                 style: Theme.of(context).textTheme.bodyText2),
           ],
         ),
         // Container for the description textfield
-        Container(
+        SizedBox(
             // Dimensions of the description textfield. No height specified since
             // the description textfield is multi-line, and will adjust for the
             // user to see everything they type. If the textbox extends the screen,
@@ -229,11 +229,11 @@ class _IssueRequestState extends State<IssueRequest> {
             child: TextField(
                 // Controls the appearance of the description textfield.
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Description",
+                  border: const OutlineInputBorder(),
+                  hintText: 'Description',
                   hintStyle: TextStyle(color: Colors.grey[600]),
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                 ),
                 // Box will expand to accomodate the user's response (if it's multi-line).
                 maxLines: null,
@@ -246,20 +246,20 @@ class _IssueRequestState extends State<IssueRequest> {
                   description = value;
                 })),
         // Vertical margin between the description textfield and the dropdown prompt.
-        Padding(
+        const Padding(
           padding: const EdgeInsets.symmetric(vertical: 3.0),
         ),
         // Prompts the user to select Bug/Feature/Other option in their dropdown.
-        Text("This is a:",
+        Text('This is a:',
             style:
                 TextStyle(color: Theme.of(context).textTheme.bodyText1!.color)),
         // Dropdown for the user to select the type of issue request they are making
-        new DropdownButton<String>(
+        DropdownButton<String>(
             value: dropdownValue,
             items: <String>['Bug', 'Feature', 'Other'].map((String value) {
-              return new DropdownMenuItem<String>(
+              return DropdownMenuItem<String>(
                 value: value,
-                child: new Text(value),
+                child: Text(value),
               );
             }).toList(),
             // Controls what the dropdown looks like.
@@ -276,18 +276,15 @@ class _IssueRequestState extends State<IssueRequest> {
         Row(
           children: <Widget>[
             // Left margin from edge to the text.
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             // Contains the text that gives us consent to contact them if we have
             // any questions about their request.
-            Container(
+            SizedBox(
               width: 300.0,
               child: Text(
-                'By selecting the checkmark, you give the developers of SmartRider' +
-                    ' permission to contact you using your entered email address if a follow-up ' +
-                    'is necessary. Any other identifying information is to remain' +
-                    ' anonymous.',
+                'By selecting the checkmark, you give the developers of SmartRider permission to contact you using your entered email address if a follow-up is necessary. Any other identifying information is to remain anonymous.',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ),
@@ -306,16 +303,11 @@ class _IssueRequestState extends State<IssueRequest> {
           ],
         ),
         // Container for the submit request button.
-        Container(
+        SizedBox(
           // Contains the button in a box.
           width: 350.0,
           // The submit request button itself.
           child: ElevatedButton(
-            child: Text(
-              'SUBMIT REQUEST',
-              style: Theme.of(context).textTheme.button,
-            ),
-            // Submits the POST request to the GitHub repository to form an issue.
             onPressed: () async {
               // Post newPost = new Post(
               //     title: title, body: description, labels: dropdownValue);
@@ -325,6 +317,10 @@ class _IssueRequestState extends State<IssueRequest> {
               // Once the POST is submitted, we can leave the Issue Request page.
               Navigator.pop(context);
             },
+            child: Text(
+              'SUBMIT REQUEST',
+              style: Theme.of(context).textTheme.button,
+            ),
           ),
         )
       ])),

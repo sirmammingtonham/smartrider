@@ -12,42 +12,43 @@ class LoadPrefsEvent extends PrefsEvent {
 }
 
 class SavePrefsEvent extends PrefsEvent {
-  // final Map<String, bool> prefData;
+  const SavePrefsEvent(this.name, this.val);
+
   final String? name;
   final bool val;
 
-  const SavePrefsEvent(this.name, this.val);
-
   @override
-  List<Object?> get props => [this.name, this.val];
+  List<Object?> get props => [name, val];
 }
 
 class PrefsUpdateEvent extends PrefsEvent {
   const PrefsUpdateEvent();
-  
+
   @override
   List<Object> get props => [];
 }
 
 class InitActiveRoutesEvent extends PrefsEvent {
-  final List<ShuttleRoute> routes;
   const InitActiveRoutesEvent(this.routes);
+
+  final List<ShuttleRoute> routes;
 
   @override
   List<Object> get props => [routes];
 }
 
 class ThemeChangedEvent extends PrefsEvent {
-  final bool isDark;
   const ThemeChangedEvent(this.isDark);
 
+  final bool isDark;
+
   @override
-  List<Object> get props => [this.isDark];
+  List<Object> get props => [isDark];
 }
 
 class OnboardingComplete extends PrefsEvent {
   const OnboardingComplete();
 
-  @override 
+  @override
   List<Object> get props => [];
 }

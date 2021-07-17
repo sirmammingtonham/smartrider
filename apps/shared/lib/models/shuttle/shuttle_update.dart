@@ -40,7 +40,7 @@ class ShuttleUpdate {
       this.vehicleId,
       this.routeId});
 
-  LatLng get getLatLng => LatLng(this.latitude, this.longitude);
+  LatLng get getLatLng => LatLng(latitude, longitude);
 
   factory ShuttleUpdate.fromJson(Map<String, dynamic> json) {
     return ShuttleUpdate(

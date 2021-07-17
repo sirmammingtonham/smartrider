@@ -24,13 +24,13 @@ class ShuttleVehicle {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['created'] = this.created;
-    data['updated'] = this.updated;
-    data['enabled'] = this.enabled;
-    data['tracker_id'] = this.trackerId;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['created'] = created;
+    data['updated'] = updated;
+    data['enabled'] = enabled;
+    data['tracker_id'] = trackerId;
     return data;
   }
 }

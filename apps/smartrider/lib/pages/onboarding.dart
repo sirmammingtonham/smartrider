@@ -1,3 +1,5 @@
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smartrider/pages/welcome.dart';
@@ -7,14 +9,14 @@ import 'package:smartrider/pages/home.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
-final kTitleStyle = TextStyle(
+const kTitleStyle = TextStyle(
   color: Colors.white,
   fontFamily: 'Helvetica',
   fontSize: 30.0,
   height: 1.5,
 );
 
-final kSubtitleStyle = TextStyle(
+const kSubtitleStyle = TextStyle(
   color: Colors.white,
   fontSize: 22.0,
   height: 1.3,
@@ -23,6 +25,8 @@ final kSubtitleStyle = TextStyle(
 bool onboardDone = false;
 
 class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({Key? key}) : super(key: key);
+
   @override
   _OnboardingScreenState createState() => _OnboardingScreenState();
 }
@@ -33,8 +37,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
 
   List<Widget> _buildPageIndicator() {
-    List<Widget> list = [];
-    for (int i = 0; i < _numPages; i++) {
+    final list = <Widget>[];
+    for (var i = 0; i < _numPages; i++) {
       list.add(i == _currentPage ? _indicator(true) : _indicator(false));
     }
     return list;
@@ -42,13 +46,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _indicator(bool isActive) {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 150),
-      margin: EdgeInsets.symmetric(horizontal: 8.0),
+      duration: const Duration(milliseconds: 150),
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
       height: 8.0,
       width: isActive ? 24.0 : 16.0,
       decoration: BoxDecoration(
-        color: isActive ? Colors.black : Color(0xFF181c5b),
-        borderRadius: BorderRadius.all(Radius.circular(12)),
+        color: isActive ? Colors.black : const Color(0xFF181c5b),
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
       ),
     );
   }
@@ -58,13 +62,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       body: Builder(builder: (BuildContext context) {
         return onboardDone
-            ? WelcomeScreen(homePage: HomePage())
+            ? const WelcomeScreen(homePage: HomePage())
             : AnnotatedRegion<SystemUiOverlayStyle>(
                 value: SystemUiOverlayStyle.light,
                 child: Container(
-                  decoration: BoxDecoration(color: Colors.white),
+                  decoration: const BoxDecoration(color: Colors.white),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 30),
+                    padding: const EdgeInsets.symmetric(vertical: 30),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
@@ -73,12 +77,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: TextButton(
                             onPressed: () {
                               BlocProvider.of<PrefsBloc>(context)
-                                  .add(OnboardingComplete());
+                                  .add(const OnboardingComplete());
                               setState(() {
                                 onboardDone = true;
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Skip',
                               style: TextStyle(
                                 color: Color(0xFF1b1d5c),
@@ -88,10 +92,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ),
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           height: 600.0,
                           child: PageView(
-                            physics: ClampingScrollPhysics(),
+                            physics: const ClampingScrollPhysics(),
                             controller: _pageController,
                             onPageChanged: (int page) {
                               setState(() {
@@ -100,14 +104,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             },
                             children: <Widget>[
                               Padding(
-                                padding: EdgeInsets.all(40.0),
+                                padding: const EdgeInsets.all(40.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
+                                  children: const <Widget>[
                                     Center(
                                       child: Image(
                                         image: AssetImage(
-                                            "assets/onboarding_images/logo_v2.png"),
+                                            'assets/onboarding_images/logo_v2.png'),
                                         height: 300.0,
                                         width: 300.0,
                                       ),
@@ -144,7 +148,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.all(40.0),
+                                padding: const EdgeInsets.all(40.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -153,15 +157,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             CrossAxisAlignment.start,
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                        children: <Widget>[
+                                        children: const <Widget>[
                                           Image(
                                               image: AssetImage(
-                                                  "assets/onboarding_images/interactive_map.png"),
+                                                  'assets/onboarding_images/interactive_map.png'),
                                               height: 300.0,
                                               width: 300.0),
                                         ]),
-                                    SizedBox(height: 50.0),
-                                    Center(
+                                    const SizedBox(height: 50.0),
+                                    const Center(
                                       child: Text(
                                         'Interactive Map',
                                         textAlign: TextAlign.center,
@@ -173,8 +177,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 15.0),
-                                    Center(
+                                    const SizedBox(height: 15.0),
+                                    const Center(
                                       child: Text(
                                           'Easily locate nearby transporation stops and routes with live shuttle/bus tracking.',
                                           textAlign: TextAlign.center,
@@ -189,7 +193,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.all(40.0),
+                                padding: const EdgeInsets.all(40.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -198,16 +202,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             CrossAxisAlignment.start,
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                        children: <Widget>[
+                                        children: const <Widget>[
                                           Image(
                                             image: AssetImage(
-                                                "assets/onboarding_images/comprehensive_scheduling.png"),
+                                                'assets/onboarding_images/comprehensive_scheduling.png'),
                                             height: 300.0,
                                             width: 300.0,
                                           ),
                                         ]),
-                                    SizedBox(height: 50.0),
-                                    Center(
+                                    const SizedBox(height: 50.0),
+                                    const Center(
                                       child: Text(
                                         'Comprehensive Scheduling',
                                         textAlign: TextAlign.center,
@@ -219,10 +223,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 15.0),
-                                    Center(
+                                    const SizedBox(height: 15.0),
+                                    const Center(
                                       child: Text(
-                                          "Access transportation route arrival times throughout the day and schedule reminders for specific stops.",
+                                          'Access transportation route arrival times throughout the day and schedule reminders for specific stops.',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Color(0xFF181c5b),
@@ -235,7 +239,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.all(40.0),
+                                padding: const EdgeInsets.all(40.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -247,17 +251,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         children: <Widget>[
                                           Align(
                                             alignment: Alignment.bottomCenter,
-                                            child: Container(
-                                              child: Image.asset(
-                                                "assets/onboarding_images/request_transportation.png",
-                                                height: 300.0,
-                                                width: 300.0,
-                                              ),
+                                            child: Image.asset(
+                                              'assets/onboarding_images/request_transportation.png',
+                                              height: 300.0,
+                                              width: 300.0,
                                             ),
                                           ),
                                         ]),
-                                    SizedBox(height: 50.0),
-                                    Center(
+                                    const SizedBox(height: 50.0),
+                                    const Center(
                                       child: Text(
                                         'Request Transportation',
                                         textAlign: TextAlign.center,
@@ -269,8 +271,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 15.0),
-                                    Center(
+                                    const SizedBox(height: 15.0),
+                                    const Center(
                                         child: Text(
                                             'With the integration of the RPI SafeRide application, easily make a request for a vehicle to transport you safely around the campus.',
                                             textAlign: TextAlign.center,
@@ -284,7 +286,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.all(40.0),
+                                padding: const EdgeInsets.all(40.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -293,16 +295,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             CrossAxisAlignment.start,
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                        children: <Widget>[
+                                        children: const <Widget>[
                                           Image(
                                             image: AssetImage(
-                                                "assets/onboarding_images/customizable_view.png"),
+                                                'assets/onboarding_images/customizable_view.png'),
                                             height: 340.0,
                                             width: 300.0,
                                           ),
                                         ]),
-                                    SizedBox(height: 50.0),
-                                    Center(
+                                    const SizedBox(height: 50.0),
+                                    const Center(
                                       child: Text(
                                         'Cuztomizable View',
                                         textAlign: TextAlign.center,
@@ -314,10 +316,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 15.0),
-                                    Center(
+                                    const SizedBox(height: 15.0),
+                                    const Center(
                                       child: Text(
-                                          "Conveniently choose which routes and stops are displayed on the map.",
+                                          'Conveniently choose which routes and stops are displayed on the map.',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Color(0xFF181c5b),
@@ -343,7 +345,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   child: TextButton(
                                     onPressed: () {
                                       _pageController.nextPage(
-                                        duration: Duration(milliseconds: 500),
+                                        duration:
+                                            const Duration(milliseconds: 500),
                                         curve: Curves.ease,
                                       );
                                     },
@@ -351,7 +354,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
+                                      children: const <Widget>[
                                         Text(
                                           'Next',
                                           style: TextStyle(
@@ -371,7 +374,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   ),
                                 ),
                               )
-                            : Text(''),
+                            : const Text(''),
                       ],
                     ),
                   ),
@@ -383,18 +386,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
                   borderRadius:
-                      BorderRadius.all(Radius.circular(double.infinity)),
-                  color: Color(0xFF181c5b)),
+                      const BorderRadius.all(Radius.circular(double.infinity)),
+                  color: const Color(0xFF181c5b)),
               height: 75,
               width: double.infinity,
               child: GestureDetector(
                 onTap: () {
-                  BlocProvider.of<PrefsBloc>(context).add(OnboardingComplete());
+                  BlocProvider.of<PrefsBloc>(context)
+                      .add(const OnboardingComplete());
                   setState(() {
                     onboardDone = true;
                   });
                 },
-                child: Center(
+                child: const Center(
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
@@ -409,7 +413,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             )
-          : Text(''),
+          : const Text(''),
     );
   }
 }

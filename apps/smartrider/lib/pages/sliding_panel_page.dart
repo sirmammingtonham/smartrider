@@ -1,9 +1,7 @@
 // ui dependencies
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:sizer/sizer.dart';
-import 'package:smartrider/blocs/map/map_bloc.dart';
 
 // bloc stuff
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
@@ -19,11 +17,12 @@ import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
 import 'package:smartrider/pages/home.dart';
 
 class PanelPage extends StatelessWidget {
+  PanelPage({Key? key, required this.panelScrollController}) : super(key: key);
+
   final ScrollController panelScrollController;
-  PanelPage({required this.panelScrollController});
   final List<Widget> _tabs = [
-    Tab(icon: Icon(Icons.directions_bus, color: Colors.grey)),
-    Tab(icon: Icon(Icons.airport_shuttle, color: Colors.grey)),
+    const Tab(icon: Icon(Icons.directions_bus, color: Colors.grey)),
+    const Tab(icon: Icon(Icons.airport_shuttle, color: Colors.grey)),
   ];
 
   Widget panelAppBar(BuildContext context, ScheduleState scheduleState) {
@@ -77,7 +76,8 @@ class PanelPage extends StatelessWidget {
                   height: 3.sp,
                   decoration: BoxDecoration(
                       color: Colors.grey[300],
-                      borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(12.0))),
                 ),
               ],
             ),
@@ -119,7 +119,7 @@ class PanelPage extends StatelessWidget {
         if (scheduleState is ScheduleTimelineState ||
             scheduleState is ScheduleTableState) {
           return ClipRRect(
-            borderRadius: BorderRadius.vertical(
+            borderRadius: const BorderRadius.vertical(
               top: Radius.circular(20.0),
             ),
             child: Scaffold(
@@ -139,24 +139,25 @@ class PanelPage extends StatelessWidget {
                 ],
               ),
               floatingActionButton: FloatingActionButton(
-                heroTag: "switch_schedule_view_button",
+                heroTag: 'switch_schedule_view_button',
+                elevation: 5.0,
+                onPressed: () {
+                  if (scheduleState is ScheduleTimelineState) {
+                    BlocProvider.of<ScheduleBloc>(context)
+                        .add(const ScheduleTypeChangeEvent(isTimeline: false));
+                  } else if (scheduleState is ScheduleTableState) {
+                    BlocProvider.of<ScheduleBloc>(context)
+                        .add(const ScheduleTypeChangeEvent(isTimeline: true));
+                  }
+                },
                 child: Icon(scheduleState is ScheduleTimelineState
                     ? Icons.table_view
                     : Icons.timeline),
-                elevation: 5.0,
-                onPressed: () {
-                  if (scheduleState is ScheduleTimelineState)
-                    BlocProvider.of<ScheduleBloc>(context)
-                        .add(ScheduleTypeChangeEvent(isTimeline: false));
-                  else if (scheduleState is ScheduleTableState)
-                    BlocProvider.of<ScheduleBloc>(context)
-                        .add(ScheduleTypeChangeEvent(isTimeline: true));
-                },
               ),
             ),
           );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );

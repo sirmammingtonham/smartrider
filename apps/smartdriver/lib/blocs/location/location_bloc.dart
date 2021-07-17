@@ -15,7 +15,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   LocationBloc() : super(LocationNotTrackingState());
 
   void positionListener(Position position) {
-    print(position.latitude.toString() + ', ' + position.longitude.toString());
+    print('${position.latitude}, ${position.longitude}');
     vehicleRef.update({
       'position_data': {
         'location': GeoPoint(position.latitude, position.longitude),

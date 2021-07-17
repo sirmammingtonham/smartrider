@@ -45,8 +45,8 @@ class AuthenticationBloc
     final isSignedIn = _authRepository.isSignedIn;
     if (isSignedIn) {
       final name = _authRepository.getUser;
-      User user = _authRepository.getActualUser!;
-      String? role = await DatabaseService(usid: user.uid).getUserRole();
+      final user = _authRepository.getActualUser!;
+      final role = await DatabaseService(usid: user.uid).getUserRole();
       yield AuthenticationSuccess(name, role ?? 'Student');
     } else {
       yield AuthenticationInit();
@@ -55,29 +55,29 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> _mapAuthenticationLoggedInToState(
       String e, String p, String role) async* {
-    UserCredential result = await (_authRepository.signInWithCredentials(
+    final result = await (_authRepository.signInWithCredentials(
         e, p)); //attempt to signin user
 
     switch (result.runtimeType) {
       case UserCredential:
         {
           //if signing in user is successful
-          User user = _authRepository.getActualUser!;
+          final user = _authRepository.getActualUser!;
           if (user.emailVerified) {
             yield AuthenticationSuccess(e, role);
           } else {
-            user.sendEmailVerification();
+            await user.sendEmailVerification();
             yield AwaitEmailVerify();
           }
         }
         break;
       default:
-        yield AuthenticationFailure("Email or Password is Incorrect");
+        yield const AuthenticationFailure('Email or Password is Incorrect');
     }
   }
 
   Stream<AuthenticationState> _mapAuthenticationLoggedOutToState() async* {
-    _authRepository.signOut();
+    await _authRepository.signOut();
     yield AuthenticationInit();
   }
 
@@ -92,7 +92,7 @@ class AuthenticationBloc
           await DatabaseService(usid: user.uid).updateUserData(user.email, role,
               rin: r,
               name: n); // usertype will be student for now, modify later
-          user.sendEmailVerification();
+          await user.sendEmailVerification();
           yield AwaitEmailVerify();
         }
         break;

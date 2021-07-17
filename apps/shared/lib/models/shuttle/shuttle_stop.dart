@@ -18,7 +18,7 @@ class ShuttleStop {
       this.name,
       this.description});
 
-  LatLng get getLatLng => LatLng(this.latitude!, this.longitude!);
+  LatLng get getLatLng => LatLng(latitude!, longitude!);
 
   ShuttleStop.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -31,14 +31,14 @@ class ShuttleStop {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['latitude'] = this.latitude;
-    data['longitude'] = this.longitude;
-    data['created'] = this.created;
-    data['updated'] = this.updated;
-    data['name'] = this.name;
-    data['description'] = this.description;
+    final data = <String, dynamic>{};
+    data['id'] = id;
+    data['latitude'] = latitude;
+    data['longitude'] = longitude;
+    data['created'] = created;
+    data['updated'] = updated;
+    data['name'] = name;
+    data['description'] = description;
     return data;
   }
 }
