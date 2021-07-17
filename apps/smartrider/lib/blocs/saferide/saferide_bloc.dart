@@ -157,9 +157,9 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
               (vehicle.get('current_driver') as Map<String, dynamic>);
           add(SaferidePickingUpEvent(
               vehicleId: vehicle.id,
-              driverName: currentDriver['name']!,
-              phoneNumber: currentDriver['phone_number']!,
-              licensePlate: vehicle.get('license_plate'),
+              driverName: currentDriver['name']! as String,
+              phoneNumber: currentDriver['phone_number']! as String,
+              licensePlate: vehicle.get('license_plate') as String,
               queuePosition: order.queuePosition ?? -1,
               estimatedPickup: order.estimatedPickup));
         }

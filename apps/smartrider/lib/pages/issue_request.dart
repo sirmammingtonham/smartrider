@@ -35,7 +35,7 @@ class Post {
 
   /// Returns a new Map object using values from this Post object.
   Map toMap() {
-    Map map = new Map();
+    Map map = new Map<String, dynamic>();
     map["title"] = title;
     map["body"] = body;
     map["labels"] = labels;

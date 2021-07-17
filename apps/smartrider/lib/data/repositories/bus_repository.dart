@@ -11,16 +11,16 @@ import '../providers/bus_provider.dart';
 /// Repo class that retrieves data from provider class methods and
 /// distributes the data to BLoC pattern
 class BusRepository {
-  late BusProvider _busProvider;
-
   /// Private constructor
   BusRepository._create() {
     _busProvider = BusProvider();
   }
 
+  late BusProvider _busProvider;
+
   /// Public factory
   static Future<BusRepository> create() async {
-    BusRepository self = BusRepository._create();
+    final self = BusRepository._create();
     await self._busProvider.waitForLoad;
     return self;
   }
@@ -46,8 +46,8 @@ class BusRepository {
 
   Future<Map<String, List<BusRealtimeUpdate>>> get getRealtimeUpdate async =>
       _busProvider.getBusRealtimeUpdates();
-      
-  Future<Map<String,Map<String, String>>> get getRealtimeTimetable async =>
+
+  Future<Map<String, Map<String, String>>> get getRealtimeTimetable async =>
       _busProvider.getTimetableRealtime();
 
   List<String> get getDefaultRoutes => _busProvider.getShortRoutes();

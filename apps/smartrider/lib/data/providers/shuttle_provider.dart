@@ -53,9 +53,9 @@ class ShuttleProvider {
     Map<String?, ShuttleRoute> routeMap = response != null
         ? Map.fromIterable(
             (json.decode(response.body) as List)
-                .where((json) => json['enabled']),
-            key: (json) => json['name'],
-            value: (json) => ShuttleRoute.fromJson(json))
+                .where((dynamic json) => json['enabled']),
+            key: (dynamic json) => json['name'],
+            value: (dynamic json) => ShuttleRoute.fromJson(json))
         : {};
 
     return routeMap;
@@ -77,7 +77,7 @@ class ShuttleProvider {
     List<ShuttleStop>? stopsList = response != null
         ? json
             .decode(response.body)
-            .map<ShuttleStop>((json) => ShuttleStop.fromJson(json))
+            .map<ShuttleStop>((dynamic json) => ShuttleStop.fromJson(json))
             .toList()
         : [];
     return stopsList;
@@ -99,7 +99,7 @@ class ShuttleProvider {
     List<ShuttleUpdate>? updatesList = response != null
         ? json
             .decode(response.body)
-            .map<ShuttleUpdate>((json) => ShuttleUpdate.fromJson(json))
+            .map<ShuttleUpdate>((dynamic json) => ShuttleUpdate.fromJson(json))
             .toList()
         : [];
     return updatesList;
@@ -119,10 +119,9 @@ class ShuttleProvider {
     ///     return etas;
     var response = await fetch('eta');
     List<ShuttleEta> etas = [];
-    Map<String, dynamic> etamap = (response != null
-        ? (json.decode(response.body) as Map<String, dynamic>?)!
-        : []) as Map<String, dynamic>;
-    etamap.forEach((key, value) {
+    Map<String, dynamic> etamap =
+        (response != null ? (json.decode(response.body))! : <dynamic>[]);
+    etamap.forEach((String key, dynamic value) {
       etas.add(ShuttleEta.fromJson(value));
     });
     return etas;

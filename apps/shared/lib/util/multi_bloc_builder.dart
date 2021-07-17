@@ -2,6 +2,8 @@
 
 library flutter_multi_bloc_builder;
 
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
@@ -47,21 +49,23 @@ class MultiBlocBuilder extends StatefulWidget {
 
 /// Serves as the state of the [MultiBlocBuilder].
 class _MultiBlocState extends State<MultiBlocBuilder> {
-  final _stateSubscriptions = [];
+  final _stateSubscriptions = <StreamSubscription>[];
 
   @override
   void initState() {
     super.initState();
 
     widget._blocs.forEach((bloc) {
-      final subscription = bloc.stream.listen((state) => setState(() {}));
+      final subscription =
+          bloc.stream.listen((dynamic state) => setState(() {}));
       _stateSubscriptions.add(subscription);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final states = widget._blocs.map((bloc) => bloc.state).toList();
+    final states =
+        widget._blocs.map<dynamic>((dynamic bloc) => bloc.state).toList();
     return widget._builder(context, BlocStates._private(states));
   }
 
@@ -84,7 +88,7 @@ class _MultiBlocState extends State<MultiBlocBuilder> {
 /// ```
 ///
 class BlocStates {
-  final List _stateContainer = [];
+  final List _stateContainer = <List>[];
 
   // Private contructor
   BlocStates._private(List states) {
@@ -99,5 +103,5 @@ class BlocStates {
   /// final exampeState = blocStates.get<ExampleState>();
   /// ```
   T get<T>() =>
-      _stateContainer.firstWhere((entry) => (entry is T), orElse: null);
+      _stateContainer.firstWhere((dynamic entry) => (entry is T), orElse: null);
 }

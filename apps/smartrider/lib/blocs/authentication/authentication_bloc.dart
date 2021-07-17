@@ -7,6 +7,7 @@ import 'package:smartrider/data/providers/database.dart';
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
+//TODO: rework this mess
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthRepository _authRepository;
@@ -53,7 +54,7 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _mapAuthenticationLoggedInToState(
-      e, p, role) async* {
+      String e, String p, String role) async* {
     UserCredential result = await (_authRepository.signInWithCredentials(
         e, p)); //attempt to signin user
 
@@ -81,8 +82,8 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _mapAuthenticationSignUpToState(
-      e, n, p, r, role) async* {
-    var result = await _authRepository.signUp(e, p);
+      String e, String n, String p, String r, String role) async* {
+    dynamic result = await _authRepository.signUp(e, p);
 
     switch (result.runtimeType) {
       case UserCredential:

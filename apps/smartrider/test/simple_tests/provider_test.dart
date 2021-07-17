@@ -69,7 +69,8 @@ void main() async {
         'https://www.cdta.org/apicache/routebus_${route}_0.json?_=$milliseconds'));
     if (response.statusCode == 200) {
       Map<String, String> data =
-          (jsonDecode(response.body) as Map<String, dynamic>).map((key, value) {
+          (jsonDecode(response.body) as Map<String, dynamic>)
+              .map((key, dynamic value) {
         return MapEntry(key, (value as String));
       });
       ret[route] = data;

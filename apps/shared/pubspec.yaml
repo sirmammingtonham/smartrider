@@ -21,5 +21,6 @@ dependencies:
 
 
 dev_dependencies:
+  very_good_analysis: ^2.1.0 # lint rules
   flutter_test:
     sdk: flutter

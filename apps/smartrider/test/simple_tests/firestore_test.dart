@@ -15,7 +15,7 @@ Future<QuerySnapshot> fetch(String collection,
       .get();
 }
 
-main() async {
+void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();

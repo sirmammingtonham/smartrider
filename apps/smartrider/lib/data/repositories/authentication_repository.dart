@@ -7,7 +7,8 @@ class AuthRepository {
 
   AuthRepository.create();
 
-  Future<UserCredential> signInWithCredentials(String email, String password) async {
+  Future<UserCredential> signInWithCredentials(
+      String email, String password) async {
     return _authProvider.signInWithCredentials(email, password);
   }
 

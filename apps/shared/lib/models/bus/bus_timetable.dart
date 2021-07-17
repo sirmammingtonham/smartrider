@@ -31,18 +31,17 @@ class BusTimetable {
   int get numColumns => stops!.length;
   int get numRows => (formatted!.length / stops!.length).truncate();
 
-
 // change time from cdta to match time format of our database
-String formatTime(String oldtime) {
+  String formatTime(String oldtime) {
     String ampm, hour, minute = "am";
     ampm = "am";
     List<String> times = oldtime.split(":");
     int inthour = int.parse(times[0]);
     if (inthour >= 12) {
       ampm = "pm";
-      if(inthour > 12){
-         times[0] = (inthour-12).toString();
-      }  
+      if (inthour > 12) {
+        times[0] = (inthour - 12).toString();
+      }
     }
     hour = times[0];
     minute = times[1];
@@ -100,7 +99,7 @@ String formatTime(String oldtime) {
       offsetLength = 5;
     }
 
-    return List.generate(offsetLength, (index) => index).map((offset) => [
+    return List.generate(offsetLength, (index) => index).map((offset) => <dynamic>[
           getTime(i, min + offset),
           now < getTimestamp(i, min + offset)
               ? getTimestamp(i, min + offset) - now
@@ -122,7 +121,7 @@ String formatTime(String oldtime) {
     includeDates = json['include_dates'].cast<String>();
     excludeDates = json['exclude_dates'].cast<String>();
 
-    stops = json['stops'].map<TimetableStop>((table) {
+    stops = json['stops'].map<TimetableStop>((dynamic table) {
       return TimetableStop.fromJson(table);
     }).toList();
 
@@ -185,21 +184,24 @@ String formatTime(String oldtime) {
 }
 
 class TimetableStop {
-  String? stopId;
-  double? stopLat;
-  double? stopLon;
-  String? stopName;
+  final String stopId;
+  final double stopLat;
+  final double stopLon;
+  final String stopName;
 
-  TimetableStop({this.stopId, this.stopLat, this.stopLon, this.stopName});
+  TimetableStop(
+      {required this.stopId,
+      required this.stopLat,
+      required this.stopLon,
+      required this.stopName});
 
-  LatLng get latLng => LatLng(stopLat!, stopLon!);
+  LatLng get latLng => LatLng(stopLat, stopLon);
 
-  TimetableStop.fromJson(Map<String, dynamic> json) {
-    stopId = json['stop_id'];
-    stopLat = json['stop_lat'];
-    stopLon = json['stop_lon'];
-    stopName = json['stop_name'];
-  }
+  factory TimetableStop.fromJson(Map<String, dynamic> json) => TimetableStop(
+      stopId: json['stop_id'],
+      stopLat: json['stop_lat'],
+      stopLon: json['stop_lon'],
+      stopName: json['stop_name']);
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

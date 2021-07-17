@@ -11,7 +11,7 @@ class ShuttleEta {
     routeId = json['route_id'];
     if (json['stop_etas'] != null) {
       stopEtas = [];
-      json['stop_etas'].forEach((v) {
+      json['stop_etas'].forEach((dynamic v) {
         stopEtas!.add(new StopEtas.fromJson(v));
       });
     }

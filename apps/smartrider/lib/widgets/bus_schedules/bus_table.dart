@@ -88,7 +88,7 @@ class BusTableState extends State<BusTable>
           width: 100,
           height: 50,
           child: SizedBox(
-            child: Text(table.stops![i].stopName!,
+            child: Text(table.stops![i].stopName,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.bold)),
           )),

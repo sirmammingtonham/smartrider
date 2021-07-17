@@ -38,27 +38,81 @@ import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/models/saferide/position_data.dart';
 // import 'package:shared/util/math_util.dart';
 import 'package:shared/util/spherical_utils.dart';
+import 'package:very_good_analysis/very_good_analysis.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
 
-enum MapView { kBusView, kShuttleView, kSaferideView }
+/// Enum representing different map views (layers)
+enum MapView {
+  /// view that represents bus view
+  kBusView,
+
+  /// view that represents
+  kShuttleView,
+
+  ///
+  kSaferideView
+}
 
 // TODO: Document this absolute fucking unit
+
+///
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
   northeast: const LatLng(42.751583, -73.616713),
 );
 
+/// Class that implements the bloc pattern for the map
 class MapBloc extends Bloc<MapEvent, MapState> {
-  static const UPDATE_FREQUENCY =
-      const Duration(seconds: 5); // update every 5 sec
-  late final Timer _updateTimer;
+  /// MapBloc named constructor
+  MapBloc(
+      {required this.shuttleRepo,
+      required this.busRepo,
+      required this.saferideRepo,
+      required this.saferideBloc,
+      required this.prefsBloc})
+      : super(const MapLoadingState()) {
+    rootBundle.loadString('assets/map_styles/aubergine.json').then((string) {
+      _darkMapStyle = string;
+    });
+    rootBundle.loadString('assets/map_styles/light.json').then((string) {
+      _lightMapStyle = string;
+    });
 
+    // just noticing that it will be a problem if the async above completes
+    // after this...
+    prefsBloc.stream.listen((prefsState) {
+      if (prefsState is PrefsLoadedState) {
+        _enabledShuttles = prefsState.shuttles;
+        _enabledBuses = prefsState.buses;
+        if (_controller != null) {
+          _controller!.setMapStyle(
+              prefsState.theme.brightness == Brightness.dark
+                  ? _darkMapStyle
+                  : _lightMapStyle);
+        }
+      }
+    });
+
+    saferideBloc.stream
+        .listen((saferideState) => add(const MapSaferideEvent()));
+  }
+
+  /// Shuttle data repository
   final ShuttleRepository shuttleRepo;
+
+  /// Bus data repository
   final BusRepository busRepo;
+
+  /// Saferide data repository
   final SaferideRepository saferideRepo;
+
+  /// Preferences Bloc
+
   final PrefsBloc prefsBloc;
+
+  /// Saferide Bloc
   final SaferideBloc saferideBloc;
 
   double _zoomLevel = 14.0;
@@ -84,6 +138,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final Set<Polyline> _saferidePolylines = <Polyline>{};
   String? _pickupVehicleId;
 
+  late Fluster<MarkerCluster> _fluster;
   final Set<Marker> _currentMarkers = <Marker>{};
   final Set<Polyline> _currentPolylines = <Polyline>{};
 
@@ -97,42 +152,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final Map<int, BitmapDescriptor> _updateIcons =
       {}; // maps route id to update marker
 
-  late Fluster<MarkerCluster> fluster;
+  static const _updateFrequency = Duration(seconds: 5); // update every 5 sec
+
+  late final Timer _updateTimer;
   late final String _lightMapStyle;
   late final String _darkMapStyle;
-
-  /// MapBloc named constructor
-  MapBloc(
-      {required this.shuttleRepo,
-      required this.busRepo,
-      required this.saferideRepo,
-      required this.saferideBloc,
-      required this.prefsBloc})
-      : super(MapLoadingState()) {
-    rootBundle.loadString('assets/map_styles/aubergine.json').then((string) {
-      _darkMapStyle = string;
-    });
-    rootBundle.loadString('assets/map_styles/light.json').then((string) {
-      _lightMapStyle = string;
-    });
-
-    // just noticing that it will be a problem if the async above completes
-    // after this...
-    prefsBloc.stream.listen((prefsState) {
-      if (prefsState is PrefsLoadedState) {
-        _enabledShuttles = prefsState.shuttles;
-        _enabledBuses = prefsState.buses;
-        if (_controller != null) {
-          _controller!.setMapStyle(
-              prefsState.theme.brightness == Brightness.dark
-                  ? _darkMapStyle
-                  : _lightMapStyle);
-        }
-      }
-    });
-
-    saferideBloc.stream.listen((saferideState) => add(MapSaferideEvent()));
-  }
 
   @override
   Future<void> close() {
@@ -140,17 +164,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     return super.close();
   }
 
+  /// getter for map controller
   GoogleMapController? get controller => _controller;
+
+  /// getter for the current mapview
   MapView get mapView => _currentView;
 
-  updateController(BuildContext context, GoogleMapController controller) {
+  void updateController(BuildContext context, GoogleMapController controller) {
     _controller = controller;
     _controller!.setMapStyle(Theme.of(context).brightness == Brightness.dark
         ? _darkMapStyle
         : _lightMapStyle);
   }
 
-  /// bloc functions
   @override
   Stream<MapState> mapEventToState(MapEvent event) async* {
     switch (event.runtimeType) {
@@ -179,7 +205,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           // switch map to saferide view
           // which also calls _mapUpdateRequestedToState
           // which then fills in the data for the saferide view
-          add(MapViewChangeEvent(newView: MapView.kSaferideView));
+          add(const MapViewChangeEvent(newView: MapView.kSaferideView));
         }
         break;
       case MapMoveEvent:
@@ -194,7 +220,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
         break;
       default:
-        yield MapErrorState(error: SRError.BLOC_ERROR);
+        yield const MapErrorState(error: SRError.BLOC_ERROR);
     }
   }
 
@@ -208,7 +234,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _busRoutes = await busRepo.getRoutes;
           _busShapes = await busRepo.getPolylines;
           _busUpdates = await busRepo.getRealtimeUpdate;
-          prefsBloc.add(PrefsUpdateEvent()); // just to get enabled bus routes
+          prefsBloc
+              .add(const PrefsUpdateEvent()); // just to get enabled bus routes
         }
         break;
       case MapView.kShuttleView:
@@ -216,7 +243,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _shuttleRoutes = await shuttleRepo.getRoutes;
           // try to fetch, then check if shuttle repo is connected
           if (!shuttleRepo.isConnected) {
-            yield MapErrorState(error: SRError.NETWORK_ERROR);
+            yield const MapErrorState(error: SRError.NETWORK_ERROR);
             return;
           }
           _shuttleStops = await shuttleRepo.getStops;
@@ -230,9 +257,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         {
           /// update vehicle positions in our cache
           saferideRepo.getSaferideLocationsStream().listen((positions) {
-            positions.forEach((position) {
+            for (final position in positions) {
               if (position.active) _saferideUpdates[position.id] = position;
-            });
+            }
           });
         }
         break;
@@ -300,8 +327,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             ..add(
               Marker(
                 icon: _pickupIcon,
-                infoWindow: InfoWindow(title: "Pickup Point"),
-                markerId: MarkerId("saferide_pickup"),
+                infoWindow: const InfoWindow(title: 'Pickup Point'),
+                markerId: const MarkerId('saferide_pickup'),
                 position:
                     (saferideState as SaferideSelectingState).pickupLatLng,
                 onTap: () {
@@ -317,8 +344,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             ..add(
               Marker(
                 icon: _dropoffIcon,
-                infoWindow: InfoWindow(title: "Dropoff Point"),
-                markerId: MarkerId("saferide_dropoff"),
+                infoWindow: const InfoWindow(title: 'Dropoff Point'),
+                markerId: const MarkerId('saferide_dropoff'),
                 position: saferideState.dropLatLng,
                 onTap: () {
                   _controller!.animateCamera(
@@ -329,14 +356,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               ),
             );
 
-          _saferidePolylines
-            ..add(Polyline(
-                polylineId: PolylineId("fancy_line"),
-                width: 5,
-                color: Colors.blueGrey,
-                patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
-                points: _drawFancyLine(
-                    saferideState.pickupLatLng, saferideState.dropLatLng)));
+          _saferidePolylines.add(Polyline(
+              polylineId: const PolylineId('fancy_line'),
+              width: 5,
+              color: Colors.blueGrey,
+              patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
+              points: _drawFancyLine(
+                  saferideState.pickupLatLng, saferideState.dropLatLng)));
 
           scrollToCurrentLocation(zoom: 16);
         }
@@ -365,39 +391,39 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     LatLng destLocation,
   ) {
     // https://gitlab.com/PraveenKishore/maps_curved_line
-    List<LatLng> path = [];
-    double angle = math.pi / 2;
-    double SE =
+    final path = <LatLng>[];
+    final angle = math.pi / 2;
+    final se =
         SphericalUtils.computeDistanceBetween(pickupLocation, destLocation)
             as double;
-    double ME = SE / 2.0;
-    double R = ME / math.sin(angle / 2);
-    double MO = R * math.cos(angle / 2);
+    final me = se / 2.0;
+    final r = me / math.sin(angle / 2);
+    final mo = r * math.cos(angle / 2);
 
-    double heading =
+    final heading =
         SphericalUtils.computeHeading(pickupLocation, destLocation) as double;
-    LatLng mCoordinate =
-        SphericalUtils.computeOffset(pickupLocation, ME, heading);
+    final mCoordinate =
+        SphericalUtils.computeOffset(pickupLocation, me, heading);
 
-    double direction =
+    final direction =
         (pickupLocation.longitude - destLocation.longitude > 0) ? -1.0 : 1.0;
-    double angleFromCenter = 90.0 * direction;
-    LatLng oCoordinate = SphericalUtils.computeOffset(
-        mCoordinate, MO, heading + angleFromCenter);
+    final angleFromCenter = 90.0 * direction;
+    final oCoordinate = SphericalUtils.computeOffset(
+        mCoordinate, mo, heading + angleFromCenter);
 
     path.add(destLocation);
 
-    int num = 100;
+    const num = 100;
 
-    double initialHeading =
+    final initialHeading =
         SphericalUtils.computeHeading(oCoordinate, destLocation) as double;
-    double degree = (180.0 * angle) / math.pi;
+    final degree = (180.0 * angle) / math.pi;
 
-    for (int i = 1; i <= num; i++) {
-      double step = i.toDouble() * (degree / num.toDouble());
-      double heading = (-1.0) * direction;
-      LatLng pointOnCurvedLine = SphericalUtils.computeOffset(
-          oCoordinate, R, initialHeading + heading * step);
+    for (var i = 1; i <= num; i++) {
+      final step = i.toDouble() * (degree / num.toDouble());
+      final heading = (-1.0) * direction;
+      final pointOnCurvedLine = SphericalUtils.computeOffset(
+          oCoordinate, r, initialHeading + heading * step);
       path.add(pointOnCurvedLine);
     }
 
@@ -415,26 +441,26 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       return;
     }
 
-    LatLng loc = LatLng(currentLocation.latitude, currentLocation.longitude);
+    final loc = LatLng(currentLocation.latitude, currentLocation.longitude);
 
     if (rpiBounds.contains(loc)) {
-      _controller!.animateCamera(
+      unawaited(_controller!.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: loc,
             zoom: zoom,
           ),
         ),
-      );
+      ));
     } else {
-      _controller!.animateCamera(
+      unawaited(_controller!.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(
+          const CameraPosition(
             target: LatLng(42.729280, -73.679056),
             zoom: 15.0,
           ),
         ),
-      );
+      ));
     }
   }
 
@@ -447,7 +473,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   /// helper functions
   Future<void> _initMapElements() async {
-    _updateTimer = Timer.periodic(UPDATE_FREQUENCY,
+    _updateTimer = Timer.periodic(_updateFrequency,
         (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
 
     final stopMarkerSize = Size(60.sp, 60.sp);
@@ -467,12 +493,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         size: stopMarkerSize);
     _saferideUpdateIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/map_icons/marker_saferide.svg',
-        color: Color(0xe7343f),
+        color: const Color(0x00e7343f),
         size: vehicleUpdateSize);
     _saferidePickupUpdateIcon =
         await BitmapHelper.getBitmapDescriptorFromSvgAsset(
             'assets/map_icons/marker_saferide.svg',
-            color: Color(0xffbb24),
+            color: const Color(0x00ffbb24),
             size: vehicleUpdateSize);
 
     // TODO: can probably move this somewhere better
@@ -483,19 +509,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       28: Colors.orange
     };
 
-    [22, 21, 24, 28].forEach((id) async {
+    for (final id in [22, 21, 24, 28]) {
       _updateIcons[id] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
           'assets/map_icons/marker_vehicle.svg',
           color: shuttleColors[id]!.lighten(0.15),
           size: vehicleUpdateSize);
-    });
+    }
 
-    [87, 286, 289, 288].forEach((id) async {
+    for (final id in [87, 286, 289, 288]) {
       _updateIcons[id] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
           'assets/map_icons/marker_vehicle.svg',
           color: BUS_COLORS[id.toString()]!.lighten(0.15),
           size: vehicleUpdateSize);
-    });
+    }
 
     // default white
     _updateIcons[-1] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
@@ -556,12 +582,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       icon: _updateIcons[
           _updateIcons.containsKey(update.routeId) ? update.routeId! : -1]!,
       infoWindow:
-          InfoWindow(title: "Shuttle ID: ${update.vehicleId.toString()}"),
+          InfoWindow(title: 'Shuttle ID: ${update.vehicleId.toString()}'),
       flat: true,
       markerId: MarkerId(update.id.toString()),
       position: update.getLatLng,
       rotation: update.heading as double,
-      anchor: Offset(0.5, 0.5),
+      anchor: const Offset(0.5, 0.5),
       onTap: () {
         _controller!.animateCamera(
           CameraUpdate.newCameraPosition(
@@ -570,17 +596,17 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       });
 
   Marker _busUpdateToMarker(BusRealtimeUpdate update) {
-    int routeId = int.parse(update.routeId);
-    LatLng busPosition = LatLng(update.lat, update.lng);
+    final routeId = int.parse(update.routeId);
+    final busPosition = LatLng(update.lat, update.lng);
     // real time update shuttles
     return Marker(
       icon: _updateIcons[_updateIcons.containsKey(routeId) ? routeId : -1]!,
-      infoWindow: InfoWindow(title: "Bus ID: ${update.id.toString()}"),
+      infoWindow: InfoWindow(title: 'Bus ID: ${update.id.toString()}'),
       flat: true,
       markerId: MarkerId(update.id.toString()),
       position: busPosition,
       rotation: double.tryParse(update.bearing) ?? 0.0,
-      anchor: Offset(0.5, 0.5),
+      anchor: const Offset(0.5, 0.5),
       onTap: () {
         _controller!.animateCamera(
           CameraUpdate.newCameraPosition(
@@ -630,21 +656,24 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       case MapView.kBusView:
         {
           /// add bus realtime update markers
-          busRepo.getDefaultRoutes.forEach((routeId) {
-            _busUpdates[routeId]?.forEach((update) {
-              _currentMarkers.add(_busUpdateToMarker(update));
-            });
-          });
-
-          /// add bus stop markers
-          _enabledBuses!.forEach((route, enabled) {
-            if (enabled) {
-              if (_busRoutes[route] != null) {
-                _busRoutes[route]!.stops!.forEach((stop) =>
-                    _markerClusters.add(_busStopToMarkerCluster(stop)));
+          for (final routeId in busRepo.getDefaultRoutes) {
+            if (_busUpdates[routeId] != null) {
+              for (final update in _busUpdates[routeId]!) {
+                _currentMarkers.add(_busUpdateToMarker(update));
               }
             }
-          });
+          }
+
+          /// add bus stop markers
+          for (final route in _enabledBuses!.keys) {
+            if (_enabledBuses![route]!) {
+              if (_busRoutes[route] != null) {
+                for (final stop in _busRoutes[route]!.stops!) {
+                  _markerClusters.add(_busStopToMarkerCluster(stop));
+                }
+              }
+            }
+          }
         }
         break;
       case MapView.kShuttleView:
@@ -660,25 +689,24 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               stop.id: _shuttleStopToMarker(stop)
           };
 
-          _enabledShuttles!.forEach((route, enabled) {
-            if (enabled!) {
-              _shuttleRoutes[route]!.stopIds!.forEach((id) {
+          for (final route in _enabledShuttles!.keys) {
+            if (_enabledShuttles![route]!) {
+              for (final id in _shuttleRoutes[route]!.stopIds!) {
                 if (shuttleMarkerMap[id] != null) {
                   _currentMarkers.add(shuttleMarkerMap[id]!);
                 }
-              });
+              }
             }
-          });
+          }
         }
         break;
       case MapView.kSaferideView:
         {
           /// convert cache of saferide positions to markers
-          _currentMarkers.addAll(_saferideUpdates.values
-              .map((status) => _saferideVehicleToMarker(status)));
-
-          /// add extra markers (i.e. destination/pickup)
-          _currentMarkers.addAll(_saferideMarkers);
+          /// and add extra markers (i.e. destination/pickup)
+          _currentMarkers
+            ..addAll(_saferideUpdates.values.map(_saferideVehicleToMarker))
+            ..addAll(_saferideMarkers);
         }
         break;
     }
@@ -687,7 +715,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   Set<Marker> _getMarkerClusters(double zoomLevel) {
-    fluster = Fluster<MarkerCluster>(
+    _fluster = Fluster<MarkerCluster>(
       minZoom: 14, // The min zoom at clusters will show
       maxZoom: 18, // The max zoom at clusters will show
       radius: 450, // increase for more aggressive clustering vice versa
@@ -703,16 +731,16 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           MarkerCluster(
               id: cluster?.id.toString(),
               position: LatLng(lat!, lng!),
-              icon: this._busStopIcon, // replace with cluster marker
-              info: fluster.children(cluster?.id)!.length.toString(),
+              icon: _busStopIcon, // replace with cluster marker
+              info: _fluster.children(cluster?.id)!.length.toString(),
               isCluster: cluster?.isCluster,
               clusterId: cluster?.id,
               pointsSize: cluster?.pointsSize,
               childMarkerId: cluster?.childMarkerId,
-              controller: this._controller),
+              controller: _controller),
     );
 
-    return fluster
+    return _fluster
         .clusters([
           rpiBounds.southwest.longitude,
           rpiBounds.southwest.latitude,
@@ -725,21 +753,16 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 }
 
 class MarkerCluster extends Clusterable {
-  final String? id;
-  final LatLng position;
-  final BitmapDescriptor icon;
-  final String? info;
-  final GoogleMapController? controller;
   MarkerCluster({
     required this.id,
     required this.position,
     required this.icon,
     this.info,
     this.controller,
-    isCluster = false,
-    clusterId,
-    pointsSize,
-    childMarkerId,
+    bool? isCluster = false,
+    int? clusterId,
+    int? pointsSize,
+    String? childMarkerId,
   }) : super(
           markerId: id,
           latitude: position.latitude,
@@ -749,6 +772,20 @@ class MarkerCluster extends Clusterable {
           pointsSize: pointsSize,
           childMarkerId: childMarkerId,
         );
+
+  factory MarkerCluster.fromMarker(Marker m) => MarkerCluster(
+        id: m.markerId.toString(),
+        position: m.position,
+        icon: m.icon,
+        isCluster: false,
+      );
+
+  final String? id;
+  final LatLng position;
+  final BitmapDescriptor icon;
+  final String? info;
+  final GoogleMapController? controller;
+
   Marker toMarker() => Marker(
       markerId: MarkerId(id ?? ''),
       position: LatLng(
@@ -768,10 +805,4 @@ class MarkerCluster extends Clusterable {
               tilt: 50)),
         );
       });
-  factory MarkerCluster.fromMarker(Marker m) => MarkerCluster(
-        id: m.markerId.toString(),
-        position: m.position,
-        icon: m.icon,
-        isCluster: false,
-      );
 }

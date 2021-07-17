@@ -66,7 +66,7 @@ class ShuttleTimelineState extends State<ShuttleTimeline>
     isExpandedList.fillRange(0, 100, false);
   }
 
-  _handleTabSelection() {
+  void _handleTabSelection() {
     setState(() {});
   }
 

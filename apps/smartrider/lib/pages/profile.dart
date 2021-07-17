@@ -235,7 +235,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                     Navigator.of(context).pop();
                     //Will show a small pop up to tell users the email has been sent
-                    showDialog(
+                    showDialog<AlertDialog>(
                       context: context,
                       barrierDismissible: true, // user must tap button!
                       builder: (BuildContext context) {
@@ -259,7 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   onPressed: () {
                     // launch(
                     //'https://github.com/sirmammingtonham/smartrider/issues/new?assignees=&labels=bug&template=bug-report---.md&title=%F0%9F%90%9B+Bug+Report%3A+%5BIssue+Title%5D');
-                    Navigator.push(
+                    Navigator.push<IssueRequest>(
                       context,
                       MaterialPageRoute(builder: (context) => IssueRequest()),
                     );
@@ -276,7 +276,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   onPressed: () {
                     //Show a box to ask user if they really want to delete their account
-                    showDialog(
+                    showDialog<AlertDialog>(
                       context: context,
                       barrierDismissible:
                           false, // user doesn't need to tap button!
@@ -294,7 +294,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   );
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pop();
-                                  showDialog(
+                                  showDialog<AlertDialog>(
                                     context: context,
                                     barrierDismissible:
                                         true, // user must tap button!
@@ -331,7 +331,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   /// Determines the assigned role that the user has.
-  determinerole(String r) {
+  bool determinerole(String r) {
     if (r[0] == 'S') {
       return true;
     } else

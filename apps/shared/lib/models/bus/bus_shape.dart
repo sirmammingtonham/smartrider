@@ -49,14 +49,14 @@ class BusShape {
     // check if single linestring or multi-linestring and handle differently
     if (json['type'] == 'LineString') {
       List<LatLng> linestring = [];
-      json['coordinates'].forEach((p) {
+      json['coordinates'].forEach((dynamic p) {
         linestring.add(LatLng(p[1], p[0]));
       });
       coordinates!.add(linestring);
     } else {
-      json['coordinates'].forEach((l) {
+      json['coordinates'].forEach((dynamic l) {
         List<LatLng> linestring = [];
-        l.forEach((p) {
+        l.forEach((dynamic p) {
           linestring.add(LatLng(p[1], p[0]));
         });
         coordinates!.add(linestring);

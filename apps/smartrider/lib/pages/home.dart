@@ -75,7 +75,7 @@ class _HomePageState extends State<_HomePage>
         panelController: _panelController, tabController: _tabController));
   }
 
-  void startShowcase(PrefsLoadedState prefState, context) {
+  void startShowcase(PrefsLoadedState prefState, BuildContext context) {
     if (prefState.prefs.getBool('firstTimeLoad') == true) {
       ShowCaseWidget.of(context)!.startShowCase([
         showcaseMap,
@@ -90,7 +90,7 @@ class _HomePageState extends State<_HomePage>
     }
   }
 
-  void startTimelineShowcase(PrefsLoadedState prefState, context) {
+  void startTimelineShowcase(PrefsLoadedState prefState, BuildContext context) {
     if (prefState.prefs.getBool('firstSlideUp') == true) {
       ShowCaseWidget.of(context)!.startShowCase(
           [showcaseTransportTab, showcaseBusTab, showcaseTimeline]);

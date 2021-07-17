@@ -129,7 +129,7 @@ class BusTimelineState extends State<BusTimeline>
     ]);
   }
 
-  Widget busExpansionTile(index, busStops, stopTimes, routeId) {
+  Widget busExpansionTile(int index, List<TimetableStop> busStops, List<List<dynamic>> stopTimes, String routeId) {
     return CustomExpansionTile(
       title: Text(busStops[index].stopName),
       subtitle: Text('Next Arrival: ${stopTimes[0][0]}'),
@@ -190,10 +190,10 @@ class BusTimelineState extends State<BusTimeline>
 
                     String subText;
                     if (stopTimes[timeIndex][1] / 3600 > 1) {
-                      var time = (stopTimes[timeIndex][1] / 3600).truncate();
+                      num time = (stopTimes[timeIndex][1] / 3600).truncate();
                       subText = "In $time ${time > 1 ? 'hours' : 'hour'}";
                     } else {
-                      var time = (stopTimes[timeIndex][1] / 60).truncate();
+                      num time = (stopTimes[timeIndex][1] / 60).truncate();
                       subText = "In $time ${time > 1 ? 'minutes' : 'minute'}";
                     }
 
@@ -242,7 +242,7 @@ class BusTimelineState extends State<BusTimeline>
       controller: _scrollController,
       itemCount: busStops.length,
       itemBuilder: (context, index) {
-        var stopTimes = this
+        final stopTimes = this
             .widget
             .busTables![routeId]!
             .getClosestTimes(index)

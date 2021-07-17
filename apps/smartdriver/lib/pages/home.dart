@@ -17,7 +17,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Future<void> showCancellationDialog(DocumentReference orderRef) async {
-    await showDialog(
+    await showDialog<Dialog>(
         context: context,
         builder: (BuildContext context) {
           return Dialog(

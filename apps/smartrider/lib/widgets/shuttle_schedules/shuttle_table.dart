@@ -34,11 +34,11 @@ class ShuttleTableState extends State<ShuttleTable>
     });
   }
 
-  _handleTabSelection() {
+  void _handleTabSelection() {
     setState(() {});
   }
 
-  _getTabColor(TabController tc) {
+  Color _getTabColor(TabController tc) {
     if (tc.index == 0) {
       return Colors.green;
     } else if (tc.index == 1) {

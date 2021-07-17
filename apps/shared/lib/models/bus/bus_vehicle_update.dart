@@ -79,7 +79,7 @@ class BusVehicleUpdate {
   }
 
   Map<String, dynamic> toJson() {
-    return Map();
+    return Map<String, dynamic>();
   }
 
   FeedEntity toFeedEntity() {

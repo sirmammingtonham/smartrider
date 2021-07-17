@@ -6,7 +6,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  FirebaseFirestore.instance.collection('orders').add({
+  FirebaseFirestore.instance.collection('orders').add(<String, dynamic>{
     'status': 'WAITING',
     'pickup': GeoPoint(-21.50872, 52.62132),
     'dropoff': GeoPoint(21.50872, -52.62132),

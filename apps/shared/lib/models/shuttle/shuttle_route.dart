@@ -48,14 +48,14 @@ class ShuttleRoute {
     updated = json['updated'];
     if (json['points'] != null) {
       points = [];
-      json['points'].forEach((v) {
+      json['points'].forEach((dynamic v) {
         points!.add(new Point.fromJson(v));
       });
     }
     active = json['active'];
     if (json['schedule'] != null) {
       schedule = [];
-      json['schedule'].forEach((v) {
+      json['schedule'].forEach((dynamic v) {
         schedule!.add(new Schedule.fromJson(v));
       });
     }

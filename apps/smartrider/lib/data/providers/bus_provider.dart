@@ -54,7 +54,8 @@ class BusProvider {
         .get();
 
     routeMapping = Map.fromIterable(routes.docs,
-        key: (doc) => doc['route_id'], value: (doc) => doc['route_short_name']);
+        key: (dynamic doc) => doc['route_id'],
+        value: (dynamic doc) => doc['route_short_name']);
 
     _defaultRoutes = routeMapping!.keys.toList();
   }
@@ -79,8 +80,8 @@ class BusProvider {
         await fetch('routes', idField: 'route_id', routes: _defaultRoutes);
 
     Map<String?, BusRoute> routeMap = Map.fromIterable(response.docs,
-        key: (doc) => doc['route_short_name'],
-        value: (doc) => BusRoute.fromJson(doc.data()));
+        key: (dynamic doc) => doc['route_short_name'],
+        value: (dynamic doc) => BusRoute.fromJson(doc.data()));
 
     return routeMap;
   }
@@ -91,8 +92,8 @@ class BusProvider {
         await fetch('polylines', idField: 'route_id', routes: _defaultRoutes);
 
     Map<String?, BusShape> shapesMap = Map.fromIterable(response.docs,
-        key: (doc) => routeMapping![doc['route_id']],
-        value: (doc) => BusShape.fromJson(json.decode(doc['geoJSON'])));
+        key: (dynamic doc) => routeMapping![doc['route_id']],
+        value: (dynamic doc) => BusShape.fromJson(json.decode(doc['geoJSON'])));
     return shapesMap;
   }
 
@@ -104,8 +105,8 @@ class BusProvider {
         .get();
 
     Map<String?, BusStop> stopsMap = Map.fromIterable(response.docs,
-        key: (doc) => doc['stop_id'],
-        value: (doc) => BusStop.fromJson(doc.data()));
+        key: (dynamic doc) => doc['stop_id'],
+        value: (dynamic doc) => BusStop.fromJson(doc.data()));
 
     return stopsMap;
   }
@@ -116,8 +117,8 @@ class BusProvider {
         await fetch('trips', idField: 'route_id', routes: _defaultRoutes);
 
     Map<String?, BusTrip> tripList = Map.fromIterable(response.docs,
-        key: (doc) => routeMapping![doc['route_id']],
-        value: (doc) => BusTrip.fromJson(doc.data()));
+        key: (dynamic doc) => routeMapping![doc['route_id']],
+        value: (dynamic doc) => BusTrip.fromJson(doc.data()));
 
     return tripList;
   }
@@ -166,7 +167,7 @@ class BusProvider {
         // filter out null values from json response and convert to map
         Map<String, String> data = {};
         (jsonDecode(response.body) as Map<String, dynamic>)
-            .forEach((key, value) {
+            .forEach((String key, dynamic value) {
           if (value != null) {
             data[key] = value.toString();
           }
@@ -186,7 +187,7 @@ class BusProvider {
         Uri.parse('https://www.cdta.org/realtime/buses.json?$milliseconds'));
     Map<String, List<BusRealtimeUpdate>> updates =
         Map<String, List<BusRealtimeUpdate>>();
-    (jsonDecode(response.body) as List).forEach((element) {
+    (jsonDecode(response.body) as List).forEach((dynamic element) {
       BusRealtimeUpdate update = BusRealtimeUpdate.fromJson(element);
       if (shortRouteIds.contains(update.routeId)) {
         if (updates[update.routeId] == null) {

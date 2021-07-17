@@ -21,7 +21,7 @@ class PositionData {
 
   factory PositionData.fromDocSnapshot(QueryDocumentSnapshot doc) {
     final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    final position = data['position_data'];
+    final Map<String, dynamic> position = data['position_data'];
     return PositionData(
         active: data['available'],
         heading: position['heading'],

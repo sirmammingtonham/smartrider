@@ -57,7 +57,7 @@ class SearchBarState extends State<SearchBar> {
 
   void _showAutocomplete(String message, {required bool isPickup}) async {
     // TODO: rework this to be less hardcoded...
-    showDialog(
+    showDialog<Widget>(
         context: context,
         builder: (context) {
           return Align(
@@ -165,7 +165,7 @@ class SearchBarState extends State<SearchBar> {
                   child: IconButton(
                     icon: Icon(SmartriderIcons.Settings),
                     onPressed: () {
-                      Navigator.push(context,
+                      Navigator.push<SettingsPage>(context,
                           MaterialPageRoute(builder: (context) {
                         return SettingsPage();
                       }));
@@ -220,7 +220,7 @@ class SearchBarState extends State<SearchBar> {
                     icon: Text(computeUsername(name!),
                         style: TextStyle(fontSize: 15, color: Colors.white70)),
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.push<ProfilePage>(
                           context,
                           MaterialPageRoute(
                               builder: (context) => ProfilePage(

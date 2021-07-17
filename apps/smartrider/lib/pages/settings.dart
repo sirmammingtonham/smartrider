@@ -68,7 +68,7 @@ class SettingsWidget extends StatelessWidget {
   A function that builds a rounded box that contains a list of
   keys from a given map to change a boolean variable.
   */
-  Widget cardBuilder(switchList) {
+  Widget cardBuilder(List<Widget> switchList) {
     return Container(
       margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
       child: Material(

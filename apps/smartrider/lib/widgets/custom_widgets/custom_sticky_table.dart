@@ -498,7 +498,7 @@ class _SyncScrollController {
   ScrollController? _scrollingController;
   bool _scrollingActive = false;
 
-  processNotification(
+  void processNotification(
       ScrollNotification notification, ScrollController sender) {
     if (notification is ScrollStartNotification && !_scrollingActive) {
       _scrollingController = sender;
