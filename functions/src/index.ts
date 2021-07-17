@@ -4,6 +4,8 @@ admin.initializeApp(); // needs to go before other imports: https://github.com/f
 /// bus functions
 import * as db from './bus/update_firestore_gtfs';
 export const refreshDataBase = db.refreshDataBase;
+import * as sfcu from './saferide/saferide_cleanup';
+export const saferideCleanup = sfcu.saferideOrderFlush;
 
 /// saferide functions
 // import * as saferide from "./saferide/saferide_listeners";
@@ -14,8 +16,8 @@ export const refreshDataBase = db.refreshDataBase;
 // export const hypertrackTripWebhook = saferide_webhooks.hypertrackTripWebhook;
 
 /// test functions
-import * as db_tests from './bus/bus_test_funcs';
-import * as saferide_tests from "./saferide/saferide_test_funcs";
+// import * as db_tests from './bus/bus_test_funcs';
+ import * as saferide_tests from "./saferide/saferide_test_funcs";
 export const createTest = saferide_tests.createTest;
 export const addTestDriver = saferide_tests.addTestDriver;
-export const testDB = db_tests.testDB;
+// export const testDB = db_tests.testDB;

@@ -49,4 +49,4 @@ export interface Order {
   estimate: Estimate;
 }
 
-export interface Trip {}
+//export interface Trip {}

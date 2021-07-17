@@ -10,7 +10,7 @@ import { genShapeGeoJSON } from "./bus_util";
 import { zipObject, zip, isNumber } from "lodash";
 import * as fs from "fs";
 import * as os from "os";
-import { mainModule } from "node:process";
+// import { mainModule } from "node:process";
 import { QueryDocumentSnapshot } from "@google-cloud/firestore";
 
 // import * as gtfs from "gtfs";
