@@ -27,7 +27,7 @@ class BusProvider {
 
   late final Map<String, String> routeMapping;
   late final Future _providerHasLoaded;
-  late final List<String?> _defaultRoutes;
+  late final List<String> _defaultRoutes;
 
   static const shortRouteIds = [
     '87',
@@ -58,7 +58,7 @@ class BusProvider {
 
   /// Fetchs data from the JSON API and returns a decoded JSON.
   Future<QuerySnapshot> fetch(String collection,
-      {List? routes, String idField = 'route_id'}) async {
+      {List<String>? routes, String idField = 'route_id'}) async {
     return _firestore
         .collection(collection)
         .where(idField, whereIn: _defaultRoutes)

@@ -122,13 +122,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   GoogleMapController? _controller;
 
-  Map<String?, BusRoute> _busRoutes = {}; // contains stops
-  Map<String?, BusShape> _busShapes = {}; // contains polylines
+  Map<String, BusRoute> _busRoutes = {}; // contains stops
+  Map<String, BusShape> _busShapes = {}; // contains polylines
   Map<String, List<BusRealtimeUpdate>> _busUpdates = {}; // realtime updates
 
-  Map<String?, ShuttleRoute> _shuttleRoutes = {}; // contains polylines
-  List<ShuttleStop>? _shuttleStops = []; // contains stops
-  List<ShuttleUpdate>? _shuttleUpdates = []; // realtime updates
+  Map<String, ShuttleRoute> _shuttleRoutes = {}; // contains polylines
+  List<ShuttleStop> _shuttleStops = []; // contains stops
+  List<ShuttleUpdate> _shuttleUpdates = []; // realtime updates
 
   final List<MarkerCluster> _markerClusters = [];
 
@@ -136,6 +136,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final Set<Marker> _saferideMarkers = <Marker>{};
   final Set<Polyline> _saferidePolylines = <Polyline>{};
   String? _pickupVehicleId;
+
+  final stopMarkerSize = Size(60.sp, 60.sp);
+  final vehicleUpdateSize = Size(80.sp, 80.sp);
 
   late Fluster<MarkerCluster> _fluster;
   final Set<Marker> _currentMarkers = <Marker>{};
@@ -148,7 +151,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _pickupIcon,
       _dropoffIcon;
 
-  final Map<int, BitmapDescriptor> _updateIcons =
+  final Map<String, BitmapDescriptor> _updateIcons =
       {}; // maps route id to update marker
 
   static const _updateFrequency = Duration(seconds: 5); // update every 5 sec
@@ -235,6 +238,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _busUpdates = await busRepo.getRealtimeUpdate;
           prefsBloc
               .add(const PrefsUpdateEvent()); // just to get enabled bus routes
+          await _initBusMarkers();
         }
         break;
       case MapView.kShuttleView:
@@ -250,6 +254,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
           // update preferences with currently active routes
           prefsBloc.add(InitActiveRoutesEvent(_shuttleRoutes.values.toList()));
+          await _initShuttleMarkers();
         }
         break;
       case MapView.kSaferideView:
@@ -315,7 +320,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     switch (saferideState.runtimeType) {
       case SaferideNoState:
         {
-          scrollToCurrentLocation();
           _saferideMarkers.clear();
           _saferidePolylines.clear();
         }
@@ -475,9 +479,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _updateTimer = Timer.periodic(_updateFrequency,
         (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
 
-    final stopMarkerSize = Size(60.sp, 60.sp);
-    final vehicleUpdateSize = Size(80.sp, 80.sp);
-
     _shuttleStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/map_icons/marker_stop_shuttle.svg',
         size: stopMarkerSize);
@@ -500,32 +501,34 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             color: const Color(0x00ffbb24),
             size: vehicleUpdateSize);
 
-    // TODO: can probably move this somewhere better
-    final shuttleColors = {
-      22: Colors.red,
-      21: Colors.yellow,
-      24: Colors.blue,
-      28: Colors.orange
-    };
-
-    for (final id in [22, 21, 24, 28]) {
-      _updateIcons[id] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-          'assets/map_icons/marker_vehicle.svg',
-          color: shuttleColors[id]!.lighten(0.15),
-          size: vehicleUpdateSize);
-    }
-
-    for (final id in [87, 286, 289, 288]) {
-      _updateIcons[id] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-          'assets/map_icons/marker_vehicle.svg',
-          color: busColors[id.toString()]!.lighten(0.15),
-          size: vehicleUpdateSize);
-    }
-
     // default white
-    _updateIcons[-1] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+    _updateIcons['-1'] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/map_icons/marker_vehicle.svg',
         size: vehicleUpdateSize);
+  }
+
+  Future<void> _initBusMarkers() async {
+    for (final key in _busRoutes.keys) {
+      final busId = _busRoutes[key]!.routeShortName!;
+      _updateIcons['bus_$busId'] =
+          await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+              'assets/map_icons/marker_vehicle.svg',
+              color: busColors[busId]!.lighten(0.15),
+              size: vehicleUpdateSize);
+    }
+  }
+
+  Future<void> _initShuttleMarkers() async {
+    for (final key in _shuttleRoutes.keys) {
+      final shuttleId = _shuttleRoutes[key]!.id.toString();
+      if (_shuttleRoutes[key]!.active == true) {
+        _updateIcons[shuttleId] =
+            await BitmapHelper.getBitmapDescriptorFromSvgAsset(
+                'assets/map_icons/marker_vehicle.svg',
+                color: _shuttleRoutes[key]!.color,
+                size: vehicleUpdateSize);
+      }
+    }
   }
 
   Marker _shuttleStopToMarker(ShuttleStop stop) => Marker(
@@ -555,6 +558,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         );
       });
 
+  /// TODO: focusing bus stop marker shows name and stuff
   // Marker _busStopToMarker(BusStop stop) {
   //   return Marker(
   //       icon: busStopIcon,
@@ -577,30 +581,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           icon: _busStopIcon,
           controller: _controller);
 
-  Marker _shuttleUpdateToMarker(ShuttleUpdate update) => Marker(
-      icon: _updateIcons[
-          _updateIcons.containsKey(update.routeId) ? update.routeId! : -1]!,
-      infoWindow:
-          InfoWindow(title: 'Shuttle ID: ${update.vehicleId.toString()}'),
-      flat: true,
-      markerId: MarkerId(update.id.toString()),
-      position: update.getLatLng,
-      rotation: update.heading as double,
-      anchor: const Offset(0.5, 0.5),
-      onTap: () {
-        _controller!.animateCamera(
-          CameraUpdate.newCameraPosition(
-              CameraPosition(target: update.getLatLng, zoom: 18, tilt: 50)),
-        );
-      });
+  Marker _shuttleUpdateToMarker(ShuttleUpdate update) {
+    return Marker(
+        icon: _updateIcons[update.routeId.toString()] ?? _updateIcons['-1']!,
+        infoWindow: InfoWindow(
+            title: 'Shuttle #${update.vehicleId.toString()} '
+                'on Route ${update.routeId}'),
+        flat: true,
+        markerId: MarkerId(update.id.toString()),
+        position: update.getLatLng,
+        rotation: update.heading as double,
+        anchor: const Offset(0.5, 0.5),
+        onTap: () {
+          _controller!.animateCamera(
+            CameraUpdate.newCameraPosition(
+                CameraPosition(target: update.getLatLng, zoom: 18, tilt: 50)),
+          );
+        });
+  }
 
   Marker _busUpdateToMarker(BusRealtimeUpdate update) {
-    final routeId = int.parse(update.routeId);
     final busPosition = LatLng(update.lat, update.lng);
     // real time update shuttles
     return Marker(
-      icon: _updateIcons[_updateIcons.containsKey(routeId) ? routeId : -1]!,
-      infoWindow: InfoWindow(title: 'Bus ID: ${update.id.toString()}'),
+      icon: _updateIcons['bus_${update.routeId}'] ?? _updateIcons['-1']!,
+      infoWindow: InfoWindow(
+          title: 'Bus #${update.id.toString()} '
+              'on Route ${update.routeId}'),
       flat: true,
       markerId: MarkerId(update.id.toString()),
       position: busPosition,
@@ -678,13 +685,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       case MapView.kShuttleView:
         {
           /// add shuttle realtime update markers
-          for (final update in _shuttleUpdates!) {
+          for (final update in _shuttleUpdates) {
             _currentMarkers.add(_shuttleUpdateToMarker(update));
           }
 
           /// add shuttle stop markers
           final shuttleMarkerMap = {
-            for (final stop in _shuttleStops!)
+            for (final stop in _shuttleStops)
               stop.id: _shuttleStopToMarker(stop)
           };
 

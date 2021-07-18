@@ -1,7 +1,9 @@
 // ui dependencies
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared/util/multi_bloc_builder.dart';
 import 'package:sizer/sizer.dart';
+import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 
 // bloc stuff
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
@@ -9,6 +11,8 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 // loading custom widgets and data
 import 'package:showcaseview/showcaseview.dart';
 import 'package:shared/util/messages.dart';
+import 'package:smartrider/widgets/saferide_status_widgets.dart'
+    as saferide_widgets;
 // import 'package:smartrider/widgets/shuttle_schedules/shuttle_timeline.dart';
 // import 'package:smartrider/widgets/shuttle_schedules/shuttle_table.dart';
 import 'package:smartrider/widgets/shuttle_schedules/shuttle_unavailable.dart';
@@ -53,7 +57,7 @@ class PanelPage extends StatelessWidget {
       children: [
         Container(
           color: Theme.of(context).accentColor,
-          height: 15.h,
+          height: saferide_widgets.saferideDefaultHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -88,78 +92,117 @@ class PanelPage extends StatelessWidget {
   }
 
   Widget panelBody(BuildContext context, ScheduleState scheduleState) =>
-      Expanded(
-        child: TabBarView(
-          controller: BlocProvider.of<ScheduleBloc>(context).tabController,
-          children: scheduleState is ScheduleTimelineState
-              ? [
-                  // timeline widgets
-                  BusTimeline(
-                    panelController:
-                        BlocProvider.of<ScheduleBloc>(context).panelController,
-                    scrollController: panelScrollController,
-                    busTables: scheduleState.busTables,
-                  ),
-                 const  ShuttleUnavailable(),
-                ]
-              : [
-                  // table widgets
-                  BusTable(
-                      timetableMap:
-                          (scheduleState as ScheduleTableState).busTables),
-                  const ShuttleUnavailable(),
-                ],
-        ),
+      TabBarView(
+        controller: BlocProvider.of<ScheduleBloc>(context).tabController,
+        children: scheduleState is ScheduleTimelineState
+            ? [
+                // timeline widgets
+                BusTimeline(
+                  panelController:
+                      BlocProvider.of<ScheduleBloc>(context).panelController,
+                  scrollController: panelScrollController,
+                  busTables: scheduleState.busTables,
+                ),
+                const ShuttleUnavailable(),
+              ]
+            : [
+                // table widgets
+                BusTable(
+                    timetableMap:
+                        (scheduleState as ScheduleTableState).busTables),
+                const ShuttleUnavailable(),
+              ],
       );
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ScheduleBloc, ScheduleState>(
-      builder: (context, scheduleState) {
-        if (scheduleState is ScheduleTimelineState ||
-            scheduleState is ScheduleTableState) {
-          return ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(20.0),
-            ),
-            child: Scaffold(
-              body: Column(
-                children: [
-                  panelAppBar(context, scheduleState),
-                  Showcase(
-                    key: showcaseTransportTab,
-                    description: slidingPageTabShowcaseMessage,
-                    child: TabBar(
-                      controller:
-                          BlocProvider.of<ScheduleBloc>(context).tabController,
-                      tabs: _tabs,
+    return MultiBlocBuilder(
+        blocs: [
+          BlocProvider.of<ScheduleBloc>(context),
+          BlocProvider.of<SaferideBloc>(context),
+        ],
+        builder: (context, states) {
+          final scheduleState = states.get<ScheduleState>();
+          final saferideState = states.get<SaferideState>();
+
+          late final Widget appBarWidget; 
+          switch (saferideState.runtimeType) {
+            case SaferideNoState:
+            case SaferideDroppingOffState:
+              appBarWidget = panelAppBar(context, scheduleState); 
+              break;
+            case SaferideSelectingState:
+              appBarWidget = saferide_widgets.saferideSelectionWidget(
+                  context, saferideState as SaferideSelectingState); 
+
+              break;
+            case SaferideWaitingState:
+              appBarWidget = saferide_widgets.saferideWaitingWidget(
+                  context, saferideState as SaferideWaitingState); 
+              break;
+            case SaferidePickingUpState:
+              appBarWidget = saferide_widgets.saferidePickingUpWidget(
+                  context, saferideState as SaferidePickingUpState); 
+              break;
+            case SaferideCancelledState:
+              //TODO add modal popup or something too
+              appBarWidget = Container(); 
+              break;
+            default:
+              appBarWidget = Container();
+              break;
+          }
+
+          switch (scheduleState.runtimeType) {
+            case ScheduleTimelineState:
+            case ScheduleTableState:
+              {
+                return ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20.0),
+                  ),
+                  child: Scaffold(
+                    body: Column(
+                      children: [
+                        appBarWidget,
+                        Showcase(
+                          key: showcaseTransportTab,
+                          description: slidingPageTabShowcaseMessage,
+                          child: TabBar(
+                            controller: BlocProvider.of<ScheduleBloc>(context)
+                                .tabController,
+                            tabs: _tabs,
+                          ),
+                        ),
+                        // SizedBox(
+                        //     height: 90.h - appBarHeight,
+                        //     child:
+                        Expanded(child: panelBody(context, scheduleState))
+// )
+                      ],
+                    ),
+                    floatingActionButton: FloatingActionButton(
+                      heroTag: 'switch_schedule_view_button',
+                      elevation: 5.0,
+                      onPressed: () {
+                        if (scheduleState is ScheduleTimelineState) {
+                          BlocProvider.of<ScheduleBloc>(context).add(
+                              const ScheduleTypeChangeEvent(isTimeline: false));
+                        } else if (scheduleState is ScheduleTableState) {
+                          BlocProvider.of<ScheduleBloc>(context).add(
+                              const ScheduleTypeChangeEvent(isTimeline: true));
+                        }
+                      },
+                      child: Icon(scheduleState is ScheduleTimelineState
+                          ? Icons.table_view
+                          : Icons.timeline),
                     ),
                   ),
-                  panelBody(context, scheduleState)
-                ],
-              ),
-              floatingActionButton: FloatingActionButton(
-                heroTag: 'switch_schedule_view_button',
-                elevation: 5.0,
-                onPressed: () {
-                  if (scheduleState is ScheduleTimelineState) {
-                    BlocProvider.of<ScheduleBloc>(context)
-                        .add(const ScheduleTypeChangeEvent(isTimeline: false));
-                  } else if (scheduleState is ScheduleTableState) {
-                    BlocProvider.of<ScheduleBloc>(context)
-                        .add(const ScheduleTypeChangeEvent(isTimeline: true));
-                  }
-                },
-                child: Icon(scheduleState is ScheduleTimelineState
-                    ? Icons.table_view
-                    : Icons.timeline),
-              ),
-            ),
-          );
-        } else {
-          return const Center(child: CircularProgressIndicator());
-        }
-      },
-    );
+                );
+              }
+            default:
+              return const Center(child: CircularProgressIndicator());
+          }
+        });
   }
 }

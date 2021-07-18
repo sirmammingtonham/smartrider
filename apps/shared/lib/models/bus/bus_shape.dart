@@ -22,12 +22,16 @@ const busIndices = {
 };
 
 class BusShape {
-  BusShape({this.routeId, this.coordinates});
+  BusShape(
+      {required this.routeId,
+      required this.routeShortName,
+      required this.coordinates});
 
-  BusShape.fromJson(Map<String, dynamic> json) {
-    routeId = (json['properties'] as Map<String, dynamic>)['route_id'];
-    routeShortName = routeId!.substring(0, routeId!.indexOf('-'));
-    coordinates = [];
+  factory BusShape.fromJson(Map<String, dynamic> json) {
+    final String routeId =
+        (json['properties'] as Map<String, dynamic>)['route_id'];
+    final routeShortName = routeId.substring(0, routeId.indexOf('-'));
+    final coordinates = <List<LatLng>>[];
 
     /// check if single linestring or multi-linestring and handle differently
     if (json['type'] == 'LineString') {
@@ -35,30 +39,35 @@ class BusShape {
       for (final point in json['coordinates'] as List) {
         linestring.add(LatLng((point as List)[1], point[0]));
       }
-      coordinates!.add(linestring);
+      coordinates.add(linestring);
     } else {
       for (final line in json['coordinates'] as List) {
         final linestring = <LatLng>[];
         for (final point in line) {
           linestring.add(LatLng((point as List)[1], point[0]));
         }
-        coordinates!.add(linestring);
+        coordinates.add(linestring);
       }
     }
+
+    return BusShape(
+        routeId: routeId,
+        routeShortName: routeShortName,
+        coordinates: coordinates);
   }
 
-  String? routeId;
-  String? routeShortName;
-  List<List<LatLng>>? coordinates;
+  String routeId;
+  String routeShortName;
+  List<List<LatLng>> coordinates;
 
   List<Polyline> get getPolylines {
     var i = 0;
-    return coordinates!
+    return coordinates
         .map((linestring) => Polyline(
             polylineId: PolylineId('$routeId${i++}'),
-            color: busColors[routeShortName!]!.withAlpha(255),
-            width: busWidths[routeShortName!]!,
-            zIndex: busIndices[routeShortName!]!,
+            color: busColors[routeShortName]!.withAlpha(255),
+            width: busWidths[routeShortName]!,
+            zIndex: busIndices[routeShortName]!,
             // patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
             points: linestring))
         .toList();

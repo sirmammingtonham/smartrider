@@ -13,10 +13,10 @@ class ShuttleRepository {
   final _shuttleProvider = ShuttleProvider();
 
 //  void get openSocket => _shuttleProvider.openSocket();
-  Future<Map<String?, ShuttleRoute>> get getRoutes async =>
+  Future<Map<String, ShuttleRoute>> get getRoutes async =>
       _shuttleProvider.getRoutes();
-  Future<List<ShuttleStop>?> get getStops async => _shuttleProvider.getStops();
-  Future<List<ShuttleUpdate>?> get getUpdates async =>
+  Future<List<ShuttleStop>> get getStops async => _shuttleProvider.getStops();
+  Future<List<ShuttleUpdate>> get getUpdates async =>
       _shuttleProvider.getUpdates();
   bool get isConnected => _shuttleProvider.isConnected;
 }

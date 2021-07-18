@@ -37,6 +37,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
                 currentOrder = snap.reference;
                 currentOrder!.snapshots().listen(orderListener);
               }
+              // TODO: retrieve polylines and stuff so we can display them again
             }
           }
           break;
@@ -122,7 +123,8 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   /// attempts to cancel saferide true if successful, false if fail
   Stream<SaferideState> _mapCancelToState(
       SaferideUserCancelledEvent event) async* {
-    await saferideRepo.cancelOrder();
+    await saferideRepo.cancelOrder(currentOrder!);
+    await endSubscription();
     yield SaferideNoState();
   }
 
@@ -139,7 +141,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     }
 
     final order = Order.fromSnapshot(update);
-
+    currentOrder = order.orderRef;
     switch (order.status) {
       case 'WAITING':
         {

@@ -113,48 +113,71 @@ class SearchBarState extends State<SearchBar> {
         });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(top: 2.h),
-        child: MultiBlocBuilder(
-          blocs: [
-            BlocProvider.of<SaferideBloc>(context),
-            BlocProvider.of<AuthenticationBloc>(context),
-            BlocProvider.of<PrefsBloc>(context),
-          ],
-          builder: (context, states) {
-            final saferideState = states.get<SaferideState>();
-            final authState = states.get<AuthenticationState>();
-            final prefState = states.get<PrefsState>();
-
-            name =
-                authState is AuthenticationSuccess ? authState.displayName : '';
-            role = authState is AuthenticationSuccess ? authState.role : '';
-            switch (saferideState.runtimeType) {
-              case SaferideNoState:
-                return searchBar(prefState);
-              case SaferideSelectingState:
-                return saferideSelectionWidget(
-                    context, saferideState as SaferideSelectingState);
-              case SaferideWaitingState:
-              case SaferidePickingUpState:
-              case SaferideDroppingOffState:
-                return Container();
-              case SaferideCancelledState:
-              case SaferideErrorState:
-                return const Placeholder(); //TODO: fill out these widgets
-              default:
-                return const Text('saferide state type error');
+  Widget searchField(SaferideState saferideState) {
+    switch (saferideState.runtimeType) {
+      case SaferideNoState:
+        // creates the autocomplete field (requires strings.dart in
+        // the utils folder to contain the api key)
+        return TypeAheadField(
+          hideOnLoading: true,
+          textFieldConfiguration: const TextFieldConfiguration(
+              autofocus: false,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(), hintText: 'Need a safe ride?')),
+          suggestionsCallback: (pattern) async {
+            if (pattern.isEmpty) {
+              return const Iterable<Prediction>.empty();
             }
+            return (await places.autocomplete(pattern,
+                    location: Location(lat: 42.729980, lng: -73.676682),
+                    radius: 1000,
+                    strictbounds: true,
+                    language: 'en'))
+                .predictions;
           },
-        ),
-      ),
-    );
+          itemBuilder: (context, Prediction suggestion) {
+            return ListTile(
+              leading: const Icon(Icons.location_on),
+              title: Text(suggestion.description!),
+              // subtitle: Text('${suggestion.distanceMeters!} m
+              // away'),
+            );
+          },
+          onSuggestionSelected: (Prediction suggestion) {
+            BlocProvider.of<SaferideBloc>(context)
+                .add(SaferideSelectingEvent(dropoffPrediction: suggestion));
+          },
+        );
+      case SaferideWaitingState:
+        // TODO: add destination info to state
+        // we can probably have some easter eggs or something here
+        return const TextField(
+            enabled: false,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Waiting for an available driver!',
+            ));
+      case SaferidePickingUpState:
+        return const TextField(
+            enabled: false,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Driver is on their way!',
+            ));
+      case SaferideDroppingOffState:
+        return const TextField(
+            enabled: false,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Have a safe ride 😄',
+            ));
+      default:
+        return const SizedBox.shrink();
+    }
   }
 
-  Widget searchBar(PrefsState prefsState) => Container(
+  Widget searchBar(SaferideState saferideState, PrefsState prefsState) =>
+      Container(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         height: 55,
         child: Material(
@@ -181,43 +204,8 @@ class SearchBarState extends State<SearchBar> {
                 description: searchbarShowcaseMessage,
                 shapeBorder: const RoundedRectangleBorder(),
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width - 150,
-                  // creates the autocomplete field (requires strings.dart in
-                  // the utils folder to contain the api key)
-                  child: TypeAheadField(
-                    hideOnLoading: true,
-                    textFieldConfiguration: const TextFieldConfiguration(
-                        autofocus: false,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Need a safe ride?')),
-                    suggestionsCallback: (pattern) async {
-                      if (pattern.isEmpty) {
-                        return const Iterable<Prediction>.empty();
-                      }
-                      return (await places.autocomplete(pattern,
-                              location:
-                                  Location(lat: 42.729980, lng: -73.676682),
-                              radius: 1000,
-                              strictbounds: true,
-                              language: 'en'))
-                          .predictions;
-                    },
-                    itemBuilder: (context, Prediction suggestion) {
-                      return ListTile(
-                        leading: const Icon(Icons.location_on),
-                        title: Text(suggestion.description!),
-                        // subtitle: Text('${suggestion.distanceMeters!} m
-                        // away'),
-                      );
-                    },
-                    onSuggestionSelected: (Prediction suggestion) {
-                      BlocProvider.of<SaferideBloc>(context).add(
-                          SaferideSelectingEvent(
-                              dropoffPrediction: suggestion));
-                    },
-                  ),
-                ),
+                    width: MediaQuery.of(context).size.width - 150,
+                    child: searchField(saferideState)),
               ),
               Showcase(
                 key: showcaseProfile,
@@ -292,4 +280,44 @@ class SearchBarState extends State<SearchBar> {
           ),
         ],
       );
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(top: 2.h),
+        child: MultiBlocBuilder(
+          blocs: [
+            BlocProvider.of<SaferideBloc>(context),
+            BlocProvider.of<AuthenticationBloc>(context),
+            BlocProvider.of<PrefsBloc>(context),
+          ],
+          builder: (context, states) {
+            final saferideState = states.get<SaferideState>();
+            final authState = states.get<AuthenticationState>();
+            final prefState = states.get<PrefsState>();
+
+            name =
+                authState is AuthenticationSuccess ? authState.displayName : '';
+            role = authState is AuthenticationSuccess ? authState.role : '';
+            switch (saferideState.runtimeType) {
+              case SaferideNoState:
+              case SaferideWaitingState:
+              case SaferidePickingUpState:
+              case SaferideDroppingOffState:
+                return searchBar(saferideState, prefState);
+              case SaferideSelectingState:
+                return saferideSelectionWidget(
+                    context, saferideState as SaferideSelectingState);
+              case SaferideCancelledState:
+              case SaferideErrorState:
+                return const Placeholder(); //TODO: fill out these widgets
+              default:
+                return const Text('saferide state type error');
+            }
+          },
+        ),
+      ),
+    );
+  }
 }

@@ -15,6 +15,8 @@ import 'package:smartrider/pages/home.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/widgets/legend.dart';
 import 'package:sizer/sizer.dart';
+import 'package:smartrider/widgets/saferide_status_widgets.dart'
+    as saferide_widgets;
 import 'custom_widgets/expandable_fab.dart';
 
 final LatLngBounds rpiBounds = LatLngBounds(
@@ -28,8 +30,7 @@ const CameraPosition kInitialPosition = CameraPosition(
 );
 
 class SmartriderMap extends StatelessWidget {
-    const SmartriderMap({Key? key}) : super(key: key);
-
+  const SmartriderMap({Key? key}) : super(key: key);
 
   /// the google map (background of stack)
   Widget map(BuildContext context, MapState state) => GoogleMap(
@@ -120,34 +121,51 @@ class SmartriderMap extends StatelessWidget {
 
   /// the stack that places all the map components together
   Widget mapStack(
-          {required SaferideState state,
-          required Widget background,
-          required Widget viewFab,
-          required Widget locationButton}) =>
-      Stack(alignment: Alignment.topCenter, children: <Widget>[
-        background,
-        Positioned(
-          right: 180,
-          bottom: 350,
-          child: Showcase(
-              key: showcaseMap,
-              title: mapShowcaseTitle,
-              description: mapShowcaseMessage,
-              child: const SizedBox(
-                height: 400,
-                width: 300,
-              )),
-        ),
-        const Positioned(left: 20.0, bottom: 120.0, child: Legend()),
-        Positioned(
-            right: 20.0,
-            bottom: state is SaferideSelectingState ? 240.0 : 190.0,
-            child: viewFab),
-        Positioned(
-            right: 20.0,
-            bottom: state is SaferideSelectingState ? 160.0 : 120.0,
-            child: locationButton)
-      ]);
+      {required SaferideState saferideState,
+      required Widget background,
+      required Widget viewFab,
+      required Widget locationButton}) {
+    late final double appBarHeight;
+
+    switch (saferideState.runtimeType) {
+      case SaferideSelectingState:
+        appBarHeight = saferide_widgets.saferideSelectingHeight;
+        break;
+      case SaferideWaitingState:
+        appBarHeight = saferide_widgets.saferideWaitingHeight;
+        break;
+      case SaferidePickingUpState:
+        appBarHeight = saferide_widgets.saferidePickingUpHeight;
+        break;
+      case SaferideCancelledState:
+        appBarHeight = saferide_widgets.saferideCancelledHeight;
+        break;
+      case SaferideNoState:
+      case SaferideDroppingOffState:
+      default:
+        appBarHeight = saferide_widgets.saferideDefaultHeight;
+        break;
+    }
+
+    return Stack(alignment: Alignment.topCenter, children: <Widget>[
+      background,
+      Positioned(
+        right: 180,
+        bottom: 350,
+        child: Showcase(
+            key: showcaseMap,
+            title: mapShowcaseTitle,
+            description: mapShowcaseMessage,
+            child: const SizedBox(
+              height: 400,
+              width: 300,
+            )),
+      ),
+      Positioned(left: 3.w, bottom: appBarHeight + 20, child: const Legend()),
+      Positioned(right: 3.w, bottom: appBarHeight + 90, child: viewFab),
+      Positioned(right: 3.w, bottom: appBarHeight + 20, child: locationButton)
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,14 +185,14 @@ class SmartriderMap extends StatelessWidget {
               );
             case MapLoadedState:
               return mapStack(
-                  state: saferideState,
+                  saferideState: saferideState,
                   background: map(context, mapState),
                   viewFab: viewFab(context, Icons.layers),
                   locationButton: locationButton(context, saferideState));
             case MapErrorState:
               // TODO: crashlytics
               return mapStack(
-                  state: saferideState,
+                  saferideState: saferideState,
                   background: Center(
                     child: Text((mapState as MapErrorState).error.toString()),
                   ),

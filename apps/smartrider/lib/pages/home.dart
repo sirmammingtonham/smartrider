@@ -18,8 +18,9 @@ import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 // custom widget imports
 import 'package:smartrider/widgets/map_widget.dart';
 import 'package:smartrider/widgets/search_bar.dart';
-import 'package:smartrider/widgets/saferide_status_widget.dart';
 import 'package:smartrider/pages/sliding_panel_page.dart';
+import 'package:smartrider/widgets/saferide_status_widgets.dart'
+    as saferide_widgets;
 
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
@@ -101,29 +102,53 @@ class _HomePageState extends State<_HomePage>
   }
 
   Widget _slidingPanel(SaferideState saferideState, PrefsState prefsState,
-          BuildContext context) =>
-      SlidingUpPanel(
-        controller: _panelController,
-        maxHeight: 90.h,
-        minHeight: 15.h,
-        onPanelOpened: () {
-          startTimelineShowcase(prefsState as PrefsLoadedState, context);
-        },
-        parallaxEnabled: true,
-        renderPanelSheet: false,
-        backdropEnabled: true,
-        parallaxOffset: .1,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(20.0),
-        ),
-        // stack the search bar widget over the map ui
-        body: Stack(children: const <Widget>[
-          SmartriderMap(),
-          SearchBar(),
-          SaferideStatusWidget()
-        ]),
-        panelBuilder: (sc) => PanelPage(panelScrollController: sc),
-      );
+      BuildContext context) {
+    late final double minHeight;
+    switch (saferideState.runtimeType) {
+      case SaferideSelectingState:
+        minHeight = saferide_widgets.saferideSelectingHeight;
+        break;
+      case SaferideWaitingState:
+        minHeight = saferide_widgets.saferideWaitingHeight;
+        break;
+      case SaferidePickingUpState:
+        minHeight = saferide_widgets.saferidePickingUpHeight;
+        break;
+      case SaferideCancelledState:
+        minHeight = saferide_widgets.saferideCancelledHeight;
+        break;
+      case SaferideErrorState:
+        minHeight = saferide_widgets.saferideErrorHeight;
+        break;
+      case SaferideNoState:
+      case SaferideDroppingOffState:
+      default:
+        minHeight = saferide_widgets.saferideDefaultHeight;
+        break;
+    }
+
+    return SlidingUpPanel(
+      controller: _panelController,
+      maxHeight: 90.h,
+      minHeight: minHeight,
+      onPanelOpened: () {
+        startTimelineShowcase(prefsState as PrefsLoadedState, context);
+      },
+      parallaxEnabled: true,
+      renderPanelSheet: false,
+      backdropEnabled: true,
+      parallaxOffset: .1,
+      borderRadius: const BorderRadius.vertical(
+        top: Radius.circular(20.0),
+      ),
+      // stack the search bar widget over the map ui
+      body: Stack(children: const <Widget>[
+        SmartriderMap(),
+        SearchBar(),
+      ]),
+      panelBuilder: (sc) => PanelPage(panelScrollController: sc),
+    );
+  }
 
   /// Builds the map and the schedule dropdown based on dynamic data.
   @override
@@ -138,20 +163,6 @@ class _HomePageState extends State<_HomePage>
             builder: (context, states) {
               final saferideState = states.get<SaferideState>();
               final prefState = states.get<PrefsState>();
-
-              switch (saferideState.runtimeType) {
-                case SaferideNoState:
-                  {
-                    if (_panelController.isAttached) _panelController.show();
-                  }
-                  break;
-                case SaferideSelectingState:
-                  {
-                    _panelController.hide();
-                  }
-                  break;
-              }
-
               switch (prefState.runtimeType) {
                 case PrefsLoadingState:
                   return const Center(child: CircularProgressIndicator());

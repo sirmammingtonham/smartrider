@@ -20,7 +20,9 @@ class ShuttleProvider {
     final client = http.Client();
     http.Response? response;
     try {
-      response = await client.get(Uri.parse('https://shuttles.rpi.edu/$type'));
+      // shuttle tracker's certificate expired,
+      // TODO: will need to change this back to https at some point
+      response = await client.get(Uri.parse('http://shuttles.rpi.edu/$type'));
       // await createJSONFile('$type', response);
 
       if (response.statusCode == 200) {
@@ -31,12 +33,11 @@ class ShuttleProvider {
       isConnected = false;
       print(error);
     }
-    //print('App has polled $type API: $isConnected');
     return response;
   }
 
   /// Getter method to retrieve the list of routes
-  Future<Map<String?, ShuttleRoute>> getRoutes() async {
+  Future<Map<String, ShuttleRoute>> getRoutes() async {
     /// Returns a map that contains the bus id and its routes.
     ///
     /// Fetch 'routes' data from the JSON API and store in varaible 'response'.
@@ -51,19 +52,20 @@ class ShuttleProvider {
     final response = await fetch('routes');
 
     final routeMap = response != null
-        ? <String?, ShuttleRoute>{
-            for (final json
-                in (json.decode(response.body) as List<Map<String, dynamic>>)
-                    .where((json) => json['enabled']))
-              json['name']: ShuttleRoute.fromJson(json)
+        ? <String, ShuttleRoute>{
+            for (final json in (json.decode(response.body) as List<dynamic>)
+                .where((dynamic json) =>
+                    (json as Map<String, dynamic>)['enabled']))
+              (json as Map<String, dynamic>)['name']:
+                  ShuttleRoute.fromJson(json)
           }
-        : <String?, ShuttleRoute>{};
+        : <String, ShuttleRoute>{};
 
     return routeMap;
   }
 
   /// Getter method to retrieve the list of stops
-  Future<List<ShuttleStop>?> getStops() async {
+  Future<List<ShuttleStop>> getStops() async {
     /// Returns a list of shuttle stops.
     ///
     /// Fetch 'stops' data from JSON API and store in variable 'response' If
@@ -74,16 +76,16 @@ class ShuttleProvider {
     ///     return stopsList;
     final response = await fetch('stops');
 
-    final List<ShuttleStop>? stopsList = response != null
-        ? (json.decode(response.body) as List<Map<String, dynamic>>)
-            .map<ShuttleStop>((json) => ShuttleStop.fromJson(json))
+    final stopsList = response != null
+        ? (json.decode(response.body) as List<dynamic>)
+            .map<ShuttleStop>((dynamic json) => ShuttleStop.fromJson(json))
             .toList()
-        : [];
+        : <ShuttleStop>[];
     return stopsList;
   }
 
   /// Getter method to retrieve the list of updated shuttles
-  Future<List<ShuttleUpdate>?> getUpdates() async {
+  Future<List<ShuttleUpdate>> getUpdates() async {
     /// Returns a list of shuttle updates.
     ///
     /// Fetch 'updates' data from JSON API and store in variable 'response' If
@@ -94,11 +96,11 @@ class ShuttleProvider {
     ///     return updatesList;
     final response = await fetch('updates');
 
-    final List<ShuttleUpdate>? updatesList = response != null
-        ? (json.decode(response.body) as List<Map<String, dynamic>>)
-            .map<ShuttleUpdate>((json) => ShuttleUpdate.fromJson(json))
+    final updatesList = response != null
+        ? (json.decode(response.body) as List<dynamic>)
+            .map<ShuttleUpdate>((dynamic json) => ShuttleUpdate.fromJson(json))
             .toList()
-        : [];
+        : <ShuttleUpdate>[];
     return updatesList;
   }
 

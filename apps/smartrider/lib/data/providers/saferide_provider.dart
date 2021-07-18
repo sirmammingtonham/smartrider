@@ -11,8 +11,6 @@ class SaferideProvider {
   final CollectionReference vehicles =
       FirebaseFirestore.instance.collection('vehicles');
 
-  String? orderId;
-
   // Map<String?, Driver>? _driversMap;
 
   // fill in the fields specified in order.dart
@@ -32,15 +30,11 @@ class SaferideProvider {
       'rider': user,
       'updated_at': FieldValue.serverTimestamp()
     });
-    orderId = ref.id;
     return ref.snapshots();
   }
 
-  Future<void> cancelOrder() async {
-    if (orderId != null) {
-      final ref = orders.doc(orderId);
-      await ref.delete();
-    }
+  Future<void> cancelOrder(DocumentReference order) async {
+    await order.delete();
   }
 
   Future<DocumentSnapshot> getOrder(String orderId) async {

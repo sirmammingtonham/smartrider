@@ -11,7 +11,6 @@ import 'package:smartrider/widgets/bus_schedules/bus_unavailable.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/pages/home.dart';
 import 'package:smartrider/widgets/custom_widgets/custom_painters.dart';
-import 'package:sizer/sizer.dart';
 import 'package:shared/models/tuple.dart';
 
 // loading custom widgets and data
@@ -115,8 +114,7 @@ class BusTimelineState extends State<BusTimeline>
       ),
 
       /// The list of bus stops to be displayed.
-      SizedBox(
-        height: 63.h,
+      Expanded(
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
