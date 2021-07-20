@@ -47,7 +47,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     });
   }
 
-  final places = GoogleMapsPlaces(apiKey: google_api_key);
+  final places = GoogleMapsPlaces(apiKey: googleApiKey);
   final PrefsBloc prefsBloc;
   final SaferideRepository saferideRepo;
   final AuthRepository authRepo;

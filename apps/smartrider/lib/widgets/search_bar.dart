@@ -50,7 +50,7 @@ class SearchBarState extends State<SearchBar> {
   SearchBarState();
   String? name;
   String? role;
-  final places = GoogleMapsPlaces(apiKey: google_api_key);
+  final places = GoogleMapsPlaces(apiKey: googleApiKey);
 
   @override
   void initState() {

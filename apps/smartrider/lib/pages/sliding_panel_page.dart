@@ -92,6 +92,8 @@ class PanelPage extends StatelessWidget {
   }
 
   Widget panelBody(BuildContext context, ScheduleState scheduleState) =>
+//TODO: probably need a document or something in the database to manually
+// enable/disable the schedules in case of an outage or something
       TabBarView(
         controller: BlocProvider.of<ScheduleBloc>(context).tabController,
         children: scheduleState is ScheduleTimelineState
@@ -114,95 +116,122 @@ class PanelPage extends StatelessWidget {
               ],
       );
 
+  Future<void> _saferideDriverCancelPopup(
+      BuildContext context, SaferideCancelledState saferideState) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Driver Cancelled Your Ride!'),
+        content: Text('REASON: ${saferideState.reason}'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+// TODO: prompt to send email to student life or something
+              BlocProvider.of<SaferideBloc>(context).add(SaferideNoEvent());
+              Navigator.pop(context, 'Report');
+            },
+            child: const Text('Report Driver'),
+          ),
+          TextButton(
+            onPressed: () {
+              BlocProvider.of<SaferideBloc>(context).add(SaferideNoEvent());
+              Navigator.pop(context, 'OK');
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocBuilder(
-        blocs: [
-          BlocProvider.of<ScheduleBloc>(context),
-          BlocProvider.of<SaferideBloc>(context),
-        ],
-        builder: (context, states) {
-          final scheduleState = states.get<ScheduleState>();
-          final saferideState = states.get<SaferideState>();
+      blocs: [
+        BlocProvider.of<ScheduleBloc>(context),
+        BlocProvider.of<SaferideBloc>(context),
+      ],
+      builder: (context, states) {
+        final scheduleState = states.get<ScheduleState>();
+        final saferideState = states.get<SaferideState>();
 
-          late final Widget appBarWidget; 
-          switch (saferideState.runtimeType) {
-            case SaferideNoState:
-            case SaferideDroppingOffState:
-              appBarWidget = panelAppBar(context, scheduleState); 
-              break;
-            case SaferideSelectingState:
-              appBarWidget = saferide_widgets.saferideSelectionWidget(
-                  context, saferideState as SaferideSelectingState); 
+        late final Widget appBarWidget;
+        switch (saferideState.runtimeType) {
+          case SaferideNoState:
+          case SaferideDroppingOffState:
+            appBarWidget = panelAppBar(context, scheduleState);
+            break;
+          case SaferideSelectingState:
+            appBarWidget = saferide_widgets.saferideSelectionWidget(
+                context, saferideState as SaferideSelectingState);
 
-              break;
-            case SaferideWaitingState:
-              appBarWidget = saferide_widgets.saferideWaitingWidget(
-                  context, saferideState as SaferideWaitingState); 
-              break;
-            case SaferidePickingUpState:
-              appBarWidget = saferide_widgets.saferidePickingUpWidget(
-                  context, saferideState as SaferidePickingUpState); 
-              break;
-            case SaferideCancelledState:
-              //TODO add modal popup or something too
-              appBarWidget = Container(); 
-              break;
-            default:
-              appBarWidget = Container();
-              break;
-          }
+            break;
+          case SaferideWaitingState:
+            appBarWidget = saferide_widgets.saferideWaitingWidget(
+                context, saferideState as SaferideWaitingState);
+            break;
+          case SaferidePickingUpState:
+            appBarWidget = saferide_widgets.saferidePickingUpWidget(
+                context, saferideState as SaferidePickingUpState);
+            break;
+          case SaferideCancelledState:
+            _saferideDriverCancelPopup(
+                context, saferideState as SaferideCancelledState);
+            appBarWidget = Container();
+            break;
+          default:
+            appBarWidget = Container();
+            break;
+        }
 
-          switch (scheduleState.runtimeType) {
-            case ScheduleTimelineState:
-            case ScheduleTableState:
-              {
-                return ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20.0),
-                  ),
-                  child: Scaffold(
-                    body: Column(
-                      children: [
-                        appBarWidget,
-                        Showcase(
-                          key: showcaseTransportTab,
-                          description: slidingPageTabShowcaseMessage,
-                          child: TabBar(
-                            controller: BlocProvider.of<ScheduleBloc>(context)
-                                .tabController,
-                            tabs: _tabs,
-                          ),
+        switch (scheduleState.runtimeType) {
+          case ScheduleTimelineState:
+          case ScheduleTableState:
+            {
+              return ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20.0),
+                ),
+                child: Scaffold(
+                  body: Column(
+                    children: [
+                      appBarWidget,
+                      Showcase(
+                        key: showcaseTransportTab,
+                        description: slidingPageTabShowcaseMessage,
+                        child: TabBar(
+                          controller: BlocProvider.of<ScheduleBloc>(context)
+                              .tabController,
+                          tabs: _tabs,
                         ),
-                        // SizedBox(
-                        //     height: 90.h - appBarHeight,
-                        //     child:
-                        Expanded(child: panelBody(context, scheduleState))
-// )
-                      ],
-                    ),
-                    floatingActionButton: FloatingActionButton(
-                      heroTag: 'switch_schedule_view_button',
-                      elevation: 5.0,
-                      onPressed: () {
-                        if (scheduleState is ScheduleTimelineState) {
-                          BlocProvider.of<ScheduleBloc>(context).add(
-                              const ScheduleTypeChangeEvent(isTimeline: false));
-                        } else if (scheduleState is ScheduleTableState) {
-                          BlocProvider.of<ScheduleBloc>(context).add(
-                              const ScheduleTypeChangeEvent(isTimeline: true));
-                        }
-                      },
-                      child: Icon(scheduleState is ScheduleTimelineState
-                          ? Icons.table_view
-                          : Icons.timeline),
-                    ),
+                      ),
+                      Expanded(child: panelBody(context, scheduleState))
+                    ],
                   ),
-                );
-              }
-            default:
-              return const Center(child: CircularProgressIndicator());
-          }
-        });
+                  floatingActionButton: FloatingActionButton(
+                    heroTag: 'switch_schedule_view_button',
+                    elevation: 5.0,
+                    onPressed: () {
+                      if (scheduleState is ScheduleTimelineState) {
+                        BlocProvider.of<ScheduleBloc>(context).add(
+                            const ScheduleTypeChangeEvent(isTimeline: false));
+                      } else if (scheduleState is ScheduleTableState) {
+                        BlocProvider.of<ScheduleBloc>(context).add(
+                            const ScheduleTypeChangeEvent(isTimeline: true));
+                      }
+                    },
+                    child: Icon(scheduleState is ScheduleTimelineState
+                        ? Icons.table_view
+                        : Icons.timeline),
+                  ),
+                ),
+              );
+            }
+          default:
+            return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
   }
 }
