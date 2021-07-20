@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:flutter/foundation.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:shared/util/messages.dart';
@@ -116,38 +117,53 @@ class SearchBarState extends State<SearchBar> {
   Widget searchField(SaferideState saferideState) {
     switch (saferideState.runtimeType) {
       case SaferideNoState:
-        // creates the autocomplete field (requires strings.dart in
-        // the utils folder to contain the api key)
-        return TypeAheadField(
-          hideOnLoading: true,
-          textFieldConfiguration: const TextFieldConfiguration(
-              autofocus: false,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(), hintText: 'Need a safe ride?')),
-          suggestionsCallback: (pattern) async {
-            if (pattern.isEmpty) {
-              return const Iterable<Prediction>.empty();
-            }
-            return (await places.autocomplete(pattern,
-                    location: Location(lat: 42.729980, lng: -73.676682),
-                    radius: 1000,
-                    strictbounds: true,
-                    language: 'en'))
-                .predictions;
-          },
-          itemBuilder: (context, Prediction suggestion) {
-            return ListTile(
-              leading: const Icon(Icons.location_on),
-              title: Text(suggestion.description!),
-              // subtitle: Text('${suggestion.distanceMeters!} m
-              // away'),
-            );
-          },
-          onSuggestionSelected: (Prediction suggestion) {
-            BlocProvider.of<SaferideBloc>(context)
-                .add(SaferideSelectingEvent(dropoffPrediction: suggestion));
-          },
-        );
+        // This only calls dateTime.now() once when everything is built
+        // so if a user starts the app before 7 and is on it after 7,
+        // it will not update.
+        // This can be changed in the multiblocprovider, but it may be
+        // inefficient
+        if (kReleaseMode && DateTime.now().hour < 19) {
+          return const TextField(
+            enabled: false,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Saferide starts at 7 p.m.'),
+          );
+        } else {
+          // creates the autocomplete field (requires strings.dart in
+          // the utils folder to contain the api key)
+          return TypeAheadField(
+            hideOnLoading: true,
+            textFieldConfiguration: const TextFieldConfiguration(
+                autofocus: false,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Need a safe ride?')),
+            suggestionsCallback: (pattern) async {
+              if (pattern.isEmpty) {
+                return const Iterable<Prediction>.empty();
+              }
+              return (await places.autocomplete(pattern,
+                      location: Location(lat: 42.729980, lng: -73.676682),
+                      radius: 1000,
+                      strictbounds: true,
+                      language: 'en'))
+                  .predictions;
+            },
+            itemBuilder: (context, Prediction suggestion) {
+              return ListTile(
+                leading: const Icon(Icons.location_on),
+                title: Text(suggestion.description!),
+                // subtitle: Text('${suggestion.distanceMeters!} m
+                // away'),
+              );
+            },
+            onSuggestionSelected: (Prediction suggestion) {
+              BlocProvider.of<SaferideBloc>(context)
+                  .add(SaferideSelectingEvent(dropoffPrediction: suggestion));
+            },
+          );
+        }
       case SaferideWaitingState:
         // TODO: add destination info to state
         // we can probably have some easter eggs or something here
