@@ -15,6 +15,7 @@ import 'package:smartrider/data/repositories/saferide_repository.dart';
 import 'package:shared/util/strings.dart';
 import 'package:shared/models/saferide/order.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:ntp/ntp.dart';
 
 part 'saferide_event.dart';
 part 'saferide_state.dart';
@@ -26,7 +27,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       {required this.prefsBloc,
       required this.saferideRepo,
       required this.authRepo})
-      : super(SaferideNoState()) {
+      : super(const SaferideNoState()) {
     prefsBloc.stream.listen((state) async {
       switch (state.runtimeType) {
         case PrefsLoadedState:
@@ -71,7 +72,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     switch (event.runtimeType) {
       case SaferideNoEvent:
         {
-          yield SaferideNoState();
+          yield SaferideNoState(serverTimeStamp: await NTP.now());
         }
         break;
       case SaferideSelectingEvent:
@@ -126,7 +127,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       SaferideUserCancelledEvent event) async* {
     await saferideRepo.cancelOrder(currentOrder!);
     await endSubscription();
-    yield SaferideNoState();
+    yield SaferideNoState(serverTimeStamp: await NTP.now());
   }
 
   Future<void> endSubscription() async {
@@ -201,8 +202,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
             null,
             reason: 'critical error in saferide bloc',
           );
-          assert(false); 
-
+          assert(false);
         }
         break;
     }

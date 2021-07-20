@@ -136,7 +136,8 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
           create: (context) => SaferideBloc(
               prefsBloc: BlocProvider.of<PrefsBloc>(context),
               saferideRepo: widget.saferideRepo,
-              authRepo: widget.authRepo),
+              authRepo: widget.authRepo)
+            ..add(SaferideNoEvent()),
         ),
         BlocProvider<MapBloc>(
             create: (context) => MapBloc(

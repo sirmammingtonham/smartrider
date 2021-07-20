@@ -122,7 +122,9 @@ class SearchBarState extends State<SearchBar> {
         // it will not update.
         // This can be changed in the multiblocprovider, but it may be
         // inefficient
-        if (kReleaseMode && DateTime.now().hour < 19) {
+        if (kReleaseMode &&
+            (saferideState as SaferideNoState).serverTimeStamp != null &&
+            saferideState.serverTimeStamp!.hour < 19) {
           return const TextField(
             enabled: false,
             decoration: InputDecoration(
