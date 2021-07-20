@@ -179,7 +179,7 @@ class SearchBarState extends State<SearchBar> {
   Widget searchBar(SaferideState saferideState, PrefsState prefsState) =>
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        height: 55,
+        height: 7.5.h,
         child: Material(
           borderRadius: BorderRadius.circular(10.0),
           elevation: 6.0,

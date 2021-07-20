@@ -1,6 +1,7 @@
 // ui stuff
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:sizer/sizer.dart';
 
 // settings and login stuff
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
@@ -110,27 +111,27 @@ class SettingsWidget extends StatelessWidget {
                 },
               )),
           // title
-          title: const Text(
+          title: Text(
             'Settings',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
           ),
         ),
         body: ListView(children: <Widget>[
           // GENERAL SETTINGS
           Container(
             margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
-            child: const Center(
+            child: Center(
               child: Padding(
                   padding: EdgeInsets.only(top: 25),
                   child: Text(
                     'General',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
                   )),
             ),
           ),
           cardBuilder([
             SwitchListTile(
-              title: const Text('Push Notifications'),
+              title: Text('Push Notifications', style: TextStyle(fontSize: 12.sp)),
               value: state.prefs.getBool('pushNotifications')!,
               onChanged: (bool value) {
                 state.prefs.setBool('pushNotifications', value);
@@ -141,7 +142,7 @@ class SettingsWidget extends StatelessWidget {
             Builder(
                 builder: (context) => SwitchListTile(
                       activeColor: Theme.of(context).toggleableActiveColor,
-                      title: const Text('Lights Out'),
+                      title: Text('Lights Out', style: TextStyle(fontSize: 12.sp)),
                       value: state.prefs.getBool('darkMode')!,
                       onChanged: (bool value) {
                         state.prefs.setBool('darkMode', value);
@@ -155,10 +156,10 @@ class SettingsWidget extends StatelessWidget {
           // SHUTTLE SETTINGS
           Container(
             margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
-            child: const Center(
+            child: Center(
               child: Text(
                 'Shuttle Settings',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
               ),
             ),
           ),
@@ -172,11 +173,11 @@ class SettingsWidget extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 10, left: 10),
                   decoration: const BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       'Shuttles are not loaded, try switching views to load',
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 11.sp),
                     ),
                   ),
                 ),
@@ -199,16 +200,16 @@ class SettingsWidget extends StatelessWidget {
           // BUS SETTINGS
           Container(
             margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
-            child: const Center(
+            child: Center(
               child: Text(
                 'Bus Settings',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
               ),
             ),
           ),
           cardBuilder(state.buses.keys
               .map((key) => SwitchListTile(
-                    title: Text(PrefsBloc.busIdMap[key]!),
+                    title: Text(PrefsBloc.busIdMap[key]!, style: TextStyle(fontSize: 12.sp)),
                     value: state.buses[key]!,
                     onChanged: (bool value) {
                       state.buses[key] = value;
@@ -223,10 +224,10 @@ class SettingsWidget extends StatelessWidget {
           // SAFE RIDE SETTINGS
           Container(
             margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
-            child: const Center(
+            child: Center(
               child: Text(
                 'Safe Ride Settings',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
               ),
             ),
           ),

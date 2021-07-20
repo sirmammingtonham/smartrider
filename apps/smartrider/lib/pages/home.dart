@@ -129,7 +129,7 @@ class _HomePageState extends State<_HomePage>
 
     return SlidingUpPanel(
       controller: _panelController,
-      maxHeight: 90.h,
+      maxHeight: 100.h,
       minHeight: minHeight,
       onPanelOpened: () {
         startTimelineShowcase(prefsState as PrefsLoadedState, context);
