@@ -86,7 +86,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             child: Text(
                               'Skip',
                               style: TextStyle(
-                                color: Color(0xFF1b1d5c),
+                                color: const Color(0xFF1b1d5c),
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -111,31 +111,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   children: <Widget>[
                                     Center(
                                       child: Image(
-                                        image: AssetImage('assets/onboarding_images/logo_v2.png'),
+                                        image: const AssetImage('assets/onboarding_images/logo_v2.png'),
                                         height: 42.h,
                                         width: 87.w,
                                       ),
                                     ),
-                                    SizedBox(height: 50),
+                                    const SizedBox(height: 50),
                                     Center(
                                       child: Text(
                                         'Welcome to SmartRider!',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: Color(0xFF181c5b),
+                                          color: const Color(0xFF181c5b),
                                           fontWeight: FontWeight.bold,
                                           fontSize: 21.sp,
                                           height: 0.1,
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 15.0),
+                                    const SizedBox(height: 15.0),
                                     Center(
                                       child: Text(
                                           'All of your RPI transportation needs in one place, instantly accessible.',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            color: Color(0xFF181c5b),
+                                            color: const Color(0xFF181c5b),
                                             fontSize: 14.sp,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
@@ -159,7 +159,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             MainAxisAlignment.center,
                                         children: <Widget>[
                                           Image(
-                                              image: AssetImage(
+                                              image: const AssetImage(
                                                   'assets/onboarding_images/interactive_map.png'),
                                               height: 35.h,
                                               width: 55.w),
@@ -170,7 +170,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         'Interactive Map',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: Color(0xFF181c5b),
+                                          color: const Color(0xFF181c5b),
                                           fontWeight: FontWeight.bold,
                                           fontSize: 21.sp,
                                           height: 1.5,
@@ -183,7 +183,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           'Easily locate nearby transporation stops and routes with live shuttle/bus tracking.',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            color: Color(0xFF181c5b),
+                                            color: const Color(0xFF181c5b),
                                             fontSize: 14.sp,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
@@ -204,7 +204,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             MainAxisAlignment.center,
                                         children: <Widget>[
                                           Image(
-                                            image: AssetImage(
+                                            image: const AssetImage(
                                                 'assets/onboarding_images/comprehensive_scheduling.png'),
                                             height: 27.h,
                                             width: 75.w,
@@ -216,7 +216,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         'Comprehensive Scheduling',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: Color(0xFF181c5b),
+                                          color: const Color(0xFF181c5b),
                                           fontWeight: FontWeight.bold,
                                           fontSize: 21.sp,
                                           height: 1.5,
@@ -229,7 +229,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           'Access transportation route arrival times throughout the day and schedule reminders for specific stops.',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            color: Color(0xFF181c5b),
+                                            color: const Color(0xFF181c5b),
                                             fontSize: 14.sp,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
@@ -264,7 +264,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         'Request Transportation',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: Color(0xFF181c5b),
+                                          color: const Color(0xFF181c5b),
                                           fontWeight: FontWeight.bold,
                                           fontSize: 21.sp,
                                           height: 1.5,
@@ -277,7 +277,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             'With the integration of the RPI SafeRide application, easily make a request for a vehicle to transport you safely around the campus.',
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                              color: Color(0xFF181c5b),
+                                              color: const Color(0xFF181c5b),
                                               fontSize: 14.sp,
                                               fontWeight: FontWeight.w500,
                                               height: 1.5,
@@ -297,7 +297,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             MainAxisAlignment.center,
                                         children: <Widget>[
                                           Image(
-                                            image: AssetImage(
+                                            image: const AssetImage(
                                                 'assets/onboarding_images/customizable_view.png'),
                                             height: 35.h,
                                             width: 60.w,
@@ -309,7 +309,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         'Cuztomizable View',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: Color(0xFF181c5b),
+                                          color: const Color(0xFF181c5b),
                                           fontWeight: FontWeight.bold,
                                           fontSize: 21.sp,
                                           height: 1.5,
@@ -322,7 +322,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           'Conveniently choose which routes and stops are displayed on the map.',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            color: Color(0xFF181c5b),
+                                            color: const Color(0xFF181c5b),
                                             fontSize: 14.sp,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
@@ -358,15 +358,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         Text(
                                           'Next',
                                           style: TextStyle(
-                                            color: Color(0xFF181c5b),
+                                            color: const Color(0xFF181c5b),
                                             fontSize: 17.sp,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        SizedBox(width: 10.0),
+                                        const SizedBox(width: 10.0),
                                         Icon(
                                           Icons.arrow_forward,
-                                          color: Color(0xFF181c5b),
+                                          color: const Color(0xFF181c5b),
                                           size: 12.sp,
                                         ),
                                       ],
