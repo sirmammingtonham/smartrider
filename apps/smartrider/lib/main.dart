@@ -1,7 +1,6 @@
 //implementation imports
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sizer/sizer.dart';
@@ -66,7 +65,8 @@ void main() async {
       shuttleRepo: ShuttleRepository.create(),
       saferideRepo: SaferideRepository.create());
 
-  runZonedGuarded(() {  //catch async errors as well
+  runZonedGuarded(() {
+    //catch async errors as well
     runApp(
       DevicePreview(
         enabled: false, //!kReleaseMode,  // uncomment to use device_preview

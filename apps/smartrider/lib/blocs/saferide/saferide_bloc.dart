@@ -14,6 +14,7 @@ import 'package:smartrider/data/repositories/authentication_repository.dart';
 import 'package:smartrider/data/repositories/saferide_repository.dart';
 import 'package:shared/util/strings.dart';
 import 'package:shared/models/saferide/order.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 part 'saferide_event.dart';
 part 'saferide_state.dart';
@@ -185,14 +186,22 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       case 'ERROR':
         {
           await endSubscription();
-          //TODO: error handling
+          await FirebaseCrashlytics.instance.recordError(
+            Exception('error in saferide bloc'),
+            null,
+            reason: 'error in saferide bloc',
+          );
         }
         break;
       default:
         {
           // should never get here
-          print(order.status);
-          assert(false); //TODO: error handling
+          await FirebaseCrashlytics.instance.recordError(
+            Exception('critical error in saferide bloc'),
+            null,
+            reason: 'critical error in saferide bloc',
+          );
+          assert(false); 
 
         }
         break;

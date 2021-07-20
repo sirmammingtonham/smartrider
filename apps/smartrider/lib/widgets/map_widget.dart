@@ -18,6 +18,7 @@ import 'package:sizer/sizer.dart';
 import 'package:smartrider/widgets/saferide_status_widgets.dart'
     as saferide_widgets;
 import 'custom_widgets/expandable_fab.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
@@ -190,7 +191,10 @@ class SmartriderMap extends StatelessWidget {
                   viewFab: viewFab(context, Icons.layers),
                   locationButton: locationButton(context, saferideState));
             case MapErrorState:
-              // TODO: crashlytics
+              FirebaseCrashlytics.instance.recordError(
+                Exception('map_widget errored'), null,
+                reason: 'map_widget errored',
+              );
               return mapStack(
                   saferideState: saferideState,
                   background: Center(
@@ -199,7 +203,10 @@ class SmartriderMap extends StatelessWidget {
                   viewFab: viewFab(context, Icons.layers),
                   locationButton: locationButton(context, saferideState));
             default:
-              // TODO: crashlytics
+              FirebaseCrashlytics.instance
+                  .recordError(Exception('map_widget is broken'), null,
+                      reason: 'map_widget is broken (fatal)',
+                      fatal: true);
               return const Center(
                 child: Text('ERROR IN MAP BLOC'),
               );

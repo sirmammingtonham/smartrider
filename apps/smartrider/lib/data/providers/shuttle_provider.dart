@@ -9,6 +9,7 @@ import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
 import 'package:shared/models/shuttle/shuttle_update.dart';
 import 'package:shared/models/shuttle/shuttle_eta.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 /// This class contains methods for providing data to Repository
 class ShuttleProvider {
@@ -28,10 +29,13 @@ class ShuttleProvider {
       if (response.statusCode == 200) {
         isConnected = true;
       }
-    } catch (error) {
-// TODO: crashlytics
+    } catch (error, stacktrace) {
+      await FirebaseCrashlytics.instance.recordError(
+        error,
+        stacktrace,
+        reason: 'client cannot connect to shuttleprovider',
+      );
       isConnected = false;
-      print(error);
     }
     return response;
   }
