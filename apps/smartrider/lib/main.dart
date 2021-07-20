@@ -1,9 +1,13 @@
 //implementation imports
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sizer/sizer.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +36,13 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  // avoid generating crash reports when the app is in debug mode.
+  if (kDebugMode) {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+  } else {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  }
+
   await AwesomeNotifications().initialize(
     null, // default app icon
     [
@@ -55,12 +66,14 @@ void main() async {
       shuttleRepo: ShuttleRepository.create(),
       saferideRepo: SaferideRepository.create());
 
-  runApp(
-    DevicePreview(
-      enabled: false, //!kReleaseMode,  // uncomment to use device_preview
-      builder: (context) => app,
-    ), // Wrap your app
-  );
+  runZonedGuarded(() {  //catch async errors as well
+    runApp(
+      DevicePreview(
+        enabled: false, //!kReleaseMode,  // uncomment to use device_preview
+        builder: (context) => app,
+      ), // Wrap your app
+    );
+  }, FirebaseCrashlytics.instance.recordError);
 }
 
 class SmartRider extends StatefulWidget {
