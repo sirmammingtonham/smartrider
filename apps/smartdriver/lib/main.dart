@@ -98,17 +98,17 @@ class _SmartDriverState extends State<SmartDriver> with WidgetsBindingObserver {
             home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {
                 switch (state.runtimeType) {
-                  case AuthenticationLoggedOutState:
+                  case AuthenticationSignedOutState:
                     return Login(
                       driverName:
-                          (state as AuthenticationLoggedOutState).driverName,
+                          (state as AuthenticationSignedOutState).driverName,
                       phoneNumber: state.phoneNumber,
                       vehicleId: state.vehicleId,
                     );
-                  case AuthenticationLoggedInState:
+                  case AuthenticationSignedInState:
                     return Home(
                         title:
-                            (state as AuthenticationLoggedInState).user.name);
+                            (state as AuthenticationSignedInState).user.name);
                   case AuthenticationFailureState:
                     return Text(
                         (state as AuthenticationFailureState).errorMessage);

@@ -1,36 +1,36 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared/models/saferide/driver.dart';
 import 'package:shared/models/saferide/order.dart';
-import '../providers/order_provider.dart';
+import 'package:smartdriver/data/providers/order_provider.dart';
 
 class OrderRepository {
-  final OrderProvider authProvider =
+  final OrderProvider orderProvider =
       OrderProvider(firestore: FirebaseFirestore.instance);
 
   Future<DocumentReference> acceptOrder(
       Driver driver, DocumentReference orderRef) async {
-    return authProvider.acceptOrder(driver, orderRef);
+    return orderProvider.acceptOrder(driver, orderRef);
   }
 
   Future<DocumentReference> reachedPickupOrder(
       DocumentReference orderRef) async {
-    return authProvider.reachedPickupOrder(orderRef);
+    return orderProvider.reachedPickupOrder(orderRef);
   }
 
   Future<DocumentReference> reachedDropoffOrder(
       Driver driver, DocumentReference orderRef) async {
-    return authProvider.reachedDropoffOrder(driver, orderRef);
+    return orderProvider.reachedDropoffOrder(driver, orderRef);
   }
 
   Future<DocumentReference> declineOrder(Order order) async {
-    return authProvider.declineOrder(order);
+    return orderProvider.declineOrder(order);
   }
 
   Future<DocumentReference> cancelOrder(
       Driver driver, DocumentReference orderRef, String reason) async {
-    return authProvider.cancelOrder(driver, orderRef, reason);
+    return orderProvider.cancelOrder(driver, orderRef, reason);
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> get orderStream =>
-      authProvider.orderStream;
+      orderProvider.orderStream;
 }

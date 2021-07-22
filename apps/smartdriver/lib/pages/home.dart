@@ -290,7 +290,7 @@ class _HomeState extends State<Home> {
           trailing: const Icon(Icons.logout),
           onTap: () {
             BlocProvider.of<AuthenticationBloc>(context)
-                .add(const AuthenticationLogoutEvent());
+                .add(const AuthenticationSignOutEvent());
           },
         )
       ]));

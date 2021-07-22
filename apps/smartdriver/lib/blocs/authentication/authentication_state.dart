@@ -7,16 +7,16 @@ abstract class AuthenticationState extends Equatable {
   List<Object?> get props => [];
 }
 
-class AuthenticationLoggedInState extends AuthenticationState {
-  const AuthenticationLoggedInState({required this.user});
+class AuthenticationSignedInState extends AuthenticationState {
+  const AuthenticationSignedInState({required this.user});
   final Driver user;
 
   @override
   List<Object?> get props => [user];
 }
 
-class AuthenticationLoggedOutState extends AuthenticationState {
-  const AuthenticationLoggedOutState(
+class AuthenticationSignedOutState extends AuthenticationState {
+  const AuthenticationSignedOutState(
       {this.driverName, this.phoneNumber, this.vehicleId});
   final String? driverName, phoneNumber, vehicleId;
 

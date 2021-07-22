@@ -2,37 +2,50 @@ part of 'authentication_bloc.dart';
 
 abstract class AuthenticationEvent extends Equatable {
   const AuthenticationEvent();
-  String get getemail => '';
-  String get getpass => '';
+
   @override
   List<Object> get props => [];
 }
 
-class AuthenticationStarted extends AuthenticationEvent {}
+class AuthenticationInitEvent extends AuthenticationEvent {}
 
-class AuthenticationDelete extends AuthenticationEvent {}
+class AuthenticationDeleteEvent extends AuthenticationEvent {}
 
-class AuthenticationLoggedIn extends AuthenticationEvent {
-  const AuthenticationLoggedIn(this.email, this.pass, this.role);
-  final String email, pass, role;
+class AuthenticationSignInEvent extends AuthenticationEvent {
+  const AuthenticationSignInEvent({
+    required this.email,
+    required this.password,
+  });
+  final String email, password;
 
   @override
-  String get getemail => email;
+  List<Object> get props => [email, password];
+}
+
+class AuthenticationSignOutEvent extends AuthenticationEvent {}
+
+class AuthenticationSignUpEvent extends AuthenticationEvent {
+  const AuthenticationSignUpEvent({
+    required this.email,
+    required this.phoneNumber,
+    required this.password,
+  });
+  final String email, phoneNumber, password;
+
   @override
-  String get getpass => pass;
-
-  String get getrole => role;
+  List<Object> get props => [email, phoneNumber, password];
 }
 
-class AuthenticationLoggedOut extends AuthenticationEvent {}
+class AuthenticationResetPhoneEvent extends AuthenticationEvent {
+  const AuthenticationResetPhoneEvent({
+    required this.email,
+    required this.password,
+    required this.newPhoneNumber,
+  });
+  final String email, newPhoneNumber, password;
 
-class AuthenticationSignUp extends AuthenticationEvent {
-  const AuthenticationSignUp(
-      this.email, this.name, this.pass, this.rin, this.role);
-  final String email, name, pass, rin, role;
+  @override
+  List<Object> get props => [email, newPhoneNumber, password];
 }
 
-class AuthentificationResetPass extends AuthenticationEvent {
-  const AuthentificationResetPass(this.email);
-  final String? email;
-}
+class AuthenticationResetPasswordEvent extends AuthenticationEvent {}

@@ -26,7 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
   // adding placeholder vars for now, replace these with sharedprefs
   Map<String, bool>? prefsData;
 
-  AuthRepository auth = AuthRepository.create();
+  AuthenticationRepository auth = AuthenticationRepository.create();
 
   @override
   void initState() {
@@ -65,7 +65,7 @@ class SettingsWidget extends StatelessWidget {
     required this.setState,
   }) : super(key: key);
   final PrefsLoadedState state;
-  final AuthRepository auth;
+  final AuthenticationRepository auth;
   final VoidCallback setState;
 
   /*
@@ -247,7 +247,7 @@ class SettingsWidget extends StatelessWidget {
                   child: ElevatedButton(
                       onPressed: () {
                         BlocProvider.of<AuthenticationBloc>(context).add(
-                          AuthenticationLoggedOut(),
+                          AuthenticationSignOutEvent(),
                         );
                         Navigator.pop(context);
                       },

@@ -7,30 +7,35 @@ abstract class AuthenticationState extends Equatable {
   List<Object?> get props => [];
 }
 
-class AuthenticationInit extends AuthenticationState {}
+class AuthenticationEmailVerificationState extends AuthenticationState {}
 
-class AuthenticationSuccess extends AuthenticationState {
-  const AuthenticationSuccess(this.displayName, this.role);
+class AuthenticationSignedOutState extends AuthenticationState {}
 
-  final String? displayName, role;
+class AuthenticationSignedInState extends AuthenticationState {
+  const AuthenticationSignedInState({
+    required this.user,
+    required this.email,
+    required this.phoneNumber,
+    required this.phoneVerified,
+  });
+
+  final User user;
+  final String email, phoneNumber;
+  final bool phoneVerified;
 
   @override
-  List<Object?> get props => [displayName];
-
-  @override
-  String toString() => 'AuthenticationSuccess($displayName)';
+  List<Object> get props => [user, email, phoneNumber, phoneVerified];
 }
 
-class AuthenticationFailure extends AuthenticationState {
-  const AuthenticationFailure(this.errorMessage);
+class AuthenticationFailedState extends AuthenticationState {
+  const AuthenticationFailedState({
+    required this.exception,
+    required this.message,
+  });
 
-  final String? errorMessage;
+  final FirebaseAuthException exception;
+  final String message;
 
   @override
-  List<Object?> get props => [errorMessage];
-
-  @override
-  String toString() => 'AuthenticationFailure($errorMessage)';
+  List<Object> get props => [exception, message];
 }
-
-class AwaitEmailVerify extends AuthenticationState {}

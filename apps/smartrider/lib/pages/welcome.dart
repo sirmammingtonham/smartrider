@@ -7,82 +7,63 @@ import 'package:sizer/sizer.dart';
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key, required this.homePage}) : super(key: key);
   final HomePage homePage;
-
+// TODO: add forgot password thing
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: BlocListener<AuthenticationBloc, AuthenticationState>(
-            listener: (context, state) {
-          if (state is AuthenticationFailure) {
-            final snackbar = SnackBar(
-                content: Text(
-              state.errorMessage!,
-              textAlign: TextAlign.center,
-            ));
-            ScaffoldMessenger.of(context).showSnackBar(snackbar);
-          } else if (state is AwaitEmailVerify) {
-            const snackbar = SnackBar(
-                content: Text(
-              'Please check your email for verification',
-              textAlign: TextAlign.center,
-            ));
-            ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      resizeToAvoidBottomInset: false,
+      body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+          switch (state.runtimeType) {
+            case AuthenticationEmailVerificationState:
+//TODO: create widget for email verification, or maybe persist snackbar
+              return Container();
+            case AuthenticationFailedState:
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text((state as AuthenticationFailedState).message),
+              ));
+              return const AuthenticationUI();
+            case AuthenticationSignedOutState:
+              return const AuthenticationUI();
+            case AuthenticationSignedInState:
+              return homePage;
+            default:
+              return Container();
           }
-        }, child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                builder: (context, state) {
-          if (state is AuthenticationInit) {
-            return Theme(
-                data:
-                    Theme.of(context).copyWith(canvasColor: Colors.transparent),
-                child: const SignupUI());
-          } else if (state is AuthenticationSuccess) {
-            return homePage;
-          } else if (state is AuthenticationFailure) {
-            return Theme(
-                data:
-                    Theme.of(context).copyWith(canvasColor: Colors.transparent),
-                child: const SignupUI());
-          } else if (state is AwaitEmailVerify) {
-            return Theme(
-                data:
-                    Theme.of(context).copyWith(canvasColor: Colors.transparent),
-                child: const SignupUI());
-          } else {
-            return const Center(child: Text('bruh moment occured'));
-          }
-        })));
+        },
+      ),
+    );
   }
 }
 
-class SignupUI extends StatefulWidget {
-  const SignupUI({Key? key}) : super(key: key);
+class AuthenticationUI extends StatefulWidget {
+  const AuthenticationUI({Key? key}) : super(key: key);
   @override
-  _SignupUIState createState() => _SignupUIState();
+  _AuthenticationUIState createState() => _AuthenticationUIState();
 }
 
-class _SignupUIState extends State<SignupUI> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _rinController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-  String role = 'Student'; // TODO: REWORK THIS
-  late PersistentBottomSheetController _sheetController;
-  bool _obscurePass = true;
-
-  Color? primary;
-
-  final _formKey = GlobalKey<FormState>();
+class _AuthenticationUIState extends State<AuthenticationUI> {
+  late final RegExp phoneRegex;
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+  late final TextEditingController phoneController;
+  late final GlobalKey<FormState> formKey;
+  bool obscurePassword = true;
 
   @override
   void initState() {
     super.initState();
+    // matches any form of valid phone number lol
+    phoneRegex = RegExp(r'(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}');
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    phoneController = TextEditingController();
+    formKey = GlobalKey<FormState>();
   }
 
-  //Image(image: AssetImage('assets/app_icons/App\ Logo\ v1.png'))
-
-  Widget logo() {
+  Widget logoWidget({
+    required BuildContext context,
+  }) {
     String pathToImage;
     if (Theme.of(context).brightness == Brightness.dark) {
       // in dark mode
@@ -95,7 +76,7 @@ class _SignupUIState extends State<SignupUI> {
       child: Align(
         alignment: Alignment.center,
         child: Container(
-          height: 65.h,
+          height: 53.h,
           width: 95.w,
           decoration: BoxDecoration(
             image: DecorationImage(image: AssetImage(pathToImage)),
@@ -105,220 +86,140 @@ class _SignupUIState extends State<SignupUI> {
     );
   }
 
-  /*
-
-  Widget logo() {return Padding(padding: EdgeInsets.only(top:
-    MediaQuery.of(context).size.height * 0.15), child: Container(width:
-    MediaQuery.of(context).size.width, height: 220, child: Stack(children:
-    <Widget>[Positioned(child: Container(child: Align(child:
-    Container(decoration: BoxDecoration(shape: BoxShape.circle, color:
-    Colors.white), width: 150, height: 150,
-                ),
-              ),
-              height: 154,
-            )),
-            Positioned(
-              child: Container(
-                  //padding: EdgeInsets.only(right: 35),
-                  height: 10,
-                  child: Align(
-                    child: Text(
-                      'SMARTRIDER',
-                      style: TextStyle(
-                        fontSize: 21,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                  )),
-            ),
-            /*
-            Positioned(
-              child: Container(
-                  padding: EdgeInsets.only(left: 40),
-                  height: 210,
-                  child: Align(
-                    child: Text(
-                      'rider',
-                      style: TextStyle(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  )),
-            ),
-            */
-            Positioned(
-              width: MediaQuery.of(context).size.width * 0.15,
-              height: MediaQuery.of(context).size.width * 0.15,
-              bottom: MediaQuery.of(context).size.height * 0.046,
-              right: MediaQuery.of(context).size.width * 0.22,
-              child: Container(
-                decoration:
-                    BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-              ),
-            ),
-            Positioned(
-              width: MediaQuery.of(context).size.width * 0.08,
-              height: MediaQuery.of(context).size.width * 0.08,
-              bottom: 0,
-              right: MediaQuery.of(context).size.width * 0.32,
-              child: Container(
-                decoration:
-                    BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  */
-
+// Padding(padding: const EdgeInsets.only(bottom: 20, top: 25),
   //input widget
-  Widget _input(Icon icon, String hint, TextEditingController controller,
-      bool isPassField, String? Function(String?)? valFunc) {
-    return Container(
-      padding: const EdgeInsets.only(left: 20, right: 20),
-      child: TextFormField(
-        controller: controller,
-        obscureText: isPassField ? _obscurePass : false,
-        validator: valFunc,
-        style: TextStyle(fontSize: 20, color: Theme.of(context).accentColor),
-        decoration: InputDecoration(
-          errorStyle: TextStyle(color: Theme.of(context).errorColor),
-          hintStyle: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Theme.of(context).accentColor), //text-box word placeholder
-          hintText: hint,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(
-              color: Theme.of(context).accentColor, // text-box border
-              width: 2,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: BorderSide(
-              color: Theme.of(context)
-                  .primaryColorDark, // text-box border when selected
-              width: 2,
-            ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(
-              color: Theme.of(context).errorColor,
-              width: 2,
-            ),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(
-              color: Theme.of(context).primaryColorDark, // even more nothing
-              width: 2,
-            ),
-          ),
-          prefixIcon: Padding(
-            padding: const EdgeInsets.only(left: 30, right: 10),
-            child: IconTheme(
-              data: IconThemeData(
-                  color: Theme.of(context)
-                      .accentColor), // icons before text-box word placeholders
-              child: icon,
-            ),
-          ),
-          // create a password visibility button for password fields
-          suffixIcon: isPassField
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 30, right: 10),
-                  child: IconTheme(
-                    data: IconThemeData(
-                        color: Theme.of(context)
-                            .accentColor), // password visibility button
+  Widget formInputField({
+    required BuildContext context,
+    required Icon icon,
+    required String hint,
+    required TextEditingController controller,
+    StateSetter? setPasswordState, // if this field is password
+    String? Function(String?)? validator,
+  }) =>
+      Container(
+        padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+        child: TextFormField(
+          controller: controller,
+          obscureText: setPasswordState != null ? obscurePassword : false,
+          validator: validator,
+          style: TextStyle(fontSize: 20, color: Theme.of(context).accentColor),
+          decoration: InputDecoration(
+            hintText: hint,
+            prefixIcon: Padding(
+                padding: const EdgeInsets.only(left: 30, right: 10),
+                child: icon),
+            // create a password visibility button for password fields
+            suffixIcon: setPasswordState != null
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 30, right: 10),
                     child: IconButton(
-                        icon: _obscurePass
-                            ? const Icon(Icons.visibility_off)
-                            : const Icon(Icons.visibility),
-                        onPressed: () => _sheetController.setState!(() {
-                              _obscurePass = !_obscurePass;
-                            })),
-                  ),
-                )
-              : null,
+                      icon: obscurePassword
+                          ? const Icon(Icons.visibility_off)
+                          : const Icon(Icons.visibility),
+                      onPressed: () => setPasswordState(() {
+                        obscurePassword = !obscurePassword;
+                      }),
+                    ),
+                  )
+                : null,
+            hintStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Theme.of(context).accentColor),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide(
+                color: Theme.of(context).accentColor, // text-box border
+                width: 2,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide(
+                color: Theme.of(context)
+                    .primaryColorDark, // text-box border when selected
+                width: 2,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide(
+                color: Theme.of(context).errorColor,
+                width: 2,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide(
+                color: Theme.of(context).errorColor.withOpacity(1),
+              ),
+            ),
+          ),
         ),
-      ),
-    );
-  }
+      );
 
   //button widget
-  Widget _button(String text, Color splashColor, Color highlightColor,
-      Color fillColor, Color textColor, void Function() function) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-          //highlightElevation: 0.0, splashColor: splashColor, highlightColor:
-          // highlightColor,
-          elevation: 0.0,
-          primary: fillColor,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0))),
-      onPressed: () {
-        function();
-      },
-      child: Text(
-        text,
-        style: const TextStyle(
-            fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
-      ),
-    );
-  }
-
-  void _loginUser() {
-    if (_formKey.currentState!.validate()) {
-      BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationLoggedIn(
-            _emailController.text, _passwordController.text, role),
+  Widget welcomeScreenButton({
+    required BuildContext context,
+    required String text,
+    required void Function() onPressed,
+  }) =>
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            elevation: 0.0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0))),
+        onPressed: () {
+          onPressed();
+        },
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 20,
+          ),
+        ),
       );
 
-      // _email = _emailController.text; _password = _passwordController.text;
-      // _emailController.clear(); _passwordController.clear();
+  void attemptSignIn({
+    required BuildContext context,
+  }) {
+    if (formKey.currentState!.validate()) {
+      BlocProvider.of<AuthenticationBloc>(context)
+          .add(AuthenticationSignInEvent(
+        email: emailController.text,
+        password: passwordController.text,
+      ));
     }
   }
 
-  void _registerUser() {
-    if (_formKey.currentState!.validate()) {
-      BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationSignUp(_emailController.text, _nameController.text,
-            _passwordController.text, _rinController.text, role),
-      );
-      BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationLoggedIn(
-            _emailController.text, _passwordController.text, role),
-      );
-
-      // _email = _emailController.text; _password = _passwordController.text;
-      // _rin = _rinController.text; _emailController.clear();
-      // _passwordController.clear(); _rinController.clear();
+  void attemptSignUp({
+    required BuildContext context,
+  }) {
+    if (formKey.currentState!.validate()) {
+      BlocProvider.of<AuthenticationBloc>(context)
+          .add(AuthenticationSignUpEvent(
+        email: emailController.text,
+        phoneNumber: phoneController.text,
+        password: passwordController.text,
+      ));
     }
   }
 
-  String? _emailValidation(String? value) {
-    if (value == null) return null;
+  String? emailValidation(String? value) {
+    if (value == null) return 'uh oh... null';
     if (value.isEmpty) {
-      return 'Enter an email';
-    } else if (!value.contains('@rpi.edu')) {
+      return 'Please enter an email';
+    } else if (!value.endsWith('@rpi.edu')) {
       return 'You must enter a valid RPI email.';
     } else {
       return null;
     }
   }
 
-  String? _passValidation(String? value) {
-    if (value == null) return null;
+  String? passwordValidation(String? value) {
+    if (value == null) return 'uh oh... null';
     if (value.isEmpty) {
       return 'Please enter a password.';
     } else if (value.length < 6) {
@@ -328,373 +229,206 @@ class _SignupUIState extends State<SignupUI> {
     }
   }
 
-  String? _nameValidation(String? val) {
-    if (val == null) return null;
-    if (val.trim().isEmpty) return "Please don't leave the name field blank";
-
-    return null;
+  String? phoneValidation(String? value) {
+    if (value == null) return 'uh oh... null';
+    if (value.isEmpty) {
+      return 'Please enter a phone number.';
+    } else if (!phoneRegex.hasMatch(value)) {
+      return 'You must enter a valid phone number.';
+    } else {
+      return null;
+    }
   }
 
-  void _showLoginSheet() {
-    _sheetController = _scaffoldKey.currentState!
-        .showBottomSheet<void>((BuildContext context) {
-      return ClipRRect(
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(40.0), topRight: Radius.circular(40.0)),
-        child: Container(
-          height: MediaQuery.of(context).size.height / 1.1,
-          width: MediaQuery.of(context).size.width,
-          color: Colors.white,
-          child: ListView(
-            children: <Widget>[
-              SizedBox(
-                height: 50,
-                width: 50,
-                child: Stack(
-                  children: <Widget>[
-                    Positioned(
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: IconButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                _emailController.clear();
-                                _passwordController.clear();
-                              },
-                              icon: const Icon(
-                                Icons.keyboard_arrow_down,
-                                size: 40.0,
-                                // color: Theme.of(context) .accentColor, //
-                                //     back (X) icon color
-                              ),
-                            )))
-                  ],
-                ),
-              ),
-              SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: 140,
-                        child: Stack(
-                          children: const <Widget>[
-                            /*
-                                Positioned(child: Align(child: Container(width:
-                                130, height: 130, decoration:
-                                BoxDecoration(shape: BoxShape.circle, color:
-                                Theme.of(context).accentColor),
-                                  ),
-                                  alignment: Alignment.center,
-                                ),
-                              ),
-                              */
-                            Positioned(
-                              left: 20,
-                              top: 50,
-                              child: Text(
-                                'LOGIN',
-                                style: TextStyle(
-                                  fontSize: 60,
-                                  fontWeight: FontWeight.bold,
-                                  // LOGIN word color
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20, top: 25),
-                        child: _input(const Icon(Icons.email), 'RPI Email',
-                            _emailController, false, _emailValidation),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: _input(const Icon(Icons.lock), 'Password',
-                            _passwordController, true, _passValidation),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 20,
-                            right: 20,
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
-                        child: SizedBox(
+  void showAuthenticationSheet({
+    required BuildContext context,
+    required String text,
+    required List<Widget> formFields,
+  }) =>
+      showModalBottomSheet<void>(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (BuildContext context) {
+            return ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(40.0),
+                  topRight: Radius.circular(40.0)),
+              child: Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).viewInsets.bottom == 0
+                      ? 80.h
+                      : 55.h,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
                           height: 50,
-                          width: MediaQuery.of(context).size.width,
-                          child: _button(
-                              'LOGIN',
-                              Theme.of(context).primaryColorDark, //splash
-                              Theme.of(context).primaryColor, //highlight color
-                              Theme.of(context).accentColor, //button fill color
-                              Theme.of(context).primaryColorLight, // text color
-                              _loginUser),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ), // entire login sheet color
-        ),
-      );
-    });
-  }
-
-  void _showRegisterSheet() {
-    _sheetController = _scaffoldKey.currentState!
-        .showBottomSheet<void>((BuildContext context) {
-      return ClipRRect(
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(40.0), topRight: Radius.circular(40.0)),
-        child: Container(
-          height: MediaQuery.of(context).size.height / 1.1,
-          width: MediaQuery.of(context).size.width,
-          color: Colors.white,
-          child: ListView(
-            children: <Widget>[
-              SizedBox(
-                height: 50,
-                width: 50,
-                child: Stack(
-                  children: <Widget>[
-                    Positioned(
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: IconButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                _rinController.clear();
-                                _nameController.clear();
-                                _emailController.clear();
-                                _passwordController.clear();
-                              },
-                              icon: Icon(
-                                Icons.keyboard_arrow_down,
-                                size: 40.0,
-                                color: Theme.of(context)
-                                    .accentColor, // back (X) icon color
-                              ),
-                            )))
-                  ],
-                ),
-              ),
-              SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: Column(children: <Widget>[
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: 140,
-                      child: Stack(
-                        children: const <Widget>[
-                          /*
-                            Positioned(child: Align(child: Container(width: 130,
-                              height: 130, decoration: BoxDecoration(shape:
-                              BoxShape.circle, color:
-                              Theme.of(context).primaryColor),
-                                ),
-                                alignment: Alignment.center,
-                              ),
-                            ),
-                            */
-                          Positioned(
-                            left: 20,
-                            top: 50,
-                            child: Text(
-                              'REGISTER',
-                              style: TextStyle(
-                                fontSize: 60,
-                                fontWeight: FontWeight.bold,
-                                // color: Theme.of(context).accentColor,
-                              ),
-                            ),
+                          width: 50,
+                          child: Stack(
+                            children: <Widget>[
+                              Positioned(
+                                  child: Align(
+                                      alignment: Alignment.center,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          // phoneController.clear();
+                                          // emailController.clear();
+                                          // passwordController.clear();
+                                        },
+                                        icon: Icon(
+                                          Icons.keyboard_arrow_down,
+                                          size: 40.0,
+                                          color: Theme.of(context).accentColor,
+                                        ),
+                                      )))
+                            ],
                           ),
-                          /*
-                            Positioned(child: Align(child: Container(padding:
-                              EdgeInsets.only(top: 55, left: 20), width: 130,
-                              child: Text('ster', style: TextStyle(fontSize: 60,
-                              fontWeight: FontWeight.bold, color: Colors.white,
+                        ),
+                        Form(
+                          key: formKey,
+                          child: Column(children: <Widget>[
+                            SizedBox(
+                              // width: MediaQuery.of(context).size.width,
+                              height: 10.h,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 20),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    text,
+                                    style: const TextStyle(
+                                      fontSize: 60,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
-                                alignment: Alignment.center,
                               ),
                             ),
-                            */
-                        ],
-                      ),
-                    ),
-                    /*     === DEPRECIATED === Padding(padding:
-                      EdgeInsets.only(bottom: 20, top: 25,
+                            ...formFields,
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: SizedBox(
+                                height: 50,
+                                width: 60.w,
+                                child: welcomeScreenButton(
+                                  context: context,
+                                  text: text,
+                                  onPressed: () =>
+                                      attemptSignUp(context: context),
+                                ),
+                              ),
+                            ),
+                          ]),
                         ),
-                        child: _input(Icon(Icons.contacts), 'RIN',
-                            _rinController, false, _rinValidation),
-                      ),
-                      */
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 20,
-                      ),
-                      child: _input(
-                          const Icon(Icons.account_circle),
-                          'First Name',
-                          _nameController,
-                          false,
-                          _nameValidation),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 20,
-                      ),
-                      child: _input(const Icon(Icons.email), 'RPI Email',
-                          _emailController, false, _emailValidation),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: _input(const Icon(Icons.lock), 'Password',
-                          _passwordController, true, _passValidation),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 20,
-                          right: 20,
-                          bottom: MediaQuery.of(context).viewInsets.bottom),
-                      child: SizedBox(
-                        height: 50,
-                        width: MediaQuery.of(context).size.width,
-                        child: _button(
-                            'REGISTER',
-                            Theme.of(context).primaryColorDark, //splash
-                            Theme.of(context).primaryColor, //highlight color
-                            Theme.of(context).accentColor, //button fill color
-                            Theme.of(context).primaryColorLight, // text color
-                            _registerUser),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ]),
+                  ),
                 ),
               ),
-            ],
-          ), // entire register sheet color
-        ),
-      );
-    });
-  }
+            );
+          });
 
   @override
   Widget build(BuildContext context) {
-    /*
-      Area to implement bypass if auto signed in
-
-      return Scaffold(body: BlocListener<AuthenticationBloc,
-        AuthenticationState>(listener: (context, state) {if (state is
-        AuthenticationSuccess) {return homePage;
-      }})
-
-    */
-
-    primary = Theme.of(context).primaryColor;
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        key: _scaffoldKey,
-        // backgroundColor: Theme.of(context).primaryColor, // main welcome
-        //     screen color
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            logo(),
-            /*
-            Padding(padding: EdgeInsets.only(top: 15), child: Align(child:
-                Text('SMARTRIDER', style: TextStyle(fontSize: 45, fontWeight:
-                FontWeight.bold, color: Theme.of(context).accentColor,
+      resizeToAvoidBottomInset: true,
+      body: ListView(
+        physics: const NeverScrollableScrollPhysics(),
+        children: <Widget>[
+          logoWidget(
+            context: context,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            child: SizedBox(
+              height: 7.h,
+              child: welcomeScreenButton(
+                context: context,
+                text: 'LOGIN',
+                onPressed: () => showAuthenticationSheet(
+                  context: context,
+                  text: 'LOGIN',
+                  formFields: [
+                    formInputField(
+                      context: context,
+                      icon: const Icon(Icons.email),
+                      hint: 'RPI Email',
+                      controller: emailController,
+                      validator: emailValidation,
                     ),
-                  ),
-                  alignment: Alignment.center,
-                )),
-                */
-            Padding(
-              padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
-              child: SizedBox(
-                height: 7.h,
-                child: _button(
-                    'LOGIN',
-                    Theme.of(context).primaryColorDark, //splash
-                    Theme.of(context).primaryColorDark, //highlight color
-                    Theme.of(context).accentColor, //button fill color
-                    Theme.of(context).primaryColor, // text color
-                    _showLoginSheet),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
-              child: SizedBox(
-                height: 7.h,
-                child: _button(
-                    'REGISTER',
-                    Theme.of(context).primaryColorDark, //splash
-                    Theme.of(context).primaryColorDark, //highlight color
-                    Theme.of(context).primaryColor, //button fill color
-                    Theme.of(context).accentColor, // text color
-                    _showRegisterSheet),
-              ),
-            ),
-
-            /*
-            Padding(child: Container(child:
-              OutlineButton(highlightedBorderColor:
-              Theme.of(context).accentColor, borderSide: BorderSide(color:
-              Theme.of(context).accentColor, width: 2.0), //color of border on
-              register button highlightElevation: 0.0, splashColor:
-              Theme.of(context).primaryColorDark, // splash when tapped color
-              highlightColor: Theme.of(context).primaryColorDark, // register
-              button on press and hold color: Theme.of(context).accentColor, //
-              color of: idk shape: RoundedRectangleBorder(borderRadius:
-              BorderRadius.circular(30.0),
-                  ),
-                  child: Text(
-                    'REGISTER',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).accentColor, //color of word register on button
-                        fontSize: 20),
-                  ),
-                  onPressed: () {
-                    _showRegisterSheet();
-                  },
-                ),
-                height: 65,
-              ),
-              padding: EdgeInsets.only(top: 10, left: 20, right: 20),
-            ),
-            */
-            Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: ClipPath(
-                  clipper: BottomWaveClipper(),
-                  child: Container(
-                    color: Theme.of(context)
-                        .accentColor, //color of clip on bottom right
-                    height: 800,
-                  ),
+                    StatefulBuilder(
+                      builder: (context, setPasswordState) => formInputField(
+                        context: context,
+                        icon: const Icon(Icons.lock),
+                        hint: 'Password',
+                        controller: passwordController,
+                        setPasswordState: setPasswordState,
+                        validator: passwordValidation,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            )
-          ],
-        ));
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+            child: SizedBox(
+              height: 7.h,
+              child: welcomeScreenButton(
+                context: context,
+                text: 'REGISTER',
+                onPressed: () => showAuthenticationSheet(
+                  context: context,
+                  text: 'REGISTER',
+                  formFields: [
+                    formInputField(
+                      context: context,
+                      icon: const Icon(Icons.email),
+                      hint: 'RPI Email',
+                      controller: emailController,
+                      validator: emailValidation,
+                    ),
+                    formInputField(
+                      context: context,
+                      icon: const Icon(Icons.phone_iphone),
+                      hint: 'Phone Number',
+                      controller: phoneController,
+                      validator: phoneValidation,
+                    ),
+                    StatefulBuilder(
+                      builder: (context, setPasswordState) => formInputField(
+                        context: context,
+                        icon: const Icon(Icons.lock),
+                        hint: 'Password',
+                        controller: passwordController,
+                        setPasswordState: setPasswordState,
+                        validator: passwordValidation,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ClipPath(
+              clipper: BottomWaveClipper(),
+              child: Container(
+                color: Theme.of(context)
+                    .accentColor, //color of clip on bottom right
+                height: 15.h,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
 

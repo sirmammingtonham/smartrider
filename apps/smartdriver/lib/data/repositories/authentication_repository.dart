@@ -12,12 +12,12 @@ class AuthenticationRepository {
 
   Driver? get currentDriver => authProvider.currentDriver;
 
-  Future<Driver> tryLogin(
+  Future<Driver> trySignIn(
       {required String name,
       required String phoneNumber,
       required String vehicleId,
       required String password}) async {
-    return authProvider.tryLogin(
+    return authProvider.trySignIn(
         name: name,
         phoneNumber: phoneNumber,
         vehicleId: vehicleId,
@@ -28,7 +28,7 @@ Future<void> setAvailibility(bool available) async {
     await authProvider.setAvailibility(available);
   }
 
-  Future<void> tryLogout() async {
-    await authProvider.tryLogout();
+  Future<void> trySignOut() async {
+    await authProvider.trySignOut();
   }
 }

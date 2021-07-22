@@ -60,7 +60,7 @@ void main() async {
 //FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
 
   final app = SmartRider(
-      authRepo: AuthRepository.create(),
+      authRepo: AuthenticationRepository.create(),
       busRepo: await BusRepository.create(),
       shuttleRepo: ShuttleRepository.create(),
       saferideRepo: SaferideRepository.create());
@@ -84,7 +84,7 @@ class SmartRider extends StatefulWidget {
     required this.shuttleRepo,
     required this.saferideRepo,
   }) : super(key: key);
-  final AuthRepository authRepo;
+  final AuthenticationRepository authRepo;
   final BusRepository busRepo;
   final ShuttleRepository shuttleRepo;
   final SaferideRepository saferideRepo;
@@ -131,7 +131,7 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
         BlocProvider<AuthenticationBloc>(
             create: (context) =>
                 AuthenticationBloc(authRepository: widget.authRepo)
-                  ..add(AuthenticationStarted())),
+                  ..add(AuthenticationInitEvent())),
         BlocProvider<SaferideBloc>(
           create: (context) => SaferideBloc(
               prefsBloc: BlocProvider.of<PrefsBloc>(context),
