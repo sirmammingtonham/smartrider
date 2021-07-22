@@ -22,7 +22,7 @@ class PrefsLoadedState extends PrefsState {
       {this.modifyActiveRoutes = false});
 
   final SharedPreferences prefs;
-  final Map<String?, bool?> shuttles;
+  final Map<String, bool> shuttles;
   final Map<String, bool> buses;
   final bool modifyActiveRoutes;
 

@@ -1,24 +1,22 @@
 // ui imports
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-
-// map imports
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smartrider/blocs/map/map_bloc.dart';
-import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
+// map imports
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared/util/messages.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
-
-import 'package:smartrider/pages/home.dart';
 import 'package:showcaseview/showcaseview.dart';
-import 'package:smartrider/widgets/legend.dart';
 import 'package:sizer/sizer.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
+import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/widgets/legend.dart';
 import 'package:smartrider/widgets/saferide_status_widgets.dart'
     as saferide_widgets;
-import 'custom_widgets/expandable_fab.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+
+import 'package:smartrider/widgets/custom_widgets/expandable_fab.dart';
 
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
@@ -192,7 +190,8 @@ class SmartriderMap extends StatelessWidget {
                   locationButton: locationButton(context, saferideState));
             case MapErrorState:
               FirebaseCrashlytics.instance.recordError(
-                Exception('map_widget errored'), null,
+                Exception('map_widget errored'),
+                null,
                 reason: 'map_widget errored',
               );
               return mapStack(
@@ -203,10 +202,9 @@ class SmartriderMap extends StatelessWidget {
                   viewFab: viewFab(context, Icons.layers),
                   locationButton: locationButton(context, saferideState));
             default:
-              FirebaseCrashlytics.instance
-                  .recordError(Exception('map_widget is broken'), null,
-                      reason: 'map_widget is broken (fatal)',
-                      fatal: true);
+              FirebaseCrashlytics.instance.recordError(
+                  Exception('map_widget is broken'), null,
+                  reason: 'map_widget is broken (fatal)', fatal: true);
               return const Center(
                 child: Text('ERROR IN MAP BLOC'),
               );

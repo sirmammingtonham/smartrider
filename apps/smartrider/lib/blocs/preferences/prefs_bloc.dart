@@ -19,7 +19,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
   /// ShuttleBloc named constructor
   late SharedPreferences _sharedPrefs;
   late bool hideInactiveRoutes;
-  late Map<String?, bool?> _shuttles;
+  late Map<String, bool> _shuttles;
   late Map<String, bool> _buses;
 
   static const Map<String, String> busIdMap = {

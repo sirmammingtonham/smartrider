@@ -61,7 +61,6 @@ class BitmapHelper {
   static Future<ui.Image> _getSvgImageFromAssets(
       String svgAssetLink, Color? color, Size? targetSize) async {
     var svgString = await rootBundle.loadString(svgAssetLink);
-
     if (color != null) {
       svgString =
           svgString.replaceAll('fill="#fff"', 'fill="${color.toHex()}"');

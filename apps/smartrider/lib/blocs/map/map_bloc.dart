@@ -94,8 +94,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
     });
 
-    saferideBloc.stream
-        .listen((saferideState) => add(const MapSaferideEvent()));
+    saferideBloc.stream.listen((saferideState) {
+      if (saferideState is! SaferideNoState) {
+        add(const MapSaferideEvent());
+      }
+    });
   }
 
   /// Shuttle data repository
@@ -117,8 +120,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   double _zoomLevel = 14.0;
   MapView _currentView = MapView.kBusView;
 
-  Map<String?, bool?>? _enabledShuttles = {};
-  Map<String, bool>? _enabledBuses = {};
+  Map<String, bool> _enabledShuttles = {};
+  Map<String, bool> _enabledBuses = {};
 
   GoogleMapController? _controller;
 
@@ -172,6 +175,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   /// getter for the current mapview
   MapView get mapView => _currentView;
 
+  ///
+  Map<String, BusRoute> get busRoutes => _busRoutes;
+
+  ///
+  Map<String, ShuttleRoute> get shuttleRoutes => _shuttleRoutes;
+
   void updateController(BuildContext context, GoogleMapController controller) {
     _controller = controller;
     _controller!.setMapStyle(Theme.of(context).brightness == Brightness.dark
@@ -214,11 +223,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         {
           _zoomLevel = (event as MapMoveEvent).zoomLevel;
           yield MapLoadedState(
-              polylines: _currentPolylines,
-              markers: _getMarkerClusters(_zoomLevel)
-                  .followedBy(_currentMarkers)
-                  .toSet(),
-              mapView: _currentView);
+            polylines: _currentPolylines,
+            markers: _getMarkerClusters(_zoomLevel)
+                .followedBy(_currentMarkers)
+                .toSet(),
+            mapView: _currentView,
+          );
         }
         break;
       default:
@@ -253,7 +263,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _shuttleUpdates = await shuttleRepo.getUpdates;
 
           // update preferences with currently active routes
-          prefsBloc.add(InitActiveRoutesEvent(_shuttleRoutes.values.toList()));
+          prefsBloc.add(InitActiveRoutesEvent(
+              _shuttleRoutes.values.where((route) => route.active).toList()));
           await _initShuttleMarkers();
         }
         break;
@@ -274,10 +285,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _getEnabledPolylines();
 
     yield MapLoadedState(
-        polylines: _currentPolylines,
-        markers:
-            _currentMarkers.followedBy(_getMarkerClusters(_zoomLevel)).toSet(),
-        mapView: _currentView);
+      polylines: _currentPolylines,
+      markers:
+          _currentMarkers.followedBy(_getMarkerClusters(_zoomLevel)).toSet(),
+      mapView: _currentView,
+    );
   }
 
   Stream<MapState> _mapUpdateRequestedToState() async* {
@@ -307,10 +319,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _getEnabledPolylines();
 
     yield MapLoadedState(
-        polylines: _currentPolylines,
-        markers:
-            _currentMarkers.followedBy(_getMarkerClusters(_zoomLevel)).toSet(),
-        mapView: _currentView);
+      polylines: _currentPolylines,
+      markers:
+          _currentMarkers.followedBy(_getMarkerClusters(_zoomLevel)).toSet(),
+      mapView: _currentView,
+    );
   }
 
   /// fills the appriate data structures with relevant saferide markers/polylines
@@ -493,12 +506,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         size: stopMarkerSize);
     _saferideUpdateIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/map_icons/marker_saferide.svg',
-        color: const Color(0x00e7343f),
         size: vehicleUpdateSize);
     _saferidePickupUpdateIcon =
         await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-            'assets/map_icons/marker_saferide.svg',
-            color: const Color(0x00ffbb24),
+            'assets/map_icons/marker_saferide_alt.svg',
             size: vehicleUpdateSize);
 
     // default white
@@ -627,7 +638,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     switch (_currentView) {
       case MapView.kBusView:
         {
-          _enabledBuses!.forEach((id, enabled) {
+          _enabledBuses.forEach((id, enabled) {
             if (enabled) {
               if (_busShapes[id] != null) {
                 _currentPolylines.addAll(_busShapes[id]!.getPolylines);
@@ -638,8 +649,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         break;
       case MapView.kShuttleView:
         {
-          _enabledShuttles!.forEach((id, enabled) {
-            if (enabled!) {
+          _enabledShuttles.forEach((id, enabled) {
+            if (enabled) {
               _currentPolylines.add(_shuttleRoutes[id]!.getPolyline);
             }
           });
@@ -671,8 +682,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           }
 
           /// add bus stop markers
-          for (final route in _enabledBuses!.keys) {
-            if (_enabledBuses![route]!) {
+          for (final route in _enabledBuses.keys) {
+            if (_enabledBuses[route]!) {
               if (_busRoutes[route] != null) {
                 for (final stop in _busRoutes[route]!.stops!) {
                   _markerClusters.add(_busStopToMarkerCluster(stop));
@@ -695,9 +706,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               stop.id: _shuttleStopToMarker(stop)
           };
 
-          for (final route in _enabledShuttles!.keys) {
-            if (_enabledShuttles![route]!) {
-              for (final id in _shuttleRoutes[route]!.stopIds!) {
+          for (final route in _enabledShuttles.keys) {
+            if (_enabledShuttles[route]!) {
+              for (final id in _shuttleRoutes[route]!.stopIds) {
                 if (shuttleMarkerMap[id] != null) {
                   _currentMarkers.add(shuttleMarkerMap[id]!);
                 }

@@ -3,62 +3,62 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ShuttleRoute {
   ShuttleRoute(
-      {this.id,
-      this.name,
-      this.description,
-      this.enabled,
-      this.color,
-      this.width,
-      this.stopIds,
-      this.created,
-      this.updated,
-      this.points,
-      this.active,
-      this.schedule});
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.enabled,
+      required this.color,
+      required this.width,
+      required this.stopIds,
+      required this.created,
+      required this.updated,
+      required this.points,
+      required this.active,
+      required this.schedule});
 
-  ShuttleRoute.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    description = json['description'];
-    enabled = json['enabled'];
-    color = Color(int.parse(json['color'].toString().replaceAll('#', '0xff')));
-    width = json['width'];
-    stopIds = (json['stop_ids'] as List).cast<int>();
-    created = json['created'];
-    updated = json['updated'];
-    if (json['points'] != null) {
-      points = [];
-      for (final v in json['points'] as List) {
-        points!.add(Point.fromJson(v));
-      }
+  factory ShuttleRoute.fromJson(Map<String, dynamic> json) {
+    final points = <Point>[];
+    for (final v in json['points'] as List) {
+      points.add(Point.fromJson(v));
     }
-    active = json['active'];
-    if (json['schedule'] != null) {
-      schedule = [];
-      for (final v in json['schedule'] as List) {
-        schedule!.add(Schedule.fromJson(v));
-      }
+    final schedule = <Schedule>[];
+    for (final v in json['schedule'] as List) {
+      schedule.add(Schedule.fromJson(v));
     }
+    return ShuttleRoute(
+        id: json['id'],
+        name: json['name'],
+        description: json['description'],
+        enabled: json['enabled'],
+        color:
+            Color(int.parse(json['color'].toString().replaceAll('#', '0xff'))),
+        width: json['width'],
+        stopIds: (json['stop_ids'] as List).cast<int>(),
+        created: json['created'],
+        updated: json['updated'],
+        points: points,
+        active: json['active'],
+        schedule: schedule);
   }
 
-  int? id;
-  String? name;
-  String? description;
-  bool? enabled;
-  Color? color;
-  int? width;
-  List<int>? stopIds;
-  String? created;
-  String? updated;
-  List<Point>? points;
-  bool? active;
-  List<Schedule>? schedule;
+  final int id;
+  final String name;
+  final String description;
+  final bool enabled;
+  final Color color;
+  final int width;
+  final List<int> stopIds;
+  final String created;
+  final String updated;
+  final List<Point> points;
+  final bool active;
+  final List<Schedule> schedule;
 
   Polyline get getPolyline => Polyline(
-        polylineId: PolylineId(name!),
-        color: color!,
+        polylineId: PolylineId(name),
+        color: color,
         width: 4,
-        points: points!.map((points) => points.getLatLng).toList(),
+        points: points.map((points) => points.getLatLng).toList(),
       );
 
   Map<String, dynamic> toJson() {
@@ -72,13 +72,13 @@ class ShuttleRoute {
     data['stop_ids'] = stopIds;
     data['created'] = created;
     data['updated'] = updated;
-    if (points != null) {
-      data['points'] = points!.map((v) => v.toJson()).toList();
-    }
+
+    data['points'] = points.map((v) => v.toJson()).toList();
+
     data['active'] = active;
-    if (schedule != null) {
-      data['schedule'] = schedule!.map((v) => v.toJson()).toList();
-    }
+
+    data['schedule'] = schedule.map((v) => v.toJson()).toList();
+
     return data;
   }
 }

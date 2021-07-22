@@ -12,8 +12,11 @@ class MapLoadingState extends MapState {
 }
 
 class MapLoadedState extends MapState {
-  const MapLoadedState(
-      {required this.polylines, required this.markers, required this.mapView});
+  const MapLoadedState({
+    required this.polylines,
+    required this.markers,
+    required this.mapView,
+  });
 
   final Set<Polyline> polylines;
   final Set<Marker> markers;
