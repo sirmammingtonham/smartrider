@@ -26,7 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
   // adding placeholder vars for now, replace these with sharedprefs
   Map<String, bool>? prefsData;
 
-  AuthRepository auth = AuthRepository.create();
+  AuthenticationRepository auth = AuthenticationRepository.create();
 
   @override
   void initState() {
@@ -65,7 +65,7 @@ class SettingsWidget extends StatelessWidget {
     required this.setState,
   }) : super(key: key);
   final PrefsLoadedState state;
-  final AuthRepository auth;
+  final AuthenticationRepository auth;
   final VoidCallback setState;
 
   /*
@@ -122,16 +122,18 @@ class SettingsWidget extends StatelessWidget {
             margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
             child: Center(
               child: Padding(
-                  padding: EdgeInsets.only(top: 25),
+                  padding: const EdgeInsets.only(top: 25),
                   child: Text(
                     'General',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20.5.sp),
                   )),
             ),
           ),
           cardBuilder([
             SwitchListTile(
-              title: Text('Push Notifications', style: TextStyle(fontSize: 12.sp)),
+              title:
+                  Text('Push Notifications', style: TextStyle(fontSize: 12.sp)),
               value: state.prefs.getBool('pushNotifications')!,
               onChanged: (bool value) {
                 state.prefs.setBool('pushNotifications', value);
@@ -142,7 +144,8 @@ class SettingsWidget extends StatelessWidget {
             Builder(
                 builder: (context) => SwitchListTile(
                       activeColor: Theme.of(context).toggleableActiveColor,
-                      title: Text('Lights Out', style: TextStyle(fontSize: 12.sp)),
+                      title:
+                          Text('Lights Out', style: TextStyle(fontSize: 12.sp)),
                       value: state.prefs.getBool('darkMode')!,
                       onChanged: (bool value) {
                         state.prefs.setBool('darkMode', value);
@@ -159,7 +162,8 @@ class SettingsWidget extends StatelessWidget {
             child: Center(
               child: Text(
                 'Shuttle Settings',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
               ),
             ),
           ),
@@ -176,8 +180,8 @@ class SettingsWidget extends StatelessWidget {
                   child: Center(
                     child: Text(
                       'Shuttles are not loaded, try switching views to load',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 11.sp),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 11.sp),
                     ),
                   ),
                 ),
@@ -185,7 +189,7 @@ class SettingsWidget extends StatelessWidget {
             ),
           cardBuilder(state.shuttles.keys
               .map((key) => SwitchListTile(
-                    title: Text(key!),
+                    title: Text(key),
                     value: state.shuttles[key]!,
                     onChanged: (bool value) {
                       state.shuttles[key] = value;
@@ -203,13 +207,15 @@ class SettingsWidget extends StatelessWidget {
             child: Center(
               child: Text(
                 'Bus Settings',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
               ),
             ),
           ),
           cardBuilder(state.buses.keys
               .map((key) => SwitchListTile(
-                    title: Text(PrefsBloc.busIdMap[key]!, style: TextStyle(fontSize: 12.sp)),
+                    title: Text(PrefsBloc.busIdMap[key]!,
+                        style: TextStyle(fontSize: 12.sp)),
                     value: state.buses[key]!,
                     onChanged: (bool value) {
                       state.buses[key] = value;
@@ -227,7 +233,8 @@ class SettingsWidget extends StatelessWidget {
             child: Center(
               child: Text(
                 'Safe Ride Settings',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
               ),
             ),
           ),
@@ -240,7 +247,7 @@ class SettingsWidget extends StatelessWidget {
                   child: ElevatedButton(
                       onPressed: () {
                         BlocProvider.of<AuthenticationBloc>(context).add(
-                          AuthenticationLoggedOut(),
+                          AuthenticationSignOutEvent(),
                         );
                         Navigator.pop(context);
                       },

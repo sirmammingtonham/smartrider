@@ -7,30 +7,43 @@ abstract class AuthenticationState extends Equatable {
   List<Object?> get props => [];
 }
 
-class AuthenticationInit extends AuthenticationState {}
-
-class AuthenticationSuccess extends AuthenticationState {
-  const AuthenticationSuccess(this.displayName, this.role);
-
-  final String? displayName, role;
-
+class AuthenticationAwaitVerificationState extends AuthenticationState {
+  /// hack to get our state to rebuild even if this state is yielded again
   @override
-  List<Object?> get props => [displayName];
+  bool operator ==(Object other) => false;
 
+  /// redundant but stops linter from complaining
   @override
-  String toString() => 'AuthenticationSuccess($displayName)';
+  int get hashCode => super.hashCode * 1;
 }
 
-class AuthenticationFailure extends AuthenticationState {
-  const AuthenticationFailure(this.errorMessage);
+class AuthenticationSignedOutState extends AuthenticationState {}
 
-  final String? errorMessage;
+class AuthenticationSignedInState extends AuthenticationState {
+  const AuthenticationSignedInState({
+    required this.user,
+    required this.email,
+    required this.phoneNumber,
+    required this.phoneVerified,
+  });
+
+  final User user;
+  final String email, phoneNumber;
+  final bool phoneVerified;
 
   @override
-  List<Object?> get props => [errorMessage];
-
-  @override
-  String toString() => 'AuthenticationFailure($errorMessage)';
+  List<Object> get props => [user, email, phoneNumber, phoneVerified];
 }
 
-class AwaitEmailVerify extends AuthenticationState {}
+class AuthenticationFailedState extends AuthenticationState {
+  const AuthenticationFailedState({
+    required this.exception,
+    required this.message,
+  });
+
+  final FirebaseAuthException exception;
+  final String message;
+
+  @override
+  List<Object> get props => [exception, message];
+}

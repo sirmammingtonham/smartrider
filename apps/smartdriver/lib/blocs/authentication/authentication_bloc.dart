@@ -13,7 +13,7 @@ part 'authentication_state.dart';
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc({required this.authRepository, required this.locationBloc})
-      : super(const AuthenticationLoggedOutState()) {
+      : super(const AuthenticationSignedOutState()) {
     add(AuthenticationStartedEvent());
   }
 
@@ -29,28 +29,28 @@ class AuthenticationBloc
       case AuthenticationStartedEvent:
         {
           sharedPrefs = await SharedPreferences.getInstance();
-          yield AuthenticationLoggedOutState(
+          yield AuthenticationSignedOutState(
             driverName: sharedPrefs.getString('driver_name'),
             phoneNumber: sharedPrefs.getString('phone_number'),
             vehicleId: sharedPrefs.getString('vehicle_id'),
           );
         }
         break;
-      case AuthenticationLoginEvent:
-        yield* _mapAuthenticationLoginToState(
-            event as AuthenticationLoginEvent);
+      case AuthenticationSignInEvent:
+        yield* _mapSignInToState(
+            event as AuthenticationSignInEvent);
         break;
-      case AuthenticationLogoutEvent:
-        yield* _mapAuthenticationLogoutToState(
-            event as AuthenticationLogoutEvent);
+      case AuthenticationSignOutEvent:
+        yield* _mapSignOutToState(
+            event as AuthenticationSignOutEvent);
         break;
     }
   }
 
-  Stream<AuthenticationState> _mapAuthenticationLoginToState(
-      AuthenticationLoginEvent event) async* {
+  Stream<AuthenticationState> _mapSignInToState(
+      AuthenticationSignInEvent event) async* {
     try {
-      final user = await authRepository.tryLogin(
+      final user = await authRepository.trySignIn(
           name: event.driverName,
           vehicleId: event.vehicleId,
           password: event.password,
@@ -59,16 +59,16 @@ class AuthenticationBloc
       await sharedPrefs.setString('driver_name', event.driverName);
       await sharedPrefs.setString('phone_number', event.phoneNumber);
       await sharedPrefs.setString('vehicle_id', event.vehicleId);
-      yield AuthenticationLoggedInState(user: user);
+      yield AuthenticationSignedInState(user: user);
     } on AuthenticationException catch (error) {
       yield AuthenticationFailureState(errorMessage: error.message);
     }
   }
 
-  Stream<AuthenticationState> _mapAuthenticationLogoutToState(
-      AuthenticationLogoutEvent event) async* {
-    await authRepository.tryLogout();
-    yield AuthenticationLoggedOutState(
+  Stream<AuthenticationState> _mapSignOutToState(
+      AuthenticationSignOutEvent event) async* {
+    await authRepository.trySignOut();
+    yield AuthenticationSignedOutState(
       driverName: sharedPrefs.getString('driver_name'),
       phoneNumber: sharedPrefs.getString('phone_number'),
       vehicleId: sharedPrefs.getString('vehicle_id'),

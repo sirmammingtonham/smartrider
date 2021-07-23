@@ -24,17 +24,11 @@ abstract class ListItem {
 
 /// Represents the physical profile page.
 class ProfilePage extends StatefulWidget {
-  const ProfilePage(
-      {Key? key,
-      this.title,
-      required this.name,
-      required this.role,
-      required this.email})
-      : super(key: key);
+  const ProfilePage({
+    Key? key,
+    this.title,
+  }) : super(key: key);
 
-  final String? role; // Decides what role the user has (student, etc.)
-  final String? email; // The user's email that is linked to their account.
-  final String? name; // Name of the user.
   final String? title;
 
   /// Sets the state of the profile page.
@@ -117,7 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ElevatedButton(
                   onPressed: () {
                     BlocProvider.of<AuthenticationBloc>(context).add(
-                      AuthenticationLoggedOut(),
+                      AuthenticationSignOutEvent(),
                     );
                     Navigator.pop(context);
                   },
@@ -151,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         // Profile greeting text
                         Center(
                             child: Text(
-                          'Hello, ${widget.role!}',
+                          'Hello',
                           style: Theme.of(context).textTheme.headline3,
                         )),
                       ],
@@ -167,7 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       backgroundColor: Theme.of(context).backgroundColor,
                       backgroundImage: const NetworkImage(_profilePic),
                       child: (_profilePic == '')
-                          ? Text(username,
+                          ? Text('username',
                               style: TextStyle(
                                   fontSize: 60,
                                   color: Theme.of(context)
@@ -190,15 +184,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       // Describes the role
                       ListTile(
                           title: const Text('Role'),
-                          subtitle: Text(widget.role!),
-                          leading: determinerole(widget.role!)
+                          subtitle: Text('widget.role!'),
+                          leading: determinerole('widget.role!')
                               ? const Icon(Icons.book)
                               : const Icon(Icons.drive_eta)),
                       // Describes the user's email
                       ListTile(
                         title: const Text('Email'),
                         leading: const Icon(Icons.email),
-                        subtitle: Text(widget.email!),
+                        subtitle: Text('get.email!'),
                       )
                     ],
                   ),
@@ -212,10 +206,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   onPressed: () {
                     //Send an email to the user to request a password change
                     BlocProvider.of<AuthenticationBloc>(context).add(
-                      AuthentificationResetPass(email),
+                      AuthenticationResetPasswordEvent(),
                     );
                     BlocProvider.of<AuthenticationBloc>(context).add(
-                      AuthenticationLoggedOut(),
+                      AuthenticationSignOutEvent(),
                     );
                     Navigator.of(context).pop();
                     // Will show a small pop up to tell users the email has been
@@ -277,7 +271,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   //authentification delete function
                                   BlocProvider.of<AuthenticationBloc>(context)
                                       .add(
-                                    AuthenticationDelete(),
+                                    AuthenticationDeleteEvent(),
                                   );
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pop();

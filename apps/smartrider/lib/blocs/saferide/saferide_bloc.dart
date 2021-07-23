@@ -14,6 +14,8 @@ import 'package:smartrider/data/repositories/authentication_repository.dart';
 import 'package:smartrider/data/repositories/saferide_repository.dart';
 import 'package:shared/util/strings.dart';
 import 'package:shared/models/saferide/order.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:ntp/ntp.dart';
 
 part 'saferide_event.dart';
 part 'saferide_state.dart';
@@ -25,7 +27,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       {required this.prefsBloc,
       required this.saferideRepo,
       required this.authRepo})
-      : super(SaferideNoState()) {
+      : super(const SaferideNoState()) {
     prefsBloc.stream.listen((state) async {
       switch (state.runtimeType) {
         case PrefsLoadedState:
@@ -50,7 +52,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   final places = GoogleMapsPlaces(apiKey: googleApiKey);
   final PrefsBloc prefsBloc;
   final SaferideRepository saferideRepo;
-  final AuthRepository authRepo;
+  final AuthenticationRepository authRepo;
 
   DocumentReference? currentOrder;
   PlacesDetailsResponse? dropoffDetails, pickupDetails;
@@ -70,17 +72,17 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     switch (event.runtimeType) {
       case SaferideNoEvent:
         {
-          yield SaferideNoState();
+          yield SaferideNoState(serverTimeStamp: await NTP.now());
         }
         break;
       case SaferideSelectingEvent:
         {
-          yield* _mapSaferideSelectionToState(event as SaferideSelectingEvent);
+          yield* _mapSelectingToState(event as SaferideSelectingEvent);
         }
         break;
       case SaferideConfirmedEvent:
         {
-          yield* _mapConfirmToState(event as SaferideConfirmedEvent);
+          yield* _mapConfirmedToState(event as SaferideConfirmedEvent);
         }
         break;
       case SaferideWaitingEvent:
@@ -108,7 +110,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         break;
       case SaferideUserCancelledEvent:
         {
-          yield* _mapCancelToState(event as SaferideUserCancelledEvent);
+          yield* _mapCancelledToState(event as SaferideUserCancelledEvent);
         }
         break;
       case SaferideDriverCancelledEvent:
@@ -121,11 +123,11 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   }
 
   /// attempts to cancel saferide true if successful, false if fail
-  Stream<SaferideState> _mapCancelToState(
+  Stream<SaferideState> _mapCancelledToState(
       SaferideUserCancelledEvent event) async* {
     await saferideRepo.cancelOrder(currentOrder!);
     await endSubscription();
-    yield SaferideNoState();
+    yield SaferideNoState(serverTimeStamp: await NTP.now());
   }
 
   Future<void> endSubscription() async {
@@ -185,29 +187,35 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       case 'ERROR':
         {
           await endSubscription();
-          //TODO: error handling
+          await FirebaseCrashlytics.instance.recordError(
+            Exception('error in saferide bloc'),
+            null,
+            reason: 'error in saferide bloc',
+          );
         }
         break;
       default:
         {
           // should never get here
-          print(order.status);
-          assert(false); //TODO: error handling
-
+          await FirebaseCrashlytics.instance.recordError(
+            Exception('critical error in saferide bloc'),
+            null,
+            reason: 'critical error in saferide bloc',
+          );
+          assert(false);
         }
         break;
     }
   }
 
-  Stream<SaferideState> _mapConfirmToState(
+  Stream<SaferideState> _mapConfirmedToState(
       SaferideConfirmedEvent event) async* {
     //create order, listen to changes in snapshot, update display vars in state
     if (pickupPoint != null && dropoffPoint != null) {
       yield SaferideLoadingState();
 
       final order = await saferideRepo.createNewOrder(
-          user: FirebaseFirestore.instance.doc(
-              'users/${authRepo.getActualUser!.uid}'), //TODO: move this and fix auth providers
+          user: authRepo.getCurrentUserRef!,
           pickupAddress: pickupAddress!,
           pickupPoint: pickupPoint!,
           dropoffAddress: dropoffAddress!,
@@ -219,7 +227,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     }
   }
 
-  Stream<SaferideState> _mapSaferideSelectionToState(
+  Stream<SaferideState> _mapSelectingToState(
       SaferideSelectingEvent event) async* {
     if (event.dropoffPrediction != null) {
       dropoffDetails =
@@ -239,7 +247,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     }
 
     /// if they didn't enter a pickup location, we just use their current
-    ///location
+    /// location
     if (pickupDetails == null) {
       try {
         final currentLocation = await Geolocator.getCurrentPosition(

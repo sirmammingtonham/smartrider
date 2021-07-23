@@ -16,7 +16,7 @@ class AuthenticationProvider {
     await currentDriver?.vehicleRef.update({'available': available});
   }
 
-  Future<Driver> tryLogin(
+  Future<Driver> trySignIn(
       {required String name,
       required String phoneNumber,
       required String vehicleId,
@@ -49,7 +49,7 @@ class AuthenticationProvider {
     }
   }
 
-  Future<void> tryLogout() async {
+  Future<void> trySignOut() async {
     await setAvailibility(false);
     currentDriver = null;
     await firebaseAuth.signOut();

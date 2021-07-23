@@ -2,103 +2,130 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:smartrider/data/repositories/authentication_repository.dart';
-import 'package:smartrider/data/providers/database.dart';
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
-//TODO: rework this mess
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  AuthenticationBloc({required AuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(AuthenticationInit());
-  final AuthRepository _authRepository;
+  AuthenticationBloc({required this.authRepository})
+      : super(AuthenticationSignedOutState());
+  final AuthenticationRepository authRepository;
 
   @override
   Stream<AuthenticationState> mapEventToState(
     AuthenticationEvent event,
   ) async* {
     switch (event.runtimeType) {
-      case AuthenticationStarted:
-        yield* _mapAuthenticationStartedToState();
+      case AuthenticationInitEvent:
+        yield* _mapInitToState();
         break;
-      case AuthenticationLoggedIn:
-        yield* _mapAuthenticationLoggedInToState(
-            (event as AuthenticationLoggedIn).email, event.pass, event.role);
+      case AuthenticationSignInEvent:
+        yield* _mapSignInToState(event as AuthenticationSignInEvent);
         break;
-      case AuthenticationLoggedOut:
-        yield* _mapAuthenticationLoggedOutToState();
+      case AuthenticationSignOutEvent:
+        yield* _mapSignOutToState();
         break;
-      case AuthenticationSignUp:
-        yield* _mapAuthenticationSignUpToState(
-            (event as AuthenticationSignUp).email,
-            event.name,
-            event.pass,
-            event.rin,
-            event.role);
+      case AuthenticationSignUpEvent:
+        yield* _mapSignUpToState(event as AuthenticationSignUpEvent);
+        break;
+      case AuthenticationResetPhoneEvent:
+        break;
+      case AuthenticationResetPasswordEvent:
+        break;
+      case AuthenticationDeleteEvent:
+        break;
     }
   }
 
-  Stream<AuthenticationState> _mapAuthenticationStartedToState() async* {
-    final isSignedIn = _authRepository.isSignedIn;
-    if (isSignedIn) {
-      final name = _authRepository.getUser;
-      final user = _authRepository.getActualUser!;
-      final role = await DatabaseService(usid: user.uid).getUserRole();
-      yield AuthenticationSuccess(name, role ?? 'Student');
+  Stream<AuthenticationState> _mapInitToState() async* {
+    final user = authRepository.getCurrentUser;
+    if (user != null) {
+      if (!user.emailVerified) {
+        yield AuthenticationAwaitVerificationState();
+        return;
+      }
+      final userData = await authRepository.getCurrentUserData;
+      yield AuthenticationSignedInState(
+        user: authRepository.getCurrentUser!,
+        email: userData!['email'],
+        phoneNumber: userData['phone'],
+        phoneVerified: userData['phone_verified'],
+      );
     } else {
-      yield AuthenticationInit();
+      yield AuthenticationSignedOutState();
     }
   }
 
-  Stream<AuthenticationState> _mapAuthenticationLoggedInToState(
-      String e, String p, String role) async* {
-    final result = await (_authRepository.signInWithCredentials(
-        e, p)); //attempt to signin user
+  Stream<AuthenticationState> _mapSignInToState(
+      AuthenticationSignInEvent event) async* {
+    try {
+      final userCredential = await authRepository.signIn(
+        email: event.email,
+        password: event.password,
+      );
+      final user = userCredential.user;
 
-    switch (result.runtimeType) {
-      case UserCredential:
-        {
-          //if signing in user is successful
-          final user = _authRepository.getActualUser!;
-          if (user.emailVerified) {
-            yield AuthenticationSuccess(e, role);
-          } else {
-            await user.sendEmailVerification();
-            yield AwaitEmailVerify();
-          }
+      if (user != null) {
+        if (user.emailVerified) {
+          final userData = await authRepository.getCurrentUserData;
+          yield AuthenticationSignedInState(
+              user: authRepository.getCurrentUser!,
+              email: userData!['email'],
+              phoneNumber: userData['phone'],
+              phoneVerified: userData['phone_verified']);
+        } else {
+          await user.sendEmailVerification();
+          yield AuthenticationAwaitVerificationState();
         }
-        break;
-      default:
-        yield const AuthenticationFailure('Email or Password is Incorrect');
+      }
+    } on FirebaseAuthException catch (exception) {
+      switch (exception.code) {
+        case 'user-not-found':
+          yield AuthenticationFailedState(
+            exception: exception,
+            message: 'User not found! Please make an account.',
+          );
+          break;
+        case 'wrong-password':
+          yield AuthenticationFailedState(
+            exception: exception,
+            message: 'Incorrect password.',
+          );
+          break;
+      }
     }
   }
 
-  Stream<AuthenticationState> _mapAuthenticationLoggedOutToState() async* {
-    await _authRepository.signOut();
-    yield AuthenticationInit();
+  Stream<AuthenticationState> _mapSignOutToState() async* {
+    await authRepository.signOut();
+    yield AuthenticationSignedOutState();
   }
 
-  Stream<AuthenticationState> _mapAuthenticationSignUpToState(
-      String e, String n, String p, String r, String role) async* {
-    final dynamic result = await _authRepository.signUp(e, p);
-
-    switch (result.runtimeType) {
-      case UserCredential:
-        {
-          final user = (result as UserCredential).user;
-          await DatabaseService(usid: user?.uid).updateUserData(
-              user?.email, role,
-              rin: r,
-              name: n); // usertype will be student for now, modify later
-          await user?.sendEmailVerification();
-          yield AwaitEmailVerify();
-        }
-        break;
-      default:
-        yield AuthenticationFailure((result as PlatformException).message);
+  Stream<AuthenticationState> _mapSignUpToState(
+      AuthenticationSignUpEvent event) async* {
+    try {
+      await authRepository.signUp(
+        email: event.email,
+        phoneNumber: event.phoneNumber,
+        password: event.password,
+      );
+      yield AuthenticationAwaitVerificationState();
+    } on FirebaseAuthException catch (exception) {
+      switch (exception.code) {
+        case 'weak-password':
+          yield AuthenticationFailedState(
+            exception: exception,
+            message: 'Password too weak! Please try again.',
+          );
+          break;
+        case 'email-already-in-use':
+          yield AuthenticationFailedState(
+            exception: exception,
+            message: 'Email already in use! Log in or reset your password.',
+          );
+          break;
+      }
     }
   }
 }

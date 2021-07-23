@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:flutter/foundation.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:shared/util/messages.dart';
@@ -26,14 +27,13 @@ import 'package:smartrider/pages/home.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:sizer/sizer.dart';
 
-String computeUsername(String name) {
-  //compute initials to be displayed on search bar
+// compute initials to be displayed on search bar
+String computeInitials(String email) {
   var counter = 1;
-  while (double.tryParse(name[name.indexOf('@') - counter]) != null) {
+  while (int.tryParse(email[email.indexOf('@') - counter]) != null) {
     counter += 1;
   }
-
-  return (name[name.indexOf('@') - counter] + name[0]).toUpperCase();
+  return (email[email.indexOf('@') - counter] + email[0]).toUpperCase();
 }
 
 class SearchBar extends StatefulWidget {
@@ -43,13 +43,9 @@ class SearchBar extends StatefulWidget {
   State<StatefulWidget> createState() => SearchBarState();
 }
 
-late String username;
-String? email;
-
 class SearchBarState extends State<SearchBar> {
   SearchBarState();
-  String? name;
-  String? role;
+  late String initials;
   final places = GoogleMapsPlaces(apiKey: googleApiKey);
 
   @override
@@ -116,38 +112,55 @@ class SearchBarState extends State<SearchBar> {
   Widget searchField(SaferideState saferideState) {
     switch (saferideState.runtimeType) {
       case SaferideNoState:
-        // creates the autocomplete field (requires strings.dart in
-        // the utils folder to contain the api key)
-        return TypeAheadField(
-          hideOnLoading: true,
-          textFieldConfiguration: const TextFieldConfiguration(
-              autofocus: false,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(), hintText: 'Need a safe ride?')),
-          suggestionsCallback: (pattern) async {
-            if (pattern.isEmpty) {
-              return const Iterable<Prediction>.empty();
-            }
-            return (await places.autocomplete(pattern,
-                    location: Location(lat: 42.729980, lng: -73.676682),
-                    radius: 1000,
-                    strictbounds: true,
-                    language: 'en'))
-                .predictions;
-          },
-          itemBuilder: (context, Prediction suggestion) {
-            return ListTile(
-              leading: const Icon(Icons.location_on),
-              title: Text(suggestion.description!),
-              // subtitle: Text('${suggestion.distanceMeters!} m
-              // away'),
-            );
-          },
-          onSuggestionSelected: (Prediction suggestion) {
-            BlocProvider.of<SaferideBloc>(context)
-                .add(SaferideSelectingEvent(dropoffPrediction: suggestion));
-          },
-        );
+        // This only calls dateTime.now() once when everything is built
+        // so if a user starts the app before 7 and is on it after 7,
+        // it will not update.
+        // This can be changed in the multiblocprovider, but it may be
+        // inefficient
+        if (kReleaseMode &&
+            (saferideState as SaferideNoState).serverTimeStamp != null &&
+            saferideState.serverTimeStamp!.hour < 19) {
+          return const TextField(
+            enabled: false,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Saferide starts at 7 p.m.'),
+          );
+        } else {
+          // creates the autocomplete field (requires strings.dart in
+          // the utils folder to contain the api key)
+          return TypeAheadField(
+            hideOnLoading: true,
+            textFieldConfiguration: const TextFieldConfiguration(
+                autofocus: false,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Need a safe ride?')),
+            suggestionsCallback: (pattern) async {
+              if (pattern.isEmpty) {
+                return const Iterable<Prediction>.empty();
+              }
+              return (await places.autocomplete(pattern,
+                      location: Location(lat: 42.729980, lng: -73.676682),
+                      radius: 1000,
+                      strictbounds: true,
+                      language: 'en'))
+                  .predictions;
+            },
+            itemBuilder: (context, Prediction suggestion) {
+              return ListTile(
+                leading: const Icon(Icons.location_on),
+                title: Text(suggestion.description!),
+                // subtitle: Text('${suggestion.distanceMeters!} m
+                // away'),
+              );
+            },
+            onSuggestionSelected: (Prediction suggestion) {
+              BlocProvider.of<SaferideBloc>(context)
+                  .add(SaferideSelectingEvent(dropoffPrediction: suggestion));
+            },
+          );
+        }
       case SaferideWaitingState:
         // TODO: add destination info to state
         // we can probably have some easter eggs or something here
@@ -214,18 +227,16 @@ class SearchBarState extends State<SearchBar> {
                 child: CircleAvatar(
                   backgroundColor: Theme.of(context).buttonColor,
                   child: IconButton(
-                    icon: Text(computeUsername(name!),
+                    icon: Text(initials,
                         style: const TextStyle(
                             fontSize: 15, color: Colors.white70)),
                     onPressed: () {
                       Navigator.push<ProfilePage>(
                           context,
                           MaterialPageRoute(
+// TODO: hero animation
                               builder: (context) => ProfilePage(
-                                    title: computeUsername(name!),
-                                    name: null,
-                                    role: role,
-                                    email: name,
+                                    title: initials,
                                   )));
                     },
                   ),
@@ -297,9 +308,11 @@ class SearchBarState extends State<SearchBar> {
             final authState = states.get<AuthenticationState>();
             final prefState = states.get<PrefsState>();
 
-            name =
-                authState is AuthenticationSuccess ? authState.displayName : '';
-            role = authState is AuthenticationSuccess ? authState.role : '';
+            assert(authState is AuthenticationSignedInState);
+            initials = computeInitials(
+              (authState as AuthenticationSignedInState).email,
+            );
+
             switch (saferideState.runtimeType) {
               case SaferideNoState:
               case SaferideWaitingState:

@@ -1,0 +1,14 @@
+name: GitHub Actions Demo
+on:
+  pull_request:
+    branches: 
+      - main
+  push:
+    branches:
+      - develop
+    
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "pushed on develop"

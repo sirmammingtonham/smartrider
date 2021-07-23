@@ -1,28 +1,35 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smartrider/data/providers/authentication_provider.dart';
 
-class AuthRepository {
-  AuthRepository.create();
+class AuthenticationRepository {
+  AuthenticationRepository.create();
 
-  final AuthProvider _authProvider = AuthProvider();
+  final AuthenticationProvider _authProvider = AuthenticationProvider();
 
-  Future<UserCredential> signInWithCredentials(
-      String email, String password) async {
-    return _authProvider.signInWithCredentials(email, password);
-  }
+  User? get getCurrentUser => _authProvider.getCurrentUser;
 
-  Future signUp(String email, String password) async {
-    return _authProvider.signUp(email, password);
-  }
+  DocumentReference? get getCurrentUserRef => _authProvider.getCurrentUserRef();
+  Future<DocumentSnapshot?> get getCurrentUserData async =>
+      _authProvider.getCurrentUserData();
 
-  Future<void> signOut() async {
-    return _authProvider.signOut();
-  }
+  bool get isSignedIn => _authProvider.isSignedIn;
 
-  bool get isSignedIn => _authProvider.isSignedIn();
+  Stream<User?> get userChangeStream => _authProvider.userChangeStream;
 
-  String? get getUser => _authProvider.getUser();
+  Future<void> signOut() async => _authProvider.signOut();
 
-  User? get getActualUser => _authProvider.getActualUser();
+  Future<UserCredential> signIn({
+    required String email,
+    required String password,
+  }) async =>
+      _authProvider.signIn(email, password);
+
+  Future<UserCredential> signUp({
+    required String email,
+    required String phoneNumber,
+    required String password,
+  }) async =>
+      _authProvider.signUp(email, phoneNumber, password);
 }

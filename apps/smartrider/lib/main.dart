@@ -1,9 +1,12 @@
 //implementation imports
-import 'package:flutter/foundation.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sizer/sizer.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +35,13 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  // avoid generating crash reports when the app is in debug mode.
+  if (kDebugMode) {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+  } else {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  }
+
   await AwesomeNotifications().initialize(
     null, // default app icon
     [
@@ -50,17 +60,20 @@ void main() async {
 //FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
 
   final app = SmartRider(
-      authRepo: AuthRepository.create(),
+      authRepo: AuthenticationRepository.create(),
       busRepo: await BusRepository.create(),
       shuttleRepo: ShuttleRepository.create(),
       saferideRepo: SaferideRepository.create());
 
-  runApp(
-    DevicePreview(
-      enabled: false, //!kReleaseMode,  // uncomment to use device_preview
-      builder: (context) => app,
-    ), // Wrap your app
-  );
+  runZonedGuarded(() {
+    //catch async errors as well
+    runApp(
+      DevicePreview(
+        enabled: false, //!kReleaseMode,  // uncomment to use device_preview
+        builder: (context) => app,
+      ), // Wrap your app
+    );
+  }, FirebaseCrashlytics.instance.recordError);
 }
 
 class SmartRider extends StatefulWidget {
@@ -71,7 +84,7 @@ class SmartRider extends StatefulWidget {
     required this.shuttleRepo,
     required this.saferideRepo,
   }) : super(key: key);
-  final AuthRepository authRepo;
+  final AuthenticationRepository authRepo;
   final BusRepository busRepo;
   final ShuttleRepository shuttleRepo;
   final SaferideRepository saferideRepo;
@@ -118,12 +131,13 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
         BlocProvider<AuthenticationBloc>(
             create: (context) =>
                 AuthenticationBloc(authRepository: widget.authRepo)
-                  ..add(AuthenticationStarted())),
+                  ..add(AuthenticationInitEvent())),
         BlocProvider<SaferideBloc>(
           create: (context) => SaferideBloc(
               prefsBloc: BlocProvider.of<PrefsBloc>(context),
               saferideRepo: widget.saferideRepo,
-              authRepo: widget.authRepo),
+              authRepo: widget.authRepo)
+            ..add(SaferideNoEvent()),
         ),
         BlocProvider<MapBloc>(
             create: (context) => MapBloc(

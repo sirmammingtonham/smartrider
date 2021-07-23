@@ -16,10 +16,9 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
-    avoid_relative_imports: true
+    always_use_package_imports: true
     prefer_final_locals: true
     public_member_api_docs: false
     require_trailing_comma: true
-
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

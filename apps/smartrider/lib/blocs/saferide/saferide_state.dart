@@ -8,7 +8,12 @@ abstract class SaferideState extends Equatable {
 }
 
 /// State for when no safe ride display is needed
-class SaferideNoState extends SaferideState {}
+class SaferideNoState extends SaferideState {
+  const SaferideNoState({this.serverTimeStamp});
+  final DateTime? serverTimeStamp;
+  @override
+  List<Object?> get props => [serverTimeStamp];
+}
 
 class SaferideLoadingState extends SaferideState {}
 

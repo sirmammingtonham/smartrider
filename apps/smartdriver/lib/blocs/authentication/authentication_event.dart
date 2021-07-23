@@ -9,8 +9,8 @@ abstract class AuthenticationEvent extends Equatable {
 
 class AuthenticationStartedEvent extends AuthenticationEvent {}
 
-class AuthenticationLoginEvent extends AuthenticationEvent {
-  const AuthenticationLoginEvent(
+class AuthenticationSignInEvent extends AuthenticationEvent {
+  const AuthenticationSignInEvent(
       {required this.driverName,
       required this.password,
       required this.vehicleId,
@@ -18,6 +18,6 @@ class AuthenticationLoginEvent extends AuthenticationEvent {
   final String driverName, phoneNumber, vehicleId, password;
 }
 
-class AuthenticationLogoutEvent extends AuthenticationEvent {
-  const AuthenticationLogoutEvent();
+class AuthenticationSignOutEvent extends AuthenticationEvent {
+  const AuthenticationSignOutEvent();
 }

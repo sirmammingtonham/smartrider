@@ -1,11 +1,12 @@
-import 'package:shared/models/bus/bus_shape.dart';
-import 'package:shared/util/messages.dart';
-import 'package:smartrider/blocs/map/map_bloc.dart';
-import 'package:smartrider/pages/home.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared/models/bus/bus_shape.dart';
+import 'package:shared/util/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
+import 'package:sizer/sizer.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/pages/home.dart';
 
 class Legend extends StatefulWidget {
   const Legend({Key? key}) : super(key: key);
@@ -14,47 +15,86 @@ class Legend extends StatefulWidget {
   _LegendState createState() => _LegendState();
 }
 
-class _LegendState extends State<Legend> {
+class _LegendState extends State<Legend> with TickerProviderStateMixin {
   bool _isExpanded = false;
+  static const double fabSize = 56;
 
-  Widget legendTile(String title, Color color, {String? subtitle}) => ListTile(
-        dense: true,
-        visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-        leading: Icon(
-          Icons.trip_origin,
-          color: color,
-        ),
-        title: Text(title),
-        subtitle: subtitle != null ? Text(subtitle) : null,
-      );
+  @override
+  void initState() {
+    super.initState();
+  }
 
-  Widget busLegend(BuildContext context) => GestureDetector(
-        onTap: () {
-          setState(() {
-            _isExpanded = false;
-          });
-        },
-        child: Container(
-          height: 150,
-          width: 175,
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(20))),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Column(
-              children: [
-                legendTile('Route 87', busColors['87']!),
-                legendTile('Route 286', busColors['286']!),
-                legendTile('Route 289', busColors['289']!),
-                legendTile('CDTA Express', busColors['288']!),
-              ],
-            ),
+  Widget _legendRouteTile({required String title, required Color color}) =>
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 1),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              Icon(
+                Icons.trip_origin,
+                color: color,
+              ),
+              SizedBox(
+                width: 15.sp,
+              ),
+              Text(title)
+            ],
           ),
         ),
       );
-  Widget shuttleLegend(BuildContext context) => Container();
-  Widget saferideLegend(BuildContext context) => Container();
+
+  Widget _legendMarkerTile(
+          {required String title,
+          required String asset,
+          double? size,
+          Color? color}) =>
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 1),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              SizedBox(
+                height: size,
+                width: size,
+                child: Center(
+                  child: SvgPicture.asset(
+                    asset,
+                    color: color,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 15.sp,
+              ),
+              Text(title)
+            ],
+          ),
+        ),
+      );
+
+  Widget _legendCard(List<Widget> children) => Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: InkWell(
+        customBorder:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        onTap: () {
+          setState(() {
+            _isExpanded = !_isExpanded;
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Center(
+            child: ListView(
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
+              children: children,
+            ),
+          ),
+        ),
+      ));
 
   Widget button(BuildContext context) => Showcase(
       key: showcaseLegend,
@@ -81,33 +121,104 @@ class _LegendState extends State<Legend> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MapBloc, MapState>(builder: (context, state) {
+      final iconSize = Theme.of(context).iconTheme.size;
       final Widget legend;
+      final double height;
+      final double width;
       if (state is MapLoadedState) {
         switch (state.mapView) {
           case MapView.kBusView:
-            legend = busLegend(context);
+            {
+              legend = _legendCard([
+                _legendMarkerTile(
+                    title: 'Bus Stop',
+                    asset: 'assets/map_icons/marker_stop_bus.svg',
+                    size: iconSize),
+                _legendMarkerTile(
+                    title: 'Realtime Bus',
+                    asset: 'assets/map_icons/marker_vehicle.svg',
+                    size: iconSize),
+                _legendRouteTile(title: 'Route 87', color: busColors['87']!),
+                _legendRouteTile(title: 'Route 286', color: busColors['286']!),
+                _legendRouteTile(title: 'Route 289', color: busColors['289']!),
+                _legendRouteTile(
+                    title: 'CDTA Express', color: busColors['288']!),
+              ]);
+              height = 23.h;
+              width = 40.w;
+            }
             break;
           case MapView.kShuttleView:
-            legend = shuttleLegend(context);
+            {
+              final routeTiles = <Widget>[];
+              final shuttleRoutes =
+                  BlocProvider.of<MapBloc>(context).shuttleRoutes;
+              for (final entry in shuttleRoutes.entries) {
+                if (entry.value.active) {
+                  routeTiles.add(_legendRouteTile(
+                      title: entry.key,
+                      color: shuttleRoutes[entry.key]!.color));
+                }
+              }
+              legend = _legendCard([
+                _legendMarkerTile(
+                    title: 'Shuttle Stop',
+                    asset: 'assets/map_icons/marker_stop_shuttle.svg',
+                    size: iconSize),
+                _legendMarkerTile(
+                    title: 'Realtime Shuttle',
+                    asset: 'assets/map_icons/marker_vehicle.svg',
+                    size: iconSize),
+                ...routeTiles
+              ]);
+              // add 3% screen height for each additional tile
+              height = (11 + 3 * routeTiles.length).h;
+              width = 45.w;
+            }
             break;
           case MapView.kSaferideView:
-            legend = saferideLegend(context);
+            {
+              legend = _legendCard([
+                _legendMarkerTile(
+                    title: 'Safe Ride',
+                    asset: 'assets/map_icons/marker_saferide.svg',
+                    size: iconSize),
+                _legendMarkerTile(
+                  title: 'Your Safe Ride',
+                  asset: 'assets/map_icons/marker_saferide_alt.svg',
+                  size: iconSize,
+                ),
+                _legendMarkerTile(
+                    title: 'Pickup Location',
+                    asset: 'assets/map_icons/marker_pickup.svg',
+                    size: iconSize),
+                _legendMarkerTile(
+                    title: 'Dropoff Location',
+                    asset: 'assets/map_icons/marker_dropoff.svg',
+                    size: iconSize)
+              ]);
+              height = 17.h;
+              width = 45.w;
+            }
             break;
         }
       } else {
         legend = button(context);
+        height = fabSize;
+        width = fabSize;
       }
 
-      return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 250),
-        transitionBuilder: (Widget child, Animation<double> animation) =>
-            ScaleTransition(
-          scale: animation,
-          alignment: Alignment.bottomLeft,
-          child: child,
-        ),
-        child: _isExpanded ? legend : button(context),
-      );
+      return AnimatedContainer(
+          curve: Curves.easeOutCubic,
+          height: _isExpanded ? height : fabSize,
+          width: _isExpanded ? width : fabSize,
+          duration: const Duration(milliseconds: 333),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(_isExpanded ? 20 : 100),
+            ),
+          ),
+          child: _isExpanded ? legend : button(context));
     });
   }
 }

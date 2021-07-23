@@ -78,7 +78,7 @@ class Login extends StatelessWidget {
                 child: TextButton(
                   onPressed: () {
                     BlocProvider.of<AuthenticationBloc>(context)
-                        .add(AuthenticationLoginEvent(
+                        .add(AuthenticationSignInEvent(
                       driverName: _nameController.text.trim(),
                       vehicleId: _vehicleController.text.trim(),
                       phoneNumber: _phoneController.text.trim(),
