@@ -79,6 +79,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
   late final RegExp phoneRegex;
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
+  late final TextEditingController passwordConfirmController;
   late final TextEditingController phoneController;
   late final GlobalKey<FormState> formKey;
   bool obscurePassword = true;
@@ -90,6 +91,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
     phoneRegex = RegExp(r'^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$');
     emailController = TextEditingController();
     passwordController = TextEditingController();
+    passwordConfirmController = TextEditingController();
     phoneController = TextEditingController();
     formKey = GlobalKey<FormState>();
   }
@@ -218,8 +220,8 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
     if (formKey.currentState!.validate()) {
       BlocProvider.of<AuthenticationBloc>(context)
           .add(AuthenticationSignInEvent(
-        email: emailController.text,
-        password: passwordController.text,
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       ));
     }
   }
@@ -230,15 +232,16 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
     if (formKey.currentState!.validate()) {
       BlocProvider.of<AuthenticationBloc>(context)
           .add(AuthenticationSignUpEvent(
-        email: emailController.text,
-        phoneNumber: phoneController.text,
-        password: passwordController.text,
+        email: emailController.text.trim(),
+        phoneNumber: phoneController.text.trim(),
+        password: passwordController.text.trim(),
       ));
     }
   }
 
   String? emailValidation(String? value) {
     if (value == null) return 'uh oh... null';
+    value = value.trim();
     if (value.isEmpty) {
       return 'Please enter an email';
     } else if (!value.endsWith('@rpi.edu')) {
@@ -250,6 +253,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
 
   String? passwordValidation(String? value) {
     if (value == null) return 'uh oh... null';
+    value = value.trim();
     if (value.isEmpty) {
       return 'Please enter a password.';
     } else if (value.length < 6) {
@@ -259,12 +263,25 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
     }
   }
 
+  String? passwordConfirmValidation(String? value) {
+    if (value == null) return 'uh oh... null';
+    value = value.trim();
+    if (value.isEmpty) {
+      return 'Please confirm your password.';
+    } else if (value != passwordController.text.trim()) {
+      return 'Password needs to be at least 6 characters';
+    } else {
+      return null;
+    }
+  }
+
   String? phoneValidation(String? value) {
     if (value == null) return 'uh oh... null';
+    value = value.trim();
     if (value.isEmpty) {
       return 'Please enter a phone number.';
     } else if (!phoneRegex.hasMatch(value)) {
-      return 'You must enter a valid phone number.';
+      return 'Your passwords don\'t match!';
     } else {
       return null;
     }
@@ -448,7 +465,16 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                         validator: passwordValidation,
                       ),
                     ),
-//TODO: verify password with second field
+                    StatefulBuilder(
+                      builder: (context, setPasswordState) => formInputField(
+                        context: context,
+                        icon: const Icon(Icons.check_circle),
+                        hint: 'Confirm Password',
+                        controller: passwordConfirmController,
+                        setPasswordState: setPasswordState,
+                        validator: passwordConfirmValidation,
+                      ),
+                    ),
                   ],
                 ),
               ),

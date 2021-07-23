@@ -33,8 +33,8 @@ class AuthenticationProvider {
   ) async {
     try {
       return await _firebaseAuth.signInWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
+        email: email,
+        password: password,
       );
     } on FirebaseAuthException {
       rethrow;
@@ -48,8 +48,8 @@ class AuthenticationProvider {
   ) async {
     try {
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
+        email: email,
+        password: password,
       );
       if (userCredential.user != null) {
 // TODO: create URL back to app for email verification
