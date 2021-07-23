@@ -6,6 +6,8 @@ class AuthenticationProvider {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final CollectionReference _users =
       FirebaseFirestore.instance.collection('users');
+  final RegExp _phoneRegex =
+      RegExp(r'^(\+\d{1,2}\s)?(\(?\d{3}\)?)[\s.-]?(\d{3})[\s.-]?(\d{4})$');
 
   bool get isSignedIn => _firebaseAuth.currentUser != null;
 
@@ -54,9 +56,9 @@ class AuthenticationProvider {
 // TODO: create a phone verification that happens before a user
 // calls their first safe ride
         await userCredential.user!.sendEmailVerification();
-        await _users.doc(userCredential.user!.uid).update({
+        await _users.doc(userCredential.user!.uid).set({
           'email': email,
-          'phone': phoneNumber,
+          'phone': _processPhoneNumber(phoneNumber),
           'phone_verified': false,
         });
       }
@@ -68,5 +70,15 @@ class AuthenticationProvider {
 
   Future<void> signOut() async {
     return _firebaseAuth.signOut();
+  }
+
+  String _processPhoneNumber(String phoneNumber) {
+    final matches = _phoneRegex.firstMatch(phoneNumber)!;
+    if (matches.groupCount == 4) {
+      return '+1 (${matches.group(2)})-${matches.group(3)}-${matches.group(4)}';
+    } else {
+      return '${matches.group(1)} '
+          '(${matches.group(2)})-${matches.group(3)}-${matches.group(4)}';
+    }
   }
 }

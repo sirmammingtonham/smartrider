@@ -7,7 +7,15 @@ abstract class AuthenticationState extends Equatable {
   List<Object?> get props => [];
 }
 
-class AuthenticationEmailVerificationState extends AuthenticationState {}
+class AuthenticationAwaitVerificationState extends AuthenticationState {
+  /// hack to get our state to rebuild even if this state is yielded again
+  @override
+  bool operator ==(Object other) => false;
+
+  /// redundant but stops linter from complaining
+  @override
+  int get hashCode => super.hashCode * 1;
+}
 
 class AuthenticationSignedOutState extends AuthenticationState {}
 

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared/models/saferide/position_data.dart';
 
 // saferide models
@@ -10,6 +11,7 @@ class SaferideProvider {
       FirebaseFirestore.instance.collection('orders');
   final CollectionReference vehicles =
       FirebaseFirestore.instance.collection('vehicles');
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   // Map<String?, Driver>? _driversMap;
 
@@ -21,7 +23,8 @@ class SaferideProvider {
       required GeoPoint pickupPoint,
       required String dropoffAddress,
       required GeoPoint dropoffPoint}) async {
-    final ref = await orders.add({
+    final ref = orders.doc(auth.currentUser!.uid);
+    await ref.set({
       'status': 'WAITING',
       'pickup_address': pickupAddress,
       'pickup_point': pickupPoint,

@@ -7,30 +7,63 @@ import 'package:sizer/sizer.dart';
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key, required this.homePage}) : super(key: key);
   final HomePage homePage;
+
+  void showErrorSnackBar({
+    required BuildContext context,
+    required String text,
+  }) =>
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).primaryColorDark,
+          content: ListTile(
+              leading: const Icon(Icons.warning, color: Colors.white),
+              title: Text(
+                text,
+                style: const TextStyle(color: Colors.white),
+              )),
+          duration: const Duration(days: 1),
+        ),
+      );
+
 // TODO: add forgot password thing
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
+      body: BlocListener<AuthenticationBloc, AuthenticationState>(
+        listener: (context, state) {
           switch (state.runtimeType) {
-            case AuthenticationEmailVerificationState:
-//TODO: create widget for email verification, or maybe persist snackbar
-              return Container();
+            case AuthenticationAwaitVerificationState:
+              showErrorSnackBar(
+                context: context,
+                text: 'Please check email for verification.',
+              );
+              break;
             case AuthenticationFailedState:
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text((state as AuthenticationFailedState).message),
-              ));
-              return const AuthenticationUI();
-            case AuthenticationSignedOutState:
-              return const AuthenticationUI();
-            case AuthenticationSignedInState:
-              return homePage;
+              showErrorSnackBar(
+                context: context,
+                text: (state as AuthenticationFailedState).message,
+              );
+              break;
             default:
-              return Container();
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              break;
           }
         },
+        child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            switch (state.runtimeType) {
+              case AuthenticationSignedOutState:
+              case AuthenticationFailedState:
+              case AuthenticationAwaitVerificationState:
+                return const AuthenticationUI();
+              case AuthenticationSignedInState:
+                return homePage;
+              default:
+                return Container();
+            }
+          },
+        ),
       ),
     );
   }
@@ -53,8 +86,8 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
   @override
   void initState() {
     super.initState();
-    // matches any form of valid phone number lol
-    phoneRegex = RegExp(r'(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}');
+    // fat regex matches any form of valid phone number lol
+    phoneRegex = RegExp(r'^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$');
     emailController = TextEditingController();
     passwordController = TextEditingController();
     phoneController = TextEditingController();
@@ -86,8 +119,6 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
     );
   }
 
-// Padding(padding: const EdgeInsets.only(bottom: 20, top: 25),
-  //input widget
   Widget formInputField({
     required BuildContext context,
     required Icon icon,
@@ -158,7 +189,6 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
         ),
       );
 
-  //button widget
   Widget welcomeScreenButton({
     required BuildContext context,
     required String text,
@@ -244,6 +274,10 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
     required BuildContext context,
     required String text,
     required List<Widget> formFields,
+    required Function({
+      required BuildContext context,
+    })
+        authFunction,
   }) =>
       showModalBottomSheet<void>(
           context: context,
@@ -252,8 +286,8 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
           builder: (BuildContext context) {
             return ClipRRect(
               borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(40.0),
-                  topRight: Radius.circular(40.0)),
+                  topLeft: Radius.circular(25.0),
+                  topRight: Radius.circular(25.0)),
               child: Padding(
                 padding: MediaQuery.of(context).viewInsets,
                 child: Container(
@@ -317,8 +351,10 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                                 child: welcomeScreenButton(
                                   context: context,
                                   text: text,
-                                  onPressed: () =>
-                                      attemptSignUp(context: context),
+                                  onPressed: () {
+                                    authFunction(context: context);
+                                    Navigator.of(context).pop();
+                                  },
                                 ),
                               ),
                             ),
@@ -352,6 +388,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                 onPressed: () => showAuthenticationSheet(
                   context: context,
                   text: 'LOGIN',
+                  authFunction: attemptSignIn,
                   formFields: [
                     formInputField(
                       context: context,
@@ -385,6 +422,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                 onPressed: () => showAuthenticationSheet(
                   context: context,
                   text: 'REGISTER',
+                  authFunction: attemptSignUp,
                   formFields: [
                     formInputField(
                       context: context,
@@ -410,6 +448,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                         validator: passwordValidation,
                       ),
                     ),
+//TODO: verify password with second field
                   ],
                 ),
               ),

@@ -39,13 +39,19 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _mapInitToState() async* {
-    if (authRepository.isSignedIn) {
+    final user = authRepository.getCurrentUser;
+    if (user != null) {
+      if (!user.emailVerified) {
+        yield AuthenticationAwaitVerificationState();
+        return;
+      }
       final userData = await authRepository.getCurrentUserData;
       yield AuthenticationSignedInState(
-          user: authRepository.getCurrentUser!,
-          email: userData!['email'],
-          phoneNumber: userData['phone'],
-          phoneVerified: userData['phone_verified']);
+        user: authRepository.getCurrentUser!,
+        email: userData!['email'],
+        phoneNumber: userData['phone'],
+        phoneVerified: userData['phone_verified'],
+      );
     } else {
       yield AuthenticationSignedOutState();
     }
@@ -70,7 +76,7 @@ class AuthenticationBloc
               phoneVerified: userData['phone_verified']);
         } else {
           await user.sendEmailVerification();
-          yield AuthenticationEmailVerificationState();
+          yield AuthenticationAwaitVerificationState();
         }
       }
     } on FirebaseAuthException catch (exception) {
@@ -104,7 +110,7 @@ class AuthenticationBloc
         phoneNumber: event.phoneNumber,
         password: event.password,
       );
-      yield AuthenticationEmailVerificationState();
+      yield AuthenticationAwaitVerificationState();
     } on FirebaseAuthException catch (exception) {
       switch (exception.code) {
         case 'weak-password':
