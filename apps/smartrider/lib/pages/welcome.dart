@@ -14,7 +14,7 @@ class WelcomeScreen extends StatelessWidget {
   }) =>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Theme.of(context).primaryColorDark,
+          // backgroundColor: Theme.of(context).primaryColorDark,
           content: ListTile(
               leading: const Icon(Icons.warning, color: Colors.white),
               title: Text(
@@ -135,7 +135,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
           controller: controller,
           obscureText: setPasswordState != null ? obscurePassword : false,
           validator: validator,
-          style: TextStyle(fontSize: 20, color: Theme.of(context).accentColor),
+          style: const TextStyle(fontSize: 20),
           decoration: InputDecoration(
             hintText: hint,
             prefixIcon: Padding(
@@ -162,30 +162,30 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide(
-                color: Theme.of(context).accentColor, // text-box border
+                //color: Theme.of(context).accentColor, // text-box border
                 width: 2,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide(
-                color: Theme.of(context)
-                    .primaryColorDark, // text-box border when selected
+                // color: Theme.of(context)
+                //     .primaryColorDark, // text-box border when selected
                 width: 2,
               ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide(
-                color: Theme.of(context).errorColor,
+                //color: Theme.of(context).errorColor,
                 width: 2,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(
-                color: Theme.of(context).errorColor.withOpacity(1),
-              ),
+              // borderSide: BorderSide(
+              //   color: Theme.of(context).errorColor.withOpacity(1),
+              // ),
             ),
           ),
         ),
@@ -333,7 +333,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                                         icon: Icon(
                                           Icons.keyboard_arrow_down,
                                           size: 40.0,
-                                          color: Theme.of(context).accentColor,
+                                          //color: Theme.of(context).accentColor,
                                         ),
                                       )))
                             ],
@@ -486,7 +486,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
               clipper: BottomWaveClipper(),
               child: Container(
                 color: Theme.of(context)
-                    .accentColor, //color of clip on bottom right
+                    .primaryColor, //color of clip on bottom right
                 height: 15.h,
               ),
             ),

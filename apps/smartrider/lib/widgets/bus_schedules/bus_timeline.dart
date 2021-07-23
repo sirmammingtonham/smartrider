@@ -107,7 +107,7 @@ class BusTimelineState extends State<BusTimeline>
               ? Colors.black
               : null,
           unselectedLabelColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.black
+              ? Colors.black45
               : null,
           controller: _tabController,
         ),
@@ -139,7 +139,7 @@ class BusTimelineState extends State<BusTimeline>
       leading: CustomPaint(
           painter: FillPainter(
               circleColor: busColors[routeId],
-              lineColor: Theme.of(context).primaryColorLight,
+              lineColor: Theme.of(context).primaryColor,
               first: index == 0,
               last: index == busStops.length - 1),
           child: const SizedBox(
@@ -159,8 +159,8 @@ class BusTimelineState extends State<BusTimeline>
       children: [
         CustomPaint(
           painter: StrokePainter(
-            circleColor: Theme.of(context).buttonColor,
-            lineColor: Theme.of(context).primaryColorLight,
+            circleColor: Theme.of(context).primaryColor,
+            lineColor: Theme.of(context).primaryColor,
             last: index == busStops.length - 1,
           ),
 

@@ -102,18 +102,18 @@ class SmartriderMap extends StatelessWidget {
         description: locationButtonShowcaseMessage,
         shapeBorder: const CircleBorder(),
         child: FloatingActionButton(
-          backgroundColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : null,
+          // backgroundColor: Theme.of(context).brightness == Brightness.light
+          //     ? Colors.white
+          //     : null,
           onPressed: () {
             BlocProvider.of<MapBloc>(context).scrollToCurrentLocation();
           },
           heroTag: 'scrollToLocButton',
           child: Icon(
             Icons.gps_fixed,
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.black87
-                : Colors.white70,
+            // color: Theme.of(context).brightness == Brightness.light
+            //     ? Colors.black87
+            //     : Colors.white70,
           ),
         ),
       );

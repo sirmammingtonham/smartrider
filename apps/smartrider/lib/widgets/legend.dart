@@ -101,20 +101,20 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
       description: legendButtonShowcaseMessage,
       shapeBorder: const CircleBorder(),
       child: FloatingActionButton(
-        backgroundColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.white
-            : Colors.white70,
+        // backgroundColor: Theme.of(context).brightness == Brightness.light
+        //     ? Colors.white
+        //     : Colors.white70,
         onPressed: () {
           setState(() {
             _isExpanded = true;
           });
         },
         heroTag: 'legendViewButton',
-        child: Icon(
+        child: const Icon(
           Icons.help_outline,
-          color: Theme.of(context).brightness == Brightness.light
-              ? Colors.black87
-              : Theme.of(context).accentColor,
+          // color: Theme.of(context).brightness == Brightness.light
+          //     ? Colors.black87
+          //     : Theme.of(context).accentColor,
         ),
       ));
 

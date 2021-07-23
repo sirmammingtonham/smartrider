@@ -55,8 +55,9 @@ class PanelPage extends StatelessWidget {
     );
     return Stack(
       children: [
+        // ignore: sized_box_for_whitespace
         Container(
-          color: Theme.of(context).accentColor,
+          color: Theme.of(context).primaryColor,
           height: saferide_widgets.saferideDefaultHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

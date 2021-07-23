@@ -143,7 +143,7 @@ class SettingsWidget extends StatelessWidget {
             ),
             Builder(
                 builder: (context) => SwitchListTile(
-                      activeColor: Theme.of(context).toggleableActiveColor,
+                      // activeColor: Theme.of(context).toggleableActiveColor,
                       title:
                           Text('Lights Out', style: TextStyle(fontSize: 12.sp)),
                       value: state.prefs.getBool('darkMode')!,
@@ -254,9 +254,9 @@ class SettingsWidget extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0))),
-                      child: Text(
+                      child: const Text(
                         'SIGN OUT',
-                        style: Theme.of(context).textTheme.button,
+                        // style: Theme.of(context).textTheme.button,
                       )),
                 ),
               ],

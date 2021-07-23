@@ -87,7 +87,7 @@ class _ExpandableFabState extends State<ExpandableFab>
           child: InkWell(
             onTap: _toggle,
             child: const Padding(
-              padding:  EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8.0),
               child: Icon(
                 Icons.close,
                 // color: Theme.of(context).primaryColor,
@@ -135,11 +135,11 @@ class _ExpandableFabState extends State<ExpandableFab>
           curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
           duration: const Duration(milliseconds: 250),
           child: FloatingActionButton(
-            backgroundColor: Colors.white,
+            // backgroundColor: Colors.white,
             onPressed: _toggle,
             child: Icon(
               widget.icon,
-              color: Colors.black87,
+              // color: Colors.black87,
             ),
           ),
         ),

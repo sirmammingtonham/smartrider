@@ -273,9 +273,9 @@ class _HomeState extends State<Home> {
         SizedBox(
           height: 20.h,
           child: DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).accentColor,
-            ),
+            // decoration: BoxDecoration(
+            //     //color: Theme.of(context).accentColor,
+            //     ),
             child: Text(
               'Settings',
               style: TextStyle(color: Colors.white, fontSize: 24.sp),

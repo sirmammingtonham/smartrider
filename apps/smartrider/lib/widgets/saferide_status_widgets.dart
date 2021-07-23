@@ -23,9 +23,9 @@ Widget saferideSelectionWidget(
         BuildContext context, SaferideSelectingState state) =>
     Container(
         height: saferideSelectingHeight,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-        ),
+        // decoration: BoxDecoration(
+        //   color: Theme.of(context).primaryColor,
+        // ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Column(
@@ -84,9 +84,9 @@ Widget saferideWaitingWidget(
         BuildContext context, SaferideWaitingState state) =>
     Container(
         height: saferideWaitingHeight,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-        ),
+        // decoration: BoxDecoration(
+        //   color: Theme.of(context).primaryColor,
+        // ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Column(
@@ -112,9 +112,9 @@ Widget saferideWaitingWidget(
                     )),
               ),
               ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Theme.of(context).buttonColor)),
+                // style: ButtonStyle(
+                //     backgroundColor: MaterialStateProperty.all<Color>(
+                //         Theme.of(context).buttonColor)),
                 onPressed: () {
                   BlocProvider.of<SaferideBloc>(context)
                       .add(const SaferideUserCancelledEvent());
@@ -137,9 +137,9 @@ Widget saferidePickingUpWidget(
         BuildContext context, SaferidePickingUpState state) =>
     Container(
       height: saferidePickingUpHeight,
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-      ),
+      // decoration: BoxDecoration(
+      //   color: Theme.of(context).primaryColor,
+      // ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
@@ -186,9 +186,9 @@ Widget saferidePickingUpWidget(
               trailing: Text(state.licensePlate),
             ),
             ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      Theme.of(context).accentColor)),
+              // style: ButtonStyle(
+              //     backgroundColor: MaterialStateProperty.all<Color>(
+              //         Theme.of(context).accentColor)),
               onPressed: () {
                 BlocProvider.of<SaferideBloc>(context)
                     .add(const SaferideUserCancelledEvent());

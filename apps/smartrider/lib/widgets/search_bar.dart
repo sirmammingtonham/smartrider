@@ -225,7 +225,7 @@ class SearchBarState extends State<SearchBar> {
                 description: profileShowcaseMessage,
                 shapeBorder: const CircleBorder(),
                 child: CircleAvatar(
-                  backgroundColor: Theme.of(context).buttonColor,
+                  // backgroundColor: Theme.of(context).buttonColor,
                   child: IconButton(
                     icon: Text(initials,
                         style: const TextStyle(
