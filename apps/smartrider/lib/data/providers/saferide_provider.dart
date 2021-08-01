@@ -56,13 +56,13 @@ class SaferideProvider {
   }
 
   Future<int> estimateWaitTime(double distance) async {
+    // get estimate wait time based on distance from caller
     final distanceInInt = convertDistance(distance);
     final snap = await pastorders.get();
     return snap.docs[0].get('$distanceInInt') as int;
   }
 
   int convertDistance(double distance) {
-    // get estimate wait time based on distance from caller
     // link for number scaling: https://stats.stackexchange.com/questions/281162/scale-a-number-between-a-range
     distance = distance.clamp(1.0, 3300.0);
     final distanceInInt = ((distance / 3300.0) * (5.0) + 0.0).ceil();
@@ -83,9 +83,9 @@ class SaferideProvider {
     final newEstimate = (alpha * A_old + (1 - alpha) * F_old).round();
 
     await refs.docs.first.reference
-        .set({'last$distanceInInt': '$newminutes'}, SetOptions(merge: true));
+        .set({'last$distanceInInt': newminutes}, SetOptions(merge: true));
     await refs.docs.first.reference
-        .set({'$distanceInInt': '$newEstimate'}, SetOptions(merge: true));
+        .set({'$distanceInInt': newEstimate}, SetOptions(merge: true));
   }
 
   Stream<List<PositionData>> getSaferideLocationsStream() =>
