@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// shouldn't be used, just here to show the different status enum values
-// enum _OrderStatus 
+// enum _OrderStatus
 // { WAITING, PICKING_UP, DROPPING_OFF, COMPLETED, CANCELLED, ERROR }
 
 class Order {
@@ -17,7 +17,9 @@ class Order {
       required this.updatedAt,
       this.estimatedPickup,
       required this.queuePosition,
-      this.cancellationReason});
+      required this.pickupTime,
+      this.cancellationReason,
+      });
 
   factory Order.fromSnapshot(DocumentSnapshot snap) {
     final data = (snap.data()! as Map<String, dynamic>);
@@ -33,6 +35,7 @@ class Order {
         updatedAt: data['updated_at']!,
         estimatedPickup: data['estimated_pickup'],
         queuePosition: data['queue_position'],
+        pickupTime: data['pickup_time'],
         cancellationReason:
             data['status'] == 'CANCELLED' ? data['cancel_reason'] : null);
   }
@@ -46,7 +49,7 @@ class Order {
   /// pickup
   final String pickupAddress;
   final GeoPoint pickupPoint;
-
+  final int pickupTime;
   /// dropoff
   final String dropoffAddress;
   final GeoPoint dropoffPoint;
@@ -62,7 +65,7 @@ class Order {
   final Timestamp updatedAt;
 
   /// timestamp of estimated pickup (when status == PICKUP_UP)
-  final Timestamp? estimatedPickup;
+  final int? estimatedPickup;
 
   /// queue position, updated on writes through cloud functions
   final int? queuePosition;

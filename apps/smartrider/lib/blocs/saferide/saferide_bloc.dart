@@ -16,7 +16,7 @@ import 'package:shared/util/strings.dart';
 import 'package:shared/models/saferide/order.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:ntp/ntp.dart';
-
+import 'dart:math';
 part 'saferide_event.dart';
 part 'saferide_state.dart';
 
@@ -59,6 +59,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   String? dropoffAddress, pickupAddress;
   String? dropoffDescription, pickupDescription;
   GeoPoint? dropoffPoint, pickupPoint;
+  double distance = 0.0;
   StreamSubscription? orderSubscription;
 
   @override
@@ -155,6 +156,8 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         break;
       case 'PICKING_UP':
         {
+          // update pastorders once passengers are picked up
+          await saferideRepo.updatePastOrders(distance, order.pickupTime);
           final vehicle = await order.vehicleRef!.get();
           final currentDriver =
               (vehicle.get('current_driver') as Map<String, dynamic>);
@@ -213,13 +216,19 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
     //create order, listen to changes in snapshot, update display vars in state
     if (pickupPoint != null && dropoffPoint != null) {
       yield SaferideLoadingState();
-
+      distance = Geolocator.bearingBetween(
+          pickupPoint!.latitude,
+          pickupPoint!.longitude,
+          dropoffPoint!.latitude,
+          dropoffPoint!.longitude);
+      final waitTime = await saferideRepo.estimateWaitTime(distance);
       final order = await saferideRepo.createNewOrder(
           user: authRepo.getCurrentUserRef!,
           pickupAddress: pickupAddress!,
           pickupPoint: pickupPoint!,
           dropoffAddress: dropoffAddress!,
-          dropoffPoint: dropoffPoint!);
+          dropoffPoint: dropoffPoint!,
+          estimateWaitTime: waitTime);
 
       orderSubscription = order.listen(orderListener);
     } else {

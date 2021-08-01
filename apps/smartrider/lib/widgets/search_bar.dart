@@ -326,7 +326,8 @@ class SearchBarState extends State<SearchBar> {
               case SaferideErrorState:
                 return const Placeholder(); //TODO: fill out these widgets
               default:
-                return const Text('saferide state type error');
+                return Text(
+      'saferide state type error, type is ${saferideState.runtimeType}');
             }
           },
         ),

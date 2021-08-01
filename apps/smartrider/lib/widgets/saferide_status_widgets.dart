@@ -92,10 +92,10 @@ Widget saferideWaitingWidget(
           child: Column(
             children: <Widget>[
               const SizedBox(height: 5),
-              const Center(
+               Center(
                 child: Text(
-                  'TODO: waiting countdown',
-                  style: TextStyle(
+                  'Estimate wait time: ${state.estimatedPickup ?? -1} minutes',
+                  style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
@@ -145,10 +145,10 @@ Widget saferidePickingUpWidget(
         child: Column(
           children: <Widget>[
             const SizedBox(height: 5),
-            const Center(
+            Center(
               child: Text(
-                'TODO: waiting countdown',
-                style: TextStyle(
+                'Estimate wait time: ${state.estimatedPickup ?? -1} minutes',
+                style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),

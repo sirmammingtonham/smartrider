@@ -48,7 +48,7 @@ class SaferideWaitingState extends SaferideState {
   const SaferideWaitingState(
       {required this.queuePosition, this.estimatedPickup});
   final int queuePosition;
-  final Timestamp? estimatedPickup;
+  final int? estimatedPickup;
 
   @override
   List<Object?> get props => [queuePosition, estimatedPickup];
@@ -67,7 +67,7 @@ class SaferidePickingUpState extends SaferideState {
   final String phoneNumber;
   final String licensePlate;
   final int queuePosition;
-  final Timestamp? estimatedPickup;
+  final int? estimatedPickup;
 
   @override
   List<Object?> get props => [

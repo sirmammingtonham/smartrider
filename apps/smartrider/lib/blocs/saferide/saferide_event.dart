@@ -31,7 +31,7 @@ class SaferideWaitingEvent extends SaferideEvent {
       {required this.queuePosition, required this.estimatedPickup});
 
   final int queuePosition;
-  final Timestamp? estimatedPickup;
+  final int? estimatedPickup;
 
   @override
   List<Object?> get props => [queuePosition, estimatedPickup];
@@ -51,7 +51,7 @@ class SaferidePickingUpEvent extends SaferideEvent {
   final String phoneNumber;
   final String licensePlate;
   final int queuePosition;
-  final Timestamp? estimatedPickup;
+  final int? estimatedPickup;
 
   @override
   List<Object?> get props => [
