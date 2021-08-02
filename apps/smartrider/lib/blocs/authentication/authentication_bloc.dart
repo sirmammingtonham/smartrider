@@ -30,11 +30,54 @@ class AuthenticationBloc
         yield* _mapSignUpToState(event as AuthenticationSignUpEvent);
         break;
       case AuthenticationResetPhoneEvent:
+        yield* _mapResetPhoneToState(event as AuthenticationResetPhoneEvent);
         break;
       case AuthenticationResetPasswordEvent:
         break;
       case AuthenticationDeleteEvent:
         break;
+      case AuthenticationPhoneSMSCodeSentEvent:
+        yield AuthenticationVerifyPhoneState(
+            verificationId:
+                (event as AuthenticationPhoneSMSCodeSentEvent).verificationId,
+            resendToken: event.resendToken);
+        break;
+      case AuthenticationPhoneSMSCodeEnteredEvent:
+        {
+          final credential = PhoneAuthProvider.credential(
+              verificationId: (event as AuthenticationPhoneSMSCodeEnteredEvent)
+                  .verificationId,
+              smsCode: event.sms);
+          await FirebaseAuth.instance.signInWithCredential(credential);
+        }
+        break;
+    }
+  }
+
+//create state, put change phone number logic in state
+  Stream<AuthenticationState> _mapResetPhoneToState(
+      AuthenticationResetPhoneEvent event) async* {
+    final user = authRepository.getCurrentUser;
+    final auth = FirebaseAuth.instance;
+    try {
+      await auth.verifyPhoneNumber(
+        phoneNumber: event.newPhoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          await auth.signInWithCredential(credential);
+          await user!.updatePhoneNumber(credential);
+        },
+        verificationFailed: (FirebaseAuthException e) {},
+        codeSent: (String verificationId, int? resendToken) async {
+          //need to prompt ui for sms code
+          //yield new state, profile.dart blocbuilder, if state is verificaation state, have prompt to input
+          add(AuthenticationPhoneSMSCodeSentEvent(
+              verificationId: verificationId, resendToken: resendToken));
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+      );
+    } on FirebaseAuthException catch (e) {
+      yield AuthenticationPhoneFailedState(
+          exception: e, message: 'Invalid SMS Code');
     }
   }
 
@@ -97,6 +140,7 @@ class AuthenticationBloc
     }
   }
 
+// TODO: write functions for
   Stream<AuthenticationState> _mapSignOutToState() async* {
     await authRepository.signOut();
     yield AuthenticationSignedOutState();

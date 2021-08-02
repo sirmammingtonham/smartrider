@@ -1,4 +1,5 @@
 // import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
@@ -21,6 +22,8 @@ abstract class ListItem {
 
   Widget buildSubtitle(BuildContext context);
 }
+// TODO: change phone number, verify phone number
+// TODO: Remove phone number from login, have saferide search bar locked until they put in phone, verify
 
 /// Represents the physical profile page.
 class ProfilePage extends StatefulWidget {
@@ -79,8 +82,31 @@ class _ProfilePageState extends State<ProfilePage> {
     // that result.
 
     const _profilePic = '';
-    return MaterialApp(
-        home: Scaffold(
+    return BlocListener(
+        bloc: BlocProvider.of<AuthenticationBloc>(context),
+        listener: (context, state) async {
+          if (state is AuthenticationVerifyPhoneState) {
+            await showDialog<Dialog>(
+                context: context,
+                builder: (BuildContext context) {
+                  return Dialog(
+                      child: Card(
+                          child: TextFormField(
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Enter SMS Code',
+                        hintText: 'Enter SMS Code'),
+                    onFieldSubmitted: (String str) {
+                      BlocProvider.of<AuthenticationBloc>(context).add(
+                          AuthenticationPhoneSMSCodeEnteredEvent(
+                              verificationId: state.verificationId, sms: str));
+                      Navigator.pop(context);
+                    },
+                  )));
+                });
+          }
+        },
+        child: Scaffold(
           body: Column(
             children: <Widget>[
               const Padding(
@@ -159,7 +185,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: CircleAvatar(
                       radius: 60,
                       backgroundColor: Theme.of(context).backgroundColor,
-                      backgroundImage: const NetworkImage(_profilePic),
+                      // backgroundImage: const NetworkImage(_profilePic),
                       child: (_profilePic == '')
                           ? Text('username',
                               style: TextStyle(
@@ -184,14 +210,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       // Describes the role
                       ListTile(
                           title: const Text('Role'),
-                          subtitle: Text('widget.role!'),
+                          subtitle: const Text('widget.role!'),
                           leading: determinerole('widget.role!')
                               ? const Icon(Icons.book)
                               : const Icon(Icons.drive_eta)),
                       // Describes the user's email
-                      ListTile(
-                        title: const Text('Email'),
-                        leading: const Icon(Icons.email),
+                      const ListTile(
+                        title: Text('Email'),
+                        leading: Icon(Icons.email),
                         subtitle: Text('get.email!'),
                       )
                     ],
@@ -202,6 +228,36 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: EdgeInsets.symmetric(vertical: 10.0),
               ), // adds space between attributes and action buttons
               // Change Password Button
+              ElevatedButton(
+                  onPressed: () async {
+                    await showDialog<Dialog>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            child: Card(
+                              child: TextFormField(
+                                  decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: 'Enter Phone Number',
+                                      hintText: 'Enter Phone Number'),
+                                  onFieldSubmitted: (String str) {
+                                    BlocProvider.of<AuthenticationBloc>(context)
+                                        .add(AuthenticationResetPhoneEvent(
+                                            newPhoneNumber: str));
+                                  }),
+                            ),
+                          );
+                        });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0)),
+                    padding: const EdgeInsets.symmetric(horizontal: 95.0),
+                  ),
+                  child: Text(
+                    'CHANGE PHONE NUMBER',
+                    style: Theme.of(context).textTheme.button,
+                  )),
               ElevatedButton(
                   onPressed: () {
                     //Send an email to the user to request a password change
@@ -311,8 +367,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ],
           ),
-        ),
-        theme: Theme.of(context));
+        ));
   }
 
   /// Determines the assigned role that the user has.

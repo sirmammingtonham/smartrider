@@ -38,14 +38,30 @@ class AuthenticationSignUpEvent extends AuthenticationEvent {
 
 class AuthenticationResetPhoneEvent extends AuthenticationEvent {
   const AuthenticationResetPhoneEvent({
-    required this.email,
-    required this.password,
     required this.newPhoneNumber,
   });
-  final String email, newPhoneNumber, password;
+  final String newPhoneNumber;
 
   @override
-  List<Object> get props => [email, newPhoneNumber, password];
+  List<Object> get props => [newPhoneNumber];
+}
+
+class AuthenticationPhoneSMSCodeEnteredEvent extends AuthenticationEvent {
+  const AuthenticationPhoneSMSCodeEnteredEvent(
+      {required this.verificationId, required this.sms});
+  final String verificationId, sms;
+
+  @override
+  List<Object> get props => [verificationId, sms];
+}
+
+class AuthenticationPhoneSMSCodeSentEvent extends AuthenticationEvent {
+  const AuthenticationPhoneSMSCodeSentEvent({
+    required this.verificationId,
+    required this.resendToken,
+  });
+  final String verificationId;
+  final int? resendToken;
 }
 
 class AuthenticationResetPasswordEvent extends AuthenticationEvent {}

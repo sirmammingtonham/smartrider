@@ -1,5 +1,5 @@
 // ignore_for_file: lines_longer_than_80_chars
-
+// TODO: give a message that you need to verify phone number before calling saferide
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smartrider/pages/welcome.dart';
@@ -111,7 +111,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   children: <Widget>[
                                     Center(
                                       child: Image(
-                                        image: const AssetImage('assets/onboarding_images/logo_v2.png'),
+                                        image: const AssetImage(
+                                            'assets/onboarding_images/logo_v2.png'),
                                         height: 42.h,
                                         width: 87.w,
                                       ),

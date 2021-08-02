@@ -58,9 +58,8 @@ class WelcomeScreen extends StatelessWidget {
               case AuthenticationAwaitVerificationState:
                 return const AuthenticationUI();
               case AuthenticationSignedInState:
-                return homePage;
               default:
-                return Container();
+                return homePage;
             }
           },
         ),

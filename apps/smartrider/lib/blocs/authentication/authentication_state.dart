@@ -47,3 +47,28 @@ class AuthenticationFailedState extends AuthenticationState {
   @override
   List<Object> get props => [exception, message];
 }
+
+class AuthenticationPhoneFailedState extends AuthenticationState {
+  const AuthenticationPhoneFailedState({
+    required this.exception,
+    required this.message,
+  });
+
+  final FirebaseAuthException exception;
+  final String message;
+
+  @override
+  List<Object> get props => [exception, message];
+}
+
+//create phone reset state,
+class AuthenticationVerifyPhoneState extends AuthenticationState {
+  const AuthenticationVerifyPhoneState({
+    required this.verificationId,
+    required this.resendToken,
+  });
+  final String verificationId;
+  final int? resendToken;
+  @override
+  List<Object?> get props => [verificationId, resendToken];
+}
