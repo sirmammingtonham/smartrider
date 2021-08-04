@@ -189,7 +189,8 @@ class SearchBarState extends State<SearchBar> {
     }
   }
 
-  Widget searchBar(SaferideState saferideState, PrefsState prefsState) =>
+  Widget searchBar(SaferideState saferideState, PrefsState prefsState,
+          AuthenticationState authState) =>
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         height: 7.5.h,
@@ -218,7 +219,14 @@ class SearchBarState extends State<SearchBar> {
                 shapeBorder: const RoundedRectangleBorder(),
                 child: SizedBox(
                     width: MediaQuery.of(context).size.width - 150,
-                    child: searchField(saferideState)),
+                    child:
+                        (authState as AuthenticationSignedInState).phoneVerified
+                            ? searchField(saferideState)
+                            : Container(
+                                child: Center(
+                                child: Text('bruh'),
+                              ))),
+// TODO: phone verification button
               ),
               Showcase(
                 key: showcaseProfile,
@@ -310,7 +318,7 @@ class SearchBarState extends State<SearchBar> {
 
             assert(authState is AuthenticationSignedInState);
             initials = computeInitials(
-              (authState as AuthenticationSignedInState).email,
+              (authState as AuthenticationSignedInState).user.email!,
             );
 
             switch (saferideState.runtimeType) {
@@ -318,7 +326,7 @@ class SearchBarState extends State<SearchBar> {
               case SaferideWaitingState:
               case SaferidePickingUpState:
               case SaferideDroppingOffState:
-                return searchBar(saferideState, prefState);
+                return searchBar(saferideState, prefState, authState);
               case SaferideSelectingState:
                 return saferideSelectionWidget(
                     context, saferideState as SaferideSelectingState);
@@ -327,7 +335,7 @@ class SearchBarState extends State<SearchBar> {
                 return const Placeholder(); //TODO: fill out these widgets
               default:
                 return Text(
-      'saferide state type error, type is ${saferideState.runtimeType}');
+                    'saferide state type error, type is ${saferideState.runtimeType}');
             }
           },
         ),

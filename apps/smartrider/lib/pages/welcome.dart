@@ -79,7 +79,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
   late final TextEditingController passwordConfirmController;
-  late final TextEditingController phoneController;
+  // late final TextEditingController phoneController;
   late final GlobalKey<FormState> formKey;
   bool obscurePassword = true;
 
@@ -91,7 +91,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
     emailController = TextEditingController();
     passwordController = TextEditingController();
     passwordConfirmController = TextEditingController();
-    phoneController = TextEditingController();
+    // phoneController = TextEditingController();
     formKey = GlobalKey<FormState>();
   }
 
@@ -232,7 +232,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
       BlocProvider.of<AuthenticationBloc>(context)
           .add(AuthenticationSignUpEvent(
         email: emailController.text.trim(),
-        phoneNumber: phoneController.text.trim(),
+        // phoneNumber: phoneController.text.trim(),
         password: passwordController.text.trim(),
       ));
     }
@@ -274,17 +274,17 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
     }
   }
 
-  String? phoneValidation(String? value) {
-    if (value == null) return 'uh oh... null';
-    value = value.trim();
-    if (value.isEmpty) {
-      return 'Please enter a phone number.';
-    } else if (!phoneRegex.hasMatch(value)) {
-      return 'Your passwords don\'t match!';
-    } else {
-      return null;
-    }
-  }
+  // String? phoneValidation(String? value) {
+  //   if (value == null) return 'uh oh... null';
+  //   value = value.trim();
+  //   if (value.isEmpty) {
+  //     return 'Please enter a phone number.';
+  //   } else if (!phoneRegex.hasMatch(value)) {
+  //     return 'Your passwords don\'t match!';
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   void showAuthenticationSheet({
     required BuildContext context,
@@ -447,13 +447,13 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                       controller: emailController,
                       validator: emailValidation,
                     ),
-                    formInputField(
-                      context: context,
-                      icon: const Icon(Icons.phone_iphone),
-                      hint: 'Phone Number',
-                      controller: phoneController,
-                      validator: phoneValidation,
-                    ),
+                    // formInputField(
+                    //   context: context,
+                    //   icon: const Icon(Icons.phone_iphone),
+                    //   hint: 'Phone Number',
+                    //   controller: phoneController,
+                    //   validator: phoneValidation,
+                    // ),
                     StatefulBuilder(
                       builder: (context, setPasswordState) => formInputField(
                         context: context,

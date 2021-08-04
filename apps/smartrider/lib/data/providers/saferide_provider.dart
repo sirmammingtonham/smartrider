@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared/models/saferide/position_data.dart';
-import 'dart:math';
 
 // saferide models
 // import 'package:shared/models/saferide/order.dart';
@@ -21,20 +20,20 @@ class SaferideProvider {
   // fill in the fields specified in order.dart
   // with the orders collection in the firebase
   Future<Stream<DocumentSnapshot>> createOrder(
-      {required DocumentReference user,
-      required String pickupAddress,
+      {required String pickupAddress,
       required GeoPoint pickupPoint,
       required String dropoffAddress,
       required GeoPoint dropoffPoint,
       required int estimateWaitTime}) async {
-    final ref = orders.doc(auth.currentUser!.uid);
+    final uid = auth.currentUser!.uid;
+    final ref = orders.doc(uid);
     await ref.set({
       'status': 'WAITING',
       'pickup_address': pickupAddress,
       'pickup_point': pickupPoint,
       'dropoff_address': dropoffAddress,
       'dropoff_point': dropoffPoint,
-      'rider': user,
+      'rider': uid,
       'updated_at': FieldValue.serverTimestamp(),
       'estimated_pickup': estimateWaitTime,
       'pickup_time': DateTime.now().millisecondsSinceEpoch

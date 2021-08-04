@@ -166,7 +166,6 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
           // so we can test on multiple device sizes
           locale: DevicePreview.locale(context),
           builder: DevicePreview.appBuilder,
-
           debugShowCheckedModeBanner: false,
           title: 'smartrider Prototype',
           theme: state.theme,

@@ -22,17 +22,16 @@ class AuthenticationSignedOutState extends AuthenticationState {}
 class AuthenticationSignedInState extends AuthenticationState {
   const AuthenticationSignedInState({
     required this.user,
-    required this.email,
-    required this.phoneNumber,
+    required this.emailVerified,
     required this.phoneVerified,
   });
 
   final User user;
-  final String email, phoneNumber;
+  final bool emailVerified; // should always be true, here for symmetry lol
   final bool phoneVerified;
 
   @override
-  List<Object> get props => [user, email, phoneNumber, phoneVerified];
+  List<Object> get props => [user, emailVerified, phoneVerified];
 }
 
 class AuthenticationFailedState extends AuthenticationState {

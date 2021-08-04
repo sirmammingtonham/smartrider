@@ -174,7 +174,7 @@ Widget saferidePickingUpWidget(
                 color: Colors.white,
               ),
               onTap: () {
-                launch('tel://${state.phoneNumber}');
+                launch('tel://${state.driverPhone}');
               },
             ),
             const Divider(

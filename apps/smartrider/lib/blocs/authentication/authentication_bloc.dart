@@ -68,8 +68,9 @@ class AuthenticationBloc
         },
         verificationFailed: (FirebaseAuthException e) {},
         codeSent: (String verificationId, int? resendToken) async {
-          //need to prompt ui for sms code
-          //yield new state, profile.dart blocbuilder, if state is verificaation state, have prompt to input
+          //TODO: need to prompt ui for sms code
+          //yield new state, profile.dart blocbuilder, if state is
+          //verificaation state, have prompt to input
           add(AuthenticationPhoneSMSCodeSentEvent(
               verificationId: verificationId, resendToken: resendToken));
         },
@@ -88,12 +89,10 @@ class AuthenticationBloc
         yield AuthenticationAwaitVerificationState();
         return;
       }
-      final userData = await authRepository.getCurrentUserData;
       yield AuthenticationSignedInState(
         user: authRepository.getCurrentUser!,
-        email: userData!['email'],
-        phoneNumber: userData['phone'],
-        phoneVerified: userData['phone_verified'],
+        emailVerified: authRepository.isEmailVerified,
+        phoneVerified: authRepository.isPhoneVerified,
       );
     } else {
       yield AuthenticationSignedOutState();
@@ -111,12 +110,11 @@ class AuthenticationBloc
 
       if (user != null) {
         if (user.emailVerified) {
-          final userData = await authRepository.getCurrentUserData;
           yield AuthenticationSignedInState(
-              user: authRepository.getCurrentUser!,
-              email: userData!['email'],
-              phoneNumber: userData['phone'],
-              phoneVerified: userData['phone_verified']);
+            user: authRepository.getCurrentUser!,
+            emailVerified: authRepository.isEmailVerified,
+            phoneVerified: authRepository.isPhoneVerified,
+          );
         } else {
           await user.sendEmailVerification();
           yield AuthenticationAwaitVerificationState();
@@ -151,7 +149,6 @@ class AuthenticationBloc
     try {
       await authRepository.signUp(
         email: event.email,
-        phoneNumber: event.phoneNumber,
         password: event.password,
       );
       yield AuthenticationAwaitVerificationState();

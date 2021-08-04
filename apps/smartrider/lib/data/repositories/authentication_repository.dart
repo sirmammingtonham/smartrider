@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smartrider/data/providers/authentication_provider.dart';
 
@@ -10,11 +9,9 @@ class AuthenticationRepository {
 
   User? get getCurrentUser => _authProvider.getCurrentUser;
 
-  DocumentReference? get getCurrentUserRef => _authProvider.getCurrentUserRef();
-  Future<DocumentSnapshot?> get getCurrentUserData async =>
-      _authProvider.getCurrentUserData();
-
   bool get isSignedIn => _authProvider.isSignedIn;
+  bool get isEmailVerified => _authProvider.isEmailVerified;
+  bool get isPhoneVerified => _authProvider.isPhoneVerified;
 
   Stream<User?> get userChangeStream => _authProvider.userChangeStream;
 
@@ -28,8 +25,7 @@ class AuthenticationRepository {
 
   Future<UserCredential> signUp({
     required String email,
-    required String phoneNumber,
     required String password,
   }) async =>
-      _authProvider.signUp(email, phoneNumber, password);
+      _authProvider.signUp(email, password);
 }

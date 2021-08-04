@@ -98,7 +98,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
           yield SaferidePickingUpState(
               vehicleId: (event as SaferidePickingUpEvent).vehicleId,
               licensePlate: event.licensePlate,
-              phoneNumber: event.phoneNumber,
+              driverPhone: event.driverPhone,
               driverName: event.driverName,
               queuePosition: event.queuePosition,
               estimatedPickup: event.estimatedPickup);
@@ -164,7 +164,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
           add(SaferidePickingUpEvent(
               vehicleId: vehicle.id,
               driverName: currentDriver['name']! as String,
-              phoneNumber: currentDriver['phone_number']! as String,
+              driverPhone: currentDriver['phone_number']! as String,
               licensePlate: vehicle.get('license_plate') as String,
               queuePosition: order.queuePosition ?? -1,
               estimatedPickup: order.estimatedPickup));
@@ -223,7 +223,6 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
           dropoffPoint!.longitude);
       final waitTime = await saferideRepo.estimateWaitTime(distance);
       final order = await saferideRepo.createNewOrder(
-          user: authRepo.getCurrentUserRef!,
           pickupAddress: pickupAddress!,
           pickupPoint: pickupPoint!,
           dropoffAddress: dropoffAddress!,
