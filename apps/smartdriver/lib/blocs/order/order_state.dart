@@ -11,9 +11,8 @@ abstract class OrderState extends Equatable {
 
 /// State when driver is waiting to accept an order
 class OrderWaitingState extends OrderState {
-  const OrderWaitingState({this.latest, this.latestRider, this.queue});
+  const OrderWaitingState({this.latest, this.queue});
   final Order? latest;
-  final SRUser? latestRider;
   final Iterable<Order>? queue;
 
   @override
@@ -21,21 +20,19 @@ class OrderWaitingState extends OrderState {
 }
 
 class OrderPickingUpState extends OrderState {
-  const OrderPickingUpState({required this.order, required this.rider});
+  const OrderPickingUpState({required this.order});
   final Order order;
-  final SRUser rider;
 
   @override
-  List<Object?> get props => [order, rider];
+  List<Object?> get props => [order];
 }
 
 class OrderDroppingOffState extends OrderState {
-  const OrderDroppingOffState({required this.order, required this.rider});
+  const OrderDroppingOffState({required this.order});
   final Order order;
-  final SRUser rider;
 
   @override
-  List<Object?> get props => [order, rider];
+  List<Object?> get props => [order];
 }
 
 class OrderCancelledState extends OrderState {}

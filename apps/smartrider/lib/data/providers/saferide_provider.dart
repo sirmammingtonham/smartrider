@@ -25,15 +25,16 @@ class SaferideProvider {
       required String dropoffAddress,
       required GeoPoint dropoffPoint,
       required int estimateWaitTime}) async {
-    final uid = auth.currentUser!.uid;
-    final ref = orders.doc(uid);
+    final user = auth.currentUser!;
+    final ref = orders.doc(user.uid);
     await ref.set({
       'status': 'WAITING',
       'pickup_address': pickupAddress,
       'pickup_point': pickupPoint,
       'dropoff_address': dropoffAddress,
       'dropoff_point': dropoffPoint,
-      'rider': uid,
+      'rider_email': user.email!,
+      'rider_phone': user.phoneNumber!,
       'updated_at': FieldValue.serverTimestamp(),
       'estimated_pickup': estimateWaitTime,
       'pickup_time': DateTime.now().millisecondsSinceEpoch

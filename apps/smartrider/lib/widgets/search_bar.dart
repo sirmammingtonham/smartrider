@@ -109,7 +109,26 @@ class SearchBarState extends State<SearchBar> {
         });
   }
 
-  Widget searchField(SaferideState saferideState) {
+  Widget searchField(
+    AuthenticationSignedInState authState,
+    SaferideState saferideState,
+  ) {
+    if (!authState.phoneVerified) {
+      return TextField(
+          readOnly: true,
+          onTap: () {
+            Navigator.push<ProfilePage>(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProfilePage(
+                          initials: initials,
+                        )));
+          },
+          decoration: const InputDecoration(
+            border: UnderlineInputBorder(),
+            hintText: 'Verify phone to use safe ride!',
+          ));
+    }
     switch (saferideState.runtimeType) {
       case SaferideNoState:
         // This only calls dateTime.now() once when everything is built
@@ -167,21 +186,21 @@ class SearchBarState extends State<SearchBar> {
         return const TextField(
             enabled: false,
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
+              border: UnderlineInputBorder(),
               hintText: 'Waiting for an available driver!',
             ));
       case SaferidePickingUpState:
         return const TextField(
             enabled: false,
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
+              border: UnderlineInputBorder(),
               hintText: 'Driver is on their way!',
             ));
       case SaferideDroppingOffState:
         return const TextField(
             enabled: false,
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
+              border: UnderlineInputBorder(),
               hintText: 'Have a safe ride 😄',
             ));
       default:
@@ -218,35 +237,38 @@ class SearchBarState extends State<SearchBar> {
                 description: searchbarShowcaseMessage,
                 shapeBorder: const RoundedRectangleBorder(),
                 child: SizedBox(
-                    width: MediaQuery.of(context).size.width - 150,
-                    child:
-                        (authState as AuthenticationSignedInState).phoneVerified
-                            ? searchField(saferideState)
-                            : Container(
-                                child: Center(
-                                child: Text('bruh'),
-                              ))),
+                  width: MediaQuery.of(context).size.width - 150,
+                  child: searchField(
+                    authState as AuthenticationSignedInState,
+                    saferideState,
+                  ),
 // TODO: phone verification button
+                ),
               ),
               Showcase(
                 key: showcaseProfile,
                 description: profileShowcaseMessage,
                 shapeBorder: const CircleBorder(),
-                child: CircleAvatar(
-                  // backgroundColor: Theme.of(context).buttonColor,
-                  child: IconButton(
-                    icon: Text(initials,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push<ProfilePage>(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfilePage(
+                                  initials: initials,
+                                )));
+                  },
+                  child: Hero(
+                    tag: 'circleAvatar',
+                    child: CircleAvatar(
+                      child: Text(
+                        initials,
                         style: const TextStyle(
-                            fontSize: 15, color: Colors.white70)),
-                    onPressed: () {
-                      Navigator.push<ProfilePage>(
-                          context,
-                          MaterialPageRoute(
-// TODO: hero animation
-                              builder: (context) => ProfilePage(
-                                    title: initials,
-                                  )));
-                    },
+                          fontSize: 15,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               )

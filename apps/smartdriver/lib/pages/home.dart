@@ -5,6 +5,7 @@ import 'package:maps_launcher/maps_launcher.dart';
 import 'package:sizer/sizer.dart';
 import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
 import 'package:smartdriver/blocs/order/order_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.title}) : super(key: key);
@@ -82,8 +83,8 @@ class _HomeState extends State<Home> {
                       visualDensity:
                           const VisualDensity(horizontal: 0, vertical: -4),
                       leading: const Icon(Icons.face),
-                      title: Text(state.latestRider!.name),
-                      subtitle: const Text('Rider\'s name'),
+                      title: Text(state.latest!.riderEmail),
+                      subtitle: const Text('Rider\'s RCS Id'),
                     ),
                     ListTile(
                       leading: const Icon(Icons.add_location_alt_rounded),
@@ -100,10 +101,8 @@ class _HomeState extends State<Home> {
                       children: <Widget>[
                         TextButton(
                           onPressed: () {
-                            BlocProvider.of<OrderBloc>(context).add(
-                                OrderAcceptedEvent(
-                                    order: state.latest!,
-                                    rider: state.latestRider!));
+                            BlocProvider.of<OrderBloc>(context)
+                                .add(OrderAcceptedEvent(order: state.latest!));
                           },
                           child: const Text('ACCEPT'),
                         ),
@@ -136,7 +135,7 @@ class _HomeState extends State<Home> {
                 shrinkWrap: true,
                 children: state.queue!
                     .map((order) => ListTile(
-                        title: Text(order.rider.id),
+                        title: Text(order.riderEmail),
                         subtitle: Text(order.status),
                         trailing: const Icon(Icons.bookmark)))
                     .toList())
@@ -158,7 +157,7 @@ class _HomeState extends State<Home> {
           children: [
             Center(
               child: Text(
-                'Picking up ${state.rider.name}',
+                'Picking up ${state.order.riderEmail}',
                 style:
                     const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
@@ -169,8 +168,17 @@ class _HomeState extends State<Home> {
             ListTile(
               visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
               leading: const Icon(Icons.face),
-              title: Text(state.rider.name),
+              title: Text(state.order.riderEmail),
               subtitle: const Text('Rider\'s name'),
+            ),
+            ListTile(
+              visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+              leading: const Icon(Icons.phone_iphone),
+              title: Text(state.order.riderPhone),
+              subtitle: const Text('Tap to Call Rider'),
+              onTap: () {
+                launch('tel://${state.order.riderPhone}');
+              },
             ),
             ListTile(
               leading: const Icon(Icons.add_location_alt_rounded),
@@ -187,9 +195,8 @@ class _HomeState extends State<Home> {
                 TextButton(
                   onPressed: () {
                     //TODO: maybe require a confirmation dialogue?
-                    BlocProvider.of<OrderBloc>(context).add(
-                        OrderReachedPickupEvent(
-                            order: state.order, rider: state.rider));
+                    BlocProvider.of<OrderBloc>(context)
+                        .add(OrderReachedPickupEvent(order: state.order));
                   },
                   child: const Text('REACHED PICKUP'),
                 ),
@@ -219,7 +226,7 @@ class _HomeState extends State<Home> {
           children: [
             Center(
               child: Text(
-                'Dropping off ${state.rider.name}',
+                'Dropping off ${state.order.riderEmail}',
                 style:
                     const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
@@ -230,7 +237,7 @@ class _HomeState extends State<Home> {
             ListTile(
               visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
               leading: const Icon(Icons.face),
-              title: Text(state.rider.name),
+              title: Text(state.order.riderEmail),
               subtitle: const Text('Rider\'s name'),
             ),
             ListTile(
@@ -247,9 +254,8 @@ class _HomeState extends State<Home> {
                 TextButton(
                   onPressed: () {
                     //TODO: maybe require a confirmation dialogue?
-                    BlocProvider.of<OrderBloc>(context).add(
-                        OrderReachedDropoffEvent(
-                            order: state.order, rider: state.rider));
+                    BlocProvider.of<OrderBloc>(context)
+                        .add(OrderReachedDropoffEvent(order: state.order));
                   },
                   child: const Text('REACHED DROPOFF'),
                 ),
