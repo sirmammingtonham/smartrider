@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:shared/util/errors.dart';
 import 'package:shared/models/saferide/order.dart';
-import 'package:smartdriver/data/repositories/authentication_repository.dart';
-import 'package:smartdriver/data/repositories/order_repository.dart';
+import 'package:smartdriver/blocs/authentication/data/authentication_repository.dart';
+import 'package:smartdriver/blocs/order/data/order_repository.dart';
 
 part 'order_event.dart';
 part 'order_exception.dart';

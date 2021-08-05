@@ -4,7 +4,7 @@ import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/models/bus/bus_stop.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
 
-import '../providers/bus_provider.dart';
+import 'bus_provider.dart';
 
 /// Repo class that retrieves data from provider class methods and
 /// distributes the data to BLoC pattern

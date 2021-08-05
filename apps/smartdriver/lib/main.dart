@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
 import 'package:smartdriver/blocs/location/location_bloc.dart';
 import 'package:smartdriver/blocs/order/order_bloc.dart';
-import 'package:smartdriver/data/repositories/authentication_repository.dart';
-import 'package:smartdriver/data/repositories/order_repository.dart';
+import 'package:smartdriver/blocs/authentication/data/authentication_repository.dart';
+import 'package:smartdriver/blocs/order/data/order_repository.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 

@@ -10,7 +10,7 @@ import 'package:shared/models/shuttle/shuttle_stop.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 
 import 'package:shared/models/bus/bus_timetable.dart';
-import 'package:smartrider/data/repositories/bus_repository.dart';
+import 'package:smartrider/blocs/map/data/bus_repository.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

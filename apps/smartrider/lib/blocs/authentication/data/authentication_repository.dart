@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:smartrider/data/providers/authentication_provider.dart';
+import 'package:smartrider/blocs/authentication/data/authentication_provider.dart';
 
 class AuthenticationRepository {
   AuthenticationRepository.create();

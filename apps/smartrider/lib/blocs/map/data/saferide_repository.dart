@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared/models/saferide/position_data.dart';
-import 'package:smartrider/data/providers/saferide_provider.dart';
+import 'package:smartrider/blocs/map/data/saferide_provider.dart';
 
 class SaferideRepository {
   SaferideRepository.create();
