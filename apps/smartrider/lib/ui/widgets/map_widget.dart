@@ -64,11 +64,11 @@ class SmartriderMap extends StatelessWidget {
   Widget viewFab(BuildContext context, IconData icon) {
     final mapBloc = BlocProvider.of<MapBloc>(context);
     return SizedBox(
-      height: 16.h,
-      width: 16.h,
+      height: 143,
+      width: 143,
       child: ExpandableFab(
         icon: icon,
-        distance: 19.w,
+        distance: 80.0,
         children: [
           ActionButton(
             tooltip: 'Bus View',

@@ -17,7 +17,8 @@ class Legend extends StatefulWidget {
 
 class _LegendState extends State<Legend> with TickerProviderStateMixin {
   bool _isExpanded = false;
-  static const double fabSize = 56;
+  static const double fabSize = 56.0;
+  static const double iconSize = 24.0;
 
   @override
   void initState() {
@@ -121,7 +122,6 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MapBloc, MapState>(builder: (context, state) {
-      final iconSize = Theme.of(context).iconTheme.size;
       final Widget legend;
       final double height;
       final double width;
@@ -144,8 +144,8 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                 _legendRouteTile(
                     title: 'CDTA Express', color: busColors['288']!),
               ]);
-              height = 23.h;
-              width = 40.w;
+              height = 185.0;
+              width = 170.0;
             }
             break;
           case MapView.kShuttleView:
@@ -171,9 +171,8 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                     size: iconSize),
                 ...routeTiles
               ]);
-              // add 3% screen height for each additional tile
-              height = (11 + 3 * routeTiles.length).h;
-              width = 45.w;
+              height = 82.0 + (25 * routeTiles.length);
+              width = 190.0;
             }
             break;
           case MapView.kSaferideView:
@@ -197,8 +196,8 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                     asset: 'assets/map_icons/marker_dropoff.svg',
                     size: iconSize)
               ]);
-              height = 17.h;
-              width = 45.w;
+              height = 140.0;
+              width = 185.0;
             }
             break;
         }

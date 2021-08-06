@@ -71,7 +71,7 @@ class SearchBarState extends State<SearchBar> {
                     textFieldConfiguration: TextFieldConfiguration(
                         autofocus: false,
                         decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
+                            border: const UnderlineInputBorder(),
                             contentPadding: const EdgeInsets.only(left: 10),
                             hintText: message)),
                     suggestionsCallback: (pattern) async {
@@ -142,7 +142,7 @@ class SearchBarState extends State<SearchBar> {
           return const TextField(
             enabled: false,
             decoration: InputDecoration(
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
                 hintText: 'Saferide starts at 7 p.m.'),
           );
         } else {
@@ -153,7 +153,7 @@ class SearchBarState extends State<SearchBar> {
             textFieldConfiguration: const TextFieldConfiguration(
                 autofocus: false,
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: UnderlineInputBorder(),
                     hintText: 'Need a safe ride?')),
             suggestionsCallback: (pattern) async {
               if (pattern.isEmpty) {
@@ -212,7 +212,7 @@ class SearchBarState extends State<SearchBar> {
           AuthenticationState authState) =>
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        height: 7.5.h,
+        height: 75,
         child: Material(
           borderRadius: BorderRadius.circular(10.0),
           elevation: 6.0,
