@@ -23,10 +23,10 @@ import 'package:smartrider/blocs/map/data/saferide_repository.dart';
 import 'package:smartrider/blocs/map/data/shuttle_repository.dart';
 
 // page imports
-import 'package:smartrider/pages/welcome.dart';
-import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/ui/welcome.dart';
+import 'package:smartrider/ui/home.dart';
 import 'package:showcaseview/showcaseview.dart';
-import 'package:smartrider/pages/onboarding.dart';
+import 'package:smartrider/ui/onboarding.dart';
 
 // test imports
 // import 'package:cloud_firestore/cloud_firestore.dart';

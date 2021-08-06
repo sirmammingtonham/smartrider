@@ -9,9 +9,9 @@
 // import 'package:flutter_test/flutter_test.dart';
 
 // import 'package:smartrider/main.dart';
-// import 'package:smartrider/pages/home.dart';
-// import 'package:smartrider/pages/sliding_panel_page.dart';
-// import 'package:smartrider/widgets/map_widget.dart';
+// import 'package:smartrider/ui/home.dart';
+// import 'package:smartrider/ui/sliding_panel_page.dart';
+// import 'package:smartrider/ui/widgets/map_widget.dart';
 
 // void main() {
 //   testWidgets('Test build properly', (WidgetTester tester) async {
