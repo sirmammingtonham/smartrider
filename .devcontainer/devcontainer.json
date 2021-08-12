@@ -2,7 +2,7 @@
     "name": "Flutter Dev Env",
     "image": "matspfeiffer/flutter",
     "settings": {
-	"terminal.integrated.automationShell.linux": null
+	"terminal.integrated.automationShell.linux": "/bin/wsl"
     },
     "extensions": [
         "dart-code.dart-code",

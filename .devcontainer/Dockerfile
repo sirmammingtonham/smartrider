@@ -58,11 +58,17 @@ RUN curl -o flutter.tar.xz $FLUTTER_URL \
   && flutter precache \
   && yes "y" | flutter doctor --android-licenses \
   && flutter doctor \
-  && flutter emulators --create \
-  && flutter update-packages
+  && flutter emulators --create Pixel_3_API_30\
+  && flutter update-packages \
+  && flutter pub get
 
 COPY entrypoint.sh /usr/local/bin/
 COPY chown.sh /usr/local/bin/
 COPY flutter-android-emulator.sh /usr/local/bin/flutter-android-emulator
 COPY flutter-web.sh /usr/local/bin/flutter-web
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
+
+# TODO: Have emulator run after setup
+RUN cd smartrider/apps/smartrider \
+  && flutter emulators --launch flutter_emulator \
+  && flutter run
