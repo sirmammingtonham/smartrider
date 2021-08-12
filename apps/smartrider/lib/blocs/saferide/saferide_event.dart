@@ -41,14 +41,14 @@ class SaferidePickingUpEvent extends SaferideEvent {
   const SaferidePickingUpEvent(
       {required this.vehicleId,
       required this.driverName,
-      required this.phoneNumber,
+      required this.driverPhone,
       required this.licensePlate,
       required this.queuePosition,
       required this.estimatedPickup});
 
   final String vehicleId;
   final String driverName;
-  final String phoneNumber;
+  final String driverPhone;
   final String licensePlate;
   final int queuePosition;
   final int? estimatedPickup;
@@ -57,7 +57,7 @@ class SaferidePickingUpEvent extends SaferideEvent {
   List<Object?> get props => [
         vehicleId,
         driverName,
-        phoneNumber,
+        driverPhone,
         licensePlate,
         queuePosition,
         estimatedPickup

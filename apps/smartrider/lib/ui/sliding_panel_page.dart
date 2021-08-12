@@ -11,14 +11,14 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 // loading custom widgets and data
 import 'package:showcaseview/showcaseview.dart';
 import 'package:shared/util/messages.dart';
-import 'package:smartrider/widgets/saferide_status_widgets.dart'
+import 'package:smartrider/ui/widgets/saferide_status_widgets.dart'
     as saferide_widgets;
-// import 'package:smartrider/widgets/shuttle_schedules/shuttle_timeline.dart';
-// import 'package:smartrider/widgets/shuttle_schedules/shuttle_table.dart';
-import 'package:smartrider/widgets/shuttle_schedules/shuttle_unavailable.dart';
-import 'package:smartrider/widgets/bus_schedules/bus_timeline.dart';
-import 'package:smartrider/widgets/bus_schedules/bus_table.dart';
-import 'package:smartrider/pages/home.dart';
+// import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_timeline.dart';
+// import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_table.dart';
+import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_unavailable.dart';
+import 'package:smartrider/ui/widgets/bus_schedules/bus_timeline.dart';
+import 'package:smartrider/ui/widgets/bus_schedules/bus_table.dart';
+import 'package:smartrider/ui/home.dart';
 
 class PanelPage extends StatelessWidget {
   PanelPage({Key? key, required this.panelScrollController}) : super(key: key);

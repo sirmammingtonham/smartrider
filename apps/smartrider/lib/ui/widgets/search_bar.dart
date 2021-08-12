@@ -8,14 +8,14 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:shared/util/messages.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
 
-import 'package:smartrider/pages/profile.dart';
-import 'package:smartrider/widgets/icons.dart';
+import 'package:smartrider/ui/profile.dart';
+import 'package:smartrider/ui/widgets/icons.dart';
 
 // auth bloc import
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 
 // import map background
-import 'package:smartrider/pages/settings.dart';
+import 'package:smartrider/ui/settings.dart';
 
 // import places api
 import 'package:google_maps_webservice/geocoding.dart';
@@ -23,7 +23,7 @@ import 'package:google_maps_webservice/places.dart';
 
 // import 'dart:io';
 import 'package:shared/util/strings.dart';
-import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/ui/home.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:sizer/sizer.dart';
 
@@ -71,7 +71,7 @@ class SearchBarState extends State<SearchBar> {
                     textFieldConfiguration: TextFieldConfiguration(
                         autofocus: false,
                         decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
+                            border: const UnderlineInputBorder(),
                             contentPadding: const EdgeInsets.only(left: 10),
                             hintText: message)),
                     suggestionsCallback: (pattern) async {
@@ -142,7 +142,7 @@ class SearchBarState extends State<SearchBar> {
           return const TextField(
             enabled: false,
             decoration: InputDecoration(
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
                 hintText: 'Saferide starts at 7 p.m.'),
           );
         } else {
@@ -153,7 +153,7 @@ class SearchBarState extends State<SearchBar> {
             textFieldConfiguration: const TextFieldConfiguration(
                 autofocus: false,
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: UnderlineInputBorder(),
                     hintText: 'Need a safe ride?')),
             suggestionsCallback: (pattern) async {
               if (pattern.isEmpty) {
@@ -212,7 +212,7 @@ class SearchBarState extends State<SearchBar> {
           AuthenticationState authState) =>
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        height: 7.5.h,
+        height: 75,
         child: Material(
           borderRadius: BorderRadius.circular(10.0),
           elevation: 6.0,

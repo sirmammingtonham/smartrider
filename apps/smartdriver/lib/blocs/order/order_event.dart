@@ -19,30 +19,27 @@ class OrderQueueUpdateEvent extends OrderEvent {
 }
 
 class OrderAcceptedEvent extends OrderEvent {
-  const OrderAcceptedEvent({required this.order, required this.rider});
+  const OrderAcceptedEvent({required this.order});
   final Order order;
-  final SRUser rider;
 
   @override
-  List<Object?> get props => [order, rider];
+  List<Object?> get props => [order];
 }
 
 class OrderReachedPickupEvent extends OrderEvent {
-  const OrderReachedPickupEvent({required this.order, required this.rider});
+  const OrderReachedPickupEvent({required this.order});
   final Order order;
-  final SRUser rider;
 
   @override
-  List<Object?> get props => [order, rider];
+  List<Object?> get props => [order];
 }
 
 class OrderReachedDropoffEvent extends OrderEvent {
-  const OrderReachedDropoffEvent({required this.order, required this.rider});
+  const OrderReachedDropoffEvent({required this.order});
   final Order order;
-  final SRUser rider;
 
   @override
-  List<Object?> get props => [order, rider];
+  List<Object?> get props => [order];
 }
 
 class OrderUserCancelledEvent extends OrderEvent {

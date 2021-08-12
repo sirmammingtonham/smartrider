@@ -2,11 +2,10 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:shared/models/authentication/user.dart';
 import 'package:shared/util/errors.dart';
 import 'package:shared/models/saferide/order.dart';
-import 'package:smartdriver/data/repositories/authentication_repository.dart';
-import 'package:smartdriver/data/repositories/order_repository.dart';
+import 'package:smartdriver/blocs/authentication/data/authentication_repository.dart';
+import 'package:smartdriver/blocs/order/data/order_repository.dart';
 
 part 'order_event.dart';
 part 'order_exception.dart';
@@ -84,9 +83,10 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
   Stream<OrderState> _mapQueueUpdateToState(
       OrderQueueUpdateEvent event) async* {
-    final rider = SRUser.fromSnapshot(await event.latest.rider.get());
     yield OrderWaitingState(
-        latest: event.latest, latestRider: rider, queue: event.queue);
+      latest: event.latest,
+      queue: event.queue,
+    );
   }
 
   Stream<OrderState> _mapOrderAcceptedToState(OrderAcceptedEvent event) async* {
@@ -96,13 +96,13 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     // final order = Order.fromSnapshot(await ref.get());
     await orderRepository.acceptOrder(
         authenticationRepository.currentDriver!, event.order.orderRef);
-    yield OrderPickingUpState(order: event.order, rider: event.rider);
+    yield OrderPickingUpState(order: event.order);
   }
 
   Stream<OrderState> _mapOrderReachedPickupToState(
       OrderReachedPickupEvent event) async* {
     await orderRepository.reachedPickupOrder(event.order.orderRef);
-    yield OrderDroppingOffState(order: event.order, rider: event.rider);
+    yield OrderDroppingOffState(order: event.order);
   }
 
   Stream<OrderState> _mapOrderReachedDropoffToState(

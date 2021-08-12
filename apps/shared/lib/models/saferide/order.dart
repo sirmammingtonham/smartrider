@@ -5,21 +5,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // { WAITING, PICKING_UP, DROPPING_OFF, COMPLETED, CANCELLED, ERROR }
 
 class Order {
-  Order(
-      {required this.orderRef,
-      required this.status,
-      required this.pickupAddress,
-      required this.pickupPoint,
-      required this.dropoffAddress,
-      required this.dropoffPoint,
-      required this.rider,
-      this.vehicleRef,
-      required this.updatedAt,
-      this.estimatedPickup,
-      required this.queuePosition,
-      required this.pickupTime,
-      this.cancellationReason,
-      });
+  Order({
+    required this.orderRef,
+    required this.status,
+    required this.pickupAddress,
+    required this.pickupPoint,
+    required this.dropoffAddress,
+    required this.dropoffPoint,
+    required this.riderEmail,
+    required this.riderPhone,
+    this.vehicleRef,
+    required this.updatedAt,
+    this.estimatedPickup,
+    required this.queuePosition,
+    required this.pickupTime,
+    this.cancellationReason,
+  });
 
   factory Order.fromSnapshot(DocumentSnapshot snap) {
     final data = (snap.data()! as Map<String, dynamic>);
@@ -30,7 +31,8 @@ class Order {
         dropoffAddress: data['dropoff_address']!,
         pickupPoint: data['pickup_point']!,
         dropoffPoint: data['dropoff_point']!,
-        rider: data['rider']!,
+        riderEmail: data['rider_email']!,
+        riderPhone: data['rider_phone']!,
         vehicleRef: data['vehicle'],
         updatedAt: data['updated_at']!,
         estimatedPickup: data['estimated_pickup'],
@@ -50,12 +52,14 @@ class Order {
   final String pickupAddress;
   final GeoPoint pickupPoint;
   final int pickupTime;
+
   /// dropoff
   final String dropoffAddress;
   final GeoPoint dropoffPoint;
 
   /// reference to rider's document in users collection
-  final DocumentReference rider;
+  final String riderEmail;
+  final String riderPhone;
 
   /// reference to the assigned vehicle (null when status == WATIING)
   final DocumentReference? vehicleRef;

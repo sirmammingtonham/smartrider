@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:circular_profile_avatar/circular_profile_avatar.dart';
-import 'package:smartrider/widgets/search_bar.dart';
+import 'package:smartrider/ui/widgets/search_bar.dart';
 
 // import 'package:firebase_storage/firebase_storage.dart'; // For File Upload
 // To Firestore import 'package:image_picker/image_picker.dart'; // For Image
@@ -14,7 +14,7 @@ import 'package:smartrider/widgets/search_bar.dart';
 // 'package:url_launcher/url_launcher.dart';
 
 // import 'dart:io';
-import 'package:smartrider/pages/issue_request.dart';
+import 'package:smartrider/ui/issue_request.dart';
 
 /// Used to display the profile options.
 abstract class ListItem {
@@ -29,10 +29,10 @@ abstract class ListItem {
 class ProfilePage extends StatefulWidget {
   const ProfilePage({
     Key? key,
-    this.title,
+    required this.initials,
   }) : super(key: key);
 
-  final String? title;
+  final String initials;
 
   /// Sets the state of the profile page.
   @override
@@ -43,45 +43,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    //This is for the futre File _image; // Used only if you need a single
-    // picture
-
-    // Future<String> uploadFile(File _image) async {StorageReference
-    //   storageReference = FirebaseStorage.instance .ref()
-    //   .child('profiles/${Path.basename(_image.path)}'); StorageUploadTask
-    //   uploadTask = storageReference.putFile(_image); await
-    //   uploadTask.onComplete; print('File Uploaded'); String returnURL; await
-    //   storageReference.getDownloadURL().then((fileURL) {returnURL = fileURL;
-    //   });
-    //   return returnURL;
-    // }
-
-    // Future getImage(bool gallery) async {ImagePicker picker = ImagePicker();
-    //   PickedFile pickedFile; // Let user select photo from gallery if
-    //   (gallery) {pickedFile = await picker.getImage(source:
-    //   ImageSource.gallery,
-    //     );
-    //   }
-    //   // Otherwise open camera to get new photo else {pickedFile = await
-    //   picker.getImage(source: ImageSource.camera,
-    //     );
-    //   }
-
-    //   setState(() {if (pickedFile != null) {_image = File(pickedFile.path);
-    //     // Use if you only need a single picture uploadFile(_image);} else
-    //     {print('No image selected.');
-    //     }
-    //   });
-    // }
-
-    // FOR THE FUTURE: The easiest way so far to load the background image as a
-    // URL. For now, I have hardcoded a profile picture just for the value. The
-    // user's profile picture should be stored in FireBase. Then, after it is
-    // stored, whenever the profile page is clicked, there should be a call to
-    // the database with the link of the profile pic. Replace _profilePic with
-    // that result.
-
-    const _profilePic = '';
     return BlocListener(
         bloc: BlocProvider.of<AuthenticationBloc>(context),
         listener: (context, state) async {
@@ -155,7 +116,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 /// WARNING: padding should be fixed to adjust to screen width.
                 padding: EdgeInsets.symmetric(vertical: 40.0),
               ),
-
               // Controls overflow between profile pic and container.
               Stack(clipBehavior: Clip.none, children: <Widget>[
                 // Profile Header
@@ -182,19 +142,18 @@ class _ProfilePageState extends State<ProfilePage> {
                   left: 130.0,
                   bottom: 110,
                   // Profile picture.
-                  child: CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Theme.of(context).backgroundColor,
-                      // backgroundImage: const NetworkImage(_profilePic),
-                      child: (_profilePic == '')
-                          ? Text('username',
-                              style: TextStyle(
-                                  fontSize: 60,
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .headline1!
-                                      .color))
-                          : null),
+                  child: Hero(
+                    tag: 'circleAvatar',
+                    child: CircleAvatar(
+                        radius: 60,
+                        child: Text(widget.initials,
+                            style: TextStyle(
+                                fontSize: 60,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .color))),
+                  ),
                 ),
               ]),
               // List of attributes on the user's profile

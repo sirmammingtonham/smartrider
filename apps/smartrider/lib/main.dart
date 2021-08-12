@@ -17,16 +17,16 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
 // data repository imports
-import 'package:smartrider/data/repositories/authentication_repository.dart';
-import 'package:smartrider/data/repositories/bus_repository.dart';
-import 'package:smartrider/data/repositories/saferide_repository.dart';
-import 'package:smartrider/data/repositories/shuttle_repository.dart';
+import 'package:smartrider/blocs/authentication/data/authentication_repository.dart';
+import 'package:smartrider/blocs/map/data/bus_repository.dart';
+import 'package:smartrider/blocs/map/data/saferide_repository.dart';
+import 'package:smartrider/blocs/map/data/shuttle_repository.dart';
 
 // page imports
-import 'package:smartrider/pages/welcome.dart';
-import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/ui/welcome.dart';
+import 'package:smartrider/ui/home.dart';
 import 'package:showcaseview/showcaseview.dart';
-import 'package:smartrider/pages/onboarding.dart';
+import 'package:smartrider/ui/onboarding.dart';
 
 // test imports
 // import 'package:cloud_firestore/cloud_firestore.dart';
@@ -166,7 +166,6 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
           // so we can test on multiple device sizes
           locale: DevicePreview.locale(context),
           builder: DevicePreview.appBuilder,
-
           debugShowCheckedModeBanner: false,
           title: 'smartrider Prototype',
           theme: state.theme,

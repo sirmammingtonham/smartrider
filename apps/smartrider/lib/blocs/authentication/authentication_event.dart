@@ -27,13 +27,12 @@ class AuthenticationSignOutEvent extends AuthenticationEvent {}
 class AuthenticationSignUpEvent extends AuthenticationEvent {
   const AuthenticationSignUpEvent({
     required this.email,
-    required this.phoneNumber,
     required this.password,
   });
-  final String email, phoneNumber, password;
+  final String email, password;
 
   @override
-  List<Object> get props => [email, phoneNumber, password];
+  List<Object> get props => [email, password];
 }
 
 class AuthenticationResetPhoneEvent extends AuthenticationEvent {

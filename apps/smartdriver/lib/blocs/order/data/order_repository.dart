@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared/models/saferide/driver.dart';
 import 'package:shared/models/saferide/order.dart';
-import 'package:smartdriver/data/providers/order_provider.dart';
+import 'package:smartdriver/blocs/order/data/order_provider.dart';
 
 class OrderRepository {
   final OrderProvider orderProvider =

@@ -3,7 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:shared/models/saferide/driver.dart';
 import 'package:smartdriver/blocs/location/location_bloc.dart';
-import 'package:smartdriver/data/repositories/authentication_repository.dart';
+import 'package:smartdriver/blocs/authentication/data/authentication_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'authentication_event.dart';

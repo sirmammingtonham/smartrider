@@ -2,7 +2,7 @@ import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
 import 'package:shared/models/shuttle/shuttle_update.dart';
 
-import '../providers/shuttle_provider.dart';
+import 'shuttle_provider.dart';
 
 //import '../provider/shuttle_local_provider.dart';
 

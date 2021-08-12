@@ -1,31 +1,22 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthenticationProvider {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final CollectionReference _users =
-      FirebaseFirestore.instance.collection('users');
   final RegExp _phoneRegex =
       RegExp(r'^(\+\d{1,2}\s)?(\(?\d{3}\)?)[\s.-]?(\d{3})[\s.-]?(\d{4})$');
 
   bool get isSignedIn => _firebaseAuth.currentUser != null;
+  bool get isEmailVerified =>
+      _firebaseAuth.currentUser != null &&
+      _firebaseAuth.currentUser!.email != null;
+  bool get isPhoneVerified =>
+      _firebaseAuth.currentUser != null &&
+      _firebaseAuth.currentUser!.phoneNumber != null;
 
   Stream<User?> get userChangeStream => _firebaseAuth.authStateChanges();
 
   User? get getCurrentUser => _firebaseAuth.currentUser;
-
-  DocumentReference? getCurrentUserRef() {
-    if (_firebaseAuth.currentUser != null) {
-      return _users.doc(getCurrentUser!.uid);
-    }
-  }
-
-  Future<DocumentSnapshot?> getCurrentUserData() async {
-    if (_firebaseAuth.currentUser != null) {
-      return _users.doc(getCurrentUser!.uid).get();
-    }
-  }
 
   Future<UserCredential> signIn(
     String email,
@@ -43,7 +34,6 @@ class AuthenticationProvider {
 
   Future<UserCredential> signUp(
     String email,
-    String phoneNumber,
     String password,
   ) async {
     try {
@@ -53,14 +43,7 @@ class AuthenticationProvider {
       );
       if (userCredential.user != null) {
 // TODO: create URL back to app for email verification
-// TODO: create a phone verification that happens before a user
-// calls their first safe ride
         await userCredential.user!.sendEmailVerification();
-        await _users.doc(userCredential.user!.uid).set({
-          'email': email,
-          'phone': _processPhoneNumber(phoneNumber),
-          'phone_verified': false,
-        });
       }
       return userCredential;
     } on FirebaseAuthException {

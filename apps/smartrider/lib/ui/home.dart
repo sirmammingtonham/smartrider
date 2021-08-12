@@ -16,10 +16,10 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 // custom widget imports
-import 'package:smartrider/widgets/map_widget.dart';
-import 'package:smartrider/widgets/search_bar.dart';
-import 'package:smartrider/pages/sliding_panel_page.dart';
-import 'package:smartrider/widgets/saferide_status_widgets.dart'
+import 'package:smartrider/ui/widgets/map_widget.dart';
+import 'package:smartrider/ui/widgets/search_bar.dart';
+import 'package:smartrider/ui/sliding_panel_page.dart';
+import 'package:smartrider/ui/widgets/saferide_status_widgets.dart'
     as saferide_widgets;
 
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
