@@ -3,7 +3,7 @@
 
 
 # If you're building an application, you may want to check-in your pubspec.lock
-pubspec.lock
+# pubspec.lock
 
 # Directory created by dartdoc
 # If you don't generate documentation locally you can remove this line.
@@ -28,7 +28,6 @@ doc/api/
 .classpath
 .project
 .settings/
-.vscode/
 
 # packages file containing multi-root paths
 .packages.generated
@@ -46,6 +45,7 @@ flutter_*.png
 linked_*.ds
 unlinked.ds
 unlinked_spec.ds
+node_modules/
 
 # Android related
 **/android/**/gradle-wrapper.jar
@@ -119,3 +119,6 @@ strings.dart
 android/app/src/main/res/api-keys.template
 ApiKeys.plist
 GoogleService-Info.plist
+
+# node module
+node_modules/

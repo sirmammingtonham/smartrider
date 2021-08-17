@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="42" height="66" viewBox="0 0 42 66">
+  <defs>
+    <filter id="Rectangle_73" x="0" y="0" width="42" height="66" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.251"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="car" transform="translate(-276.863 -99.093)">
+    <rect id="shadow" width="25" height="48" rx="8" transform="translate(293.863 113.093)" opacity="0.251"/>
+    <g id="car-color" transform="translate(285.863 105.093)">
+      <g transform="matrix(1, 0, 0, 1, -9, -6)" filter="url(#Rectangle_73)">
+        <rect id="Rectangle_73-2" data-name="Rectangle 73" width="24" height="48" rx="8" transform="translate(9 6)" fill="#ffbb24"/>
+      </g>
+      <rect id="Rectangle_74" data-name="Rectangle 74" width="20" height="30" rx="8" transform="translate(1.948 12)" fill="rgba(0,0,0,0.48)"/>
+      <rect id="Rectangle_75" data-name="Rectangle 75" width="16" height="18" rx="6" transform="translate(3.895 20.999)" fill="#ffbb24"/>
+    </g>
+  </g>
+</svg>

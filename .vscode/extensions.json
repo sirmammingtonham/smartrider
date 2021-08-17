@@ -1,0 +1,10 @@
+{
+	"recommendations": [
+		"ms-vscode-remote.remote-containers",
+		"dart-code.flutter",
+		"dart-code.dart-code",
+		"ms-azuretools.vscode-docker",
+		"eamodio.gitlens",
+		"ms-vsliveshare.vsliveshare"
+	]
+}

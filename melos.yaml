@@ -1,0 +1,91 @@
+name: smartrider
+
+packages:
+  - apps/**
+
+# mostly using melos for the ability to run scripts in multiple package folders
+scripts:
+  lint:all:
+    run: melos run analyze && melos run format
+    description: Run all static analysis checks
+
+  analyze:
+    run: |
+      melos exec -c 5 -- \
+        dart analyze . --fatal-infos
+    description: |
+      Run `dart analyze` in all packages.
+       - Note: you can also rely on your IDEs Dart Analysis / Issues window.
+  # firebase:emulator:
+  #   run: |
+  #     cd .github/workflows/scripts && ./start-firebase-emulator.sh
+  #   description: |
+  #     Start the Firebase emulator suite. Used by Functions, Firestore, Auth and Storage
+  #     integration testing.
+  #      - Requires Node.js and NPM installed.
+  format:
+    run: dart pub global run flutter_plugin_tools format
+    description: |
+      Build a specific example app for Android.
+       - Requires `flutter_plugin_tools` (`pub global activate flutter_plugin_tools`).
+       - Requires `clang-format` (can be installed via Brew on macOS).
+
+  build:all:
+    run: |
+      melos run build:example_ios_pub --no-select && melos run build:example_android_pub --no-select && melos bootstrap
+    description: Build all example apps (currently ios and android, macos requires flutter channel master)
+
+  build:example_android_pub:
+    run: |
+      melos exec -c 6 --fail-fast -- \
+        "flutter build apk"
+    description: Build a specific example app for Android.
+    select-package:
+      dir-exists:
+        - android
+      scope: "*example*"
+
+  build:example_ios_pub:
+    run: |
+      melos exec -c 6 --fail-fast -- \
+        "flutter build ios --no-codesign"
+    description: Build a specific example app for iOS.
+    select-package:
+      dir-exists:
+        - ios
+      scope: "*example*"
+
+  test:all:
+    run: melos run test --no-select
+    description: Run all tests available on stable channel
+
+  test:
+    run: |
+      melos exec -c 6 --fail-fast -- \
+        "flutter test --no-pub"
+    description: Run `flutter test` for a specific package.
+    select-package:
+      dir-exists:
+        - test
+      ignore:
+        - "*web*"
+        - "*example*"
+
+  # Clean things very deeply, can be used to establish "pristine checkout" status
+  clean:deep: >
+    git clean -x -d -f -q
+
+  # Additional cleanup lifecycle script, executed when `melos clean` is ran.
+  postclean: >
+    melos exec -c 6 -- "flutter clean"
+
+  # Run all targets generally expected in CI for a full local quality check
+  qualitycheck: >
+    melos run clean:deep && melos clean && melos bootstrap && melos run lint:all && melos run build:all && melos run test:all
+
+dev_dependencies:
+  pedantic: ^1.11.0
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.2.1 <3.0.0"
