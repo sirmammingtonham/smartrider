@@ -1,19 +1,23 @@
-// import * as bus from "./bus_exports";
-// import * as saferide from "./saferide_exports";
+import * as admin from 'firebase-admin';
+admin.initializeApp(); // needs to go before other imports: https://github.com/firebase/firebase-functions-test/issues/6#issuecomment-496021884
 
-// // bus functions
-// export const helloWorld = bus.helloWorld;
-// export const busRoutes = bus.busRoutes;
-// export const busTrips = bus.busTrips;
-// export const busStops = bus.busStops;
-// export const busShapes = bus.busShapes;
-// export const busTimetables = bus.busTimetables;
+/// bus functions
+import * as db from './bus/update_firestore_gtfs';
+export const refreshDataBase = db.refreshDataBase;
+import * as sfcu from './saferide/saferide_cleanup';
+export const saferideCleanup = sfcu.saferideOrderFlush;
 
-// // saferide functions
-// // export const srUpdateOrderStatus = saferide.srUpdateOrderStatus;
-// // export const srDelOrder = saferide.srDelOrder;
-// export const srOnTripUpdate = saferide.srOnTripUpdate;
+/// saferide functions
+// import * as saferide from "./saferide/saferide_listeners";
+// import * as saferide_webhooks from "./saferide/saferide_webhooks";
+// export const saferideOnOrderUpdate = saferide.onOrderUpdate;
+// export const saferideOnDriverUpdate = saferide.onDriverUpdate;
 
-// import * as t from "./firestore/create_fs"
+// export const hypertrackTripWebhook = saferide_webhooks.hypertrackTripWebhook;
 
-// export const test = t.test;
+/// test functions
+// import * as db_tests from './bus/bus_test_funcs';
+ import * as saferide_tests from "./saferide/saferide_test_funcs";
+export const createTest = saferide_tests.createTest;
+export const addTestDriver = saferide_tests.addTestDriver;
+// export const testDB = db_tests.testDB;

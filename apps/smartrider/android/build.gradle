@@ -1,0 +1,69 @@
+buildscript {
+    ext.kotlin_version = '1.3.50'
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+//task copyJavadocsAndSources {
+//    inputs.files configurations.runtime
+//    outputs.dir "${buildDir}/download"
+//    doLast {
+//        def componentIds = configurations.runtime.incoming.resolutionResult.allDependencies.collect { it.selected.id }
+//        ArtifactResolutionResult result = dependencies.createArtifactResolutionQuery()
+//            .forComponents(componentIds)
+//            .withArtifacts(JvmLibrary, SourcesArtifact, JavadocArtifact)
+//            .execute()
+//        def sourceArtifacts = []
+//        result.resolvedComponents.each { ComponentArtifactsResult component ->
+//            Set<ArtifactResult> sources = component.getArtifacts(SourcesArtifact)
+//            println "Found ${sources.size()} sources for ${component.id}"
+//            sources.each { ArtifactResult ar ->
+//                if (ar instanceof ResolvedArtifactResult) {
+//                    sourceArtifacts << ar.file
+//                }
+//            }
+//        }
+//
+//        copy {
+//            from sourceArtifacts
+//            into "${buildDir}/download"
+//        }
+//    }
+//}
+
+//apply plugin: 'java'
+apply plugin: 'idea'
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}

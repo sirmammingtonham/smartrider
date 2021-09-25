@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isRider(request) {
+    // function to check if user is a driver or not
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    match /{collectionName}/{documentId}/{document=**} {
+      // allow anyone to read bus data since it's public anyway
+      allow read: if collectionName in ['agency', 'calendar', 'polylines', 'routes', 'stops', 'timetables',];
+    }
+
+    match /users/{documentId} {
+      // allow users to read and modify their own user document
+      allow read,write: if request.auth != null && documentId == request.auth.uid;
+    }
+		
+    match /orders/{documentId}{
+      allow read,write: if request.auth != null && !isRider(request);
+      // todo check if phone verified
+      // only allow users to write to their order
+      allow read,write: if request.auth != null && 
+      isRider(request) && 
+      documentId == request.auth.uid
+    }
+
+    match /vehicles/{document=**} {
+      // allow smartrider user to read from vehicles
+      allow read: if request.auth != null && isRider(request);
+
+      // allow smartdriver user to read and write to vehicles
+      allow read,update: if request.auth != null && !isRider(request);
+    }
+  }
+}
