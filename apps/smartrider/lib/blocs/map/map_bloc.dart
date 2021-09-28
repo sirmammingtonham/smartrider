@@ -85,12 +85,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       if (prefsState is PrefsLoadedState) {
         _enabledShuttles = prefsState.shuttles;
         _enabledBuses = prefsState.buses;
-        if (_controller != null) {
-          _controller!.setMapStyle(
-              prefsState.theme.brightness == Brightness.dark
-                  ? _darkMapStyle
-                  : _lightMapStyle);
-        }
+        // if (_controller != null) {
+        //   _controller!.setMapStyle(
+        //       prefsState.theme.brightness == Brightness.dark
+        //           ? _darkMapStyle
+        //           : _lightMapStyle);
+        // }
       }
     });
 
@@ -203,6 +203,26 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           yield* _mapUpdateRequestedToState();
         }
         break;
+
+      case MapThemeChangeEvent:
+        {
+          if (_controller != null) {
+            await _controller!.setMapStyle(
+                (event as MapThemeChangeEvent).theme.brightness ==
+                        Brightness.dark
+                    ? _darkMapStyle
+                    : _lightMapStyle);
+          }
+          yield MapLoadedState(
+            polylines: _currentPolylines,
+            markers: _currentMarkers
+                .followedBy(_getMarkerClusters(_zoomLevel))
+                .toSet(),
+            mapView: _currentView,
+          );
+        }
+        break;
+
       case MapViewChangeEvent:
         {
           if ((event as MapViewChangeEvent).newView != _currentView) {

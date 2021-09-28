@@ -1,6 +1,7 @@
 //implementation imports
 import 'dart:async';
 
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sizer/sizer.dart';
@@ -98,6 +99,12 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
+    final window = WidgetsBinding.instance!.window;
+    window.onPlatformBrightnessChanged = () {
+    // This callback is called every time the brightness changes.
+    final brightness = window.platformBrightness;
+  };
+
   }
 
   @override
@@ -168,7 +175,9 @@ Widget _buildWithTheme(BuildContext context, PrefsState state) {
           builder: DevicePreview.appBuilder,
           debugShowCheckedModeBanner: false,
           title: 'smartrider Prototype',
-          theme: state.theme,
+          theme: FlexColorScheme.light(scheme: FlexScheme.redWine).toTheme,
+          darkTheme: FlexColorScheme.dark(scheme: FlexScheme.redWine).toTheme,
+          themeMode: ThemeMode.system,
           home: ShowCaseWidget(
             builder: Builder(
                 builder: (context) => state.firstLaunch!
