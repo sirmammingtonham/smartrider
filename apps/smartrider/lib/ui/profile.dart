@@ -12,6 +12,7 @@ import 'package:smartrider/ui/widgets/search_bar.dart';
 // Picker import 'package:path/path.dart' as Path; import
 // 'package:cloud_firestore/cloud_firestore.dart'; import
 // 'package:url_launcher/url_launcher.dart';
+import 'package:sizer/sizer.dart';
 
 // import 'dart:io';
 import 'package:smartrider/ui/issue_request.dart';
@@ -39,6 +40,26 @@ class ProfilePage extends StatefulWidget {
   _ProfilePageState createState() => _ProfilePageState();
 }
 
+Widget cardBuilder(List<Widget> buttonList) {
+  return Container(
+    margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
+    child: Material(
+      elevation: 5,
+      borderRadius: BorderRadius.circular(20.0),
+      child: Container(
+        padding: const EdgeInsets.only(right: 10, left: 10),
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        child: Center(
+          child: Column(children: buttonList),
+        ),
+      ),
+    ),
+  );
+}
+
+// TODO: use sizer to fix button layout/sizes
+// TODO: fix background colors/shading
 /// Represents the current state of the Profile Page
 class _ProfilePageState extends State<ProfilePage> {
   @override
@@ -68,49 +89,44 @@ class _ProfilePageState extends State<ProfilePage> {
           }
         },
         child: Scaffold(
+          appBar: AppBar(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(15.0),
+              ),
+            ),
+            centerTitle: true,
+            // first down arrow
+            leading: Padding(
+                padding: const EdgeInsets.only(bottom: 15),
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios),
+                  tooltip: 'Go back',
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                )),
+            // title
+            title: Text(
+              'Profile',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
+            ),
+          ),
           body: Column(
             children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20.0),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 5.w),
               ), // adds space between button and lower bezel
-              Row(children: <Widget>[
-                // Back button
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0))),
-                  child: Text(
-                    '< BACK',
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                ),
 
-                // Adds space between BACK button and SIGN OUT button.
-                const Padding(
-                  /// WARNING: padding should be fixed to adjust to screen
-                  /// width.
-                  padding: EdgeInsets.symmetric(horizontal: 100.0),
-                ),
-                // Sign Out button
-                ElevatedButton(
-                  onPressed: () {
-                    BlocProvider.of<AuthenticationBloc>(context).add(
-                      AuthenticationSignOutEvent(),
-                    );
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0))),
-                  child: Text(
-                    'SIGN OUT',
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                )
-              ]),
+
+              // Adds space between BACK button and SIGN OUT button.
+              Padding(
+                /// WARNING: padding should be fixed to adjust to screen
+                /// width.
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+              ),
+              // Sign Out button
+      
               // Space between row buttons and profile header
               const Padding(
                 /// WARNING: padding should be fixed to adjust to screen width.
@@ -131,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         // Profile greeting text
                         Center(
                             child: Text(
-                          'Hello',
+                          'Email',
                           style: Theme.of(context).textTheme.headline3,
                         )),
                       ],
@@ -157,35 +173,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ]),
               // List of attributes on the user's profile
-              Expanded(
-                child: SizedBox(
-                  height: 180,
-                  child: ListView(
-                    // Keeps list from scrolling (if more attributes are added,
-                    // we should make the profile page scrollable and reveal the
-                    // action buttons as the user scrolls down)
-                    padding: const EdgeInsets.symmetric(vertical: 0.0),
-                    children: <Widget>[
-                      // Describes the role
-                      ListTile(
-                          title: const Text('Role'),
-                          subtitle: const Text('widget.role!'),
-                          leading: determinerole('widget.role!')
-                              ? const Icon(Icons.book)
-                              : const Icon(Icons.drive_eta)),
-                      // Describes the user's email
-                      const ListTile(
-                        title: Text('Email'),
-                        leading: Icon(Icons.email),
-                        subtitle: Text('get.email!'),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-              ), // adds space between attributes and action buttons
               // Change Password Button
               ElevatedButton(
                   onPressed: () async {
@@ -331,10 +318,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   /// Determines the assigned role that the user has.
   bool determinerole(String r) {
-    if (r[0] == 'S') {
-      return true;
-    } else {
-      return false;
-    }
+    return r[0] == 'S';
+    // if (r[0] == 'S') {
+    //   return true;
+    // } else {
+    //   return false;
+    // }
   }
 }
