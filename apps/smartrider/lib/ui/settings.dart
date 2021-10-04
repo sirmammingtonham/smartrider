@@ -1,7 +1,7 @@
 // ui stuff
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 
 // settings and login stuff
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
@@ -113,7 +113,7 @@ class SettingsWidget extends StatelessWidget {
           // title
           title: Text(
             'Settings',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
           ),
         ),
         body: ListView(children: <Widget>[
@@ -126,14 +126,14 @@ class SettingsWidget extends StatelessWidget {
                   child: Text(
                     'General',
                     style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 20.5.sp),
+                        fontWeight: FontWeight.bold, fontSize: 28),
                   )),
             ),
           ),
           cardBuilder([
             SwitchListTile(
               title:
-                  Text('Push Notifications', style: TextStyle(fontSize: 12.sp)),
+                  Text('Push Notifications', style: TextStyle(fontSize: 16)),
               value: state.prefs.getBool('pushNotifications')!,
               onChanged: (bool value) {
                 state.prefs.setBool('pushNotifications', value);
@@ -145,7 +145,7 @@ class SettingsWidget extends StatelessWidget {
                 builder: (context) => SwitchListTile(
                       // activeColor: Theme.of(context).toggleableActiveColor,
                       title:
-                          Text('Lights Out', style: TextStyle(fontSize: 12.sp)),
+                          Text('Lights Out', style: TextStyle(fontSize: 12)),
                       value: state.prefs.getBool('darkMode')!,
                       onChanged: (bool value) {
                         state.prefs.setBool('darkMode', value);
@@ -163,7 +163,7 @@ class SettingsWidget extends StatelessWidget {
               child: Text(
                 'Shuttle Settings',
                 style:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
+                    TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
               ),
             ),
           ),
@@ -181,7 +181,7 @@ class SettingsWidget extends StatelessWidget {
                     child: Text(
                       'Shuttles are not loaded, try switching views to load',
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 11.sp),
+                          fontWeight: FontWeight.bold, fontSize: 12),
                     ),
                   ),
                 ),
@@ -208,14 +208,14 @@ class SettingsWidget extends StatelessWidget {
               child: Text(
                 'Bus Settings',
                 style:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
+                    TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
               ),
             ),
           ),
           cardBuilder(state.buses.keys
               .map((key) => SwitchListTile(
                     title: Text(PrefsBloc.busIdMap[key]!,
-                        style: TextStyle(fontSize: 12.sp)),
+                        style: TextStyle(fontSize: 12)),
                     value: state.buses[key]!,
                     onChanged: (bool value) {
                       state.buses[key] = value;
@@ -234,7 +234,7 @@ class SettingsWidget extends StatelessWidget {
               child: Text(
                 'Safe Ride Settings',
                 style:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: 20.5.sp),
+                    TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
               ),
             ),
           ),

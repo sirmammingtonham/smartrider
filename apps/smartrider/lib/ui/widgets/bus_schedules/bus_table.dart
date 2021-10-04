@@ -6,7 +6,7 @@ import 'package:shared/models/bus/bus_timetable.dart';
 // loading custom widgets and data
 import 'package:smartrider/ui/widgets/bus_schedules/bus_unavailable.dart';
 import 'package:smartrider/ui/widgets/custom_widgets/custom_sticky_table.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 //import 'package:sticky_headers/sticky_headers.dart';
 //import 'package:table_sticky_headers/table_sticky_headers.dart';
 
@@ -58,7 +58,7 @@ class BusTableState extends State<BusTable>
         controller: _tabController,
       ),
       SizedBox(
-        height: 63.h,
+        height: 502,
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[

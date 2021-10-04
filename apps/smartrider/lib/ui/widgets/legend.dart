@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/util/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/ui/home.dart';
 
@@ -37,7 +37,7 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                 color: color,
               ),
               SizedBox(
-                width: 15.sp,
+                width: 15,
               ),
               Text(title)
             ],
@@ -67,7 +67,7 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                 ),
               ),
               SizedBox(
-                width: 15.sp,
+                width: 15,
               ),
               Text(title)
             ],

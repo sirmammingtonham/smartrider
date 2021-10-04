@@ -8,7 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared/util/messages.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
 import 'package:showcaseview/showcaseview.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/ui/home.dart';
@@ -160,9 +160,9 @@ class SmartriderMap extends StatelessWidget {
               width: 300,
             )),
       ),
-      Positioned(left: 3.w, bottom: appBarHeight + 20, child: const Legend()),
-      Positioned(right: 3.w, bottom: appBarHeight + 90, child: viewFab),
-      Positioned(right: 3.w, bottom: appBarHeight + 20, child: locationButton)
+      Positioned(left: 12, bottom: appBarHeight + 20, child: const Legend()),
+      Positioned(right: 12, bottom: appBarHeight + 90, child: viewFab),
+      Positioned(right: 12, bottom: appBarHeight + 20, child: locationButton)
     ]);
   }
 

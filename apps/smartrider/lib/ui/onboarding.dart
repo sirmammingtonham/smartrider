@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smartrider/ui/welcome.dart';
 import 'package:smartrider/ui/home.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 
 // prefs bloc
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -87,14 +87,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               'Skip',
                               style: TextStyle(
                                 color: const Color(0xFF1b1d5c),
-                                fontSize: 15.sp,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
                         ),
                         SizedBox(
-                          height: 75.h,
+                          height: 600,
                           child: PageView(
                             physics: const ClampingScrollPhysics(),
                             controller: _pageController,
@@ -113,8 +113,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                       child: Image(
                                         image: const AssetImage(
                                             'assets/onboarding_images/logo_v2.png'),
-                                        height: 42.h,
-                                        width: 87.w,
+                                        height: 42,
+                                        width: 87,
                                       ),
                                     ),
                                     const SizedBox(height: 50),
@@ -125,7 +125,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         style: TextStyle(
                                           color: const Color(0xFF181c5b),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 21.sp,
+                                          fontSize: 21,
                                           height: 0.1,
                                         ),
                                       ),
@@ -137,7 +137,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: const Color(0xFF181c5b),
-                                            fontSize: 14.sp,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
                                           )),
@@ -162,8 +162,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           Image(
                                               image: const AssetImage(
                                                   'assets/onboarding_images/interactive_map.png'),
-                                              height: 35.h,
-                                              width: 55.w),
+                                              height: 35,
+                                              width: 55),
                                         ]),
                                     const SizedBox(height: 50.0),
                                     Center(
@@ -173,7 +173,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         style: TextStyle(
                                           color: const Color(0xFF181c5b),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 21.sp,
+                                          fontSize: 21,
                                           height: 1.5,
                                         ),
                                       ),
@@ -185,7 +185,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: const Color(0xFF181c5b),
-                                            fontSize: 14.sp,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
                                           )),
@@ -207,8 +207,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           Image(
                                             image: const AssetImage(
                                                 'assets/onboarding_images/comprehensive_scheduling.png'),
-                                            height: 27.h,
-                                            width: 75.w,
+                                            height: 27,
+                                            width: 75,
                                           ),
                                         ]),
                                     const SizedBox(height: 50.0),
@@ -219,7 +219,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         style: TextStyle(
                                           color: const Color(0xFF181c5b),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 21.sp,
+                                          fontSize: 21,
                                           height: 1.5,
                                         ),
                                       ),
@@ -231,7 +231,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: const Color(0xFF181c5b),
-                                            fontSize: 14.sp,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
                                           )),
@@ -254,8 +254,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             alignment: Alignment.bottomCenter,
                                             child: Image.asset(
                                               'assets/onboarding_images/request_transportation.png',
-                                              height: 30.h,
-                                              width: 50.w,
+                                              height: 30,
+                                              width: 50,
                                             ),
                                           ),
                                         ]),
@@ -267,7 +267,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         style: TextStyle(
                                           color: const Color(0xFF181c5b),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 21.sp,
+                                          fontSize: 21,
                                           height: 1.5,
                                         ),
                                       ),
@@ -279,7 +279,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               color: const Color(0xFF181c5b),
-                                              fontSize: 14.sp,
+                                              fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                               height: 1.5,
                                             ))),
@@ -300,8 +300,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           Image(
                                             image: const AssetImage(
                                                 'assets/onboarding_images/customizable_view.png'),
-                                            height: 35.h,
-                                            width: 60.w,
+                                            height: 35,
+                                            width: 60,
                                           ),
                                         ]),
                                     const SizedBox(height: 50.0),
@@ -312,7 +312,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         style: TextStyle(
                                           color: const Color(0xFF181c5b),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 21.sp,
+                                          fontSize: 21,
                                           height: 1.5,
                                         ),
                                       ),
@@ -324,7 +324,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: const Color(0xFF181c5b),
-                                            fontSize: 14.sp,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
                                           )),
@@ -360,7 +360,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           'Next',
                                           style: TextStyle(
                                             color: const Color(0xFF181c5b),
-                                            fontSize: 17.sp,
+                                            fontSize: 17,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -368,7 +368,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         Icon(
                                           Icons.arrow_forward,
                                           color: const Color(0xFF181c5b),
-                                          size: 12.sp,
+                                          size: 12,
                                         ),
                                       ],
                                     ),
@@ -389,7 +389,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   borderRadius:
                       const BorderRadius.all(Radius.circular(double.infinity)),
                   color: const Color(0xFF181c5b)),
-              height: 10.h,
+              height: 10,
               width: double.infinity,
               child: GestureDetector(
                 onTap: () {
@@ -406,7 +406,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       'Get Started',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

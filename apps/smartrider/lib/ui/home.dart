@@ -8,7 +8,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 // import 'package:shared/util/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
 
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 // bloc imports
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
@@ -129,7 +129,7 @@ class _HomePageState extends State<_HomePage>
 
     return SlidingUpPanel(
       controller: _panelController,
-      maxHeight: 90.h,
+      maxHeight: 717, // probably use mediaquery here
       minHeight: minHeight,
       onPanelOpened: () {
         startTimelineShowcase(prefsState as PrefsLoadedState, context);

@@ -9,14 +9,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 
-final saferideDefaultHeight = 15.h;
-final saferideSelectingHeight = 16.h;
-final saferideWaitingHeight = 22.h;
-final saferidePickingUpHeight = 30.h;
-final saferideCancelledHeight = 30.h;
-final saferideErrorHeight = 16.h;
+final saferideDefaultHeight = 119.0;
+final saferideSelectingHeight = 128.0;
+final saferideWaitingHeight = 175.0;
+final saferidePickingUpHeight = 240.0;
+final saferideCancelledHeight = 240.0;
+final saferideErrorHeight = 128.0;
 
 /// widget when user is still selecting pickup/dropoff
 Widget saferideSelectionWidget(
@@ -92,7 +92,7 @@ Widget saferideWaitingWidget(
           child: Column(
             children: <Widget>[
               const SizedBox(height: 5),
-               Center(
+              Center(
                 child: Text(
                   'Estimate wait time: ${state.estimatedPickup ?? -1} minutes',
                   style: const TextStyle(

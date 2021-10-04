@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/ui/home.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key, required this.homePage}) : super(key: key);
@@ -110,8 +110,8 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
       child: Align(
         alignment: Alignment.center,
         child: Container(
-          height: 53.h,
-          width: 95.w,
+          height: 422,
+          width: 380,
           decoration: BoxDecoration(
             image: DecorationImage(image: AssetImage(pathToImage)),
           ),
@@ -309,8 +309,8 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                 child: Container(
                   color: Colors.white,
                   height: MediaQuery.of(context).viewInsets.bottom == 0
-                      ? 80.h
-                      : 55.h,
+                      ? 350
+                      : 438,
                   child: SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
@@ -343,7 +343,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                           child: Column(children: <Widget>[
                             SizedBox(
                               // width: MediaQuery.of(context).size.width,
-                              height: 10.h,
+                              height: 79,
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 20),
                                 child: Align(
@@ -363,7 +363,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                               padding: const EdgeInsets.only(top: 20),
                               child: SizedBox(
                                 height: 50,
-                                width: 60.w,
+                                width: 250,
                                 child: welcomeScreenButton(
                                   context: context,
                                   text: text,
@@ -397,7 +397,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: SizedBox(
-              height: 7.h,
+              height: 55,
               child: welcomeScreenButton(
                 context: context,
                 text: 'LOGIN',
@@ -431,7 +431,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
           Padding(
             padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
             child: SizedBox(
-              height: 7.h,
+              height: 55,
               child: welcomeScreenButton(
                 context: context,
                 text: 'REGISTER',
@@ -486,7 +486,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
               child: Container(
                 color: Theme.of(context)
                     .primaryColor, //color of clip on bottom right
-                height: 15.h,
+                height: 120,
               ),
             ),
           )

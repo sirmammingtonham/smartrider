@@ -12,7 +12,7 @@ import 'package:smartrider/ui/widgets/search_bar.dart';
 // Picker import 'package:path/path.dart' as Path; import
 // 'package:cloud_firestore/cloud_firestore.dart'; import
 // 'package:url_launcher/url_launcher.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 
 // import 'dart:io';
 import 'package:smartrider/ui/issue_request.dart';
@@ -109,24 +109,23 @@ class _ProfilePageState extends State<ProfilePage> {
             // title
             title: Text(
               'Profile',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
           ),
           body: Column(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 5.w),
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
               ), // adds space between button and lower bezel
-
 
               // Adds space between BACK button and SIGN OUT button.
               Padding(
                 /// WARNING: padding should be fixed to adjust to screen
                 /// width.
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                padding: EdgeInsets.symmetric(horizontal: 82),
               ),
               // Sign Out button
-      
+
               // Space between row buttons and profile header
               const Padding(
                 /// WARNING: padding should be fixed to adjust to screen width.

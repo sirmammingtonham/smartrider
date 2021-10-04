@@ -101,10 +101,9 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     WidgetsBinding.instance!.addObserver(this);
     final window = WidgetsBinding.instance!.window;
     window.onPlatformBrightnessChanged = () {
-    // This callback is called every time the brightness changes.
-    final brightness = window.platformBrightness;
-  };
-
+      // This callback is called every time the brightness changes.
+      final brightness = window.platformBrightness;
+    };
   }
 
   @override

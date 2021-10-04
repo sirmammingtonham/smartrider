@@ -25,7 +25,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:shared/util/strings.dart';
 import 'package:smartrider/ui/home.dart';
 import 'package:showcaseview/showcaseview.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 
 // compute initials to be displayed on search bar
 String computeInitials(String email) {
@@ -326,7 +326,7 @@ class SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.only(top: 2.h),
+        padding: EdgeInsets.only(top: 15),
         child: MultiBlocBuilder(
           blocs: [
             BlocProvider.of<SaferideBloc>(context),

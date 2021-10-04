@@ -12,7 +12,7 @@ import 'package:shared/util/errors.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:fluster/fluster.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 
 // bloc imports
 import 'package:equatable/equatable.dart';
@@ -140,8 +140,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final Set<Polyline> _saferidePolylines = <Polyline>{};
   String? _pickupVehicleId;
 
-  final stopMarkerSize = Size(60.sp, 60.sp);
-  final vehicleUpdateSize = Size(80.sp, 80.sp);
+  final stopMarkerSize = Size(82, 82);
+  final vehicleUpdateSize = Size(110, 110);
 
   late Fluster<MarkerCluster> _fluster;
   final Set<Marker> _currentMarkers = <Marker>{};

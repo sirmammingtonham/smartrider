@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 
 // bloc stuff
@@ -40,7 +40,7 @@ class PanelPage extends StatelessWidget {
       child: Icon(
         Icons.expand_more,
         color: Colors.white,
-        size: 30.sp,
+        size: 30,
       ),
     );
 
@@ -48,7 +48,7 @@ class PanelPage extends StatelessWidget {
       child: Text(
         'Schedules',
         style: TextStyle(
-          fontSize: 20.sp,
+          fontSize: 20,
           color: Colors.white,
         ),
       ),
@@ -77,8 +77,8 @@ class PanelPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  width: 15.w,
-                  height: 3.sp,
+                  width: 61,
+                  height: 4,
                   decoration: BoxDecoration(
                       color: Colors.grey[300],
                       borderRadius:
