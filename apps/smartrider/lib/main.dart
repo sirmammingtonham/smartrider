@@ -4,10 +4,9 @@ import 'dart:async';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:sizer/sizer.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
+import 'package:responsive_framework/responsive_framework.dart';
 
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,11 +35,15 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // avoid generating crash reports when the app is in debug mode.
-  if (kDebugMode) {
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
-  } else {
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
+  // crashlytics not supported on web
+  if (!kIsWeb) {
+    if (kDebugMode) {
+      // avoid generating crash reports when the app is in debug mode.
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+    } else {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    }
   }
 
   await AwesomeNotifications().initialize(
@@ -66,15 +69,14 @@ void main() async {
       shuttleRepo: ShuttleRepository.create(),
       saferideRepo: SaferideRepository.create());
 
-  runZonedGuarded(() {
+  if (!kIsWeb) {
     //catch async errors as well
-    runApp(
-      DevicePreview(
-        enabled: false, //!kReleaseMode,  // uncomment to use device_preview
-        builder: (context) => app,
-      ), // Wrap your app
-    );
-  }, FirebaseCrashlytics.instance.recordError);
+    await runZonedGuarded(() async {
+      runApp(app);
+    }, FirebaseCrashlytics.instance.recordError);
+  } else {
+    runApp(app);
+  }
 }
 
 class SmartRider extends StatefulWidget {
@@ -95,14 +97,45 @@ class SmartRider extends StatefulWidget {
 }
 
 class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
+  late final AuthenticationBloc _authBloc;
+  late final PrefsBloc _prefsBloc;
+  late final MapBloc _mapBloc;
+  late final SaferideBloc _saferideBloc;
+  late final ScheduleBloc _scheduleBloc;
+  static const FlexScheme colorScheme = FlexScheme.redWine;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
+
+    _prefsBloc = PrefsBloc()..add(const LoadPrefsEvent());
+    _authBloc = AuthenticationBloc(authRepository: widget.authRepo)
+      ..add(AuthenticationInitEvent());
+    _saferideBloc = SaferideBloc(
+        prefsBloc: _prefsBloc,
+        saferideRepo: widget.saferideRepo,
+        authRepo: widget.authRepo)
+      ..add(SaferideNoEvent());
+    _mapBloc = MapBloc(
+        saferideBloc: _saferideBloc,
+        prefsBloc: _prefsBloc,
+        busRepo: widget.busRepo,
+        shuttleRepo: widget.shuttleRepo,
+        saferideRepo: widget.saferideRepo);
+    _scheduleBloc = ScheduleBloc(
+      mapBloc: _mapBloc,
+      busRepo: widget.busRepo,
+    );
+
     final window = WidgetsBinding.instance!.window;
     window.onPlatformBrightnessChanged = () {
       // This callback is called every time the brightness changes.
       final brightness = window.platformBrightness;
+      _mapBloc.add(MapThemeChangeEvent(
+          theme: brightness == Brightness.light
+              ? FlexColorScheme.light(scheme: colorScheme).toTheme
+              : FlexColorScheme.dark(scheme: colorScheme).toTheme));
     };
   }
 
@@ -131,64 +164,46 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<PrefsBloc>(
-          create: (context) => PrefsBloc()..add(const LoadPrefsEvent()),
-        ),
-        BlocProvider<AuthenticationBloc>(
-            create: (context) =>
-                AuthenticationBloc(authRepository: widget.authRepo)
-                  ..add(AuthenticationInitEvent())),
-        BlocProvider<SaferideBloc>(
-          create: (context) => SaferideBloc(
-              prefsBloc: BlocProvider.of<PrefsBloc>(context),
-              saferideRepo: widget.saferideRepo,
-              authRepo: widget.authRepo)
-            ..add(SaferideNoEvent()),
-        ),
-        BlocProvider<MapBloc>(
-            create: (context) => MapBloc(
-                saferideBloc: BlocProvider.of<SaferideBloc>(context),
-                prefsBloc: BlocProvider.of<PrefsBloc>(context),
-                busRepo: widget.busRepo,
-                shuttleRepo: widget.shuttleRepo,
-                saferideRepo: widget.saferideRepo)),
-        BlocProvider<ScheduleBloc>(
-          create: (context) => ScheduleBloc(
-            mapBloc: BlocProvider.of<MapBloc>(context),
-            busRepo: widget.busRepo,
-          ),
-        ),
+        BlocProvider<PrefsBloc>(create: (context) => _prefsBloc),
+        BlocProvider<AuthenticationBloc>(create: (context) => _authBloc),
+        BlocProvider<SaferideBloc>(create: (context) => _saferideBloc),
+        BlocProvider<MapBloc>(create: (context) => _mapBloc),
+        BlocProvider<ScheduleBloc>(create: (context) => _scheduleBloc),
       ],
-      child: const BlocBuilder<PrefsBloc, PrefsState>(builder: _buildWithTheme),
+      child: BlocBuilder<PrefsBloc, PrefsState>(
+          builder: (BuildContext context, PrefsState state) {
+        if (state is PrefsLoadedState) {
+          return MaterialApp(
+            builder: (context, widget) => ResponsiveWrapper.builder(
+                BouncingScrollWrapper.builder(context, widget!),
+                maxWidth: 1200,
+                minWidth: 450,
+                defaultScale: true,
+                breakpoints: const [
+                  ResponsiveBreakpoint.resize(450, name: MOBILE),
+                  ResponsiveBreakpoint.autoScale(800, name: TABLET),
+                  ResponsiveBreakpoint.autoScale(1000, name: TABLET),
+                  ResponsiveBreakpoint.resize(1200, name: DESKTOP),
+                  ResponsiveBreakpoint.autoScale(2460, name: '4K'),
+                ]),
+            debugShowCheckedModeBanner: false,
+            title: 'smartrider Prototype',
+            theme: FlexColorScheme.light(scheme: colorScheme).toTheme,
+            darkTheme: FlexColorScheme.dark(scheme: colorScheme).toTheme,
+            themeMode: ThemeMode.system,
+            home: ShowCaseWidget(
+              builder: Builder(
+                  builder: (context) => state.firstLaunch!
+                      ? const OnboardingScreen()
+                      : const WelcomeScreen(homePage: HomePage())),
+              autoPlay: true,
+              autoPlayDelay: const Duration(seconds: 10),
+            ),
+          );
+        } else {
+          return const MaterialApp(home: CircularProgressIndicator());
+        }
+      }),
     );
-  }
-}
-
-Widget _buildWithTheme(BuildContext context, PrefsState state) {
-  if (state is PrefsLoadedState) {
-    return Sizer(
-      builder: (context, orientation, deviceType) {
-        return MaterialApp(
-          // so we can test on multiple device sizes
-          locale: DevicePreview.locale(context),
-          builder: DevicePreview.appBuilder,
-          debugShowCheckedModeBanner: false,
-          title: 'smartrider Prototype',
-          theme: FlexColorScheme.light(scheme: FlexScheme.redWine).toTheme,
-          darkTheme: FlexColorScheme.dark(scheme: FlexScheme.redWine).toTheme,
-          themeMode: ThemeMode.system,
-          home: ShowCaseWidget(
-            builder: Builder(
-                builder: (context) => state.firstLaunch!
-                    ? const OnboardingScreen()
-                    : const WelcomeScreen(homePage: HomePage())),
-            autoPlay: true,
-            autoPlayDelay: const Duration(seconds: 10),
-          ),
-        );
-      },
-    );
-  } else {
-    return const MaterialApp(home: CircularProgressIndicator());
   }
 }
