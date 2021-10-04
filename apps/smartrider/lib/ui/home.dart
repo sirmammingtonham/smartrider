@@ -174,11 +174,11 @@ class _HomePageState extends State<_HomePage>
                     KeyboardVisibilityController()
                         .onChange
                         .listen((bool visible) {
-                      if (visible && saferideState is SaferideNoState) {
-                        _panelController.hide();
-                      } else {
-                        _panelController.show();
-                      }
+                      // if (visible && saferideState is SaferideNoState) {
+                      //   _panelController.hide();
+                      // } else {
+                      //   _panelController.show();
+                      // }
                     });
                     return _slidingPanel(saferideState, prefState, context);
                   }

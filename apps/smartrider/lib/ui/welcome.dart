@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
 import 'package:smartrider/ui/home.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 // import 'package:sizer/sizer.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -155,9 +156,10 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                   )
                 : null,
             hintStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Theme.of(context).accentColor),
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              // color: Theme.of(context).accentColor,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide(
@@ -207,7 +209,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
           text,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            // color: Colors.white,
             fontSize: 20,
           ),
         ),
@@ -307,10 +309,8 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
               child: Padding(
                 padding: MediaQuery.of(context).viewInsets,
                 child: Container(
-                  color: Colors.white,
-                  height: MediaQuery.of(context).viewInsets.bottom == 0
-                      ? 350
-                      : 438,
+                  color: Theme.of(context).colorScheme.background,
+                  height: MediaQuery.of(context).size.height * 0.6,
                   child: SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
@@ -325,14 +325,10 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                                       child: IconButton(
                                         onPressed: () {
                                           Navigator.of(context).pop();
-                                          // phoneController.clear();
-                                          // emailController.clear();
-                                          // passwordController.clear();
                                         },
-                                        icon: Icon(
+                                        icon: const Icon(
                                           Icons.keyboard_arrow_down,
                                           size: 40.0,
-                                          //color: Theme.of(context).accentColor,
                                         ),
                                       )))
                             ],
@@ -447,13 +443,6 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
                       controller: emailController,
                       validator: emailValidation,
                     ),
-                    // formInputField(
-                    //   context: context,
-                    //   icon: const Icon(Icons.phone_iphone),
-                    //   hint: 'Phone Number',
-                    //   controller: phoneController,
-                    //   validator: phoneValidation,
-                    // ),
                     StatefulBuilder(
                       builder: (context, setPasswordState) => formInputField(
                         context: context,
@@ -480,13 +469,13 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
             ),
           ),
           Align(
-            alignment: Alignment.bottomCenter,
+            alignment: Alignment.bottomRight,
             child: ClipPath(
               clipper: BottomWaveClipper(),
               child: Container(
                 color: Theme.of(context)
                     .primaryColor, //color of clip on bottom right
-                height: 120,
+                height: 200,
               ),
             ),
           )
