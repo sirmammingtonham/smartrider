@@ -107,19 +107,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                 )),
             // title
-            title: Text(
+            title: const Text(
               'Profile',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
           ),
           body: Column(
             children: <Widget>[
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
               ), // adds space between button and lower bezel
 
               // Adds space between BACK button and SIGN OUT button.
-              Padding(
+              const Padding(
                 /// WARNING: padding should be fixed to adjust to screen
                 /// width.
                 padding: EdgeInsets.symmetric(horizontal: 82),
@@ -132,180 +132,158 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: EdgeInsets.symmetric(vertical: 40.0),
               ),
               // Controls overflow between profile pic and container.
-              Stack(clipBehavior: Clip.none, children: <Widget>[
-                // Profile Header
-                Container(
-                    color: Theme.of(context).hoverColor,
-                    width: double.infinity,
-                    height: 175.0,
-                    child: Column(
-                      children: [
-                        // Spacing below text
-                        const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 45.0)),
-                        // Profile greeting text
-                        Center(
-                            child: Text(
-                          'Email',
-                          style: Theme.of(context).textTheme.headline3,
+              Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    // Profile Header
+                    Container(
+                        color: Theme.of(context).hoverColor,
+                        height: 175.0,
+                        child: Column(
+                          children: [
+                            // Spacing below text
+                            const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 45.0)),
+                            // Profile greeting text
+                            Center(
+                                child: Text(
+                              'Email',
+                              style: Theme.of(context).textTheme.headline3,
+                            )),
+                          ],
                         )),
-                      ],
-                    )),
-                // Controls where the profile picture is compare to the profile
-                // greeting.
-                Positioned(
-                  left: 130.0,
-                  bottom: 110,
-                  // Profile picture.
-                  child: Hero(
-                    tag: 'circleAvatar',
-                    child: CircleAvatar(
-                        radius: 60,
-                        child: Text(widget.initials,
-                            style: TextStyle(
-                                fontSize: 60,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .headline1!
-                                    .color))),
-                  ),
-                ),
-              ]),
+                    // Controls where the profile picture is 
+                    //compared to the profile greeting.
+                    Positioned(
+                      // left: 165,
+                      bottom: 110,
+                      // Profile picture.
+                      child: Hero(
+                        tag: 'circleAvatar',
+                        child: CircleAvatar(
+                            radius: 60,
+                            child: Text(widget.initials,
+                                style: TextStyle(
+                                    fontSize: 60,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .headline1!
+                                        .color))),
+                      ),
+                    ),
+                  ]),
               // List of attributes on the user's profile
               // Change Password Button
-              ElevatedButton(
-                  onPressed: () async {
-                    await showDialog<Dialog>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Dialog(
-                            child: Card(
-                              child: TextFormField(
-                                  decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: 'Enter Phone Number',
-                                      hintText: 'Enter Phone Number'),
-                                  onFieldSubmitted: (String str) {
-                                    BlocProvider.of<AuthenticationBloc>(context)
-                                        .add(AuthenticationResetPhoneEvent(
-                                            newPhoneNumber: str));
-                                  }),
-                            ),
-                          );
-                        });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    padding: const EdgeInsets.symmetric(horizontal: 95.0),
-                  ),
-                  child: Text(
-                    'CHANGE PHONE NUMBER',
-                    style: Theme.of(context).textTheme.button,
-                  )),
-              ElevatedButton(
-                  onPressed: () {
-                    //Send an email to the user to request a password change
-                    BlocProvider.of<AuthenticationBloc>(context).add(
-                      AuthenticationResetPasswordEvent(),
-                    );
-                    BlocProvider.of<AuthenticationBloc>(context).add(
-                      AuthenticationSignOutEvent(),
-                    );
-                    Navigator.of(context).pop();
-                    // Will show a small pop up to tell users the email has been
-                    // sent
-                    showDialog<AlertDialog>(
+              cardBuilder([
+              getButton(
+                text: 'CHANGE PHONE NUMBER',
+                onPressed: () async {
+                  await showDialog<Dialog>(
                       context: context,
-                      barrierDismissible: true, // user must tap button!
                       builder: (BuildContext context) {
-                        return const AlertDialog(
-                          title: Text('Email has been sent'),
-                        );
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    padding: const EdgeInsets.symmetric(horizontal: 95.0),
-                  ),
-                  child: Text(
-                    'CHANGE PASSWORD',
-                    style: Theme.of(context).textTheme.button,
-                  )),
-              // Report Bug Button
-              ElevatedButton(
-                  onPressed: () {
-                    // launch('https://github.com/sirmammingtonham/smartrider/issues/new?assignees=&labels=bug&template=bug-report---.md&title=%F0%9F%90%9B+Bug+Report%3A+%5BIssue+Title%5D');
-                    Navigator.push<IssueRequest>(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const IssueRequest()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 53.0),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0))),
-                  child: Text(
-                    'REPORT BUG / REQUEST FEATURE',
-                    style: Theme.of(context).textTheme.button,
-                  )),
-              // Delete Account Button
-              ElevatedButton(
-                  onPressed: () {
-                    //Show a box to ask user if they really want to delete their
-                    //account
-                    showDialog<AlertDialog>(
-                      context: context,
-                      barrierDismissible:
-                          false, // user doesn't need to tap button!
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text(
-                              'Are you sure you want to delete your account?'),
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  //If the user chooses yes, we will call the
-                                  //authentification delete function
+                        return Dialog(
+                          child: Card(
+                            child: TextFormField(
+                                decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Enter Phone Number',
+                                    hintText: 'Enter Phone Number'),
+                                onFieldSubmitted: (String str) {
                                   BlocProvider.of<AuthenticationBloc>(context)
-                                      .add(
-                                    AuthenticationDeleteEvent(),
-                                  );
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
-                                  showDialog<AlertDialog>(
-                                    context: context,
-                                    barrierDismissible:
-                                        true, // user must tap button!
-                                    builder: (BuildContext context) {
-                                      return const AlertDialog(
-                                        title: Text('Account has been deleted'),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: const Text('Yes')),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('No'))
-                          ],
+                                      .add(AuthenticationResetPhoneEvent(
+                                          newPhoneNumber: str));
+                                }),
+                          ),
                         );
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 102.0),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0))),
-                  child: Text(
-                    'DELETE ACCOUNT',
-                    style: Theme.of(context).textTheme.button,
-                  )),
+                      });
+                },
+              ),
+              getButton(
+                text: 'CHANGE PASSWORD',
+                onPressed: () {
+                  //Send an email to the user to request a password change
+                  BlocProvider.of<AuthenticationBloc>(context).add(
+                    AuthenticationResetPasswordEvent(),
+                  );
+                  BlocProvider.of<AuthenticationBloc>(context).add(
+                    AuthenticationSignOutEvent(),
+                  );
+                  Navigator.of(context).pop();
+                  // Will show a small pop up to tell users the email has been
+                  // sent
+                  showDialog<AlertDialog>(
+                    context: context,
+                    barrierDismissible: true, // user must tap button!
+                    builder: (BuildContext context) {
+                      return const AlertDialog(
+                        title: Text('Email has been sent'),
+                      );
+                    },
+                  );
+                },
+              ),
+              // Report Bug Button
+              getButton(
+                text: 'REPORT BUG / REQUEST FEATURE',
+                onPressed: () {
+                  // launch('https://github.com/sirmammingtonham/smartrider/issues/new?assignees=&labels=bug&template=bug-report---.md&title=%F0%9F%90%9B+Bug+Report%3A+%5BIssue+Title%5D');
+                  Navigator.push<IssueRequest>(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const IssueRequest()),
+                  );
+                },
+              ),
+              // Delete Account Button
+              getButton(
+                text: 'DELETE ACCOUNT',
+                onPressed: () {
+                  //Show a box to ask user if they really want to delete their
+                  //account
+                  showDialog<AlertDialog>(
+                    context: context,
+                    barrierDismissible:
+                        false, // user doesn't need to tap button!
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text(
+                            'Are you sure you want to delete your account?'),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                //If the user chooses yes, we will call the
+                                //authentification delete function
+                                BlocProvider.of<AuthenticationBloc>(context)
+                                    .add(
+                                  AuthenticationDeleteEvent(),
+                                );
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                showDialog<AlertDialog>(
+                                  context: context,
+                                  barrierDismissible:
+                                      true, // user must tap button!
+                                  builder: (BuildContext context) {
+                                    return const AlertDialog(
+                                      title: Text('Account has been deleted'),
+                                    );
+                                  },
+                                );
+                              },
+                              child: const Text('Yes')),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('No'))
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+              ]),
               // Adds space between action buttons and bottom of screen.
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.0),
@@ -315,13 +293,17 @@ class _ProfilePageState extends State<ProfilePage> {
         ));
   }
 
-  /// Determines the assigned role that the user has.
-  bool determinerole(String r) {
-    return r[0] == 'S';
-    // if (r[0] == 'S') {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
+  ElevatedButton getButton({
+    required String text,
+    required void Function() onPressed,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+          // padding: const EdgeInsets.symmetric(horizontal: 95.0),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0))),
+      child: Text(text),
+    );
   }
 }
