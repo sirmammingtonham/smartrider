@@ -140,8 +140,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final Set<Polyline> _saferidePolylines = <Polyline>{};
   String? _pickupVehicleId;
 
-  final stopMarkerSize = Size(82, 82);
-  final vehicleUpdateSize = Size(110, 110);
+  final stopMarkerSize = const Size(82, 82);
+  final vehicleUpdateSize = const Size(110, 110);
 
   late Fluster<MarkerCluster> _fluster;
   final Set<Marker> _currentMarkers = <Marker>{};

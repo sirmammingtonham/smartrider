@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 /// Creates our 'lines and circles' on the left hand side of the
 /// schedule list for each bus. This particular class is responsible
 /// for the first stop.
-class FillPainter extends CustomPainter {
-  const FillPainter(
-      {this.circleColor,
-      this.lineColor,
+class CirclePainter extends CustomPainter {
+  const CirclePainter(
+      {required this.circleColor,
+      required this.lineColor,
       this.first = false,
       this.last = false,
       this.overflow = 30.0})
       : super();
-  final Color? circleColor;
-  final Color? lineColor;
+  final Color circleColor;
+  final Color lineColor;
   final bool first;
   final bool last;
 
@@ -26,7 +26,7 @@ class FillPainter extends CustomPainter {
     final paint = Paint();
     // cascade notation, look it up it's pretty cool
     final line = Paint()
-      ..color = lineColor!
+      ..color = lineColor
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.fill
       ..strokeWidth = 6;
@@ -47,7 +47,7 @@ class FillPainter extends CustomPainter {
 
     // set the color property of the paint
     paint
-      ..color = circleColor!
+      ..color = circleColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0;
 
@@ -64,27 +64,21 @@ class FillPainter extends CustomPainter {
 /// Creates our 'lines and circles' on the left hand side of the
 /// schedule list for each bus. This particular class is responsible
 /// for all stops but the first.
-class StrokePainter extends CustomPainter {
-  const StrokePainter({
-    this.circleColor,
-    this.lineColor,
-    this.last = false,
+class LinePainter extends CustomPainter {
+  const LinePainter({
+    required this.lineColor,
   }) : super();
-  final Color? circleColor;
-  final Color? lineColor;
-  final bool last;
+  final Color lineColor;
 
   @override
   void paint(Canvas canvas, Size size) {
     final line = Paint()
-      ..color = lineColor!
+      ..color = lineColor
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.fill
       ..strokeWidth = 6;
 
-    if (!last) {
-      canvas.drawLine(Offset(38.5, size.height), const Offset(38.5, 0), line);
-    }
+    canvas.drawLine(Offset(38.5, size.height), const Offset(38.5, 0), line);
   }
 
   @override

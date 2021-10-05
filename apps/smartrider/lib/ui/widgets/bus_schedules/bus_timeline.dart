@@ -137,9 +137,9 @@ class BusTimelineState extends State<BusTimeline>
 
       /// Controls the leading circle icon in front of each bus stop.
       leading: CustomPaint(
-          painter: FillPainter(
-              circleColor: busColors[routeId],
-              lineColor: Theme.of(context).primaryColor,
+          painter: CirclePainter(
+              circleColor: busColors[routeId]!,
+              lineColor: busColors[routeId]!,
               first: index == 0,
               last: index == busStops.length - 1),
           child: const SizedBox(
@@ -158,10 +158,8 @@ class BusTimelineState extends State<BusTimeline>
       /// Contains everything below the ExpansionTile when it is expanded.
       children: [
         CustomPaint(
-          painter: StrokePainter(
-            circleColor: Theme.of(context).primaryColor,
-            lineColor: Theme.of(context).primaryColor,
-            last: index == busStops.length - 1,
+          painter: LinePainter(
+            lineColor: busColors[routeId]!,
           ),
 
           /// A list item for every arrival time for the selected bus stop.
@@ -177,49 +175,46 @@ class BusTimelineState extends State<BusTimeline>
               displacement: 1,
 
               /// A list of the upcoming bus stop arrivals.
-              child: ListView.builder(
+              child: ListView(
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
-                itemCount: stopTimes.length,
-                itemExtent: 50,
-                itemBuilder: (BuildContext context, int timeIndex) {
-                  if (stopTimes[timeIndex].first == '-') {
-                    // return empty container if stop not available
-                    return Container();
-                  }
+                children: stopTimes.fold(
+                  [],
+                  (list, timeTuple) {
+                    if (timeTuple.first.length == 3) {
+                      return list;
+                    }
+                    String subText;
+                    if (timeTuple.second / 3600 > 1) {
+                      final num time = (timeTuple.second / 3600).truncate();
+                      subText = 'In $time ${time > 1 ? 'hours' : 'hour'}';
+                    } else {
+                      final num time = (timeTuple.second / 60).truncate();
+                      subText = 'In $time ${time > 1 ? 'minutes' : 'minute'}';
+                    }
 
-                  String subText;
-                  if (stopTimes[timeIndex].second / 3600 > 1) {
-                    final num time =
-                        (stopTimes[timeIndex].second / 3600).truncate();
-                    subText = 'In $time ${time > 1 ? 'hours' : 'hour'}';
-                  } else {
-                    final num time =
-                        (stopTimes[timeIndex].second / 60).truncate();
-                    subText = 'In $time ${time > 1 ? 'minutes' : 'minute'}';
-                  }
-
-                  /// The container in which the bus stop arrival times are
-                  /// displayed.
-                  return ListTile(
-                    dense: true,
-                    leading: const Icon(Icons.access_time,
-                        size:
-                            20), // TODO: change icon if bus is within 5 minutes
-                    title: Text(
-                      stopTimes[timeIndex].first,
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                    subtitle: Text(subText),
-                    trailing: PopupMenuButton<String>(
-                        onSelected: (choice) => _handlePopupSelection(
-                            choice, busStops[index], stopTimes[timeIndex]),
-                        itemBuilder: (BuildContext context) => choices
-                            .map((choice) => PopupMenuItem<String>(
-                                value: choice, child: Text(choice)))
-                            .toList()),
-                  );
-                },
+                    /// The container in which the bus stop arrival times are
+                    /// displayed.
+                    list.add(ListTile(
+                      dense: true,
+                      // TODO: change icon if bus is within 5 minutes
+                      leading: const Icon(Icons.access_time, size: 20),
+                      title: Text(
+                        timeTuple.first,
+                        style: const TextStyle(fontSize: 15),
+                      ),
+                      subtitle: Text(subText),
+                      trailing: PopupMenuButton<String>(
+                          onSelected: (choice) => _handlePopupSelection(
+                              choice, busStops[index], timeTuple),
+                          itemBuilder: (BuildContext context) => choices
+                              .map((choice) => PopupMenuItem<String>(
+                                  value: choice, child: Text(choice)))
+                              .toList()),
+                    ));
+                    return list;
+                  },
+                ),
               ),
             ),
           ),

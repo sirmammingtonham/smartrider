@@ -15,10 +15,12 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+
 // custom widget imports
 import 'package:smartrider/ui/widgets/map_widget.dart';
 import 'package:smartrider/ui/widgets/search_bar.dart';
-import 'package:smartrider/ui/sliding_panel_page.dart';
+import 'package:smartrider/ui/widgets/panel_header.dart';
+import 'package:smartrider/ui/widgets/panel_body.dart';
 import 'package:smartrider/ui/widgets/saferide_status_widgets.dart'
     as saferide_widgets;
 
@@ -129,7 +131,7 @@ class _HomePageState extends State<_HomePage>
 
     return SlidingUpPanel(
       controller: _panelController,
-      maxHeight: 717, // probably use mediaquery here
+      maxHeight: MediaQuery.of(context).size.height * 0.9,
       minHeight: minHeight,
       onPanelOpened: () {
         startTimelineShowcase(prefsState as PrefsLoadedState, context);
@@ -138,15 +140,16 @@ class _HomePageState extends State<_HomePage>
       renderPanelSheet: false,
       backdropEnabled: true,
       parallaxOffset: .1,
-      borderRadius: const BorderRadius.vertical(
-        top: Radius.circular(20.0),
-      ),
       // stack the search bar widget over the map ui
       body: Stack(children: const <Widget>[
         SmartriderMap(),
         SearchBar(),
       ]),
-      panelBuilder: (sc) => PanelPage(panelScrollController: sc),
+      header: PanelHeader(panelController: _panelController),
+      panelBuilder: (sc) => PanelBody(
+        panelScrollController: sc,
+        headerHeight: minHeight,
+      ),
     );
   }
 
@@ -166,7 +169,6 @@ class _HomePageState extends State<_HomePage>
               switch (prefState.runtimeType) {
                 case PrefsLoadingState:
                   return const Center(child: CircularProgressIndicator());
-
                 case PrefsLoadedState:
                   {
                     WidgetsBinding.instance!.addPostFrameCallback((_) =>

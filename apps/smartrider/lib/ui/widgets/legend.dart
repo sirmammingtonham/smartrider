@@ -36,7 +36,7 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                 Icons.trip_origin,
                 color: color,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 15,
               ),
               Text(title)
@@ -66,7 +66,7 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 15,
               ),
               Text(title)
@@ -142,7 +142,9 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                 _legendRouteTile(title: 'Route 286', color: busColors['286']!),
                 _legendRouteTile(title: 'Route 289', color: busColors['289']!),
                 _legendRouteTile(
-                    title: 'CDTA Express', color: busColors['288']!),
+                  title: 'CDTA Express',
+                  color: busColors['288']!,
+                ),
               ]);
               height = 185.0;
               width = 170.0;
@@ -172,7 +174,7 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                 ...routeTiles
               ]);
               height = 82.0 + (25 * routeTiles.length);
-              width = 190.0;
+              width = 230.0;
             }
             break;
           case MapView.kSaferideView:
