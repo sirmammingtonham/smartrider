@@ -99,8 +99,8 @@ class PanelBody extends StatelessWidget {
                       }
                     },
                     child: Icon(scheduleState is ScheduleTimelineState
-                        ? Icons.table_view
-                        : Icons.timeline),
+                        ? Icons.table_chart_outlined
+                        : Icons.timeline_outlined),
                   ),
                 ),
               );

@@ -122,7 +122,8 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
         prefsBloc: _prefsBloc,
         busRepo: widget.busRepo,
         shuttleRepo: widget.shuttleRepo,
-        saferideRepo: widget.saferideRepo);
+        saferideRepo: widget.saferideRepo)
+      ..add(const MapInitEvent());
     _scheduleBloc = ScheduleBloc(
       mapBloc: _mapBloc,
       busRepo: widget.busRepo,
@@ -170,40 +171,49 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
         BlocProvider<MapBloc>(create: (context) => _mapBloc),
         BlocProvider<ScheduleBloc>(create: (context) => _scheduleBloc),
       ],
-      child: BlocBuilder<PrefsBloc, PrefsState>(
-          builder: (BuildContext context, PrefsState state) {
-        if (state is PrefsLoadedState) {
-          return MaterialApp(
-            builder: (context, widget) => ResponsiveWrapper.builder(
-                BouncingScrollWrapper.builder(context, widget!),
-                maxWidth: 1200,
-                minWidth: 450,
-                defaultScale: true,
-                breakpoints: const [
-                  ResponsiveBreakpoint.resize(450, name: MOBILE),
-                  ResponsiveBreakpoint.autoScale(800, name: TABLET),
-                  ResponsiveBreakpoint.autoScale(1000, name: TABLET),
-                  ResponsiveBreakpoint.resize(1200, name: DESKTOP),
-                  ResponsiveBreakpoint.autoScale(2460, name: '4K'),
-                ]),
-            debugShowCheckedModeBanner: false,
-            title: 'smartrider Prototype',
-            theme: FlexColorScheme.light(scheme: colorScheme).toTheme,
-            darkTheme: FlexColorScheme.dark(scheme: colorScheme).toTheme,
-            themeMode: ThemeMode.system,
-            home: ShowCaseWidget(
-              builder: Builder(
-                  builder: (context) => state.firstLaunch!
-                      ? const OnboardingScreen()
-                      : const WelcomeScreen(homePage: HomePage())),
-              autoPlay: true,
-              autoPlayDelay: const Duration(seconds: 10),
-            ),
-          );
-        } else {
-          return const MaterialApp(home: CircularProgressIndicator());
-        }
-      }),
+      child: MaterialApp(
+        builder: (context, widget) => ResponsiveWrapper.builder(
+            BouncingScrollWrapper.builder(context, widget!),
+            maxWidth: 1200,
+            minWidth: 450,
+            defaultScale: true,
+            breakpoints: const [
+              ResponsiveBreakpoint.resize(450, name: MOBILE),
+              ResponsiveBreakpoint.autoScale(800, name: TABLET),
+              ResponsiveBreakpoint.autoScale(1000, name: TABLET),
+              ResponsiveBreakpoint.resize(1200, name: DESKTOP),
+              ResponsiveBreakpoint.autoScale(2460, name: '4K'),
+            ]),
+        debugShowCheckedModeBanner: false,
+        title: 'smartrider Prototype',
+        theme: FlexColorScheme.light(scheme: colorScheme).toTheme,
+        darkTheme: FlexColorScheme.dark(scheme: colorScheme).toTheme,
+        themeMode: ThemeMode.system,
+        home: ShowCaseWidget(
+          builder: Builder(
+              builder: (context) => const WelcomeScreen(homePage: HomePage())),
+          autoPlay: true,
+          autoPlayDelay: const Duration(seconds: 10),
+        ),
+        // TODO: put all this shid into an onboarding bloc so we dont rebuild
+        //  the whole app each time we change settings...
+
+        // BlocBuilder<PrefsBloc, PrefsState>(
+        //     builder: (BuildContext context, PrefsState state) {
+        //   if (state is PrefsLoadedState) {
+        //     return ShowCaseWidget(
+        //       builder: Builder(
+        //           builder: (context) => state.firstLaunch!
+        //               ? const OnboardingScreen()
+        //               : const WelcomeScreen(homePage: HomePage())),
+        //       autoPlay: true,
+        //       autoPlayDelay: const Duration(seconds: 10),
+        //     );
+        //   } else {
+        //     return const MaterialApp(home: CircularProgressIndicator());
+        //   }
+        // }),
+      ),
     );
   }
 }

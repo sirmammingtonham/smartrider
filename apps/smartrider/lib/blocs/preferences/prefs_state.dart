@@ -46,14 +46,6 @@ class PrefsChangedState extends PrefsState {
   const PrefsChangedState();
 }
 
-/// This class represents what user will see when fetching data
-class PrefsSavingState extends PrefsState {
-  const PrefsSavingState();
-
-  @override
-  List<Object> get props => [];
-}
-
 // This class represents what user will see when there is an error
 class PrefsErrorState extends PrefsState {
   const PrefsErrorState({this.message});

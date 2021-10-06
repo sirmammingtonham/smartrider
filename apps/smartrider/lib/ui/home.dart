@@ -9,10 +9,8 @@ import 'package:showcaseview/showcaseview.dart';
 
 // import 'package:sizer/sizer.dart';
 // bloc imports
-import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
-import 'package:shared/util/multi_bloc_builder.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 
 // custom widget imports
@@ -22,8 +20,6 @@ import 'package:smartrider/ui/widgets/panel_header.dart';
 import 'package:smartrider/ui/widgets/panel_body.dart';
 import 'package:smartrider/ui/widgets/saferide_status_widgets.dart'
     as saferide_widgets;
-
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 GlobalKey showcaseSettings = GlobalKey();
 GlobalKey showcaseShuttleToggle = GlobalKey();
@@ -74,7 +70,6 @@ class _HomePageState extends State<_HomePage>
     super.initState();
     _panelController = PanelController();
     _tabController = TabController(vsync: this, length: 2);
-    BlocProvider.of<MapBloc>(context).add(const MapInitEvent());
     BlocProvider.of<ScheduleBloc>(context).add(ScheduleInitEvent(
         panelController: _panelController, tabController: _tabController));
   }
@@ -102,8 +97,7 @@ class _HomePageState extends State<_HomePage>
     }
   }
 
-  Widget _slidingPanel(SaferideState saferideState, PrefsState prefsState,
-      BuildContext context) {
+  Widget _slidingPanel(SaferideState saferideState, BuildContext context) {
     late final double minHeight;
     switch (saferideState.runtimeType) {
       case SaferideSelectingState:
@@ -132,9 +126,9 @@ class _HomePageState extends State<_HomePage>
       controller: _panelController,
       maxHeight: MediaQuery.of(context).size.height * 0.9,
       minHeight: minHeight,
-      onPanelOpened: () {
-        startTimelineShowcase(prefsState as PrefsLoadedState, context);
-      },
+      // onPanelOpened: () {
+      //   startTimelineShowcase(prefsState as PrefsLoadedState, context);
+      // },
       parallaxEnabled: true,
       renderPanelSheet: false,
       backdropEnabled: true,
@@ -156,38 +150,13 @@ class _HomePageState extends State<_HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: MultiBlocBuilder(
-            blocs: [
-              BlocProvider.of<SaferideBloc>(context),
-              BlocProvider.of<PrefsBloc>(context),
-            ],
-            builder: (context, states) {
-              final saferideState = states.get<SaferideState>();
-              final prefState = states.get<PrefsState>();
-              switch (prefState.runtimeType) {
-                case PrefsLoadingState:
-                  return const Center(child: CircularProgressIndicator());
-                case PrefsLoadedState:
-                  {
-                    WidgetsBinding.instance!.addPostFrameCallback((_) =>
-                        startShowcase(prefState as PrefsLoadedState, context));
-                    KeyboardVisibilityController()
-                        .onChange
-                        .listen((bool visible) {
-                      // if (visible && saferideState is SaferideNoState) {
-                      //   _panelController.hide();
-                      // } else {
-                      //   _panelController.show();
-                      // }
-                    });
-                    return _slidingPanel(saferideState, prefState, context);
-                  }
-                case PrefsSavingState:
-                  return const Center(child: CircularProgressIndicator());
-                default:
-                  return const Center(child: Text('oh poops'));
-              }
-            }));
+      resizeToAvoidBottomInset: false,
+      body: BlocBuilder<SaferideBloc, SaferideState>(
+        bloc: BlocProvider.of<SaferideBloc>(context),
+        builder: (context, state) {
+          return _slidingPanel(state, context);
+        },
+      ),
+    );
   }
 }

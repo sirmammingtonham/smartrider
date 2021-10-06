@@ -80,7 +80,6 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
         break;
       case SavePrefsEvent:
         {
-          yield const PrefsSavingState();
           await _sharedPrefs.setBool(
               (event as SavePrefsEvent).name!, event.val);
           yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
