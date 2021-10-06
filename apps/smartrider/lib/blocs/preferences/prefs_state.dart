@@ -26,7 +26,7 @@ class PrefsLoadedState extends PrefsState {
   final Map<String, bool> buses;
   final bool modifyActiveRoutes;
 
-  ThemeData get theme => prefs.getBool('darkMode')! ? darkTheme : lightTheme;
+  // ThemeData get theme => prefs.getBool('darkMode')! ? FlexScheme.brandBlue : lightTheme;
 
   bool? get firstLaunch => prefs.getBool('firstLaunch');
 

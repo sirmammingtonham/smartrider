@@ -45,7 +45,7 @@ dependencies:
 
   #notication dependencies
   #flutter_local_notifications: ^6.0.0
-  awesome_notifications: 0.0.6+9
+  awesome_notifications: 0.0.6+10
 
   #url_launcher
   url_launcher: ^6.0.6
@@ -59,6 +59,8 @@ dependencies:
   table_sticky_headers: ^2.0.0
   showcaseview: ^1.0.0
   device_preview: ^0.7.4
+  responsive_framework: ^0.1.4
+  flex_color_scheme: ^3.0.1
 
   #issue request dependencies
   oauth2_client: ^2.2.0

@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shared/models/themes.dart';
+// import 'package:shared/models/themes.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
+
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
