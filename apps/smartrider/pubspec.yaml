@@ -51,7 +51,6 @@ dependencies:
   url_launcher: ^6.0.6
 
   #ui dependencies
-  sliding_up_panel: ^2.0.0+1
   scrollable_positioned_list: ^0.2.0-nullsafety.0
   intl: ^0.17.0
   flutter_svg: ^0.22.0

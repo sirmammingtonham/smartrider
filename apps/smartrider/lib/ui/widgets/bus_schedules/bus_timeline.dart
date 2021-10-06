@@ -1,7 +1,8 @@
 // ui dependencies
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:shared/models/bus/bus_shape.dart';

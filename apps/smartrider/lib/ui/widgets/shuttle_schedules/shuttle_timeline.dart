@@ -6,7 +6,8 @@
 
 // import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 // // import 'package:intl/intl.dart';
-// import 'package:sliding_up_panel/sliding_up_panel.dart';
+//
+import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 // // import 'package:smartrider/blocs/map/map_bloc.dart';
 // // import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
@@ -59,7 +60,7 @@
 //   void initState() {
 //     super.initState();
 //     _tabController =
-//         TabController(vsync: this, length: 
+//         TabController(vsync: this, length:
 // shuttleTabs.length, initialIndex: 1);
 //     _tabController!.addListener(() {
 //       isExpandedList.fillRange(0, 100, false);
@@ -84,7 +85,7 @@
 //         labelColor: Theme.of(context).brightness == Brightness.light
 //             ? Colors.black
 //             : null,
-//         unselectedLabelColor: 
+//         unselectedLabelColor:
 // Theme.of(context).brightness == Brightness.light
 //             ? Colors.black
 //             : null,

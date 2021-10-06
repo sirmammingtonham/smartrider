@@ -1,7 +1,8 @@
 // ui dependencies
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 // import 'package:sizer/sizer.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 
@@ -144,9 +145,9 @@ class PanelHeader extends StatelessWidget {
         }
         return GestureDetector(
           onVerticalDragUpdate: (det) {
-            if (det.primaryDelta! > 0.0) {
-              panelController.close();
-            }
+            // if (det.primaryDelta! > 0.0) {
+            //   panelController.close();
+            // }
           },
           child: SizedBox(
             width: MediaQuery.of(context).size.width,

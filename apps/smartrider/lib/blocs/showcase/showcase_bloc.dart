@@ -5,7 +5,8 @@
 //if we continue with this, we are using awesome notifications
 // import 'package:awesome_notifications/awesome_notifications.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:sliding_up_panel/sliding_up_panel.dart';
+//
+// import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 // import 'package:shared/models/bus/bus_route.dart';
 // import 'package:shared/models/shuttle/shuttle_stop.dart';
 

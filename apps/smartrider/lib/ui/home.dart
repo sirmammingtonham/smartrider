@@ -1,9 +1,8 @@
 // ui imports
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 
 // import 'package:shared/util/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
