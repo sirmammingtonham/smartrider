@@ -6,7 +6,7 @@ import 'package:shared/util/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:sizer/sizer.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
-import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/ui/home.dart';
 
 class Legend extends StatefulWidget {
   const Legend({Key? key}) : super(key: key);

@@ -8,7 +8,7 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:shared/util/messages.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
 
-import 'package:smartrider/pages/profile.dart';
+import 'package:smartrider/ui/profile.dart';
 import 'package:smartrider/widgets/icons.dart';
 
 // auth bloc import
@@ -23,7 +23,7 @@ import 'package:google_maps_webservice/places.dart';
 
 // import 'dart:io';
 import 'package:shared/util/strings.dart';
-import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/ui/home.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:sizer/sizer.dart';
 
@@ -46,7 +46,7 @@ class SearchBar extends StatefulWidget {
 class SearchBarState extends State<SearchBar> {
   SearchBarState();
   late String initials;
-  final places = GoogleMapsPlaces(apiKey: googleApiKey);
+  final places = GoogleMapsPlaces(apiKey: google_api_key);
 
   @override
   void initState() {

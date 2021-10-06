@@ -11,7 +11,7 @@ import 'package:showcaseview/showcaseview.dart';
 import 'package:sizer/sizer.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
-import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/ui/home.dart';
 import 'package:smartrider/widgets/legend.dart';
 import 'package:smartrider/widgets/saferide_status_widgets.dart'
     as saferide_widgets;

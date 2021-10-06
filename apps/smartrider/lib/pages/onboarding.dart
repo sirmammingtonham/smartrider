@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smartrider/pages/welcome.dart';
-import 'package:smartrider/pages/home.dart';
+import 'package:smartrider/ui/home.dart';
 import 'package:sizer/sizer.dart';
 
 // prefs bloc
