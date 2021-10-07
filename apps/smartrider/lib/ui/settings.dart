@@ -91,6 +91,7 @@ class _SettingsPageState extends State<SettingsPage> {
         case PrefsLoadedState:
           return Scaffold(
               appBar: AppBar(
+                backgroundColor: Theme.of(context).accentColor,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(
                     bottom: Radius.circular(15.0),

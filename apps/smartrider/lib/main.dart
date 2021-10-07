@@ -132,11 +132,12 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     final window = WidgetsBinding.instance!.window;
     window.onPlatformBrightnessChanged = () {
       // This callback is called every time the brightness changes.
-      final brightness = window.platformBrightness;
       _mapBloc.add(MapThemeChangeEvent(
-          theme: brightness == Brightness.light
-              ? FlexColorScheme.light(scheme: colorScheme).toTheme
-              : FlexColorScheme.dark(scheme: colorScheme).toTheme));
+        theme: window.platformBrightness == Brightness.light
+            ? FlexColorScheme.light(scheme: colorScheme).toTheme
+            : FlexColorScheme.dark(scheme: colorScheme).toTheme,
+      ));
+      setState(() {});
     };
   }
 

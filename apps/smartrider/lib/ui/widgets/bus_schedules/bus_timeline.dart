@@ -104,12 +104,9 @@ class BusTimelineState extends State<BusTimeline>
           indicatorColor: busColors.values.toList()[_tabController.index],
           isScrollable: true,
           tabs: busTabs,
-          labelColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.black
-              : null,
-          unselectedLabelColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.black45
-              : null,
+          labelColor: Theme.of(context).colorScheme.onBackground,
+          unselectedLabelColor:
+              Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
           controller: _tabController,
         ),
       ),

@@ -46,7 +46,7 @@ class PanelHeader extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).accentColor,
           height: saferide_widgets.saferideDefaultHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -123,40 +123,40 @@ class PanelHeader extends StatelessWidget {
             break;
           case SaferideSelectingState:
             appBarWidget = saferide_widgets.saferideSelectionWidget(
-                context, saferideState as SaferideSelectingState);
-
+              context,
+              saferideState as SaferideSelectingState,
+            );
             break;
           case SaferideWaitingState:
             appBarWidget = saferide_widgets.saferideWaitingWidget(
-                context, saferideState as SaferideWaitingState);
+              context,
+              saferideState as SaferideWaitingState,
+            );
             break;
           case SaferidePickingUpState:
             appBarWidget = saferide_widgets.saferidePickingUpWidget(
-                context, saferideState as SaferidePickingUpState);
+              context,
+              saferideState as SaferidePickingUpState,
+            );
             break;
           case SaferideCancelledState:
             _saferideDriverCancelPopup(
-                context, saferideState as SaferideCancelledState);
+              context,
+              saferideState as SaferideCancelledState,
+            );
             appBarWidget = Container();
             break;
           default:
             appBarWidget = Container();
             break;
         }
-        return GestureDetector(
-          onVerticalDragUpdate: (det) {
-            // if (det.primaryDelta! > 0.0) {
-            //   panelController.close();
-            // }
-          },
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20.0),
-              ),
-              child: appBarWidget,
+        return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20.0),
             ),
+            child: appBarWidget,
           ),
         );
       },

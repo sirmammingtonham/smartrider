@@ -262,11 +262,11 @@ class SearchBarState extends State<SearchBar> {
                   child: Hero(
                     tag: 'circleAvatar',
                     child: CircleAvatar(
+                      backgroundColor: Theme.of(context).accentColor,
                       child: Text(
                         initials,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.white70,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
                       ),
                     ),
@@ -327,7 +327,7 @@ class SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.only(top: 15),
+        padding: const EdgeInsets.only(top: 15),
         child: MultiBlocBuilder(
           blocs: [
             BlocProvider.of<SaferideBloc>(context),
@@ -357,8 +357,8 @@ class SearchBarState extends State<SearchBar> {
               case SaferideErrorState:
                 return const Placeholder(); //TODO: fill out these widgets
               default:
-                return Text(
-                    'saferide state type error, type is ${saferideState.runtimeType}');
+                return Text('saferide state type error, '
+                    'type is ${saferideState.runtimeType}');
             }
           },
         ),

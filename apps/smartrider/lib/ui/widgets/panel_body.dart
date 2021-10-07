@@ -25,12 +25,8 @@ class PanelBody extends StatelessWidget {
   final ScrollController panelScrollController;
   final double headerHeight;
   final List<Widget> _tabs = [
-    const Tab(
-        text: 'Bus Schedule',
-        icon: Icon(Icons.directions_bus, color: Colors.grey)),
-    const Tab(
-        text: 'Shuttle Schedule',
-        icon: Icon(Icons.airport_shuttle, color: Colors.grey)),
+    const Tab(text: 'Bus Schedule', icon: Icon(Icons.directions_bus)),
+    const Tab(text: 'Shuttle Schedule', icon: Icon(Icons.airport_shuttle)),
   ];
 
   Widget panelBody(BuildContext context, ScheduleState scheduleState) =>
@@ -81,6 +77,13 @@ class PanelBody extends StatelessWidget {
                         child: TabBar(
                           controller: BlocProvider.of<ScheduleBloc>(context)
                               .tabController,
+                          indicatorColor: Theme.of(context).accentColor,
+                          labelColor:
+                              Theme.of(context).colorScheme.onBackground,
+                          unselectedLabelColor: Theme.of(context)
+                              .colorScheme
+                              .onBackground
+                              .withOpacity(0.5),
                           tabs: _tabs,
                         ),
                       ),

@@ -473,7 +473,7 @@ class _AuthenticationUIState extends State<AuthenticationUI> {
               clipper: BottomWaveClipper(),
               child: Container(
                 color: Theme.of(context)
-                    .primaryColor, //color of clip on bottom right
+                    .accentColor, //color of clip on bottom right
                 height: 200,
               ),
             ),
