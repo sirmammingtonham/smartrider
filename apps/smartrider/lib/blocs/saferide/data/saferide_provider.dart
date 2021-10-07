@@ -1,3 +1,4 @@
+// ignore_for_file: non_constant_identifier_names
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared/models/saferide/position_data.dart';
@@ -19,12 +20,13 @@ class SaferideProvider {
 
   // fill in the fields specified in order.dart
   // with the orders collection in the firebase
-  Future<Stream<DocumentSnapshot>> createOrder(
-      {required String pickupAddress,
-      required GeoPoint pickupPoint,
-      required String dropoffAddress,
-      required GeoPoint dropoffPoint,
-      required int estimateWaitTime}) async {
+  Future<Stream<DocumentSnapshot>> createOrder({
+    required String pickupAddress,
+    required GeoPoint pickupPoint,
+    required String dropoffAddress,
+    required GeoPoint dropoffPoint,
+    required double distance,
+  }) async {
     final user = auth.currentUser!;
     final ref = orders.doc(user.uid);
     await ref.set({
@@ -36,7 +38,8 @@ class SaferideProvider {
       'rider_email': user.email!,
       'rider_phone': user.phoneNumber!,
       'updated_at': FieldValue.serverTimestamp(),
-      'estimated_pickup': estimateWaitTime,
+      'estimated_pickup': await estimateWaitTime(distance),
+      'queue_position': await getQueueSize(),
       'pickup_time': DateTime.now().millisecondsSinceEpoch
     });
     return ref.snapshots();
@@ -69,6 +72,7 @@ class SaferideProvider {
     return distanceInInt;
   }
 
+  // TODO: also update past order queue positions
   Future<void> updatePastOrders(double distance, int newTime) async {
     // estimate arrival time using exponential averaging: https://www.youtube.com/watch?v=k_HN0wOKDd0
     final distanceInInt = convertDistance(distance);
@@ -82,10 +86,8 @@ class SaferideProvider {
     final F_old = await estimateWaitTime(distance);
     final newEstimate = (alpha * A_old + (1 - alpha) * F_old).round();
 
-    await refs.docs.first.reference
-        .set({'last$distanceInInt': newminutes}, SetOptions(merge: true));
-    await refs.docs.first.reference
-        .set({'$distanceInInt': newEstimate}, SetOptions(merge: true));
+    await refs.docs.first.reference.update({'last$distanceInInt': newminutes});
+    await refs.docs.first.reference.update({'$distanceInInt': newEstimate});
   }
 
   Stream<List<PositionData>> getSaferideLocationsStream() =>

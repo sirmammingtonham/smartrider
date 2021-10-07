@@ -11,7 +11,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 // import 'package:shared/models/saferide/driver.dart';
 import 'package:smartrider/blocs/authentication/data/authentication_repository.dart';
-import 'package:smartrider/blocs/map/data/saferide_repository.dart';
+import 'package:smartrider/blocs/saferide/data/saferide_repository.dart';
 import 'package:shared/util/strings.dart';
 import 'package:shared/models/saferide/order.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -150,7 +150,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         {
           prefsBloc.setCurrentOrderId(order.orderRef.id);
           add(SaferideWaitingEvent(
-              queuePosition: order.queuePosition ?? -1,
+              queuePosition: order.queuePosition,
               estimatedPickup: order.estimatedPickup));
         }
         break;
@@ -166,7 +166,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
               driverName: currentDriver['name']! as String,
               driverPhone: currentDriver['phone_number']! as String,
               licensePlate: vehicle.get('license_plate') as String,
-              queuePosition: order.queuePosition ?? -1,
+              queuePosition: order.queuePosition,
               estimatedPickup: order.estimatedPickup));
         }
         break;
@@ -213,7 +213,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
 
   Stream<SaferideState> _mapConfirmedToState(
       SaferideConfirmedEvent event) async* {
-    //create order, listen to changes in snapshot, update display vars in state
+    // create order, listen to changes in snapshot, update display vars in state
     if (pickupPoint != null && dropoffPoint != null) {
       yield SaferideLoadingState();
       distance = Geolocator.bearingBetween(
@@ -221,13 +221,13 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
           pickupPoint!.longitude,
           dropoffPoint!.latitude,
           dropoffPoint!.longitude);
-      final waitTime = await saferideRepo.estimateWaitTime(distance);
-      final order = await saferideRepo.createNewOrder(
-          pickupAddress: pickupAddress!,
-          pickupPoint: pickupPoint!,
-          dropoffAddress: dropoffAddress!,
-          dropoffPoint: dropoffPoint!,
-          estimateWaitTime: waitTime);
+      final order = await saferideRepo.createOrder(
+        pickupAddress: pickupAddress!,
+        pickupPoint: pickupPoint!,
+        dropoffAddress: dropoffAddress!,
+        dropoffPoint: dropoffPoint!,
+        distance: distance,
+      );
 
       orderSubscription = order.listen(orderListener);
     } else {
@@ -276,7 +276,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       pickupDescription: pickupDescription!,
       dropPoint: dropoffPoint!,
       dropDescription: dropoffDescription!,
-      queuePosition: 0, //
+      queuePosition: await saferideRepo.getQueueSize(),
     );
   }
 }

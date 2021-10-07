@@ -11,21 +11,20 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 
 // import 'package:sizer/sizer.dart';
 
-final saferideDefaultHeight = 119.0;
-final saferideSelectingHeight = 128.0;
-final saferideWaitingHeight = 175.0;
-final saferidePickingUpHeight = 240.0;
-final saferideCancelledHeight = 240.0;
-final saferideErrorHeight = 128.0;
+const saferideDefaultHeight = 119.0;
+const saferideSelectingHeight = 128.0;
+const saferideWaitingHeight = 175.0;
+const saferidePickingUpHeight = 240.0;
+const saferideCancelledHeight = 240.0;
+const saferideErrorHeight = 128.0;
 
 /// widget when user is still selecting pickup/dropoff
 Widget saferideSelectionWidget(
-        BuildContext context, SaferideSelectingState state) =>
-    Container(
+  BuildContext context,
+  SaferideSelectingState state,
+) =>
+    SizedBox(
         height: saferideSelectingHeight,
-        // decoration: BoxDecoration(
-        //   color: Theme.of(context).primaryColor,
-        // ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Column(
@@ -81,12 +80,11 @@ Widget saferideSelectionWidget(
 
 /// widget for order status waiting
 Widget saferideWaitingWidget(
-        BuildContext context, SaferideWaitingState state) =>
-    Container(
+  BuildContext context,
+  SaferideWaitingState state,
+) =>
+    SizedBox(
         height: saferideWaitingHeight,
-        // decoration: BoxDecoration(
-        //   color: Theme.of(context).primaryColor,
-        // ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Column(
@@ -94,7 +92,7 @@ Widget saferideWaitingWidget(
               const SizedBox(height: 5),
               Center(
                 child: Text(
-                  'Estimate wait time: ${state.estimatedPickup ?? -1} minutes',
+                  'Estimate wait time: ${state.estimatedPickup} minutes',
                   style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -106,15 +104,14 @@ Widget saferideWaitingWidget(
                   Icons.hourglass_top,
                   color: Colors.white,
                 ),
-                title: Text('${state.queuePosition} in line',
+                title: Text(
+                    '${state.queuePosition + 1}'
+                    '${(state.queuePosition + 1).toOrdinal()} in line',
                     style: const TextStyle(
                       color: Colors.white,
                     )),
               ),
               ElevatedButton(
-                // style: ButtonStyle(
-                //     backgroundColor: MaterialStateProperty.all<Color>(
-                //         Theme.of(context).buttonColor)),
                 onPressed: () {
                   BlocProvider.of<SaferideBloc>(context)
                       .add(const SaferideUserCancelledEvent());
@@ -134,12 +131,11 @@ Widget saferideWaitingWidget(
 
 /// widget for order status picking up
 Widget saferidePickingUpWidget(
-        BuildContext context, SaferidePickingUpState state) =>
-    Container(
+  BuildContext context,
+  SaferidePickingUpState state,
+) =>
+    SizedBox(
       height: saferidePickingUpHeight,
-      // decoration: BoxDecoration(
-      //   color: Theme.of(context).primaryColor,
-      // ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
@@ -147,7 +143,7 @@ Widget saferidePickingUpWidget(
             const SizedBox(height: 5),
             Center(
               child: Text(
-                'Estimate wait time: ${state.estimatedPickup ?? -1} minutes',
+                'Estimate wait time: ${state.estimatedPickup} minutes',
                 style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -186,9 +182,6 @@ Widget saferidePickingUpWidget(
               trailing: Text(state.licensePlate),
             ),
             ElevatedButton(
-              // style: ButtonStyle(
-              //     backgroundColor: MaterialStateProperty.all<Color>(
-              //         Theme.of(context).accentColor)),
               onPressed: () {
                 BlocProvider.of<SaferideBloc>(context)
                     .add(const SaferideUserCancelledEvent());

@@ -214,7 +214,8 @@ class ActionButton extends StatelessWidget {
         decoration: isSelected
             ? BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(width: 3, color: Colors.blueAccent),
+                border:
+                    Border.all(width: 3, color: Theme.of(context).accentColor),
               )
             : null,
         child: IconButton(

@@ -16,7 +16,7 @@ class Order {
     required this.riderPhone,
     this.vehicleRef,
     required this.updatedAt,
-    this.estimatedPickup,
+    required this.estimatedPickup,
     required this.queuePosition,
     required this.pickupTime,
     this.cancellationReason,
@@ -35,8 +35,8 @@ class Order {
         riderPhone: data['rider_phone']!,
         vehicleRef: data['vehicle'],
         updatedAt: data['updated_at']!,
-        estimatedPickup: data['estimated_pickup'],
-        queuePosition: data['queue_position'],
+        estimatedPickup: data['estimated_pickup']!,
+        queuePosition: data['queue_position']!,
         pickupTime: data['pickup_time'],
         cancellationReason:
             data['status'] == 'CANCELLED' ? data['cancel_reason'] : null);
@@ -69,10 +69,10 @@ class Order {
   final Timestamp updatedAt;
 
   /// timestamp of estimated pickup (when status == PICKUP_UP)
-  final int? estimatedPickup;
+  final int estimatedPickup;
 
   /// queue position, updated on writes through cloud functions
-  final int? queuePosition;
+  final int queuePosition;
 
   /// cancellation reason if status == CANCELLED else null
   final String? cancellationReason;

@@ -23,7 +23,7 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 // repository imports
 import 'package:smartrider/blocs/map/data/bus_repository.dart';
 import 'package:smartrider/blocs/map/data/shuttle_repository.dart';
-import 'package:smartrider/blocs/map/data/saferide_repository.dart';
+import 'package:smartrider/blocs/saferide/data/saferide_repository.dart';
 
 // model imports
 import 'package:shared/models/shuttle/shuttle_route.dart';

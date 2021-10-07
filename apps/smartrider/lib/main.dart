@@ -19,8 +19,8 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 // data repository imports
 import 'package:smartrider/blocs/authentication/data/authentication_repository.dart';
 import 'package:smartrider/blocs/map/data/bus_repository.dart';
-import 'package:smartrider/blocs/map/data/saferide_repository.dart';
 import 'package:smartrider/blocs/map/data/shuttle_repository.dart';
+import 'package:smartrider/blocs/saferide/data/saferide_repository.dart';
 
 // page imports
 import 'package:smartrider/ui/welcome.dart';

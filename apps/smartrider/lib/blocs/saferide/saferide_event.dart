@@ -10,7 +10,10 @@ class SaferideNoEvent extends SaferideEvent {
 }
 
 class SaferideSelectingEvent extends SaferideEvent {
-  const SaferideSelectingEvent({this.pickupPrediction, this.dropoffPrediction});
+  const SaferideSelectingEvent({
+    this.pickupPrediction,
+    this.dropoffPrediction,
+  });
 
   final Prediction? pickupPrediction;
   final Prediction? dropoffPrediction;
@@ -27,34 +30,37 @@ class SaferideConfirmedEvent extends SaferideEvent {
 }
 
 class SaferideWaitingEvent extends SaferideEvent {
-  const SaferideWaitingEvent(
-      {required this.queuePosition, required this.estimatedPickup});
+  const SaferideWaitingEvent({
+    required this.queuePosition,
+    required this.estimatedPickup,
+  });
 
   final int queuePosition;
-  final int? estimatedPickup;
+  final int estimatedPickup;
 
   @override
-  List<Object?> get props => [queuePosition, estimatedPickup];
+  List<Object> get props => [queuePosition, estimatedPickup];
 }
 
 class SaferidePickingUpEvent extends SaferideEvent {
-  const SaferidePickingUpEvent(
-      {required this.vehicleId,
-      required this.driverName,
-      required this.driverPhone,
-      required this.licensePlate,
-      required this.queuePosition,
-      required this.estimatedPickup});
+  const SaferidePickingUpEvent({
+    required this.vehicleId,
+    required this.driverName,
+    required this.driverPhone,
+    required this.licensePlate,
+    required this.queuePosition,
+    required this.estimatedPickup,
+  });
 
   final String vehicleId;
   final String driverName;
   final String driverPhone;
   final String licensePlate;
   final int queuePosition;
-  final int? estimatedPickup;
+  final int estimatedPickup;
 
   @override
-  List<Object?> get props => [
+  List<Object> get props => [
         vehicleId,
         driverName,
         driverPhone,
@@ -79,7 +85,9 @@ class SaferideUserCancelledEvent extends SaferideEvent {
 }
 
 class SaferideDriverCancelledEvent extends SaferideEvent {
-  const SaferideDriverCancelledEvent({required this.reason});
+  const SaferideDriverCancelledEvent({
+    required this.reason,
+  });
 
   final String reason;
 

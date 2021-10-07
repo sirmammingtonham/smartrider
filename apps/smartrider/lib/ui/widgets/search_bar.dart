@@ -150,10 +150,11 @@ class SearchBarState extends State<SearchBar> {
           // the utils folder to contain the api key)
           return TypeAheadField(
             hideOnLoading: true,
-            textFieldConfiguration: const TextFieldConfiguration(
+            textFieldConfiguration: TextFieldConfiguration(
                 autofocus: false,
                 decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0)),
                     hintText: 'Need a safe ride?')),
             suggestionsCallback: (pattern) async {
               if (pattern.isEmpty) {

@@ -25,8 +25,12 @@ class PanelBody extends StatelessWidget {
   final ScrollController panelScrollController;
   final double headerHeight;
   final List<Widget> _tabs = [
-    const Tab(icon: Icon(Icons.directions_bus, color: Colors.grey)),
-    const Tab(icon: Icon(Icons.airport_shuttle, color: Colors.grey)),
+    const Tab(
+        text: 'Bus Schedule',
+        icon: Icon(Icons.directions_bus, color: Colors.grey)),
+    const Tab(
+        text: 'Shuttle Schedule',
+        icon: Icon(Icons.airport_shuttle, color: Colors.grey)),
   ];
 
   Widget panelBody(BuildContext context, ScheduleState scheduleState) =>
