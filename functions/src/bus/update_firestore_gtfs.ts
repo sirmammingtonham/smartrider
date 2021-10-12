@@ -371,14 +371,14 @@ const parseTimetables = async () => {
       try {
         await pushTable(route, activity_map[active_days], 0);
       } catch (error) {
-        if (!error.message.includes("trips")) {
+        if (!(error as Error).message.includes("trips")) {
           throw error;
         }
       }
       try {
         await pushTable(route, activity_map[active_days], 1);
       } catch (error) {
-        if (!error.message.includes("trips")) {
+        if (!(error as Error).message.includes("trips")) {
           throw error;
         }
       }

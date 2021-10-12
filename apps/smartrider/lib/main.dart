@@ -30,7 +30,7 @@ import 'package:smartrider/ui/onboarding.dart';
 
 // test imports
 // import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
+// import 'package:awesome_notifications/awesome_notifications.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,17 +46,17 @@ void main() async {
     }
   }
 
-  await AwesomeNotifications().initialize(
-    null, // default app icon
-    [
-      NotificationChannel(
-          channelKey: 'basic_channel',
-          channelName: 'Basic notifications',
-          channelDescription: 'Notification channel for basic tests',
-          defaultColor: const Color(0xFF9D50DD),
-          ledColor: Colors.white)
-    ],
-  );
+  // await AwesomeNotifications().initialize(
+  //   null, // default app icon
+  //   [
+  //     NotificationChannel(
+  //         channelKey: 'basic_channel',
+  //         channelName: 'Basic notifications',
+  //         channelDescription: 'Notification channel for basic tests',
+  //         defaultColor: const Color(0xFF9D50DD),
+  //         ledColor: Colors.white)
+  //   ],
+  // );
 
   // final host = defaultTargetPlatform == TargetPlatform.android
   //     ? '10.0.2.2:8080'

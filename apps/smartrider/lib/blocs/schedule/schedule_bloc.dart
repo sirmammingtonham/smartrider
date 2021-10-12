@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 //import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
+// import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 import 'package:shared/models/bus/bus_route.dart';
@@ -22,14 +22,14 @@ part 'schedule_state.dart';
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ScheduleBloc({required this.mapBloc, required this.busRepo})
       : super(ScheduleInitialState()) {
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      if (!isAllowed) {
-        // Insert here your friendly dialog box before call the request method
-        // This is very important to not harm the user experience
-        AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-    });
-    _isTimeline = true;
+    // AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    //   if (!isAllowed) {
+    //     // Insert here your friendly dialog box before call the request method
+    //     // This is very important to not harm the user experience
+    //     AwesomeNotifications().requestPermissionToSendNotifications();
+    //   }
+    // });
+     _isTimeline = true;
   }
 
   final BusRepository busRepo;
@@ -46,26 +46,26 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   Map<String?, BusTimetable>? busTables;
 
   Future<void> scheduleBusAlarm(int secondsFromNow, TimetableStop stop) async {
-    await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 10,
-            channelKey: 'basic_channel',
-            title: 'Your bus is almost here!',
-            body: '${stop.stopName} is arriving soon!'),
-        schedule: NotificationInterval(
-            interval: secondsFromNow, repeats: false, allowWhileIdle: true));
+    // await AwesomeNotifications().createNotification(
+    //     content: NotificationContent(
+    //         id: 10,
+    //         channelKey: 'basic_channel',
+    //         title: 'Your bus is almost here!',
+    //         body: '${stop.stopName} is arriving soon!'),
+    //     schedule: NotificationInterval(
+    //         interval: secondsFromNow, repeats: false, allowWhileIdle: true));
   }
 
   Future<void> scheduleShuttleAlarm(
       int secondsFromNow, ShuttleStop stop) async {
-    await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 10,
-            channelKey: 'basic_channel',
-            title: 'Your bus is almost here!',
-            body: '${stop.name} is arriving soon!'),
-        schedule: NotificationInterval(
-            interval: secondsFromNow, repeats: false, allowWhileIdle: true));
+    // await AwesomeNotifications().createNotification(
+    //     content: NotificationContent(
+    //         id: 10,
+    //         channelKey: 'basic_channel',
+    //         title: 'Your bus is almost here!',
+    //         body: '${stop.name} is arriving soon!'),
+    //     schedule: NotificationInterval(
+    //         interval: secondsFromNow, repeats: false, allowWhileIdle: true));
   }
 
   @override
