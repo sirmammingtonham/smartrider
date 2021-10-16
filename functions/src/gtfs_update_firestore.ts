@@ -2,11 +2,11 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as gtfs from "gtfs";
 import * as gtfs_timetable from "gtfs-to-html";
-import * as models from "./bus_types";
+import * as models from "./gtfs_types";
 import * as Promise from "./async_util";
 import * as firestore from "typesaurus";
-import * as serviceAccount from "./smartrider-4e9e8-service.json";
-import { genShapeGeoJSON } from "./bus_util";
+import * as serviceAccount from "./setup/smartrider-4e9e8-service.json";
+import { genShapeGeoJSON } from "./gtfs_util";
 import { zipObject, zip, isNumber } from "lodash";
 import * as fs from "fs";
 import * as os from "os";
@@ -465,7 +465,7 @@ export const generateDB = async () => {
  * checks if the current date is past what we have data for, then calls [generateDB] if true
  * @effects
  */
-export const refreshDataBase = functions
+export const refreshGTFS = functions
   .runWith(runtimeOpts)
   .pubsub.schedule("0 3 * * *") // run at 3:00 am everyday eastern time
   .timeZone("America/New_York")

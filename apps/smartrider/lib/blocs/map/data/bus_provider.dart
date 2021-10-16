@@ -36,6 +36,9 @@ class BusProvider {
     '288', // cdta express shuttle
   ];
 
+  static const corsProxyURL =
+      'https://us-central1-smartrider-4e9e8.cloudfunctions.net/corsProxy/';
+
   List<String> getShortRoutes() {
     return shortRouteIds;
   }
@@ -128,8 +131,9 @@ class BusProvider {
     final milliseconds = now.millisecondsSinceEpoch;
     final ret = <String, Map<String, String>>{};
     for (final route in shortRouteIds) {
-      final response = await http.get(Uri.parse(
-          'https://www.cdta.org/apicache/routebus_${route}_0.json?_=$milliseconds'));
+      final response = await http.get(Uri.parse('$corsProxyURL'
+          'https://www.cdta.org/apicache/routebus_'
+          '${route}_0.json?_=$milliseconds'));
       if (response.statusCode == 200) {
         // filter out null values from json response and convert to map
         final data = <String, String>{};
@@ -151,8 +155,8 @@ class BusProvider {
   Future<Map<String, List<BusRealtimeUpdate>>> getBusRealtimeUpdates() async {
     final now = DateTime.now();
     final milliseconds = now.millisecondsSinceEpoch;
-    final response = await http.get(
-        Uri.parse('https://www.cdta.org/realtime/buses.json?$milliseconds'));
+    final response = await http.get(Uri.parse('$corsProxyURL'
+        'https://www.cdta.org/realtime/buses.json?$milliseconds'));
     final updates = <String, List<BusRealtimeUpdate>>{};
     for (final element in jsonDecode(response.body)) {
       final update = BusRealtimeUpdate.fromJson(element);
