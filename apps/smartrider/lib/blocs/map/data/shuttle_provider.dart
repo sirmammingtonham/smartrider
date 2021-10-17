@@ -3,13 +3,14 @@ import 'dart:convert';
 // import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:shared/util/http_util.dart';
 // import 'package:path_provider/path_provider.dart';
 
 import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
 import 'package:shared/models/shuttle/shuttle_update.dart';
 import 'package:shared/models/shuttle/shuttle_eta.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 /// This class contains methods for providing data to Repository
 class ShuttleProvider {
@@ -18,25 +19,19 @@ class ShuttleProvider {
 
   /// This function will fetch the data from the JSON API and return a decoded
   Future<http.Response?> fetch(String type) async {
-    final client = http.Client();
-    http.Response? response;
-    try {
-      // shuttle tracker's certificate expired,
-      // TODO: will need to change this back to https at some point
-      response = await client.get(Uri.parse('http://shuttles.rpi.edu/$type'));
-      // await createJSONFile('$type', response);
+    // try {
+    final response = await get(url: 'https://shuttles.rpi.edu/$type');
 
-      if (response.statusCode == 200) {
-        isConnected = true;
-      }
-    } catch (error, stacktrace) {
-      await FirebaseCrashlytics.instance.recordError(
-        error,
-        stacktrace,
-        reason: 'client cannot connect to shuttleprovider',
-      );
-      isConnected = false;
-    }
+    isConnected = response.statusCode == 200;
+
+    // } catch (error, stacktrace) {
+    //   await FirebaseCrashlytics.instance.recordError(
+    //     error,
+    //     stacktrace,
+    //     reason: 'client cannot connect to shuttleprovider',
+    //   );
+    //   isConnected = false;
+    // }
     return response;
   }
 

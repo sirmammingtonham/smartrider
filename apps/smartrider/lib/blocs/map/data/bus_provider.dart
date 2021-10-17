@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:shared/models/bus/bus_realtime_update.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+
+import 'package:shared/util/http_util.dart';
 
 /// static gtfs models
 import 'package:shared/models/bus/bus_route.dart';
@@ -24,6 +25,7 @@ class BusProvider {
   }
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
 
   late final Map<String, String> routeMapping;
   late final Future _providerHasLoaded;
@@ -35,9 +37,6 @@ class BusProvider {
     '289',
     '288', // cdta express shuttle
   ];
-
-  static const corsProxyURL =
-      'https://us-central1-smartrider-4e9e8.cloudfunctions.net/corsProxy/';
 
   List<String> getShortRoutes() {
     return shortRouteIds;
@@ -130,10 +129,12 @@ class BusProvider {
     final now = DateTime.now();
     final milliseconds = now.millisecondsSinceEpoch;
     final ret = <String, Map<String, String>>{};
+
     for (final route in shortRouteIds) {
-      final response = await http.get(Uri.parse('$corsProxyURL'
-          'https://www.cdta.org/apicache/routebus_'
-          '${route}_0.json?_=$milliseconds'));
+      final response = await get(
+        url: 'https://www.cdta.org/apicache/routebus_'
+            '${route}_0.json?_=$milliseconds',
+      );
       if (response.statusCode == 200) {
         // filter out null values from json response and convert to map
         final data = <String, String>{};
@@ -155,9 +156,10 @@ class BusProvider {
   Future<Map<String, List<BusRealtimeUpdate>>> getBusRealtimeUpdates() async {
     final now = DateTime.now();
     final milliseconds = now.millisecondsSinceEpoch;
-    final response = await http.get(Uri.parse('$corsProxyURL'
-        'https://www.cdta.org/realtime/buses.json?$milliseconds'));
     final updates = <String, List<BusRealtimeUpdate>>{};
+    final response = await get(
+      url: 'https://www.cdta.org/realtime/buses.json?$milliseconds',
+    );
     for (final element in jsonDecode(response.body)) {
       final update = BusRealtimeUpdate.fromJson(element);
       if (shortRouteIds.contains(update.routeId)) {
