@@ -5,6 +5,7 @@ abstract class SaferideEvent extends Equatable {
 }
 
 class SaferideNoEvent extends SaferideEvent {
+  const SaferideNoEvent();
   @override
   List<Object> get props => [];
 }

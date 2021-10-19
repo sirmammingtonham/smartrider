@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:intl/intl.dart';
 
-import 'package:shared/util/http_util.dart';
+import 'package:smartrider/blocs/map/data/http_util.dart';
 
 /// static gtfs models
 import 'package:shared/models/bus/bus_route.dart';
@@ -131,15 +131,14 @@ class BusProvider {
     final ret = <String, Map<String, String>>{};
 
     for (final route in shortRouteIds) {
-      final response = await get(
+      final response = await get<Map<String, dynamic>>(
         url: 'https://www.cdta.org/apicache/routebus_'
             '${route}_0.json?_=$milliseconds',
       );
-      if (response.statusCode == 200) {
+      if (response != null) {
         // filter out null values from json response and convert to map
         final data = <String, String>{};
-        (jsonDecode(response.body) as Map<String, dynamic>)
-            .forEach((String key, dynamic value) {
+        response.forEach((String key, dynamic value) {
           if (value != null) {
             data[key] = value.toString();
           }
@@ -157,16 +156,18 @@ class BusProvider {
     final now = DateTime.now();
     final milliseconds = now.millisecondsSinceEpoch;
     final updates = <String, List<BusRealtimeUpdate>>{};
-    final response = await get(
+    final response = await get<List<dynamic>>(
       url: 'https://www.cdta.org/realtime/buses.json?$milliseconds',
     );
-    for (final element in jsonDecode(response.body)) {
-      final update = BusRealtimeUpdate.fromJson(element);
-      if (shortRouteIds.contains(update.routeId)) {
-        if (updates[update.routeId] == null) {
-          updates[update.routeId] = [];
+    if (response != null) {
+      for (final element in response) {
+        final update = BusRealtimeUpdate.fromJson(element);
+        if (shortRouteIds.contains(update.routeId)) {
+          if (updates[update.routeId] == null) {
+            updates[update.routeId] = [];
+          }
+          updates[update.routeId]?.add(update);
         }
-        updates[update.routeId]?.add(update);
       }
     }
 

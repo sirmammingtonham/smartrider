@@ -1,6 +1,7 @@
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
 
 import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 
@@ -72,6 +73,8 @@ class _HomePageState extends State<_HomePage>
     _tabController = TabController(vsync: this, length: 2);
     BlocProvider.of<ScheduleBloc>(context).add(ScheduleInitEvent(
         panelController: _panelController, tabController: _tabController));
+    BlocProvider.of<MapBloc>(context).add(const MapInitEvent());
+    BlocProvider.of<SaferideBloc>(context).add(const SaferideNoEvent());
   }
 
   void startShowcase(PrefsLoadedState prefState, BuildContext context) {

@@ -1,9 +1,5 @@
 // thx flutter shuttle tracker lol
-import 'dart:convert';
-// import 'dart:io';
-
-import 'package:http/http.dart' as http;
-import 'package:shared/util/http_util.dart';
+import 'package:smartrider/blocs/map/data/http_util.dart';
 // import 'package:path_provider/path_provider.dart';
 
 import 'package:shared/models/shuttle/shuttle_route.dart';
@@ -18,20 +14,10 @@ class ShuttleProvider {
   bool isConnected = false;
 
   /// This function will fetch the data from the JSON API and return a decoded
-  Future<http.Response?> fetch(String type) async {
-    // try {
-    final response = await get(url: 'https://shuttles.rpi.edu/$type');
-
-    isConnected = response.statusCode == 200;
-
-    // } catch (error, stacktrace) {
-    //   await FirebaseCrashlytics.instance.recordError(
-    //     error,
-    //     stacktrace,
-    //     reason: 'client cannot connect to shuttleprovider',
-    //   );
-    //   isConnected = false;
-    // }
+  Future<List<dynamic>?> fetch(String type) async {
+    final response =
+        await get<List<dynamic>>(url: 'https://shuttles.rpi.edu/$type');
+    isConnected = response != null;
     return response;
   }
 
@@ -52,9 +38,8 @@ class ShuttleProvider {
 
     final routeMap = response != null
         ? <String, ShuttleRoute>{
-            for (final json in (json.decode(response.body) as List<dynamic>)
-                .where((dynamic json) =>
-                    (json as Map<String, dynamic>)['enabled']))
+            for (final json in response.where(
+                (dynamic json) => (json as Map<String, dynamic>)['enabled']))
               (json as Map<String, dynamic>)['name']:
                   ShuttleRoute.fromJson(json)
           }
@@ -76,7 +61,7 @@ class ShuttleProvider {
     final response = await fetch('stops');
 
     final stopsList = response != null
-        ? (json.decode(response.body) as List<dynamic>)
+        ? response
             .map<ShuttleStop>((dynamic json) => ShuttleStop.fromJson(json))
             .toList()
         : <ShuttleStop>[];
@@ -94,9 +79,8 @@ class ShuttleProvider {
     ///
     ///     return updatesList;
     final response = await fetch('updates');
-
     final updatesList = response != null
-        ? (json.decode(response.body) as List<dynamic>)
+        ? response
             .map<ShuttleUpdate>((dynamic json) => ShuttleUpdate.fromJson(json))
             .toList()
         : <ShuttleUpdate>[];
@@ -118,7 +102,7 @@ class ShuttleProvider {
     // final response = await fetch('eta');
     final etas = <ShuttleEta>[];
     // final Map<String, dynamic> etamap = (response != null ?
-    //     (json.decode(response.body))! : <dynamic>[]) ..forEach((String key,
+    //     (response)! : <dynamic>[]) ..forEach((String key,
     //     dynamic value) {etas.add(ShuttleEta.fromJson(value));
     //       });
     return etas;

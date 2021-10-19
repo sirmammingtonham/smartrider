@@ -115,15 +115,13 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     _saferideBloc = SaferideBloc(
         prefsBloc: _prefsBloc,
         saferideRepo: widget.saferideRepo,
-        authRepo: widget.authRepo)
-      ..add(SaferideNoEvent());
+        authRepo: widget.authRepo);
     _mapBloc = MapBloc(
         saferideBloc: _saferideBloc,
         prefsBloc: _prefsBloc,
         busRepo: widget.busRepo,
         shuttleRepo: widget.shuttleRepo,
-        saferideRepo: widget.saferideRepo)
-      ..add(const MapInitEvent());
+        saferideRepo: widget.saferideRepo);
     _scheduleBloc = ScheduleBloc(
       mapBloc: _mapBloc,
       busRepo: widget.busRepo,

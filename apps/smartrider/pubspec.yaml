@@ -31,6 +31,8 @@ dependencies:
   # firebase_analytics: ^8.1.1
   firebase_auth: ^1.4.1
   cloud_firestore: ^2.2.2
+  cloud_functions: ^3.0.4
+
 
   #map dependencies
   google_maps_flutter: ^2.0.6
