@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-//import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 import 'package:shared/models/bus/bus_route.dart';
@@ -22,20 +21,25 @@ part 'schedule_state.dart';
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ScheduleBloc({required this.mapBloc, required this.busRepo})
       : super(ScheduleInitialState()) {
-    // AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-    //   if (!isAllowed) {
-    //     // Insert here your friendly dialog box before call the request method
-    //     // This is very important to not harm the user experience
-    //     AwesomeNotifications().requestPermissionToSendNotifications();
-    //   }
-    // });
-     _isTimeline = true;
+    _isTimeline = true;
   }
 
   final BusRepository busRepo;
   final MapBloc mapBloc;
   late final PanelController _panelController;
   late final TabController _tabController;
+
+  static const androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      '10', 'basic_channel',
+      channelDescription: 'description',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker');
+  static const platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   late bool _isTimeline;
 
@@ -45,27 +49,31 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   Map<String, BusRoute>? busRoutes;
   Map<String?, BusTimetable>? busTables;
 
+  void onDidReceiveLocalNotification(int x, String? s, String? r, String? i) {}
+
+  void selectNotification(String? s) async {
+    if (s != null) {
+      debugPrint('notification payload: $s');
+    }
+  }
+
   Future<void> scheduleBusAlarm(int secondsFromNow, TimetableStop stop) async {
-    // await AwesomeNotifications().createNotification(
-    //     content: NotificationContent(
-    //         id: 10,
-    //         channelKey: 'basic_channel',
-    //         title: 'Your bus is almost here!',
-    //         body: '${stop.stopName} is arriving soon!'),
-    //     schedule: NotificationInterval(
-    //         interval: secondsFromNow, repeats: false, allowWhileIdle: true));
+    await flutterLocalNotificationsPlugin.show(
+        secondsFromNow,
+        'Your bus is almost here!',
+        '${stop.stopName} is arriving soon!',
+        platformChannelSpecifics,
+        payload: 'item x');
   }
 
   Future<void> scheduleShuttleAlarm(
       int secondsFromNow, ShuttleStop stop) async {
-    // await AwesomeNotifications().createNotification(
-    //     content: NotificationContent(
-    //         id: 10,
-    //         channelKey: 'basic_channel',
-    //         title: 'Your bus is almost here!',
-    //         body: '${stop.name} is arriving soon!'),
-    //     schedule: NotificationInterval(
-    //         interval: secondsFromNow, repeats: false, allowWhileIdle: true));
+    await flutterLocalNotificationsPlugin.show(
+        secondsFromNow,
+        'Your bus is almost here!',
+        '${stop.name} is arriving soon!',
+        platformChannelSpecifics,
+        payload: 'item x');
   }
 
   @override
@@ -73,6 +81,17 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     switch (event.runtimeType) {
       case ScheduleInitEvent:
         {
+          const initializationSettingsAndroid =
+              AndroidInitializationSettings('app_icon');
+
+          final initializationSettingsIOS = IOSInitializationSettings(
+              onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+          final initializationSettings = InitializationSettings(
+              android: initializationSettingsAndroid,
+              iOS: initializationSettingsIOS);
+          await flutterLocalNotificationsPlugin.initialize(
+              initializationSettings,
+              onSelectNotification: selectNotification);
           _tabController = (event as ScheduleInitEvent).tabController
             ..addListener(() => add(const ScheduleViewChangeEvent()));
           _panelController = event.panelController;

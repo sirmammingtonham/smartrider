@@ -46,8 +46,8 @@ dependencies:
   flutter_keyboard_visibility: ^5.0.2
 
   #notication dependencies
-  #flutter_local_notifications: ^6.0.0
-  awesome_notifications: 0.0.6+10
+  flutter_local_notifications: ^9.0.0
+  # awesome_notifications: 0.0.6+10
 
   #url_launcher
   url_launcher: ^6.0.6
