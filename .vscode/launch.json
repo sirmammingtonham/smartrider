@@ -1,49 +1,47 @@
 {
-	// Use IntelliSense to learn about possible attributes.
-	// Hover to view descriptions of existing attributes.
-	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"name": "shared",
-			"cwd": "apps\\shared",
-			"request": "launch",
-			"type": "dart"
-		},
-		{
-			"name": "shared (profile mode)",
-			"cwd": "apps\\shared",
-			"request": "launch",
-			"type": "dart",
-			"flutterMode": "profile"
-		},
-		{
-			"name": "smartdriver",
-			"cwd": "apps\\smartdriver",
-			"request": "launch",
-			"type": "dart"
-		},
-		{
-			"name": "smartdriver (profile mode)",
-			"cwd": "apps\\smartdriver",
-			"request": "launch",
-			"type": "dart",
-			"flutterMode": "profile"
-		},
-		{
-			"name": "smartrider",
-			"cwd": "apps\\smartrider",
-			"request": "launch",
-			"type": "dart",
-			"program": "lib/main.dart"
-		},
-		{
-			"name": "smartrider (profile mode)",
-			"cwd": "apps\\smartrider",
-			"request": "launch",
-			"type": "dart",
-			"flutterMode": "profile",
-			"program": "lib/main.dart"
-		}
-	]
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "shared",
+            "cwd": "apps/shared",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "shared (profile mode)",
+            "cwd": "apps/shared",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "smartdriver",
+            "cwd": "apps/smartdriver",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "smartdriver (profile mode)",
+            "cwd": "apps/smartdriver",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "smartrider",
+            "cwd": "apps/smartrider",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "smartrider (profile mode)",
+            "cwd": "apps/smartrider",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        }
+    ]
 }
