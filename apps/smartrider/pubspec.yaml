@@ -47,7 +47,6 @@ dependencies:
 
   #notication dependencies
   flutter_local_notifications: ^9.0.0
-  # awesome_notifications: 0.0.6+10
 
   #url_launcher
   url_launcher: ^6.0.6

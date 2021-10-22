@@ -7,5 +7,8 @@
     "extensions": [
         "dart-code.dart-code",
         "dart-code.flutter"
+    ],
+    "mounts": [
+        "source=${localEnv:HOME}/c,target=/c,type=bind,consistency=cached"
     ]
 }

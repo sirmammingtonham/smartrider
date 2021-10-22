@@ -61,6 +61,8 @@ RUN curl -o flutter.tar.xz $FLUTTER_URL \
   && flutter emulators --create \
   && flutter update-packages
 
+#RUN flutter config --android-studio-dir=$ANDROID_STUDIO
+
 # get packages for each directory in apps
 RUN cd /workspaces/smartrider/apps/shared \
 && flutter pub get \ 
@@ -68,6 +70,10 @@ RUN cd /workspaces/smartrider/apps/shared \
 && flutter pub get \
 && cd /workspaces/smartrider/apps/smartrider \
 && flutter pub get
+
+
+# copy over strings.dart
+
 
 
 
