@@ -10,8 +10,5 @@
     ],
     "mounts": [
         "source=${localEnv:HOME}/c,target=/c,type=bind,consistency=cached"
-    ],
-    "remoteEnv": {
-        "CHROME_EXECUTABLE" : "${localEnv:CHROME_EXECUTABLE}"
-    }
+    ]
 }
