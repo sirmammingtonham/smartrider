@@ -35,9 +35,9 @@ dependencies:
 
 
   #map dependencies
-  google_maps_flutter: ^2.0.6
+  google_maps_flutter: ^2.0.11
   google_maps_flutter_web: ^0.3.0+2
-  geolocator: ^7.0.3
+  geolocator: ^7.7.0
   google_maps_webservice: ^0.0.20-nullsafety.5
   http: ^0.13.3
   fluster: ^1.2.0
