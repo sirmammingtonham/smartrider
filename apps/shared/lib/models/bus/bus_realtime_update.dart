@@ -1,30 +1,32 @@
 class BusRealtimeUpdate {
-  BusRealtimeUpdate(
-      {required this.objName,
-      required this.id,
-      required this.lat,
-      required this.lng,
-      required this.bearing,
-      required this.routeId,
-      required this.stopId,
-      required this.stopName,
-      required this.tripId,
-      required this.directionId,
-      required this.tripHeadsign});
+  BusRealtimeUpdate({
+    required this.objName,
+    required this.id,
+    required this.lat,
+    required this.lng,
+    required this.bearing,
+    required this.routeId,
+    required this.stopId,
+    required this.stopName,
+    required this.tripId,
+    required this.directionId,
+    required this.tripHeadsign,
+  });
 
   factory BusRealtimeUpdate.fromJson(Map<String, dynamic> json) {
     return BusRealtimeUpdate(
-        objName: json['objName'],
-        id: json['id'],
-        lat: (json['lat'] as num).toDouble(),
-        lng: (json['lng'] as num).toDouble(),
-        bearing: json['bearing'],
-        routeId: json['route_id'],
-        stopId: json['stop_id'],
-        stopName: json['stop_name'],
-        tripId: json['trip_id'],
-        directionId: json['direction_id'],
-        tripHeadsign: json['trip_headsign']);
+      objName: json['objName'] as String,
+      id: json['id'] as String,
+      lat: (json['lat'] as num).toDouble(),
+      lng: (json['lng'] as num).toDouble(),
+      bearing: json['bearing'] as String,
+      routeId: json['route_id'] as String,
+      stopId: json['stop_id'] as String,
+      stopName: json['stop_name'] as String,
+      tripId: json['trip_id'] as String,
+      directionId: json['direction_id'] as String,
+      tripHeadsign: json['trip_headsign'] as String,
+    );
   }
 
   String objName;

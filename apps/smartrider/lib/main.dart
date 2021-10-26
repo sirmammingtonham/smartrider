@@ -173,7 +173,6 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
       child: MaterialApp(
         builder: (context, widget) => ResponsiveWrapper.builder(
             BouncingScrollWrapper.builder(context, widget!),
-            maxWidth: 1200,
             minWidth: 450,
             defaultScale: true,
             breakpoints: const [

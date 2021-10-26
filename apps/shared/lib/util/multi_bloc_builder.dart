@@ -106,6 +106,6 @@ class BlocStates {
   /// final exampeState = blocStates.get<ExampleState>();
   /// ```
   T get<T>() => _stateContainer.firstWhere(
-        (dynamic entry) => (entry is T),
-      );
+        (dynamic entry) => entry is T,
+      ) as T;
 }

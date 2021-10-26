@@ -19,9 +19,9 @@ class Post {
   /// map (or a JSON format).
   factory Post.fromJson(Map json) {
     return Post(
-      title: json['title'],
-      body: json['body'],
-      labels: json['labels'],
+      title: json['title'] as String?,
+      body: json['body'] as String?,
+      labels: json['labels'] as String?,
     );
   }
 

@@ -39,8 +39,10 @@ class ShuttleProvider {
     final routeMap = response != null
         ? <String, ShuttleRoute>{
             for (final json in response.where(
-                (dynamic json) => (json as Map<String, dynamic>)['enabled']))
-              (json as Map<String, dynamic>)['name']:
+              (dynamic json) =>
+                  (json as Map<String, dynamic>)['enabled'] as bool,
+            ))
+              (json as Map<String, dynamic>)['name'] as String:
                   ShuttleRoute.fromJson(json)
           }
         : <String, ShuttleRoute>{};
@@ -62,7 +64,10 @@ class ShuttleProvider {
 
     final stopsList = response != null
         ? response
-            .map<ShuttleStop>((dynamic json) => ShuttleStop.fromJson(json))
+            .map<ShuttleStop>(
+              (dynamic json) =>
+                  ShuttleStop.fromJson(json as Map<String, dynamic>),
+            )
             .toList()
         : <ShuttleStop>[];
     return stopsList;
@@ -81,7 +86,10 @@ class ShuttleProvider {
     final response = await fetch('updates');
     final updatesList = response != null
         ? response
-            .map<ShuttleUpdate>((dynamic json) => ShuttleUpdate.fromJson(json))
+            .map<ShuttleUpdate>(
+              (dynamic json) =>
+                  ShuttleUpdate.fromJson(json as Map<String, dynamic>),
+            )
             .toList()
         : <ShuttleUpdate>[];
     return updatesList;

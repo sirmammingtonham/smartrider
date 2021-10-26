@@ -23,23 +23,25 @@ class Order {
   });
 
   factory Order.fromSnapshot(DocumentSnapshot snap) {
-    final data = (snap.data()! as Map<String, dynamic>);
+    final data = snap.data()! as Map<String, dynamic>;
     return Order(
-        orderRef: snap.reference,
-        status: data['status']!,
-        pickupAddress: data['pickup_address']!,
-        dropoffAddress: data['dropoff_address']!,
-        pickupPoint: data['pickup_point']!,
-        dropoffPoint: data['dropoff_point']!,
-        riderEmail: data['rider_email']!,
-        riderPhone: data['rider_phone']!,
-        vehicleRef: data['vehicle'],
-        updatedAt: data['updated_at']!,
-        estimatedPickup: data['estimated_pickup']!,
-        queuePosition: data['queue_position']!,
-        pickupTime: data['pickup_time'],
-        cancellationReason:
-            data['status'] == 'CANCELLED' ? data['cancel_reason'] : null);
+      orderRef: snap.reference,
+      status: data['status'] as String,
+      pickupAddress: data['pickup_address'] as String,
+      dropoffAddress: data['dropoff_address'] as String,
+      pickupPoint: data['pickup_point'] as GeoPoint,
+      dropoffPoint: data['dropoff_point'] as GeoPoint,
+      riderEmail: data['rider_email'] as String,
+      riderPhone: data['rider_phone'] as String,
+      vehicleRef: data['vehicle'] as DocumentReference<Object?>?,
+      updatedAt: data['updated_at'] as Timestamp,
+      estimatedPickup: data['estimated_pickup'] as int,
+      queuePosition: data['queue_position'] as int,
+      pickupTime: data['pickup_time'] as int,
+      cancellationReason: data['status'] == 'CANCELLED'
+          ? data['cancel_reason'] as String
+          : null,
+    );
   }
 
   /// reference to the order in firestore

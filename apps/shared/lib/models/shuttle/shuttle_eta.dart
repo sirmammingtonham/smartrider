@@ -2,15 +2,15 @@ class ShuttleEta {
   ShuttleEta({this.vehicleId, this.routeId, this.stopEtas, this.updated});
 
   ShuttleEta.fromJson(Map<String, dynamic> json) {
-    vehicleId = json['vehicle_id'];
-    routeId = json['route_id'];
+    vehicleId = json['vehicle_id'] as int?;
+    routeId = json['route_id'] as int?;
     if (json['stop_etas'] != null) {
       stopEtas = [];
       for (final v in json['stop_etas'] as List) {
-        stopEtas!.add(StopEtas.fromJson(v));
+        stopEtas!.add(StopEtas.fromJson(v as Map<String, dynamic>));
       }
     }
-    updated = json['updated'];
+    updated = json['updated'] as String?;
   }
 
   int? vehicleId;
@@ -34,9 +34,9 @@ class StopEtas {
   StopEtas({this.stopId, this.eta, this.arriving});
 
   StopEtas.fromJson(Map<String, dynamic> json) {
-    stopId = json['stop_id'];
-    eta = json['eta'];
-    arriving = json['arriving'];
+    stopId = json['stop_id'] as int?;
+    eta = json['eta'] as String?;
+    arriving = json['arriving'] as bool?;
   }
 
   int? stopId;

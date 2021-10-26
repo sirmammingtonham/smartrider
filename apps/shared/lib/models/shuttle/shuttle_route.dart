@@ -2,43 +2,44 @@ import 'dart:ui';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ShuttleRoute {
-  ShuttleRoute(
-      {required this.id,
-      required this.name,
-      required this.description,
-      required this.enabled,
-      required this.color,
-      required this.width,
-      required this.stopIds,
-      required this.created,
-      required this.updated,
-      required this.points,
-      required this.active,
-      required this.schedule});
+  ShuttleRoute({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.enabled,
+    required this.color,
+    required this.width,
+    required this.stopIds,
+    required this.created,
+    required this.updated,
+    required this.points,
+    required this.active,
+    required this.schedule,
+  });
 
   factory ShuttleRoute.fromJson(Map<String, dynamic> json) {
     final points = <Point>[];
     for (final v in json['points'] as List) {
-      points.add(Point.fromJson(v));
+      points.add(Point.fromJson(v as Map<String, dynamic>));
     }
     final schedule = <Schedule>[];
     for (final v in json['schedule'] as List) {
-      schedule.add(Schedule.fromJson(v));
+      schedule.add(Schedule.fromJson(v as Map<String, dynamic>));
     }
     return ShuttleRoute(
-        id: json['id'],
-        name: json['name'],
-        description: json['description'],
-        enabled: json['enabled'],
-        color:
-            Color(int.parse(json['color'].toString().replaceAll('#', '0xff'))),
-        width: json['width'],
-        stopIds: (json['stop_ids'] as List).cast<int>(),
-        created: json['created'],
-        updated: json['updated'],
-        points: points,
-        active: json['active'],
-        schedule: schedule);
+      id: json['id'] as int,
+      name: json['name'] as String,
+      description: json['description'] as String,
+      enabled: json['enabled'] as bool,
+      color: Color(int.parse(json['color'].toString().replaceAll('#', '0xff'))),
+      width: json['width'] as int,
+      stopIds: (json['stop_ids'] as List).cast<int>(),
+      created: json['created'] as String,
+      updated: json['updated'] as String,
+      points: points,
+      active: json['active'] as bool,
+      schedule: schedule,
+    );
   }
 
   final int id;
@@ -87,8 +88,8 @@ class Point {
   Point({this.latitude, this.longitude});
 
   Point.fromJson(Map<String, dynamic> json) {
-    latitude = json['latitude'];
-    longitude = json['longitude'];
+    latitude = json['latitude'] as double?;
+    longitude = json['longitude'] as double?;
   }
 
   double? latitude;
@@ -105,21 +106,22 @@ class Point {
 }
 
 class Schedule {
-  Schedule(
-      {this.id,
-      this.routeId,
-      this.startDay,
-      this.startTime,
-      this.endDay,
-      this.endTime});
+  Schedule({
+    this.id,
+    this.routeId,
+    this.startDay,
+    this.startTime,
+    this.endDay,
+    this.endTime,
+  });
 
   Schedule.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    routeId = json['route_id'];
-    startDay = json['start_day'];
-    startTime = json['start_time'];
-    endDay = json['end_day'];
-    endTime = json['end_time'];
+    id = json['id'] as int?;
+    routeId = json['route_id'] as int?;
+    startDay = json['start_day'] as int?;
+    startTime = json['start_time'] as String?;
+    endDay = json['end_day'] as int?;
+    endTime = json['end_time'] as String?;
   }
 
   int? id;

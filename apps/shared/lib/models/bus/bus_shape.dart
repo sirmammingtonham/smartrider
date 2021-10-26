@@ -22,38 +22,42 @@ const busIndices = {
 };
 
 class BusShape {
-  BusShape(
-      {required this.routeId,
-      required this.routeShortName,
-      required this.coordinates});
+  BusShape({
+    required this.routeId,
+    required this.routeShortName,
+    required this.coordinates,
+  });
 
   factory BusShape.fromJson(Map<String, dynamic> json) {
-    final String routeId =
-        (json['properties'] as Map<String, dynamic>)['route_id'];
+    final routeId =
+        (json['properties'] as Map<String, dynamic>)['route_id'] as String;
     final routeShortName = routeId.substring(0, routeId.indexOf('-'));
     final coordinates = <List<LatLng>>[];
 
     /// check if single linestring or multi-linestring and handle differently
     if (json['type'] == 'LineString') {
       final linestring = <LatLng>[];
-      for (final point in json['coordinates'] as List) {
-        linestring.add(LatLng((point as List)[1], point[0]));
+      for (final p in json['coordinates'] as List) {
+          final point = (p as List).cast<double>();
+        linestring.add(LatLng(point[1], point[0]));
       }
       coordinates.add(linestring);
     } else {
       for (final line in json['coordinates'] as List) {
         final linestring = <LatLng>[];
-        for (final point in line) {
-          linestring.add(LatLng((point as List)[1], point[0]));
+        for (final p in line) {
+          final point = (p as List).cast<double>();
+          linestring.add(LatLng(point[1], point[0]));
         }
         coordinates.add(linestring);
       }
     }
 
     return BusShape(
-        routeId: routeId,
-        routeShortName: routeShortName,
-        coordinates: coordinates);
+      routeId: routeId,
+      routeShortName: routeShortName,
+      coordinates: coordinates,
+    );
   }
 
   String routeId;
@@ -63,13 +67,16 @@ class BusShape {
   List<Polyline> get getPolylines {
     var i = 0;
     return coordinates
-        .map((linestring) => Polyline(
+        .map(
+          (linestring) => Polyline(
             polylineId: PolylineId('$routeId${i++}'),
             color: busColors[routeShortName]!.withAlpha(255),
             width: busWidths[routeShortName]!,
             zIndex: busIndices[routeShortName]!,
             // patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
-            points: linestring))
+            points: linestring,
+          ),
+        )
         .toList();
   }
 

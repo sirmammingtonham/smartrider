@@ -16,19 +16,19 @@ class BusTimetable {
       this.formatted});
 
   BusTimetable.fromJson(Map<String, dynamic> json) {
-    routeId = json['route_id'];
-    directionId = json['direction_id'];
-    directionName = json['direction_name'];
-    label = json['label'];
-    startDate = json['start_date'];
-    endDate = json['end_date'];
-    serviceId = json['service_id'];
+    routeId = json['route_id'] as String?;
+    directionId = json['direction_id'] as int?;
+    directionName = json['direction_name'] as String?;
+    label = json['label'] as String?;
+    startDate = json['start_date'] as String?;
+    endDate = json['end_date'] as String?;
+    serviceId = json['service_id'] as String?;
 
     includeDates = (json['include_dates'] as List).cast<String>();
     excludeDates = (json['exclude_dates'] as List).cast<String>();
 
     stops = (json['stops'] as List).map<TimetableStop>((dynamic table) {
-      return TimetableStop.fromJson(table);
+      return TimetableStop.fromJson(table as Map<String, dynamic>);
     }).toList();
 
     formatted = (json['formatted'] as List).cast<String>();
@@ -121,11 +121,14 @@ class BusTimetable {
     }
 
     return List.generate(offsetLength, (index) => index)
-        .map<Tuple<String, int>>((offset) => Tuple(
-            first: getTime(i, min + offset),
-            second: now < getTimestamp(i, min + offset)
-                ? getTimestamp(i, min + offset) - now
-                : 86400 - now + getTimestamp(i, min + offset)));
+        .map<Tuple<String, int>>(
+      (offset) => Tuple(
+        first: getTime(i, min + offset),
+        second: now < getTimestamp(i, min + offset)
+            ? getTimestamp(i, min + offset) - now
+            : 86400 - now + getTimestamp(i, min + offset),
+      ),
+    );
   }
 
   /// pass in value has to be [stopID, stopTime]
@@ -190,10 +193,11 @@ class TimetableStop {
       required this.stopName});
 
   factory TimetableStop.fromJson(Map<String, dynamic> json) => TimetableStop(
-      stopId: json['stop_id'],
-      stopLat: json['stop_lat'],
-      stopLon: json['stop_lon'],
-      stopName: json['stop_name']);
+        stopId: json['stop_id'] as String,
+        stopLat: json['stop_lat'] as double,
+        stopLon: json['stop_lon'] as double,
+        stopName: json['stop_name'] as String,
+      );
 
   final String stopId;
   final double stopLat;

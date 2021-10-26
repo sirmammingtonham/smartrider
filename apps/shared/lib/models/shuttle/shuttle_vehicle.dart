@@ -1,19 +1,20 @@
 class ShuttleVehicle {
-  ShuttleVehicle(
-      {this.id,
-      this.name,
-      this.created,
-      this.updated,
-      this.enabled,
-      this.trackerId});
+  ShuttleVehicle({
+    this.id,
+    this.name,
+    this.created,
+    this.updated,
+    this.enabled,
+    this.trackerId,
+  });
 
   ShuttleVehicle.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    created = json['created'];
-    updated = json['updated'];
-    enabled = json['enabled'];
-    trackerId = json['tracker_id'];
+    id = json['id'] as int?;
+    name = json['name'] as String?;
+    created = json['created'] as String?;
+    updated = json['updated'] as String?;
+    enabled = json['enabled'] as bool?;
+    trackerId = json['tracker_id'] as String?;
   }
 
   int? id;
