@@ -59,9 +59,7 @@ RUN curl -o flutter.tar.xz $FLUTTER_URL \
   && yes "y" | flutter doctor --android-licenses \
   && flutter doctor \
   && flutter emulators --create \
-  && flutter update-packages
-
-#RUN flutter config --android-studio-dir=$ANDROID_STUDIO
+  && flutter update-packages 
 
 # get packages for each directory in apps
 RUN cd /workspaces/smartrider/apps/shared \
@@ -75,10 +73,8 @@ RUN cd /workspaces/smartrider/apps/shared \
 # copy over strings.dart
 
 
-
-
 # TODO: Get variables from string.dart
-# TODO: Run flutter pub get in each directory in apps
+
 # TODO: Test android studio with container
 # TODO: GitHub wiki
 
