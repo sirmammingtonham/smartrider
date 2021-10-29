@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter/foundation.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:shared/util/messages.dart';
@@ -209,74 +210,93 @@ class SearchBarState extends State<SearchBar> {
     }
   }
 
-  Widget searchBar(SaferideState saferideState, PrefsState prefsState,
-          AuthenticationState authState) =>
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        height: 75,
-        child: Material(
-          borderRadius: BorderRadius.circular(10.0),
-          elevation: 6.0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Showcase(
-                  key: showcaseSettings,
-                  description: settingsShowcaseMessage,
+  Widget searchBar(MapView mapView, SaferideState saferideState,
+      PrefsState prefsState, AuthenticationState authState) {
+    Widget indicator;
+    switch (mapView) {
+      case MapView.kBusView:
+        indicator = const Text('Bus View');
+        break;
+      case MapView.kSaferideView:
+        indicator = const Text('Saferide View');
+        break;
+      case MapView.kShuttleView:
+        indicator = const Text('Shuttle View');
+        break;
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      height: 85,
+      child: Material(
+        borderRadius: BorderRadius.circular(10.0),
+        elevation: 6.0,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Showcase(
+                    key: showcaseSettings,
+                    description: settingsShowcaseMessage,
+                    shapeBorder: const RoundedRectangleBorder(),
+                    child: IconButton(
+                      icon: const Icon(SmartriderIcons.settingsIcon),
+                      onPressed: () {
+                        Navigator.push<SettingsPage>(context,
+                            MaterialPageRoute(builder: (context) {
+                          return const SettingsPage();
+                        }));
+                      },
+                    )),
+                Showcase(
+                  key: showcaseSearch,
+                  description: searchbarShowcaseMessage,
                   shapeBorder: const RoundedRectangleBorder(),
-                  child: IconButton(
-                    icon: const Icon(SmartriderIcons.settingsIcon),
-                    onPressed: () {
-                      Navigator.push<SettingsPage>(context,
-                          MaterialPageRoute(builder: (context) {
-                        return const SettingsPage();
-                      }));
-                    },
-                  )),
-              Showcase(
-                key: showcaseSearch,
-                description: searchbarShowcaseMessage,
-                shapeBorder: const RoundedRectangleBorder(),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width - 150,
-                  child: searchField(
-                    authState as AuthenticationSignedInState,
-                    saferideState,
-                  ),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width - 150,
+                    child: searchField(
+                      authState as AuthenticationSignedInState,
+                      saferideState,
+                    ),
 // TODO: phone verification button
+                  ),
                 ),
-              ),
-              Showcase(
-                key: showcaseProfile,
-                description: profileShowcaseMessage,
-                shapeBorder: const CircleBorder(),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push<ProfilePage>(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfilePage(
-                                  initials: initials,
-                                )));
-                  },
-                  child: Hero(
-                    tag: 'circleAvatar',
-                    child: CircleAvatar(
-                      backgroundColor: Theme.of(context).accentColor,
-                      child: Text(
-                        initials,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
+                Showcase(
+                  key: showcaseProfile,
+                  description: profileShowcaseMessage,
+                  shapeBorder: const CircleBorder(),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push<ProfilePage>(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfilePage(
+                                    initials: initials,
+                                  )));
+                    },
+                    child: Hero(
+                      tag: 'circleAvatar',
+                      child: CircleAvatar(
+                        backgroundColor: Theme.of(context).accentColor,
+                        child: Text(
+                          initials,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              )
-            ],
-          ),
+                )
+              ],
+            ),
+            indicator,
+          ],
         ),
-      );
+      ),
+    );
+  }
 
   Widget saferideSelectionWidget(
           BuildContext context, SaferideSelectingState saferideState) =>
@@ -330,6 +350,7 @@ class SearchBarState extends State<SearchBar> {
         padding: const EdgeInsets.only(top: 15),
         child: MultiBlocBuilder(
           blocs: [
+            BlocProvider.of<MapBloc>(context),
             BlocProvider.of<SaferideBloc>(context),
             BlocProvider.of<AuthenticationBloc>(context),
             BlocProvider.of<PrefsBloc>(context),
@@ -349,7 +370,8 @@ class SearchBarState extends State<SearchBar> {
               case SaferideWaitingState:
               case SaferidePickingUpState:
               case SaferideDroppingOffState:
-                return searchBar(saferideState, prefState, authState);
+                return searchBar(BlocProvider.of<MapBloc>(context).mapView,
+                    saferideState, prefState, authState);
               case SaferideSelectingState:
                 return saferideSelectionWidget(
                     context, saferideState as SaferideSelectingState);
