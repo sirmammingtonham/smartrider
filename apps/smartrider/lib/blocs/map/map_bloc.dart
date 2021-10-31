@@ -159,13 +159,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   static const _updateFrequency = Duration(seconds: 5); // update every 5 sec
 
-  late final Timer _updateTimer;
+  Timer? _updateTimer;
   late final String _lightMapStyle;
   late final String _darkMapStyle;
 
   @override
   Future<void> close() {
-    _updateTimer.cancel();
+    _updateTimer?.cancel();
     return super.close();
   }
 
@@ -183,9 +183,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   void updateController(BuildContext context, GoogleMapController controller) {
     _controller = controller;
-    _controller!.setMapStyle(Theme.of(context).brightness == Brightness.dark
-        ? _darkMapStyle
-        : _lightMapStyle);
+    _controller!.setMapStyle(
+      Theme.of(context).brightness == Brightness.dark
+          ? _darkMapStyle
+          : _lightMapStyle,
+    );
   }
 
   @override
@@ -208,10 +210,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         {
           if (_controller != null) {
             await _controller!.setMapStyle(
-                (event as MapThemeChangeEvent).theme.brightness ==
-                        Brightness.dark
-                    ? _darkMapStyle
-                    : _lightMapStyle);
+              (event as MapThemeChangeEvent).theme.brightness == Brightness.dark
+                  ? _darkMapStyle
+                  : _lightMapStyle,
+            );
           }
           yield MapLoadedState(
             polylines: _currentPolylines,
@@ -283,8 +285,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           _shuttleUpdates = await shuttleRepo.getUpdates;
 
           // update preferences with currently active routes
-          prefsBloc.add(InitActiveRoutesEvent(
-              _shuttleRoutes.values.where((route) => route.active).toList()));
+          prefsBloc.add(
+            InitActiveRoutesEvent(
+              _shuttleRoutes.values.where((route) => route.active).toList(),
+            ),
+          );
           await _initShuttleMarkers();
         }
         break;
@@ -509,8 +514,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   /// helper functions
   Future<void> _initMapElements() async {
-    _updateTimer = Timer.periodic(_updateFrequency,
-        (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)));
+    _updateTimer ??= Timer.periodic(
+      _updateFrequency,
+      (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)),
+    );
 
     _shuttleStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/map_icons/marker_stop_shuttle.svg',

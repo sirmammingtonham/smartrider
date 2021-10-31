@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,18 +36,52 @@ class AuthenticationBloc
       case AuthenticationDeleteEvent:
         break;
       case AuthenticationPhoneSMSCodeSentEvent:
-        yield AuthenticationVerifyPhoneState(
+        {
+          yield AuthenticationVerifyPhoneState(
             verificationId:
                 (event as AuthenticationPhoneSMSCodeSentEvent).verificationId,
-            resendToken: event.resendToken);
+            resendToken: event.resendToken,
+          );
+          yield AuthenticationSignedInState(
+            user: authRepository.getCurrentUser!,
+            emailVerified: authRepository.isEmailVerified,
+            phoneVerified: authRepository.isPhoneVerified,
+          );
+        }
         break;
       case AuthenticationPhoneSMSCodeEnteredEvent:
         {
           final credential = PhoneAuthProvider.credential(
-              verificationId: (event as AuthenticationPhoneSMSCodeEnteredEvent)
-                  .verificationId,
-              smsCode: event.sms);
-          await FirebaseAuth.instance.signInWithCredential(credential);
+            verificationId: (event as AuthenticationPhoneSMSCodeEnteredEvent)
+                .verificationId,
+            smsCode: event.sms,
+          );
+          try {
+            await FirebaseAuth.instance.signInWithCredential(credential);
+          } on FirebaseAuthException catch (e) {
+            yield AuthenticationFailedState(
+              exception: e,
+              message: 'Invalid code',
+            );
+          }
+          yield AuthenticationSignedInState(
+            user: authRepository.getCurrentUser!,
+            emailVerified: authRepository.isEmailVerified,
+            phoneVerified: authRepository.isPhoneVerified,
+          );
+        }
+        break;
+      case AuthenticationPhoneFailedEvent:
+        {
+          yield AuthenticationFailedState(
+            exception: (event as AuthenticationPhoneFailedEvent).exception,
+            message: event.message,
+          );
+          yield AuthenticationSignedInState(
+            user: authRepository.getCurrentUser!,
+            emailVerified: authRepository.isEmailVerified,
+            phoneVerified: authRepository.isPhoneVerified,
+          );
         }
         break;
     }
@@ -56,30 +89,35 @@ class AuthenticationBloc
 
 //create state, put change phone number logic in state
   Stream<AuthenticationState> _mapResetPhoneToState(
-      AuthenticationResetPhoneEvent event) async* {
+    AuthenticationResetPhoneEvent event,
+  ) async* {
     final user = authRepository.getCurrentUser;
     final auth = FirebaseAuth.instance;
-    try {
-      await auth.verifyPhoneNumber(
-        phoneNumber: event.newPhoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          await auth.signInWithCredential(credential);
-          await user!.updatePhoneNumber(credential);
-        },
-        verificationFailed: (FirebaseAuthException e) {},
-        codeSent: (String verificationId, int? resendToken) async {
-          //TODO: need to prompt ui for sms code
-          //yield new state, profile.dart blocbuilder, if state is
-          //verificaation state, have prompt to input
-          add(AuthenticationPhoneSMSCodeSentEvent(
-              verificationId: verificationId, resendToken: resendToken));
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {},
-      );
-    } on FirebaseAuthException catch (e) {
-      yield AuthenticationPhoneFailedState(
-          exception: e, message: 'Invalid SMS Code');
-    }
+
+    await authRepository.verifyPhoneNumber(
+      phoneNumber: event.newPhoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await auth.signInWithCredential(credential);
+        await user!.updatePhoneNumber(credential);
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        add(
+          AuthenticationPhoneFailedEvent(
+            exception: e,
+            message: 'Phone Verification Failed',
+          ),
+        );
+      },
+      codeSent: (String verificationId, int? resendToken) async {
+        add(
+          AuthenticationPhoneSMSCodeSentEvent(
+            verificationId: verificationId,
+            resendToken: resendToken,
+          ),
+        );
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
   }
 
   Stream<AuthenticationState> _mapInitToState() async* {
@@ -100,7 +138,8 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _mapSignInToState(
-      AuthenticationSignInEvent event) async* {
+    AuthenticationSignInEvent event,
+  ) async* {
     try {
       final userCredential = await authRepository.signIn(
         email: event.email,
@@ -145,7 +184,8 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _mapSignUpToState(
-      AuthenticationSignUpEvent event) async* {
+    AuthenticationSignUpEvent event,
+  ) async* {
     try {
       await authRepository.signUp(
         email: event.email,

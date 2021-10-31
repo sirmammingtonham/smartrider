@@ -20,7 +20,7 @@ class WelcomeScreen extends StatelessWidget {
               title: Text(
                 text,
                 style: const TextStyle(color: Colors.white),
-              )),
+              ),),
           duration: const Duration(days: 1),
         ),
       );

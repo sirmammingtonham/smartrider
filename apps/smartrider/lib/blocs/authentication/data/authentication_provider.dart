@@ -3,16 +3,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthenticationProvider {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final RegExp _phoneRegex =
-      RegExp(r'^(\+\d{1,2}\s)?(\(?\d{3}\)?)[\s.-]?(\d{3})[\s.-]?(\d{4})$');
+  static final RegExp phoneRegex = RegExp(
+    r'(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?',
+  );
 
   bool get isSignedIn => _firebaseAuth.currentUser != null;
   bool get isEmailVerified =>
       _firebaseAuth.currentUser != null &&
-      _firebaseAuth.currentUser!.email != null;
+      _firebaseAuth.currentUser!.email != null &&
+      _firebaseAuth.currentUser!.email!.isNotEmpty;
   bool get isPhoneVerified =>
       _firebaseAuth.currentUser != null &&
-      _firebaseAuth.currentUser!.phoneNumber != null;
+      _firebaseAuth.currentUser!.phoneNumber != null &&
+      _firebaseAuth.currentUser!.phoneNumber!.isNotEmpty;
 
   Stream<User?> get userChangeStream => _firebaseAuth.authStateChanges();
 
@@ -55,12 +58,30 @@ class AuthenticationProvider {
     return _firebaseAuth.signOut();
   }
 
-  String _processPhoneNumber(String phoneNumber) {
-    final matches = _phoneRegex.firstMatch(phoneNumber)!;
-    if (matches.groupCount == 4) {
+  Future<void> verifyPhoneNumber({
+    required String phoneNumber,
+    required void Function(PhoneAuthCredential) verificationCompleted,
+    required void Function(FirebaseAuthException) verificationFailed,
+    required void Function(String, int?) codeSent,
+    required void Function(String) codeAutoRetrievalTimeout,
+    String? autoRetrievedSmsCodeForTesting,
+    Duration timeout = const Duration(seconds: 30),
+    int? forceResendingToken,
+  }) =>
+      _firebaseAuth.verifyPhoneNumber(
+        phoneNumber: processPhoneNumber(phoneNumber),
+        verificationCompleted: verificationCompleted,
+        verificationFailed: verificationFailed,
+        codeSent: codeSent,
+        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
+      );
+
+  String processPhoneNumber(String phoneNumber) {
+    final matches = phoneRegex.firstMatch(phoneNumber)!;
+    if (matches.group(1) == null) {
       return '+1 (${matches.group(2)})-${matches.group(3)}-${matches.group(4)}';
     } else {
-      return '${matches.group(1)} '
+      return '+${matches.group(1)} '
           '(${matches.group(2)})-${matches.group(3)}-${matches.group(4)}';
     }
   }

@@ -46,8 +46,10 @@ class AuthenticationResetPhoneEvent extends AuthenticationEvent {
 }
 
 class AuthenticationPhoneSMSCodeEnteredEvent extends AuthenticationEvent {
-  const AuthenticationPhoneSMSCodeEnteredEvent(
-      {required this.verificationId, required this.sms});
+  const AuthenticationPhoneSMSCodeEnteredEvent({
+    required this.verificationId,
+    required this.sms,
+  });
   final String verificationId, sms;
 
   @override
@@ -64,3 +66,16 @@ class AuthenticationPhoneSMSCodeSentEvent extends AuthenticationEvent {
 }
 
 class AuthenticationResetPasswordEvent extends AuthenticationEvent {}
+
+class AuthenticationPhoneFailedEvent extends AuthenticationEvent {
+  const AuthenticationPhoneFailedEvent({
+    required this.exception,
+    required this.message,
+  });
+
+  final FirebaseAuthException exception;
+  final String message;
+
+  @override
+  List<Object> get props => [exception, message];
+}
