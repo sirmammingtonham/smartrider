@@ -1,43 +1,38 @@
 // implementation imports
 import 'dart:async';
 import 'dart:math' as math;
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:shared/models/bus/bus_realtime_update.dart';
-import 'package:shared/util/bitmap_helpers.dart';
-import 'package:shared/util/errors.dart';
-
-// map imports
-// import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:fluster/fluster.dart';
-// import 'package:sizer/sizer.dart';
 
 // bloc imports
 import 'package:equatable/equatable.dart';
+import 'package:fluster/fluster.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
-import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
-
-// repository imports
-import 'package:smartrider/blocs/map/data/bus_repository.dart';
-import 'package:smartrider/blocs/map/data/shuttle_repository.dart';
-import 'package:smartrider/blocs/saferide/data/saferide_repository.dart';
-
-// model imports
-import 'package:shared/models/shuttle/shuttle_route.dart';
-import 'package:shared/models/shuttle/shuttle_stop.dart';
-import 'package:shared/models/shuttle/shuttle_update.dart';
-
+import 'package:geolocator/geolocator.dart';
+// map imports
+// import 'package:hypertrack_views_flutter/hypertrack_views_flutter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared/models/bus/bus_realtime_update.dart';
 // import 'package:shared/models/saferide/driver.dart';
 
 import 'package:shared/models/bus/bus_route.dart';
 import 'package:shared/models/bus/bus_shape.dart';
 //import 'package:shared/models/bus/bus_vehicle_update.dart';
 import 'package:shared/models/saferide/position_data.dart';
+// model imports
+import 'package:shared/models/shuttle/shuttle_route.dart';
+import 'package:shared/models/shuttle/shuttle_stop.dart';
+import 'package:shared/models/shuttle/shuttle_update.dart';
+import 'package:shared/util/bitmap_helpers.dart';
+import 'package:shared/util/errors.dart';
 // import 'package:shared/util/math_util.dart';
 import 'package:shared/util/spherical_utils.dart';
+// repository imports
+import 'package:smartrider/blocs/map/data/bus_repository.dart';
+import 'package:smartrider/blocs/map/data/shuttle_repository.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+import 'package:smartrider/blocs/saferide/data/saferide_repository.dart';
+import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -65,13 +60,13 @@ final LatLngBounds rpiBounds = LatLngBounds(
 /// Class that implements the bloc pattern for the map
 class MapBloc extends Bloc<MapEvent, MapState> {
   /// MapBloc named constructor
-  MapBloc(
-      {required this.shuttleRepo,
-      required this.busRepo,
-      required this.saferideRepo,
-      required this.saferideBloc,
-      required this.prefsBloc})
-      : super(const MapLoadingState()) {
+  MapBloc({
+    required this.shuttleRepo,
+    required this.busRepo,
+    required this.saferideRepo,
+    required this.saferideBloc,
+    required this.prefsBloc,
+  }) : super(const MapLoadingState()) {
     rootBundle.loadString('assets/map_styles/aubergine.json').then((string) {
       _darkMapStyle = string;
     });
@@ -117,7 +112,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   /// Saferide Bloc
   final SaferideBloc saferideBloc;
 
-  double _zoomLevel = 14.0;
+  double _zoomLevel = 14;
   MapView _currentView = MapView.kBusView;
 
   Map<String, bool> _enabledShuttles = {};
@@ -374,10 +369,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                     (saferideState as SaferideSelectingState).pickupLatLng,
                 onTap: () {
                   _controller!.animateCamera(
-                    CameraUpdate.newCameraPosition(CameraPosition(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
                         target: saferideState.pickupLatLng,
                         zoom: 18,
-                        tilt: 50)),
+                        tilt: 50,
+                      ),
+                    ),
                   );
                 },
               ),
@@ -390,8 +388,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                 position: saferideState.dropLatLng,
                 onTap: () {
                   _controller!.animateCamera(
-                    CameraUpdate.newCameraPosition(CameraPosition(
-                        target: saferideState.dropLatLng, zoom: 18, tilt: 50)),
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        target: saferideState.dropLatLng,
+                        zoom: 18,
+                        tilt: 50,
+                      ),
+                    ),
                   );
                 },
               ),
@@ -401,9 +404,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               polylineId: const PolylineId('fancy_line'),
               width: 5,
               color: Colors.blueGrey,
-              patterns: [PatternItem.dash(20.0), PatternItem.gap(10)],
+              patterns: [PatternItem.dash(20), PatternItem.gap(10)],
               points: _drawFancyLine(
-                  saferideState.pickupLatLng, saferideState.dropLatLng)));
+                  saferideState.pickupLatLng, saferideState.dropLatLng,),),);
 
           scrollToCurrentLocation(zoom: 16);
         }
@@ -450,7 +453,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         (pickupLocation.longitude - destLocation.longitude > 0) ? -1.0 : 1.0;
     final angleFromCenter = 90.0 * direction;
     final oCoordinate = SphericalUtils.computeOffset(
-        mCoordinate, mo, heading + angleFromCenter);
+      mCoordinate,
+      mo,
+      heading + angleFromCenter,
+    );
 
     path.add(destLocation);
 
@@ -464,7 +470,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       final step = i.toDouble() * (degree / num.toDouble());
       final heading = (-1.0) * direction;
       final pointOnCurvedLine = SphericalUtils.computeOffset(
-          oCoordinate, r, initialHeading + heading * step);
+        oCoordinate,
+        r,
+        initialHeading + heading * step,
+      );
       path.add(pointOnCurvedLine);
     }
 
@@ -477,7 +486,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     Position currentLocation;
     try {
       currentLocation = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best);
+        desiredAccuracy: LocationAccuracy.best,
+      );
     } on PermissionDeniedException catch (_) {
       return;
     }
@@ -498,7 +508,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         CameraUpdate.newCameraPosition(
           const CameraPosition(
             target: LatLng(42.729280, -73.679056),
-            zoom: 15.0,
+            zoom: 15,
           ),
         ),
       );
@@ -508,7 +518,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   void scrollToLatLng(LatLng loc, {double zoom = 18, double tilt = 50}) {
     _controller!.animateCamera(
       CameraUpdate.newCameraPosition(
-          CameraPosition(target: loc, zoom: zoom, tilt: tilt)),
+          CameraPosition(target: loc, zoom: zoom, tilt: tilt,),),
     );
   }
 
@@ -521,28 +531,28 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     _shuttleStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/map_icons/marker_stop_shuttle.svg',
-        size: stopMarkerSize);
+        size: stopMarkerSize,);
     _busStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/map_icons/marker_stop_bus.svg',
-        size: stopMarkerSize);
+        size: stopMarkerSize,);
     _pickupIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/map_icons/marker_pickup.svg',
-        size: stopMarkerSize);
+        size: stopMarkerSize,);
     _dropoffIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/map_icons/marker_dropoff.svg',
-        size: stopMarkerSize);
+        size: stopMarkerSize,);
     _saferideUpdateIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/map_icons/marker_saferide.svg',
-        size: vehicleUpdateSize);
+        size: vehicleUpdateSize,);
     _saferidePickupUpdateIcon =
         await BitmapHelper.getBitmapDescriptorFromSvgAsset(
             'assets/map_icons/marker_saferide_alt.svg',
-            size: vehicleUpdateSize);
+            size: vehicleUpdateSize,);
 
     // default white
     _updateIcons['-1'] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
         'assets/map_icons/marker_vehicle.svg',
-        size: vehicleUpdateSize);
+        size: vehicleUpdateSize,);
   }
 
   Future<void> _initBusMarkers() async {
@@ -552,7 +562,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           await BitmapHelper.getBitmapDescriptorFromSvgAsset(
               'assets/map_icons/marker_vehicle.svg',
               color: busColors[busId]!.lighten(0.15),
-              size: vehicleUpdateSize);
+              size: vehicleUpdateSize,);
     }
   }
 
@@ -564,7 +574,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             await BitmapHelper.getBitmapDescriptorFromSvgAsset(
                 'assets/map_icons/marker_vehicle.svg',
                 color: _shuttleRoutes[key]!.color,
-                size: vehicleUpdateSize);
+                size: vehicleUpdateSize,);
       }
     }
   }
@@ -577,9 +587,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       onTap: () {
         _controller!.animateCamera(
           CameraUpdate.newCameraPosition(
-              CameraPosition(target: stop.getLatLng, zoom: 18, tilt: 50)),
+              CameraPosition(target: stop.getLatLng, zoom: 18, tilt: 50,),),
         );
-      });
+      },);
 
   Marker _saferideVehicleToMarker(PositionData position) => Marker(
       icon: position.id == _pickupVehicleId
@@ -592,9 +602,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       onTap: () {
         _controller!.animateCamera(
           CameraUpdate.newCameraPosition(
-              CameraPosition(target: position.latLng, zoom: 18, tilt: 50)),
+              CameraPosition(target: position.latLng, zoom: 18, tilt: 50,),),
         );
-      });
+      },);
 
   /// TODO: focusing bus stop marker shows name and stuff
   // Marker _busStopToMarker(BusStop stop) {
@@ -617,14 +627,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           info: stop.stopName,
           position: stop.getLatLng,
           icon: _busStopIcon,
-          controller: _controller);
+          controller: _controller,);
 
   Marker _shuttleUpdateToMarker(ShuttleUpdate update) {
     return Marker(
         icon: _updateIcons[update.routeId.toString()] ?? _updateIcons['-1']!,
         infoWindow: InfoWindow(
             title: 'Shuttle #${update.vehicleId.toString()} '
-                'on Route ${update.routeId}'),
+                'on Route ${update.routeId}',),
         flat: true,
         markerId: MarkerId(update.id.toString()),
         position: update.getLatLng,
@@ -633,9 +643,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         onTap: () {
           _controller!.animateCamera(
             CameraUpdate.newCameraPosition(
-                CameraPosition(target: update.getLatLng, zoom: 18, tilt: 50)),
+                CameraPosition(target: update.getLatLng, zoom: 18, tilt: 50),),
           );
-        });
+        },);
   }
 
   Marker _busUpdateToMarker(BusRealtimeUpdate update) {
@@ -645,7 +655,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       icon: _updateIcons['bus_${update.routeId}'] ?? _updateIcons['-1']!,
       infoWindow: InfoWindow(
           title: 'Bus #${update.id.toString()} '
-              'on Route ${update.routeId}'),
+              'on Route ${update.routeId}',),
       flat: true,
       markerId: MarkerId(update.id.toString()),
       position: busPosition,
@@ -654,7 +664,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       onTap: () {
         _controller!.animateCamera(
           CameraUpdate.newCameraPosition(
-              CameraPosition(target: busPosition, zoom: 18, tilt: 50)),
+              CameraPosition(target: busPosition, zoom: 18, tilt: 50),),
         );
       },
     );
@@ -781,7 +791,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               clusterId: cluster?.id,
               pointsSize: cluster?.pointsSize,
               childMarkerId: cluster?.childMarkerId,
-              controller: _controller),
+              controller: _controller,),
     );
 
     return _fluster
@@ -790,7 +800,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           rpiBounds.southwest.latitude,
           rpiBounds.northeast.longitude,
           rpiBounds.northeast.latitude
-        ], zoomLevel.round())
+        ], zoomLevel.round(),)
         .map((cluster) => cluster.toMarker())
         .toSet();
   }
@@ -846,7 +856,7 @@ class MarkerCluster extends Clusterable {
                 position.longitude,
               ),
               zoom: 18,
-              tilt: 50)),
+              tilt: 50,),),
         );
-      });
+      },);
 }

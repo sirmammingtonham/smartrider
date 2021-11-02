@@ -17,8 +17,8 @@ class Legend extends StatefulWidget {
 
 class _LegendState extends State<Legend> with TickerProviderStateMixin {
   bool _isExpanded = false;
-  static const double fabSize = 56.0;
-  static const double iconSize = 24.0;
+  static const double fabSize = 56;
+  static const double iconSize = 24;
 
   @override
   void initState() {

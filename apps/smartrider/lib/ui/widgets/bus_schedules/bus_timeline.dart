@@ -1,21 +1,19 @@
 // ui dependencies
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
-import 'package:smartrider/blocs/map/map_bloc.dart';
-import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
-import 'package:shared/util/messages.dart';
-import 'package:smartrider/ui/widgets/bus_schedules/bus_unavailable.dart';
-import 'package:showcaseview/showcaseview.dart';
-import 'package:smartrider/ui/home.dart';
-import 'package:smartrider/ui/widgets/custom_widgets/custom_painters.dart';
 import 'package:shared/models/tuple.dart';
-
+import 'package:shared/util/messages.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
+import 'package:smartrider/ui/home.dart';
+import 'package:smartrider/ui/widgets/bus_schedules/bus_unavailable.dart';
 // loading custom widgets and data
 import 'package:smartrider/ui/widgets/custom_widgets/custom_expansion_tile.dart';
+import 'package:smartrider/ui/widgets/custom_widgets/custom_painters.dart';
+import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 
 const List<String> choices = [
   'Set reminder',
@@ -30,7 +28,7 @@ class BusTimeline extends StatefulWidget {
       required this.panelController,
       required this.scrollController,
       // @required this.busRoutes,
-      required this.busTables})
+      required this.busTables,})
       : super(key: key);
   final PanelController panelController;
   final ScrollController scrollController;
@@ -123,15 +121,15 @@ class BusTimelineState extends State<BusTimeline>
           ],
         ),
       )
-    ]);
+    ],);
   }
 
   Widget busExpansionTile(int index, List<TimetableStop> busStops,
-      List<Tuple<String, int>> stopTimes, String routeId) {
+      List<Tuple<String, int>> stopTimes, String routeId,) {
     return CustomExpansionTile(
       title: Text(busStops[index].stopName),
       subtitle: Text('Next Arrival: ${stopTimes[0].first}'),
-      tilePadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      tilePadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
 
       /// Controls the leading circle icon in front of each bus stop.
       leading: CustomPaint(
@@ -139,11 +137,11 @@ class BusTimelineState extends State<BusTimeline>
               circleColor: busColors[routeId]!,
               lineColor: busColors[routeId]!,
               first: index == 0,
-              last: index == busStops.length - 1),
+              last: index == busStops.length - 1,),
           child: const SizedBox(
             height: 50,
             width: 45,
-          )),
+          ),),
       trailing: isExpandedList[index]
           ? const Text('Hide Arrivals -')
           : const Text('Show Arrivals +'),
@@ -204,12 +202,12 @@ class BusTimelineState extends State<BusTimeline>
                       subtitle: Text(subText),
                       trailing: PopupMenuButton<String>(
                           onSelected: (choice) => _handlePopupSelection(
-                              choice, busStops[index], timeTuple),
+                              choice, busStops[index], timeTuple,),
                           itemBuilder: (BuildContext context) => choices
                               .map((choice) => PopupMenuItem<String>(
-                                  value: choice, child: Text(choice)))
-                              .toList()),
-                    ));
+                                  value: choice, child: Text(choice),),)
+                              .toList(),),
+                    ),);
                     return list;
                   },
                 ),
@@ -256,7 +254,7 @@ class BusTimelineState extends State<BusTimeline>
   }
 
   void _handlePopupSelection(
-      String choice, TimetableStop? busStop, Tuple<String, int>? stopTime) {
+      String choice, TimetableStop? busStop, Tuple<String, int>? stopTime,) {
     if (choice == choices[0]) {
       BlocProvider.of<ScheduleBloc>(context)
           .scheduleBusAlarm(stopTime!.second, busStop!);
