@@ -62,14 +62,8 @@ flutter {
     source '../..'
 }
 
-repositories {
-    maven {
-        name 'hypertrack'
-        url 'http://m2.hypertrack.com'
-    }
-}
-
 dependencies {
+    implementation 'com.google.android.gms:play-services-safetynet:17.0.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
