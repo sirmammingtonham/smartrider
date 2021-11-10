@@ -35,7 +35,7 @@ class SearchBar extends StatefulWidget {
 class SearchBarState extends State<SearchBar> {
   SearchBarState();
   late String initials;
-  final places = GoogleMapsPlaces(apiKey: googleApiKey);
+  final places = GoogleMapsPlaces(apiKey: google_api_key);
 
   @override
   void initState() {

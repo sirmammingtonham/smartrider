@@ -77,6 +77,7 @@ class _HomePageState extends State<_HomePage>
     BlocProvider.of<SaferideBloc>(context).add(const SaferideNoEvent());
   }
 
+  // TODO: showcase logic, move out of home.dart
   void startShowcase(PrefsLoadedState prefState, BuildContext context) {
     if (prefState.prefs.getBool('firstTimeLoad') == true) {
       ShowCaseWidget.of(context)!.startShowCase([
@@ -92,6 +93,7 @@ class _HomePageState extends State<_HomePage>
     }
   }
 
+  //  TODO: showcase logic, move out of home.dart
   void startTimelineShowcase(PrefsLoadedState prefState, BuildContext context) {
     if (prefState.prefs.getBool('firstSlideUp') == true) {
       ShowCaseWidget.of(context)!.startShowCase(
