@@ -5,7 +5,7 @@ import 'package:smartrider/blocs/map/map_bloc.dart';
 
 import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 
-// import 'package:shared/util/messages.dart';
+// import 'package:shared/util/consts/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 // import 'package:sizer/sizer.dart';

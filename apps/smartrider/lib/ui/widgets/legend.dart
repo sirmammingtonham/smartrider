@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared/models/bus/bus_shape.dart';
-import 'package:shared/util/messages.dart';
+import 'package:shared/util/consts/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
 // import 'package:sizer/sizer.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';

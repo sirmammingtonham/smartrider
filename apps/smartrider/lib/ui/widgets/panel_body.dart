@@ -7,7 +7,7 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 
 // loading custom widgets and data
 import 'package:showcaseview/showcaseview.dart';
-import 'package:shared/util/messages.dart';
+import 'package:shared/util/consts/messages.dart';
 // import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_timeline.dart';
 // import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_table.dart';
 import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_unavailable.dart';

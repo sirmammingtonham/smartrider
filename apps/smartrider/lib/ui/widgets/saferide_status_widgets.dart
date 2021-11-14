@@ -2,7 +2,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:shared/util/num_to_ordinal.dart';
+import 'package:shared/util/math/num_to_ordinal.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // bloc imports

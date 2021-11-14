@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
 import 'package:shared/models/tuple.dart';
-import 'package:shared/util/messages.dart';
+import 'package:shared/util/consts/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';

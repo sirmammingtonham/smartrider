@@ -24,9 +24,8 @@ import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
 import 'package:shared/models/shuttle/shuttle_update.dart';
 import 'package:shared/util/bitmap_helpers.dart';
-import 'package:shared/util/errors.dart';
-// import 'package:shared/util/math_util.dart';
-import 'package:shared/util/spherical_utils.dart';
+import 'package:shared/util/consts/errors.dart';
+import 'package:shared/util/math/spherical_utils.dart';
 // repository imports
 import 'package:smartrider/blocs/map/data/bus_repository.dart';
 import 'package:smartrider/blocs/map/data/shuttle_repository.dart';

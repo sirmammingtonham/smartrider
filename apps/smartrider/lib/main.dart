@@ -1,38 +1,34 @@
-//implementation imports
 import 'dart:async';
-
-import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
-import 'package:responsive_framework/responsive_framework.dart';
-
-// bloc imports
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smartrider/blocs/map/map_bloc.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+import 'package:responsive_framework/responsive_framework.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
-import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
-import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
-
-// data repository imports
 import 'package:smartrider/blocs/authentication/data/authentication_repository.dart';
 import 'package:smartrider/blocs/map/data/bus_repository.dart';
 import 'package:smartrider/blocs/map/data/shuttle_repository.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/data/saferide_repository.dart';
-
-// page imports
-import 'package:smartrider/ui/welcome.dart';
+import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
+import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/ui/home.dart';
-import 'package:showcaseview/showcaseview.dart';
-import 'package:smartrider/ui/onboarding.dart';
+import 'package:smartrider/ui/welcome.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 // test imports
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:awesome_notifications/awesome_notifications.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
@@ -46,34 +42,25 @@ void main() async {
     }
   }
 
-  // await AwesomeNotifications().initialize(
-  //   null, // default app icon
-  //   [
-  //     NotificationChannel(
-  //         channelKey: 'basic_channel',
-  //         channelName: 'Basic notifications',
-  //         channelDescription: 'Notification channel for basic tests',
-  //         defaultColor: const Color(0xFF9D50DD),
-  //         ledColor: Colors.white)
-  //   ],
-  // );
-
-  // final host = defaultTargetPlatform == TargetPlatform.android
-  //     ? '10.0.2.2:8080'
-  //     : 'localhost:8080';
-//FirebaseFirestore.instance.settings = Settings(host: host, sslEnabled: false);
+  await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
+  FirebaseFunctions.instance.useFunctionsEmulator('10.0.2.2', 5001);
+  FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
 
   final app = SmartRider(
-      authRepo: AuthenticationRepository.create(),
-      busRepo: await BusRepository.create(),
-      shuttleRepo: ShuttleRepository.create(),
-      saferideRepo: SaferideRepository.create());
+    authRepo: AuthenticationRepository.create(),
+    busRepo: await BusRepository.create(),
+    shuttleRepo: ShuttleRepository.create(),
+    saferideRepo: SaferideRepository.create(),
+  );
 
   if (!kIsWeb) {
     //catch async errors as well
-    await runZonedGuarded(() async {
-      runApp(app);
-    }, FirebaseCrashlytics.instance.recordError);
+    await runZonedGuarded(
+      () async {
+        runApp(app);
+      },
+      FirebaseCrashlytics.instance.recordError,
+    );
   } else {
     runApp(app);
   }
@@ -93,10 +80,10 @@ class SmartRider extends StatefulWidget {
   final SaferideRepository saferideRepo;
 
   @override
-  _SmartRiderState createState() => _SmartRiderState();
+  SmartRiderState createState() => SmartRiderState();
 }
 
-class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
+class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
   late final AuthenticationBloc _authBloc;
   late final PrefsBloc _prefsBloc;
   late final MapBloc _mapBloc;
@@ -113,15 +100,17 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     _authBloc = AuthenticationBloc(authRepository: widget.authRepo)
       ..add(AuthenticationInitEvent());
     _saferideBloc = SaferideBloc(
-        prefsBloc: _prefsBloc,
-        saferideRepo: widget.saferideRepo,
-        authRepo: widget.authRepo);
+      prefsBloc: _prefsBloc,
+      saferideRepo: widget.saferideRepo,
+      authRepo: widget.authRepo,
+    );
     _mapBloc = MapBloc(
-        saferideBloc: _saferideBloc,
-        prefsBloc: _prefsBloc,
-        busRepo: widget.busRepo,
-        shuttleRepo: widget.shuttleRepo,
-        saferideRepo: widget.saferideRepo);
+      saferideBloc: _saferideBloc,
+      prefsBloc: _prefsBloc,
+      busRepo: widget.busRepo,
+      shuttleRepo: widget.shuttleRepo,
+      saferideRepo: widget.saferideRepo,
+    );
     _scheduleBloc = ScheduleBloc(
       mapBloc: _mapBloc,
       busRepo: widget.busRepo,
@@ -130,13 +119,49 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     final window = WidgetsBinding.instance!.window;
     window.onPlatformBrightnessChanged = () {
       // This callback is called every time the brightness changes.
-      _mapBloc.add(MapThemeChangeEvent(
-        theme: window.platformBrightness == Brightness.light
-            ? FlexColorScheme.light(scheme: colorScheme).toTheme
-            : FlexColorScheme.dark(scheme: colorScheme).toTheme,
-      ));
+      _mapBloc.add(
+        MapThemeChangeEvent(
+          theme: window.platformBrightness == Brightness.light
+              ? FlexColorScheme.light(scheme: colorScheme).toTheme
+              : FlexColorScheme.dark(scheme: colorScheme).toTheme,
+        ),
+      );
       setState(() {});
     };
+
+    initDynamicLinks();
+  }
+
+  Future<void> initDynamicLinks() async {
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData? dynamicLink) async {
+        final deepLink = dynamicLink?.link;
+        if (deepLink != null) {
+          await _handleDeepLink(deepLink);
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        // print('onLinkError');
+        // print(e.message);
+        // TODO: error handling
+      },
+    );
+
+    final data = await FirebaseDynamicLinks.instance.getInitialLink();
+    final deepLink = data?.link;
+
+    if (deepLink != null) {
+      await _handleDeepLink(deepLink);
+    }
+  }
+
+  Future<void> _handleDeepLink(Uri link) async {
+    final params = link.queryParameters;
+    if (params.containsKey('error')) {
+      // TODO: error handling
+    } else {
+      // _authBloc.add();
+    }
   }
 
   @override
@@ -172,24 +197,42 @@ class _SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
       ],
       child: MaterialApp(
         builder: (context, widget) => ResponsiveWrapper.builder(
-            BouncingScrollWrapper.builder(context, widget!),
-            minWidth: 450,
-            defaultScale: true,
-            breakpoints: const [
-              ResponsiveBreakpoint.resize(450, name: MOBILE),
-              ResponsiveBreakpoint.autoScale(800, name: TABLET),
-              ResponsiveBreakpoint.autoScale(1000, name: TABLET),
-              ResponsiveBreakpoint.resize(1200, name: DESKTOP),
-              ResponsiveBreakpoint.autoScale(2460, name: '4K'),
-            ]),
+          BouncingScrollWrapper.builder(context, widget!),
+          defaultScale: true,
+          breakpoints: const [
+            ResponsiveBreakpoint.resize(450, name: MOBILE),
+            ResponsiveBreakpoint.autoScale(800, name: TABLET),
+            ResponsiveBreakpoint.autoScale(1000, name: TABLET),
+            ResponsiveBreakpoint.resize(1200, name: DESKTOP),
+            ResponsiveBreakpoint.autoScale(2460, name: '4K'),
+          ],
+        ),
         debugShowCheckedModeBanner: false,
         title: 'smartrider Prototype',
         theme: FlexColorScheme.light(scheme: colorScheme).toTheme,
         darkTheme: FlexColorScheme.dark(scheme: colorScheme).toTheme,
-        themeMode: ThemeMode.system,
         home: ShowCaseWidget(
           builder: Builder(
-              builder: (context) => const WelcomeScreen(homePage: HomePage())),
+            builder: (context) => Scaffold(
+              body: Center(
+                child: ElevatedButton(
+                  child: const Text('Test Auth Redirect and shid'),
+                  onPressed: () async {
+                    await ChromeSafariBrowser().open(
+                      url: Uri.parse(
+                          'http://10.0.2.2:5001/smartrider-4e9e8/us-central1/casAuthenticate'),
+                      options: ChromeSafariBrowserClassOptions(
+                        android: AndroidChromeCustomTabsOptions(
+                          addDefaultShareMenuItem: false,
+                        ),
+                        ios: IOSSafariOptions(barCollapsingEnabled: true),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ), //const WelcomeScreen(homePage: HomePage()),
+          ),
           autoPlay: true,
           autoPlayDelay: const Duration(seconds: 10),
         ),

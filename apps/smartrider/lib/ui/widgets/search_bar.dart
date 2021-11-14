@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_webservice/geocoding.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:shared/util/messages.dart';
+import 'package:shared/util/consts/messages.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
 import 'package:shared/util/strings.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -35,7 +35,7 @@ class SearchBar extends StatefulWidget {
 class SearchBarState extends State<SearchBar> {
   SearchBarState();
   late String initials;
-  final places = GoogleMapsPlaces(apiKey: google_api_key);
+  final places = GoogleMapsPlaces(apiKey: googleApiKey);
 
   @override
   void initState() {

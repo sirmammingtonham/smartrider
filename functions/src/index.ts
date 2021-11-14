@@ -1,14 +1,27 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
+import * as xml2js from "xml2js";
 import { default as fetch } from "node-fetch";
 
 admin.initializeApp(); // needs to go before other imports: https://github.com/firebase/firebase-functions-test/issues/6#issuecomment-496021884
 
+const auth = admin.auth();
+const parser = new xml2js.Parser();
 const runtimeOpts: functions.RuntimeOptions = {
-  timeoutSeconds: 3, // timeout function after 3 secs
+  timeoutSeconds: 60, // timeout function after 3 secs
   memory: "128MB", // allocate 128MB of mem per function
 };
-// export { refreshGTFS } from "./gtfs_update_firestore";
+
+const CAS_ENDPOINT = `https://casserver.herokuapp.com/cas`;
+const BUNDLE_ID = "com.rcos.smartrider";
+const IOS_MIN_VERSION = "0.0.1";
+const ANDROID_MIN_VERSION = "0.0.1";
+const EFR = 1;
+
+const getDynamicLink = (deepUrl: String) =>
+  `https://smartrider.page.link/?link=${deepUrl}&apn=${BUNDLE_ID}&amv=${ANDROID_MIN_VERSION}&ibi=${BUNDLE_ID}&imv=${IOS_MIN_VERSION}&efr=${EFR}`;
+
+// export { refreshGTFS } from "./gtfs/gtfs_update_firestore";
 
 // Clears the firestore database of any orders that have not errored
 // Runs at 3:00 am everyday eastern time automatically
@@ -31,7 +44,10 @@ export const corsProxy = functions
   .runWith(runtimeOpts)
   .https.onCall(async (data, context) => {
     if (!context.auth) {
-        throw new functions.https.HttpsError("unauthenticated", "You must be authenticated");
+      throw new functions.https.HttpsError(
+        "unauthenticated",
+        "You must be authenticated"
+      );
     }
     const url = data.url;
     const r = await fetch(url, { method: data.method });
@@ -40,4 +56,62 @@ export const corsProxy = functions
       return null;
     }
     return r.json();
+  });
+
+export const casAuthenticate = functions
+  .runWith(runtimeOpts)
+  .https.onRequest(async (req, res) => {
+    const ORIGIN = `${req.protocol}://${req.get(
+      "Host"
+    )}/smartrider-4e9e8/us-central1/casAuthenticate`;
+
+    if (req.query.ticket === undefined || req.query.ticket === null) {
+      return res.redirect(`${CAS_ENDPOINT}/login?service=${ORIGIN}`);
+    }
+
+    const params = new URLSearchParams({
+      ticket: req.query.ticket as string,
+      service: ORIGIN,
+    }).toString();
+
+    try {
+      const r = await fetch(`${CAS_ENDPOINT}/serviceValidate?${params}`);
+      const xml = await r.text();
+
+      const result = await parser.parseStringPromise(xml);
+
+      const casAttributes =
+        result["cas:serviceResponse"]["cas:authenticationSuccess"]["0"][
+          "cas:attributes"
+        ]["0"];
+      const uid = casAttributes["cas:uid"][0];
+      // const displayName = casAttributes['cas:displayName'][0];
+      // const email = casAttributes['cas:mailLocalAddress'][0];
+      // const rin = casAttributes['cas:rpiRIN'][0];
+
+      const payload = new URLSearchParams({
+        token: await admin.auth().createCustomToken(uid),
+        uid,
+        // displayName,
+        // email,
+        // rin,
+      }).toString();
+      const deepUrl = `https://smartrider.page.link.com/casAuth?${encodeURIComponent(
+        payload
+      )}`;
+      console.log(deepUrl);
+      return res.redirect(getDynamicLink(deepUrl));
+    } catch (e) {
+      // on any auth failure redirect to fail dynamic link
+      const payload = new URLSearchParams({
+        error: String(e),
+      }).toString();
+      return res.redirect(
+        getDynamicLink(
+          `https://smartrider.page.link.com/casAuthFail?${encodeURIComponent(
+            payload
+          )}`
+        )
+      );
+    }
   });
