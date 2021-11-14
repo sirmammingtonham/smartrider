@@ -10,7 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 // import 'package:shared/models/saferide/driver.dart';
-import 'package:smartrider/blocs/authentication/data/authentication_repository.dart';
+import 'package:smartrider/blocs/auth/data/auth_repository.dart';
 import 'package:smartrider/blocs/saferide/data/saferide_repository.dart';
 import 'package:shared/util/strings.dart';
 import 'package:shared/models/saferide/order.dart';
@@ -52,7 +52,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   final places = GoogleMapsPlaces(apiKey: googleApiKey);
   final PrefsBloc prefsBloc;
   final SaferideRepository saferideRepo;
-  final AuthenticationRepository authRepo;
+  final AuthRepository authRepo;
 
   DocumentReference? currentOrder;
   PlacesDetailsResponse? dropoffDetails, pickupDetails;

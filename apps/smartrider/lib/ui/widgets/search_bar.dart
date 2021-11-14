@@ -8,7 +8,7 @@ import 'package:shared/util/consts/messages.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
 import 'package:shared/util/strings.dart';
 import 'package:showcaseview/showcaseview.dart';
-import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
+import 'package:smartrider/blocs/auth/auth_bloc.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
@@ -107,7 +107,7 @@ class SearchBarState extends State<SearchBar> {
   }
 
   Widget searchField(
-    AuthenticationSignedInState authState,
+    AuthSignedInState authState,
     SaferideState saferideState,
   ) {
     if (!authState.user.phoneVerified) {
@@ -219,7 +219,7 @@ class SearchBarState extends State<SearchBar> {
     MapView mapView,
     SaferideState saferideState,
     PrefsState prefsState,
-    AuthenticationState authState,
+    AuthState authState,
   ) {
     Widget indicator;
     switch (mapView) {
@@ -270,7 +270,7 @@ class SearchBarState extends State<SearchBar> {
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width - 150,
                     child: searchField(
-                      authState as AuthenticationSignedInState,
+                      authState as AuthSignedInState,
                       saferideState,
                     ),
 // TODO: phone verification button
@@ -356,17 +356,17 @@ class SearchBarState extends State<SearchBar> {
           blocs: [
             BlocProvider.of<MapBloc>(context),
             BlocProvider.of<SaferideBloc>(context),
-            BlocProvider.of<AuthenticationBloc>(context),
+            BlocProvider.of<AuthBloc>(context),
             BlocProvider.of<PrefsBloc>(context),
           ],
           builder: (context, states) {
             final saferideState = states.get<SaferideState>();
-            final authState = states.get<AuthenticationState>();
+            final authState = states.get<AuthState>();
             final prefState = states.get<PrefsState>();
 
-            // assert(authState is AuthenticationSignedInState);
+            // assert(authState is AuthSignedInState);
             initials = computeInitials(
-              (authState as AuthenticationSignedInState).user.email,
+              (authState as AuthSignedInState).user.email,
             );
 
             switch (saferideState.runtimeType) {

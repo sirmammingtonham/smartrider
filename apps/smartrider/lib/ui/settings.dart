@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
-import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
-import 'package:smartrider/blocs/authentication/data/authentication_repository.dart';
+import 'package:smartrider/blocs/auth/auth_bloc.dart';
+import 'package:smartrider/blocs/auth/data/auth_repository.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/ui/issue_request.dart';
@@ -22,7 +22,7 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
   // adding placeholder vars for now, replace these with sharedprefs
-  // final AuthenticationRepository auth = AuthenticationRepository.create();
+  // final AuthRepository auth = AuthRepository.create();
   bool _loadingShuttle = false;
 
   @override
@@ -78,10 +78,10 @@ class SettingsPageState extends State<SettingsPage> {
     bool submit(String str) {
       if (_formKey.currentState!.validate()) {
         SmsAutoFill().listenForCode();
-        BlocProvider.of<AuthenticationBloc>(
+        BlocProvider.of<AuthBloc>(
           context,
         ).add(
-          AuthenticationResetPhoneEvent(
+          AuthResetPhoneEvent(
             newPhoneNumber: str.trim(),
           ),
         );
@@ -110,7 +110,7 @@ class SettingsPageState extends State<SettingsPage> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a password.';
                   }
-                  if (AuthenticationRepository.phoneRegex.hasMatch(value)) {
+                  if (AuthRepository.phoneRegex.hasMatch(value)) {
                     return null;
                   } else {
                     return 'Please enter a valid phone number';
@@ -151,10 +151,10 @@ class SettingsPageState extends State<SettingsPage> {
   //           TextButton(
   //             onPressed: () {
   //               //If the user chooses yes, we will call the authentification delete function
-  //               BlocProvider.of<AuthenticationBloc>(
+  //               BlocProvider.of<AuthBloc>(
   //                 context,
   //               ).add(
-  //                 AuthenticationDeleteEvent(),
+  //                 AuthDeleteEvent(),
   //               );
   //               Navigator.of(context).pop();
   //               showDialog<AlertDialog>(
@@ -183,12 +183,12 @@ class SettingsPageState extends State<SettingsPage> {
   //   );
   // }
 
-// TODO: add bloclistener for authentication, model on profile.dart
+// TODO: add bloclistener for auth, model on profile.dart
   @override
   Widget build(BuildContext context) {
     void submit(String code, String verificationId) {
-      BlocProvider.of<AuthenticationBloc>(context).add(
-        AuthenticationPhoneSMSCodeEnteredEvent(
+      BlocProvider.of<AuthBloc>(context).add(
+        AuthPhoneSMSCodeEnteredEvent(
           verificationId: verificationId,
           sms: code,
         ),
@@ -199,9 +199,9 @@ class SettingsPageState extends State<SettingsPage> {
     final _textFieldController = TextEditingController();
 
     return BlocListener(
-      bloc: BlocProvider.of<AuthenticationBloc>(context),
+      bloc: BlocProvider.of<AuthBloc>(context),
       listener: (context, state) async {
-        if (state is AuthenticationVerifyPhoneState) {
+        if (state is AuthVerifyPhoneState) {
           await showDialog<AlertDialog>(
             context: context,
             barrierDismissible: false,
@@ -237,7 +237,7 @@ class SettingsPageState extends State<SettingsPage> {
               );
             },
           );
-        } else if (state is AuthenticationFailedState) {
+        } else if (state is AuthFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -277,11 +277,11 @@ class SettingsPageState extends State<SettingsPage> {
         ),
         body: MultiBlocBuilder(
           blocs: [
-            BlocProvider.of<AuthenticationBloc>(context),
+            BlocProvider.of<AuthBloc>(context),
             BlocProvider.of<PrefsBloc>(context),
           ],
           builder: (context, states) {
-            final authState = states.get<AuthenticationState>();
+            final authState = states.get<AuthState>();
             final prefsState = states.get<PrefsState>();
             switch (prefsState.runtimeType) {
               case PrefsLoadingState:
@@ -290,7 +290,7 @@ class SettingsPageState extends State<SettingsPage> {
                 return ListView(
                   children: <Widget>[
                     // Conditional verify phone number
-                    if (authState is AuthenticationSignedInState &&
+                    if (authState is AuthSignedInState &&
                         !authState.user.phoneVerified) ...[
                       Container(
                         margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
@@ -476,11 +476,11 @@ class SettingsPageState extends State<SettingsPage> {
                       //   icon: const Icon(Icons.password),
                       //   onPressed: () {
                       //     //Send an email to the user to request a password change
-                      //     BlocProvider.of<AuthenticationBloc>(context).add(
-                      //       AuthenticationResetPasswordEvent(),
+                      //     BlocProvider.of<AuthBloc>(context).add(
+                      //       AuthResetPasswordEvent(),
                       //     );
-                      //     BlocProvider.of<AuthenticationBloc>(context).add(
-                      //       AuthenticationSignOutEvent(),
+                      //     BlocProvider.of<AuthBloc>(context).add(
+                      //       AuthSignOutEvent(),
                       //     );
                       //     Navigator.of(context).pop();
                       //     // Will show a small pop up
@@ -526,9 +526,8 @@ class SettingsPageState extends State<SettingsPage> {
                             padding: const EdgeInsets.all(25),
                             child: ElevatedButton(
                               onPressed: () {
-                                BlocProvider.of<AuthenticationBloc>(context)
-                                    .add(
-                                  AuthenticationSignOutEvent(),
+                                BlocProvider.of<AuthBloc>(context).add(
+                                  AuthSignOutEvent(),
                                 );
                                 Navigator.pop(context);
                               },

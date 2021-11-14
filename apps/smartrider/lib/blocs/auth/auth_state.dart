@@ -1,16 +1,16 @@
-part of 'authentication_bloc.dart';
+part of 'auth_bloc.dart';
 
-abstract class AuthenticationState extends Equatable {
-  const AuthenticationState();
+abstract class AuthState extends Equatable {
+  const AuthState();
 
   @override
   List<Object?> get props => [];
 }
 
-class AuthenticationSignedOutState extends AuthenticationState {}
+class AuthSignedOutState extends AuthState {}
 
-class AuthenticationSignedInState extends AuthenticationState {
-  const AuthenticationSignedInState({
+class AuthSignedInState extends AuthState {
+  const AuthSignedInState({
     required this.user,
   });
 
@@ -20,8 +20,8 @@ class AuthenticationSignedInState extends AuthenticationState {
   List<Object> get props => [user];
 }
 
-class AuthenticationFailedState extends AuthenticationState {
-  const AuthenticationFailedState({
+class AuthFailedState extends AuthState {
+  const AuthFailedState({
     this.exception,
     required this.message,
   });
@@ -34,8 +34,8 @@ class AuthenticationFailedState extends AuthenticationState {
 }
 
 //create phone reset state,
-class AuthenticationVerifyPhoneState extends AuthenticationState {
-  const AuthenticationVerifyPhoneState({
+class AuthVerifyPhoneState extends AuthState {
+  const AuthVerifyPhoneState({
     required this.verificationId,
     required this.resendToken,
   });

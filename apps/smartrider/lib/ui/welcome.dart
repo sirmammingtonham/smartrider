@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
+import 'package:smartrider/blocs/auth/auth_bloc.dart';
 import 'package:smartrider/ui/home.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -30,13 +30,13 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: BlocListener<AuthenticationBloc, AuthenticationState>(
+      body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           switch (state.runtimeType) {
-            case AuthenticationFailedState:
+            case AuthFailedState:
               showErrorSnackBar(
                 context: context,
-                text: (state as AuthenticationFailedState).message,
+                text: (state as AuthFailedState).message,
               );
               break;
             default:
@@ -44,13 +44,13 @@ class WelcomeScreen extends StatelessWidget {
               break;
           }
         },
-        child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
             switch (state.runtimeType) {
-              case AuthenticationSignedOutState:
-              case AuthenticationFailedState:
-                return const AuthenticationUI();
-              case AuthenticationSignedInState:
+              case AuthSignedOutState:
+              case AuthFailedState:
+                return const AuthUI();
+              case AuthSignedInState:
               default:
                 return homePage;
             }
@@ -61,13 +61,13 @@ class WelcomeScreen extends StatelessWidget {
   }
 }
 
-class AuthenticationUI extends StatefulWidget {
-  const AuthenticationUI({Key? key}) : super(key: key);
+class AuthUI extends StatefulWidget {
+  const AuthUI({Key? key}) : super(key: key);
   @override
-  AuthenticationUIState createState() => AuthenticationUIState();
+  AuthUIState createState() => AuthUIState();
 }
 
-class AuthenticationUIState extends State<AuthenticationUI> {
+class AuthUIState extends State<AuthUI> {
   static const authUrl =
       'http://10.0.2.2:5001/smartrider-4e9e8/us-central1/casAuthenticate';
 

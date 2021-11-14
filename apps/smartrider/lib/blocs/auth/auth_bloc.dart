@@ -1,93 +1,90 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:smartrider/blocs/authentication/data/authentication_repository.dart';
+import 'package:smartrider/blocs/auth/data/auth_repository.dart';
 import 'package:shared/models/auth/rider.dart';
 
-part 'authentication_event.dart';
-part 'authentication_state.dart';
+part 'auth_event.dart';
+part 'auth_state.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
-  AuthenticationBloc({required this.authRepository})
-      : super(AuthenticationSignedOutState());
-  final AuthenticationRepository authRepository;
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  AuthBloc({required this.authRepository}) : super(AuthSignedOutState());
+  final AuthRepository authRepository;
 
   @override
-  Stream<AuthenticationState> mapEventToState(
-    AuthenticationEvent event,
+  Stream<AuthState> mapEventToState(
+    AuthEvent event,
   ) async* {
     switch (event.runtimeType) {
-      case AuthenticationInitEvent:
+      case AuthInitEvent:
         yield* _mapInitToState();
         break;
-      case AuthenticationSignInEvent:
-        yield* _mapSignInToState(event as AuthenticationSignInEvent);
+      case AuthSignInEvent:
+        yield* _mapSignInToState(event as AuthSignInEvent);
         break;
-      case AuthenticationSignOutEvent:
+      case AuthSignOutEvent:
         yield* _mapSignOutToState();
         break;
-      case AuthenticationResetPhoneEvent:
-        yield* _mapResetPhoneToState(event as AuthenticationResetPhoneEvent);
+      case AuthResetPhoneEvent:
+        yield* _mapResetPhoneToState(event as AuthResetPhoneEvent);
         break;
-      case AuthenticationPhoneSMSCodeSentEvent:
+      case AuthPhoneSMSCodeSentEvent:
         {
-          yield AuthenticationVerifyPhoneState(
-            verificationId:
-                (event as AuthenticationPhoneSMSCodeSentEvent).verificationId,
+          yield AuthVerifyPhoneState(
+            verificationId: (event as AuthPhoneSMSCodeSentEvent).verificationId,
             resendToken: event.resendToken,
           );
-          yield AuthenticationSignedInState(
+          yield AuthSignedInState(
             user: authRepository.getCurrentUser!,
           );
         }
         break;
-      case AuthenticationPhoneSMSCodeEnteredEvent:
+      case AuthPhoneSMSCodeEnteredEvent:
         {
           final credential = PhoneAuthProvider.credential(
-            verificationId: (event as AuthenticationPhoneSMSCodeEnteredEvent)
-                .verificationId,
+            verificationId:
+                (event as AuthPhoneSMSCodeEnteredEvent).verificationId,
             smsCode: event.sms,
           );
           try {
             await FirebaseAuth.instance.signInWithCredential(credential);
           } on FirebaseAuthException catch (e) {
-            yield AuthenticationFailedState(
+            yield AuthFailedState(
               exception: e,
               message: 'Invalid code',
             );
           }
-          yield AuthenticationSignedInState(
+          yield AuthSignedInState(
             user: authRepository.getCurrentUser!,
           );
         }
         break;
-      case AuthenticationFailedEvent:
+      case AuthFailedEvent:
         {
-          yield AuthenticationFailedState(
-            exception: (event as AuthenticationFailedEvent).exception,
+          yield AuthFailedState(
+            exception: (event as AuthFailedEvent).exception,
             message: event.message,
           );
           if (authRepository.getCurrentUser != null) {
-            yield AuthenticationSignedInState(
+            yield AuthSignedInState(
               user: authRepository.getCurrentUser!,
             );
           } else {
-            yield AuthenticationSignedOutState();
+            yield AuthSignedOutState();
           }
         }
         break;
     }
   }
 
-  Stream<AuthenticationState> _mapSignOutToState() async* {
+  Stream<AuthState> _mapSignOutToState() async* {
     await authRepository.signOut();
-    yield AuthenticationSignedOutState();
+    yield AuthSignedOutState();
   }
 
 //create state, put change phone number logic in state
-  Stream<AuthenticationState> _mapResetPhoneToState(
-    AuthenticationResetPhoneEvent event,
+  Stream<AuthState> _mapResetPhoneToState(
+    AuthResetPhoneEvent event,
   ) async* {
     final auth = FirebaseAuth.instance;
 // TODO: update user number on firestore
@@ -100,7 +97,7 @@ class AuthenticationBloc
       },
       verificationFailed: (FirebaseAuthException e) {
         add(
-          AuthenticationFailedEvent(
+          AuthFailedEvent(
             exception: e,
             message: 'Phone Verification Failed',
           ),
@@ -108,7 +105,7 @@ class AuthenticationBloc
       },
       codeSent: (String verificationId, int? resendToken) async {
         add(
-          AuthenticationPhoneSMSCodeSentEvent(
+          AuthPhoneSMSCodeSentEvent(
             verificationId: verificationId,
             resendToken: resendToken,
           ),
@@ -118,22 +115,22 @@ class AuthenticationBloc
     );
   }
 
-  Stream<AuthenticationState> _mapInitToState() async* {
+  Stream<AuthState> _mapInitToState() async* {
     final user = authRepository.getCurrentUser;
     if (user != null) {
-      yield AuthenticationSignedInState(
+      yield AuthSignedInState(
         user: authRepository.getCurrentUser!,
       );
     } else {
-      yield AuthenticationSignedOutState();
+      yield AuthSignedOutState();
     }
   }
 
-  Stream<AuthenticationState> _mapSignInToState(
-    AuthenticationSignInEvent event,
+  Stream<AuthState> _mapSignInToState(
+    AuthSignInEvent event,
   ) async* {
     try {
-      yield AuthenticationSignedInState(
+      yield AuthSignedInState(
         user: await authRepository.signIn(
           token: event.token,
         ),
@@ -141,13 +138,13 @@ class AuthenticationBloc
     } on FirebaseAuthException catch (exception) {
       switch (exception.code) {
         case 'user-not-found':
-          yield AuthenticationFailedState(
+          yield AuthFailedState(
             exception: exception,
             message: 'User not found! Please make an account.',
           );
           break;
         case 'wrong-password':
-          yield AuthenticationFailedState(
+          yield AuthFailedState(
             exception: exception,
             message: 'Incorrect password.',
           );

@@ -11,8 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:showcaseview/showcaseview.dart';
-import 'package:smartrider/blocs/authentication/authentication_bloc.dart';
-import 'package:smartrider/blocs/authentication/data/authentication_repository.dart';
+import 'package:smartrider/blocs/auth/auth_bloc.dart';
+import 'package:smartrider/blocs/auth/data/auth_repository.dart';
 import 'package:smartrider/blocs/map/data/bus_repository.dart';
 import 'package:smartrider/blocs/map/data/shuttle_repository.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
@@ -46,7 +46,7 @@ Future<void> main() async {
   FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
 
   final app = SmartRider(
-    authRepo: await AuthenticationRepository.create(),
+    authRepo: await AuthRepository.create(),
     busRepo: await BusRepository.create(),
     shuttleRepo: ShuttleRepository.create(),
     saferideRepo: SaferideRepository.create(),
@@ -73,7 +73,7 @@ class SmartRider extends StatefulWidget {
     required this.shuttleRepo,
     required this.saferideRepo,
   }) : super(key: key);
-  final AuthenticationRepository authRepo;
+  final AuthRepository authRepo;
   final BusRepository busRepo;
   final ShuttleRepository shuttleRepo;
   final SaferideRepository saferideRepo;
@@ -83,7 +83,7 @@ class SmartRider extends StatefulWidget {
 }
 
 class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
-  late final AuthenticationBloc _authBloc;
+  late final AuthBloc _authBloc;
   late final PrefsBloc _prefsBloc;
   late final MapBloc _mapBloc;
   late final SaferideBloc _saferideBloc;
@@ -96,8 +96,7 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     WidgetsBinding.instance!.addObserver(this);
 
     _prefsBloc = PrefsBloc()..add(const LoadPrefsEvent());
-    _authBloc = AuthenticationBloc(authRepository: widget.authRepo)
-      ..add(AuthenticationInitEvent());
+    _authBloc = AuthBloc(authRepository: widget.authRepo)..add(AuthInitEvent());
     _saferideBloc = SaferideBloc(
       prefsBloc: _prefsBloc,
       saferideRepo: widget.saferideRepo,
@@ -141,7 +140,7 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
       },
       onError: (OnLinkErrorException e) async {
         _authBloc.add(
-          AuthenticationFailedEvent(
+          AuthFailedEvent(
             exception: e,
             message: 'Auth redirect failed!',
           ),
@@ -161,12 +160,12 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     final params = link.queryParameters;
     if (params.containsKey('error') || !params.containsKey('token')) {
       _authBloc.add(
-        AuthenticationFailedEvent(
+        AuthFailedEvent(
           message: "Auth redirect failed! ${params['error']}",
         ),
       );
     } else {
-      _authBloc.add(AuthenticationSignInEvent(token: params['token']!));
+      _authBloc.add(AuthSignInEvent(token: params['token']!));
     }
   }
 
@@ -196,7 +195,7 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     return MultiBlocProvider(
       providers: [
         BlocProvider<PrefsBloc>(create: (context) => _prefsBloc),
-        BlocProvider<AuthenticationBloc>(create: (context) => _authBloc),
+        BlocProvider<AuthBloc>(create: (context) => _authBloc),
         BlocProvider<SaferideBloc>(create: (context) => _saferideBloc),
         BlocProvider<MapBloc>(create: (context) => _mapBloc),
         BlocProvider<ScheduleBloc>(create: (context) => _scheduleBloc),

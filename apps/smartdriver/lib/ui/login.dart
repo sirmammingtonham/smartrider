@@ -3,7 +3,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
-import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
+import 'package:smartdriver/blocs/auth/auth_bloc.dart';
 
 class Login extends StatelessWidget {
   Login({
@@ -77,8 +77,7 @@ class Login extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20)),
                 child: TextButton(
                   onPressed: () {
-                    BlocProvider.of<AuthenticationBloc>(context)
-                        .add(AuthenticationSignInEvent(
+                    BlocProvider.of<AuthBloc>(context).add(AuthSignInEvent(
                       driverName: _nameController.text.trim(),
                       vehicleId: _vehicleController.text.trim(),
                       phoneNumber: _phoneController.text.trim(),
