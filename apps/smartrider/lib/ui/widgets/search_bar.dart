@@ -110,7 +110,7 @@ class SearchBarState extends State<SearchBar> {
     AuthenticationSignedInState authState,
     SaferideState saferideState,
   ) {
-    if (!authState.phoneVerified) {
+    if (!authState.user.phoneVerified) {
       return TextField(
         readOnly: true,
         onTap: () {
@@ -366,7 +366,7 @@ class SearchBarState extends State<SearchBar> {
 
             // assert(authState is AuthenticationSignedInState);
             initials = computeInitials(
-              (authState as AuthenticationSignedInState).user.email!,
+              (authState as AuthenticationSignedInState).user.email,
             );
 
             switch (saferideState.runtimeType) {

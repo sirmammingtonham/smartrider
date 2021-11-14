@@ -4,6 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
@@ -21,8 +22,6 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/ui/home.dart';
 import 'package:smartrider/ui/welcome.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 // test imports
 // import 'package:cloud_firestore/cloud_firestore.dart';
@@ -47,7 +46,7 @@ Future<void> main() async {
   FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
 
   final app = SmartRider(
-    authRepo: AuthenticationRepository.create(),
+    authRepo: await AuthenticationRepository.create(),
     busRepo: await BusRepository.create(),
     shuttleRepo: ShuttleRepository.create(),
     saferideRepo: SaferideRepository.create(),
@@ -141,9 +140,12 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
         }
       },
       onError: (OnLinkErrorException e) async {
-        // print('onLinkError');
-        // print(e.message);
-        // TODO: error handling
+        _authBloc.add(
+          AuthenticationFailedEvent(
+            exception: e,
+            message: 'Auth redirect failed!',
+          ),
+        );
       },
     );
 
@@ -157,10 +159,14 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
 
   Future<void> _handleDeepLink(Uri link) async {
     final params = link.queryParameters;
-    if (params.containsKey('error')) {
-      // TODO: error handling
+    if (params.containsKey('error') || !params.containsKey('token')) {
+      _authBloc.add(
+        AuthenticationFailedEvent(
+          message: "Auth redirect failed! ${params['error']}",
+        ),
+      );
     } else {
-      // _authBloc.add();
+      _authBloc.add(AuthenticationSignInEvent(token: params['token']!));
     }
   }
 
@@ -213,25 +219,7 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
         darkTheme: FlexColorScheme.dark(scheme: colorScheme).toTheme,
         home: ShowCaseWidget(
           builder: Builder(
-            builder: (context) => Scaffold(
-              body: Center(
-                child: ElevatedButton(
-                  child: const Text('Test Auth Redirect and shid'),
-                  onPressed: () async {
-                    await ChromeSafariBrowser().open(
-                      url: Uri.parse(
-                          'http://10.0.2.2:5001/smartrider-4e9e8/us-central1/casAuthenticate'),
-                      options: ChromeSafariBrowserClassOptions(
-                        android: AndroidChromeCustomTabsOptions(
-                          addDefaultShareMenuItem: false,
-                        ),
-                        ios: IOSSafariOptions(barCollapsingEnabled: true),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ), //const WelcomeScreen(homePage: HomePage()),
+            builder: (context) => const WelcomeScreen(homePage: HomePage()),
           ),
           autoPlay: true,
           autoPlayDelay: const Duration(seconds: 10),

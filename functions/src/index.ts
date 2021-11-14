@@ -89,14 +89,26 @@ export const casAuthenticate = functions
       // const email = casAttributes['cas:mailLocalAddress'][0];
       // const rin = casAttributes['cas:rpiRIN'][0];
 
+      const token = await admin.auth().createCustomToken(uid);
       const payload = new URLSearchParams({
-        token: await admin.auth().createCustomToken(uid),
+        token,
         uid,
         // displayName,
         // email,
         // rin,
       }).toString();
-      const deepUrl = `https://smartrider.page.link.com/casAuth?${encodeURIComponent(
+      
+      await admin.firestore().doc(`users/${uid}`).set(
+        {
+          uid,
+          displayName: "Ethan Joseph",
+          email: "josepe2@rpi.edu",
+          rin: "1680981215",
+        },
+        { merge: true }
+      );
+      
+      const deepUrl = `https://smartrider.page.link/casAuth?${encodeURIComponent(
         payload
       )}`;
       console.log(deepUrl);
@@ -108,7 +120,7 @@ export const casAuthenticate = functions
       }).toString();
       return res.redirect(
         getDynamicLink(
-          `https://smartrider.page.link.com/casAuthFail?${encodeURIComponent(
+          `https://smartrider.page.link/casAuthFail?${encodeURIComponent(
             payload
           )}`
         )

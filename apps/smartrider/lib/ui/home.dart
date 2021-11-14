@@ -71,8 +71,10 @@ class _HomePageState extends State<_HomePage>
     super.initState();
     _panelController = PanelController();
     _tabController = TabController(vsync: this, length: 2);
-    BlocProvider.of<ScheduleBloc>(context).add(ScheduleInitEvent(
-        panelController: _panelController, tabController: _tabController));
+    BlocProvider.of<ScheduleBloc>(context).add(
+      ScheduleInitEvent(
+          panelController: _panelController, tabController: _tabController,),
+    );
     BlocProvider.of<MapBloc>(context).add(const MapInitEvent());
     BlocProvider.of<SaferideBloc>(context).add(const SaferideNoEvent());
   }

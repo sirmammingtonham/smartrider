@@ -1,34 +1,35 @@
 import 'dart:async';
+import 'package:shared/models/auth/rider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smartrider/blocs/authentication/data/authentication_provider.dart';
 
 class AuthenticationRepository {
-  AuthenticationRepository.create();
+  AuthenticationRepository._create() {
+    _authProvider = AuthenticationProvider();
+  }
 
-  final AuthenticationProvider _authProvider = AuthenticationProvider();
-
-  User? get getCurrentUser => _authProvider.getCurrentUser;
+  late final AuthenticationProvider _authProvider;
 
   bool get isSignedIn => _authProvider.isSignedIn;
-  bool get isEmailVerified => _authProvider.isEmailVerified;
-  bool get isPhoneVerified => _authProvider.isPhoneVerified;
+  Rider? get getCurrentUser => _authProvider.currentUser;
+
   static RegExp get phoneRegex => AuthenticationProvider.phoneRegex;
 
   Stream<User?> get userChangeStream => _authProvider.userChangeStream;
 
+/// Public factory
+  static Future<AuthenticationRepository> create() async {
+    final self = AuthenticationRepository._create();
+    await self._authProvider.waitForLoad;
+    return self;
+  }
+
   Future<void> signOut() async => _authProvider.signOut();
 
-  Future<UserCredential> signIn({
-    required String email,
-    required String password,
+  Future<Rider> signIn({
+    required String token,
   }) async =>
-      _authProvider.signIn(email, password);
-
-  Future<UserCredential> signUp({
-    required String email,
-    required String password,
-  }) async =>
-      _authProvider.signUp(email, password);
+      _authProvider.signIn(token);
 
   Future<void> verifyPhoneNumber({
     required String phoneNumber,

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared/util/multi_bloc_builder.dart';
@@ -21,7 +22,7 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
   // adding placeholder vars for now, replace these with sharedprefs
-  final AuthenticationRepository auth = AuthenticationRepository.create();
+  // final AuthenticationRepository auth = AuthenticationRepository.create();
   bool _loadingShuttle = false;
 
   @override
@@ -135,52 +136,52 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Future<AlertDialog?> deleteAccountDialog() {
-    //Show a box to ask user if
-    //they really want to delete their account
-    return showDialog<AlertDialog>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Are you sure you want '
-            'to delete your account?',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                //If the user chooses yes, we will call the authentification delete function
-                BlocProvider.of<AuthenticationBloc>(
-                  context,
-                ).add(
-                  AuthenticationDeleteEvent(),
-                );
-                Navigator.of(context).pop();
-                showDialog<AlertDialog>(
-                  context: context,
-                  barrierDismissible: true, // user must tap button!
-                  builder: (BuildContext context) {
-                    return const AlertDialog(
-                      title: Text(
-                        'Account has been deleted',
-                      ),
-                    );
-                  },
-                );
-              },
-              child: const Text('Yes'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('No'),
-            )
-          ],
-        );
-      },
-    );
-  }
+  // Future<AlertDialog?> deleteAccountDialog() {
+  //   //Show a box to ask user if
+  //   //they really want to delete their account
+  //   return showDialog<AlertDialog>(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text(
+  //           'Are you sure you want '
+  //           'to delete your account?',
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               //If the user chooses yes, we will call the authentification delete function
+  //               BlocProvider.of<AuthenticationBloc>(
+  //                 context,
+  //               ).add(
+  //                 AuthenticationDeleteEvent(),
+  //               );
+  //               Navigator.of(context).pop();
+  //               showDialog<AlertDialog>(
+  //                 context: context,
+  //                 barrierDismissible: true, // user must tap button!
+  //                 builder: (BuildContext context) {
+  //                   return const AlertDialog(
+  //                     title: Text(
+  //                       'Account has been deleted',
+  //                     ),
+  //                   );
+  //                 },
+  //               );
+  //             },
+  //             child: const Text('Yes'),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: const Text('No'),
+  //           )
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
 // TODO: add bloclistener for authentication, model on profile.dart
   @override
@@ -241,7 +242,7 @@ class SettingsPageState extends State<SettingsPage> {
             SnackBar(
               content: Text(
                 'Phone number verification failed. '
-                'Code: ${state.exception.code}. '
+                'Code: ${(state.exception! as FirebaseAuthException).code}. '
                 'Message: ${state.message}',
               ),
             ),
@@ -290,7 +291,7 @@ class SettingsPageState extends State<SettingsPage> {
                   children: <Widget>[
                     // Conditional verify phone number
                     if (authState is AuthenticationSignedInState &&
-                        !authState.phoneVerified) ...[
+                        !authState.user.phoneVerified) ...[
                       Container(
                         margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
                         child: const Center(
@@ -470,31 +471,31 @@ class SettingsPageState extends State<SettingsPage> {
                         icon: const Icon(Icons.phone),
                         onPressed: changePhoneDialog,
                       ),
-                      getButton(
-                        text: 'Change Password',
-                        icon: const Icon(Icons.password),
-                        onPressed: () {
-                          //Send an email to the user to request a password change
-                          BlocProvider.of<AuthenticationBloc>(context).add(
-                            AuthenticationResetPasswordEvent(),
-                          );
-                          BlocProvider.of<AuthenticationBloc>(context).add(
-                            AuthenticationSignOutEvent(),
-                          );
-                          Navigator.of(context).pop();
-                          // Will show a small pop up
-                          //to tell users the email has been sent
-                          showDialog<AlertDialog>(
-                            context: context,
-                            barrierDismissible: true, // user must tap button!
-                            builder: (BuildContext context) {
-                              return const AlertDialog(
-                                title: Text('Email has been sent'),
-                              );
-                            },
-                          );
-                        },
-                      ),
+                      // getButton(
+                      //   text: 'Change Password',
+                      //   icon: const Icon(Icons.password),
+                      //   onPressed: () {
+                      //     //Send an email to the user to request a password change
+                      //     BlocProvider.of<AuthenticationBloc>(context).add(
+                      //       AuthenticationResetPasswordEvent(),
+                      //     );
+                      //     BlocProvider.of<AuthenticationBloc>(context).add(
+                      //       AuthenticationSignOutEvent(),
+                      //     );
+                      //     Navigator.of(context).pop();
+                      //     // Will show a small pop up
+                      //     //to tell users the email has been sent
+                      //     showDialog<AlertDialog>(
+                      //       context: context,
+                      //       barrierDismissible: true, // user must tap button!
+                      //       builder: (BuildContext context) {
+                      //         return const AlertDialog(
+                      //           title: Text('Email has been sent'),
+                      //         );
+                      //       },
+                      //     );
+                      //   },
+                      // ),
                       // Report Bug Button
                       getButton(
                         text: 'Report Bug / Request Feature',
@@ -509,12 +510,12 @@ class SettingsPageState extends State<SettingsPage> {
                           );
                         },
                       ),
-                      // Delete Account Button
-                      getButton(
-                        text: 'Delete Account',
-                        icon: const Icon(Icons.delete),
-                        onPressed: deleteAccountDialog,
-                      ),
+                      // // Delete Account Button
+                      // getButton(
+                      //   text: 'Delete Account',
+                      //   icon: const Icon(Icons.delete),
+                      //   onPressed: deleteAccountDialog,
+                      // ),
                     ]),
 
                     SizedBox(

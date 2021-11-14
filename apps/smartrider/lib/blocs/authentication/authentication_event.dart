@@ -4,35 +4,19 @@ abstract class AuthenticationEvent extends Equatable {
   const AuthenticationEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class AuthenticationInitEvent extends AuthenticationEvent {}
 
-class AuthenticationDeleteEvent extends AuthenticationEvent {}
-
 class AuthenticationSignInEvent extends AuthenticationEvent {
   const AuthenticationSignInEvent({
-    required this.email,
-    required this.password,
+    required this.token,
   });
-  final String email, password;
+  final String token;
 
   @override
-  List<Object> get props => [email, password];
-}
-
-class AuthenticationSignOutEvent extends AuthenticationEvent {}
-
-class AuthenticationSignUpEvent extends AuthenticationEvent {
-  const AuthenticationSignUpEvent({
-    required this.email,
-    required this.password,
-  });
-  final String email, password;
-
-  @override
-  List<Object> get props => [email, password];
+  List<Object> get props => [token];
 }
 
 class AuthenticationResetPhoneEvent extends AuthenticationEvent {
@@ -65,17 +49,17 @@ class AuthenticationPhoneSMSCodeSentEvent extends AuthenticationEvent {
   final int? resendToken;
 }
 
-class AuthenticationResetPasswordEvent extends AuthenticationEvent {}
-
-class AuthenticationPhoneFailedEvent extends AuthenticationEvent {
-  const AuthenticationPhoneFailedEvent({
-    required this.exception,
+class AuthenticationFailedEvent extends AuthenticationEvent {
+  const AuthenticationFailedEvent({
+    this.exception,
     required this.message,
   });
 
-  final FirebaseAuthException exception;
+  final Exception? exception;
   final String message;
 
   @override
-  List<Object> get props => [exception, message];
+  List<Object?> get props => [exception, message];
 }
+
+class AuthenticationSignOutEvent extends AuthenticationEvent {}

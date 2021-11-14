@@ -14,7 +14,7 @@ class BusRepository {
     _busProvider = BusProvider();
   }
 
-  late BusProvider _busProvider;
+  late final BusProvider _busProvider;
 
   /// Public factory
   static Future<BusRepository> create() async {

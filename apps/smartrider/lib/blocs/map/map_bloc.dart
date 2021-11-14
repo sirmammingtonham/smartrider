@@ -113,6 +113,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   double _zoomLevel = 14;
   MapView _currentView = MapView.kBusView;
+  bool _initialized = false;
 
   Map<String, bool> _enabledShuttles = {};
   Map<String, bool> _enabledBuses = {};
@@ -160,6 +161,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   @override
   Future<void> close() {
     _updateTimer?.cancel();
+    _initialized = false;
     return super.close();
   }
 
@@ -399,13 +401,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               ),
             );
 
-          _saferidePolylines.add(Polyline(
+          _saferidePolylines.add(
+            Polyline(
               polylineId: const PolylineId('fancy_line'),
               width: 5,
               color: Colors.blueGrey,
               patterns: [PatternItem.dash(20), PatternItem.gap(10)],
               points: _drawFancyLine(
-                  saferideState.pickupLatLng, saferideState.dropLatLng,),),);
+                saferideState.pickupLatLng,
+                saferideState.dropLatLng,
+              ),
+            ),
+          );
 
           scrollToCurrentLocation(zoom: 16);
         }
@@ -481,12 +488,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     return path;
   }
 
-  void scrollToCurrentLocation({double zoom = 17}) async {
+  Future<void> scrollToCurrentLocation({double zoom = 17}) async {
     Position currentLocation;
     try {
-      currentLocation = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
-      );
+      currentLocation = await Geolocator.getCurrentPosition();
     } on PermissionDeniedException catch (_) {
       return;
     }
@@ -517,41 +522,57 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   void scrollToLatLng(LatLng loc, {double zoom = 18, double tilt = 50}) {
     _controller!.animateCamera(
       CameraUpdate.newCameraPosition(
-          CameraPosition(target: loc, zoom: zoom, tilt: tilt,),),
+        CameraPosition(
+          target: loc,
+          zoom: zoom,
+          tilt: tilt,
+        ),
+      ),
     );
   }
 
   /// helper functions
   Future<void> _initMapElements() async {
+    if (_initialized) return;
+
     _updateTimer ??= Timer.periodic(
       _updateFrequency,
       (Timer t) => add(MapUpdateEvent(zoomLevel: _zoomLevel)),
     );
 
     _shuttleStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/map_icons/marker_stop_shuttle.svg',
-        size: stopMarkerSize,);
+      'assets/map_icons/marker_stop_shuttle.svg',
+      size: stopMarkerSize,
+    );
     _busStopIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/map_icons/marker_stop_bus.svg',
-        size: stopMarkerSize,);
+      'assets/map_icons/marker_stop_bus.svg',
+      size: stopMarkerSize,
+    );
     _pickupIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/map_icons/marker_pickup.svg',
-        size: stopMarkerSize,);
+      'assets/map_icons/marker_pickup.svg',
+      size: stopMarkerSize,
+    );
     _dropoffIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/map_icons/marker_dropoff.svg',
-        size: stopMarkerSize,);
+      'assets/map_icons/marker_dropoff.svg',
+      size: stopMarkerSize,
+    );
     _saferideUpdateIcon = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/map_icons/marker_saferide.svg',
-        size: vehicleUpdateSize,);
+      'assets/map_icons/marker_saferide.svg',
+      size: vehicleUpdateSize,
+    );
     _saferidePickupUpdateIcon =
         await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-            'assets/map_icons/marker_saferide_alt.svg',
-            size: vehicleUpdateSize,);
+      'assets/map_icons/marker_saferide_alt.svg',
+      size: vehicleUpdateSize,
+    );
 
     // default white
     _updateIcons['-1'] = await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-        'assets/map_icons/marker_vehicle.svg',
-        size: vehicleUpdateSize,);
+      'assets/map_icons/marker_vehicle.svg',
+      size: vehicleUpdateSize,
+    );
+
+    _initialized = true;
   }
 
   Future<void> _initBusMarkers() async {
@@ -559,9 +580,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       final busId = _busRoutes[key]!.routeShortName!;
       _updateIcons['bus_$busId'] =
           await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-              'assets/map_icons/marker_vehicle.svg',
-              color: busColors[busId]!.lighten(0.15),
-              size: vehicleUpdateSize,);
+        'assets/map_icons/marker_vehicle.svg',
+        color: busColors[busId]!.lighten(0.15),
+        size: vehicleUpdateSize,
+      );
     }
   }
 
@@ -571,39 +593,52 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       if (_shuttleRoutes[key]!.active == true) {
         _updateIcons[shuttleId] =
             await BitmapHelper.getBitmapDescriptorFromSvgAsset(
-                'assets/map_icons/marker_vehicle.svg',
-                color: _shuttleRoutes[key]!.color,
-                size: vehicleUpdateSize,);
+          'assets/map_icons/marker_vehicle.svg',
+          color: _shuttleRoutes[key]!.color,
+          size: vehicleUpdateSize,
+        );
       }
     }
   }
 
   Marker _shuttleStopToMarker(ShuttleStop stop) => Marker(
-      icon: _shuttleStopIcon,
-      infoWindow: InfoWindow(title: stop.name),
-      markerId: MarkerId(stop.id.toString()),
-      position: stop.getLatLng,
-      onTap: () {
-        _controller!.animateCamera(
-          CameraUpdate.newCameraPosition(
-              CameraPosition(target: stop.getLatLng, zoom: 18, tilt: 50,),),
-        );
-      },);
+        icon: _shuttleStopIcon,
+        infoWindow: InfoWindow(title: stop.name),
+        markerId: MarkerId(stop.id.toString()),
+        position: stop.getLatLng,
+        onTap: () {
+          _controller!.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: stop.getLatLng,
+                zoom: 18,
+                tilt: 50,
+              ),
+            ),
+          );
+        },
+      );
 
   Marker _saferideVehicleToMarker(PositionData position) => Marker(
-      icon: position.id == _pickupVehicleId
-          ? _saferidePickupUpdateIcon
-          : _saferideUpdateIcon,
-      infoWindow: InfoWindow(title: 'Safe Ride going ${position.mph} mph'),
-      markerId: MarkerId(position.id),
-      position: position.latLng,
-      rotation: position.heading,
-      onTap: () {
-        _controller!.animateCamera(
-          CameraUpdate.newCameraPosition(
-              CameraPosition(target: position.latLng, zoom: 18, tilt: 50,),),
-        );
-      },);
+        icon: position.id == _pickupVehicleId
+            ? _saferidePickupUpdateIcon
+            : _saferideUpdateIcon,
+        infoWindow: InfoWindow(title: 'Safe Ride going ${position.mph} mph'),
+        markerId: MarkerId(position.id),
+        position: position.latLng,
+        rotation: position.heading,
+        onTap: () {
+          _controller!.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: position.latLng,
+                zoom: 18,
+                tilt: 50,
+              ),
+            ),
+          );
+        },
+      );
 
   /// TODO: focusing bus stop marker shows name and stuff
   // Marker _busStopToMarker(BusStop stop) {
@@ -622,29 +657,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   MarkerCluster _busStopToMarkerCluster(BusStopSimplified stop) =>
       MarkerCluster(
-          id: stop.stopId,
-          info: stop.stopName,
-          position: stop.getLatLng,
-          icon: _busStopIcon,
-          controller: _controller,);
+        id: stop.stopId,
+        info: stop.stopName,
+        position: stop.getLatLng,
+        icon: _busStopIcon,
+        controller: _controller,
+      );
 
   Marker _shuttleUpdateToMarker(ShuttleUpdate update) {
     return Marker(
-        icon: _updateIcons[update.routeId.toString()] ?? _updateIcons['-1']!,
-        infoWindow: InfoWindow(
-            title: 'Shuttle #${update.vehicleId.toString()} '
-                'on Route ${update.routeId}',),
-        flat: true,
-        markerId: MarkerId(update.id.toString()),
-        position: update.getLatLng,
-        rotation: update.heading as double,
-        anchor: const Offset(0.5, 0.5),
-        onTap: () {
-          _controller!.animateCamera(
-            CameraUpdate.newCameraPosition(
-                CameraPosition(target: update.getLatLng, zoom: 18, tilt: 50),),
-          );
-        },);
+      icon: _updateIcons[update.routeId.toString()] ?? _updateIcons['-1']!,
+      infoWindow: InfoWindow(
+        title: 'Shuttle #${update.vehicleId.toString()} '
+            'on Route ${update.routeId}',
+      ),
+      flat: true,
+      markerId: MarkerId(update.id.toString()),
+      position: update.getLatLng,
+      rotation: update.heading as double,
+      anchor: const Offset(0.5, 0.5),
+      onTap: () {
+        _controller!.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(target: update.getLatLng, zoom: 18, tilt: 50),
+          ),
+        );
+      },
+    );
   }
 
   Marker _busUpdateToMarker(BusRealtimeUpdate update) {
@@ -653,8 +692,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     return Marker(
       icon: _updateIcons['bus_${update.routeId}'] ?? _updateIcons['-1']!,
       infoWindow: InfoWindow(
-          title: 'Bus #${update.id.toString()} '
-              'on Route ${update.routeId}',),
+        title: 'Bus #${update.id.toString()} '
+            'on Route ${update.routeId}',
+      ),
       flat: true,
       markerId: MarkerId(update.id.toString()),
       position: busPosition,
@@ -663,7 +703,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       onTap: () {
         _controller!.animateCamera(
           CameraUpdate.newCameraPosition(
-              CameraPosition(target: busPosition, zoom: 18, tilt: 50),),
+            CameraPosition(target: busPosition, zoom: 18, tilt: 50),
+          ),
         );
       },
     );
@@ -782,24 +823,28 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         double? lat,
       ) =>
           MarkerCluster(
-              id: cluster?.id.toString(),
-              position: LatLng(lat!, lng!),
-              icon: _busStopIcon, // replace with cluster marker
-              info: _fluster.children(cluster?.id)!.length.toString(),
-              isCluster: cluster?.isCluster,
-              clusterId: cluster?.id,
-              pointsSize: cluster?.pointsSize,
-              childMarkerId: cluster?.childMarkerId,
-              controller: _controller,),
+        id: cluster?.id.toString(),
+        position: LatLng(lat!, lng!),
+        icon: _busStopIcon, // replace with cluster marker
+        info: _fluster.children(cluster?.id)!.length.toString(),
+        isCluster: cluster?.isCluster,
+        clusterId: cluster?.id,
+        pointsSize: cluster?.pointsSize,
+        childMarkerId: cluster?.childMarkerId,
+        controller: _controller,
+      ),
     );
 
     return _fluster
-        .clusters([
-          rpiBounds.southwest.longitude,
-          rpiBounds.southwest.latitude,
-          rpiBounds.northeast.longitude,
-          rpiBounds.northeast.latitude
-        ], zoomLevel.round(),)
+        .clusters(
+          [
+            rpiBounds.southwest.longitude,
+            rpiBounds.southwest.latitude,
+            rpiBounds.northeast.longitude,
+            rpiBounds.northeast.latitude
+          ],
+          zoomLevel.round(),
+        )
         .map((cluster) => cluster.toMarker())
         .toSet();
   }
@@ -840,22 +885,26 @@ class MarkerCluster extends Clusterable {
   final GoogleMapController? controller;
 
   Marker toMarker() => Marker(
-      markerId: MarkerId(id ?? ''),
-      position: LatLng(
-        position.latitude,
-        position.longitude,
-      ),
-      infoWindow: InfoWindow(title: info),
-      icon: icon,
-      onTap: () {
-        controller?.animateCamera(
-          CameraUpdate.newCameraPosition(CameraPosition(
-              target: LatLng(
-                position.latitude,
-                position.longitude,
+        markerId: MarkerId(id ?? ''),
+        position: LatLng(
+          position.latitude,
+          position.longitude,
+        ),
+        infoWindow: InfoWindow(title: info),
+        icon: icon,
+        onTap: () {
+          controller?.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(
+                  position.latitude,
+                  position.longitude,
+                ),
+                zoom: 18,
+                tilt: 50,
               ),
-              zoom: 18,
-              tilt: 50,),),
-        );
-      },);
+            ),
+          );
+        },
+      );
 }

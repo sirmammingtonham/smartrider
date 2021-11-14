@@ -7,44 +7,30 @@ abstract class AuthenticationState extends Equatable {
   List<Object?> get props => [];
 }
 
-class AuthenticationAwaitVerificationState extends AuthenticationState {
-  /// hack to get our state to rebuild even if this state is yielded again
-  @override
-  bool operator ==(Object other) => false;
-
-  /// redundant but stops linter from complaining
-  @override
-  int get hashCode => super.hashCode * 1;
-}
-
 class AuthenticationSignedOutState extends AuthenticationState {}
 
 class AuthenticationSignedInState extends AuthenticationState {
   const AuthenticationSignedInState({
     required this.user,
-    required this.emailVerified,
-    required this.phoneVerified,
   });
 
-  final User user;
-  final bool emailVerified; // should always be true, here for symmetry lol
-  final bool phoneVerified;
+  final Rider user;
 
   @override
-  List<Object> get props => [user, emailVerified, phoneVerified];
+  List<Object> get props => [user];
 }
 
 class AuthenticationFailedState extends AuthenticationState {
   const AuthenticationFailedState({
-    required this.exception,
+    this.exception,
     required this.message,
   });
 
-  final FirebaseAuthException exception;
+  final Exception? exception;
   final String message;
 
   @override
-  List<Object> get props => [exception, message];
+  List<Object?> get props => [exception, message];
 }
 
 //create phone reset state,

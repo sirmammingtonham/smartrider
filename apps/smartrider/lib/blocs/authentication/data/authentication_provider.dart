@@ -1,54 +1,47 @@
-import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared/models/auth/rider.dart';
 
 class AuthenticationProvider {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  AuthenticationProvider() {
+    _providerHasLoaded = _init();
+  }
+
   static final RegExp phoneRegex = RegExp(
     r'(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?',
   );
 
-  bool get isSignedIn => _firebaseAuth.currentUser != null;
-  bool get isEmailVerified =>
-      _firebaseAuth.currentUser != null &&
-      _firebaseAuth.currentUser!.email != null &&
-      _firebaseAuth.currentUser!.email!.isNotEmpty;
-  bool get isPhoneVerified =>
-      _firebaseAuth.currentUser != null &&
-      _firebaseAuth.currentUser!.phoneNumber != null &&
-      _firebaseAuth.currentUser!.phoneNumber!.isNotEmpty;
+  late final Future _providerHasLoaded;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  Rider? currentUser;
 
+  Future get waitForLoad => _providerHasLoaded;
+  bool get isSignedIn => _firebaseAuth.currentUser != null;
   Stream<User?> get userChangeStream => _firebaseAuth.authStateChanges();
 
-  User? get getCurrentUser => _firebaseAuth.currentUser;
-
-  Future<UserCredential> signIn(
-    String email,
-    String password,
-  ) async {
-    try {
-      return await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+  Future<void> _init() async {
+    if (_firebaseAuth.currentUser != null) {
+      currentUser = Rider.fromJson(
+        await _firebaseFirestore
+            .doc('users/${_firebaseAuth.currentUser!.uid}')
+            .get(),
       );
-    } on FirebaseAuthException {
-      rethrow;
     }
   }
 
-  Future<UserCredential> signUp(
-    String email,
-    String password,
+  Future<Rider> signIn(
+    String token,
   ) async {
     try {
-      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
+      final cred = await _firebaseAuth.signInWithCustomToken(
+        token,
       );
-      if (userCredential.user != null) {
-// TODO: create URL back to app for email verification
-        await userCredential.user!.sendEmailVerification();
-      }
-      return userCredential;
+      currentUser = Rider.fromJson(
+        await _firebaseFirestore.doc('users/${cred.user!.uid}').get(),
+      );
+
+      return currentUser!;
     } on FirebaseAuthException {
       rethrow;
     }
