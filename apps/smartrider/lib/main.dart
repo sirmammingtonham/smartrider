@@ -43,9 +43,9 @@ Future<void> main() async {
   }
 
   if (const bool.hasEnvironment('EMULATORS')) {
-    await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
+    // await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
     FirebaseFunctions.instance.useFunctionsEmulator('10.0.2.2', 5001);
-    FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
+    // FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
   }
   final app = SmartRider(
     authRepo: await AuthRepository.create(),

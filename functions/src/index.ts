@@ -1,10 +1,17 @@
 import * as admin from "firebase-admin";
-import { FirebaseError } from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as xml2js from "xml2js";
 import { default as fetch } from "node-fetch";
 
-admin.initializeApp(); // needs to go before other imports: https://github.com/firebase/firebase-functions-test/issues/6#issuecomment-496021884
+// admin.initializeApp();
+
+import * as serviceAccount from "./setup/smartrider-4e9e8-service.json";
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+});
+
+const firestore = admin.firestore()
+const auth = admin.auth()
 
 const parser = new xml2js.Parser();
 const runtimeOpts: functions.RuntimeOptions = {
@@ -30,7 +37,7 @@ const getDynamicLink = (deepUrl: String) =>
 //   .pubsub.schedule("0 3 * * *")
 //   .timeZone("America/New_York")
 //   .onRun(async (_context) => {
-//     const snapshot = await admin.firestore().collection("orders").get();
+//     const snapshot = await firestore.collection("orders").get();
 //     for (const doc of snapshot.docs) {
 //       if (doc.data().status !== "ERROR") {
 //         await doc.ref.delete();
@@ -89,7 +96,7 @@ export const casAuthenticate = functions
       // const email = casAttributes['cas:mailLocalAddress'][0];
       // const rin = casAttributes['cas:rpiRIN'][0];
 
-      const token = await admin.auth().createCustomToken(uid);
+      const token = await auth.createCustomToken(uid);
       const payload = new URLSearchParams({
         token,
         uid,
@@ -98,7 +105,7 @@ export const casAuthenticate = functions
         // rin,
       }).toString();
 
-      await admin.firestore().doc(`users/${uid}`).set(
+      await firestore.doc(`users/${uid}`).set(
         {
           uid,
           displayName: "Ethan Joseph",

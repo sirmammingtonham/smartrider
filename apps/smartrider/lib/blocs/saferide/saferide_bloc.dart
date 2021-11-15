@@ -47,12 +47,11 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
 
     platformChannelSpecifics = const NotificationDetails(
       android: AndroidNotificationDetails(
-        '10',
-        'basic_channel',
-        channelDescription: 'description',
+        'saferide_alarm',
+        'Saferide notifications',
+        channelDescription: 'Notifications for safe ride updates',
         importance: Importance.max,
         priority: Priority.high,
-        ticker: 'ticker',
       ),
       iOS: IOSNotificationDetails(),
     );
@@ -180,7 +179,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
               Vehicle.fromDocSnapshot(await order.vehicleRef!.get());
 
           await notifications.show(
-            2,
+            -1,
             '${vehicle.currentDriver.name} has accepted your ride!',
             'Open smartrider to see on their current location.',
             platformChannelSpecifics,
@@ -210,7 +209,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       case 'CANCELLED':
         {
           await notifications.show(
-            2,
+            -1,
             'Your ride was cancelled!',
             order.cancellationReason,
             platformChannelSpecifics,

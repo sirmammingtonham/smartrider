@@ -23,13 +23,13 @@ const List<String> choices = [
 
 /// Creates an object that contains all the busses and their respective stops.
 class BusTimeline extends StatefulWidget {
-  const BusTimeline(
-      {Key? key,
-      required this.panelController,
-      required this.scrollController,
-      // @required this.busRoutes,
-      required this.busTables,})
-      : super(key: key);
+  const BusTimeline({
+    Key? key,
+    required this.panelController,
+    required this.scrollController,
+    // @required this.busRoutes,
+    required this.busTables,
+  }) : super(key: key);
   final PanelController panelController;
   final ScrollController scrollController;
   // final Map<String, BusRoute> busRoutes;
@@ -93,39 +93,46 @@ class BusTimelineState extends State<BusTimeline>
   @override
   Widget build(BuildContext context) {
     /// Controls the format (tabs on top, list of bus stops on bottom).
-    return Column(children: <Widget>[
-      /// The tab bar displayed when the bus icon is selected.
-      Showcase(
-        key: showcaseBusTab,
-        description: busTabShowcaseMessage,
-        child: TabBar(
-          indicatorColor: busColors.values.toList()[_tabController.index],
-          isScrollable: true,
-          tabs: busTabs,
-          labelColor: Theme.of(context).colorScheme.onBackground,
-          unselectedLabelColor:
-              Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
-          controller: _tabController,
+    return Column(
+      children: <Widget>[
+        /// The tab bar displayed when the bus icon is selected.
+        Showcase(
+          key: showcaseBusTab,
+          description: busTabShowcaseMessage,
+          child: TabBar(
+            indicatorColor: busColors.values.toList()[_tabController.index],
+            isScrollable: true,
+            tabs: busTabs,
+            labelColor: Theme.of(context).colorScheme.onBackground,
+            unselectedLabelColor:
+                Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
+            controller: _tabController,
+          ),
         ),
-      ),
 
-      /// The list of bus stops to be displayed.
-      Expanded(
-        child: TabBarView(
-          controller: _tabController,
-          children: <Widget>[
-            busList('87'),
-            busList('286'),
-            busList('289'),
-            busList('288'),
-          ],
-        ),
-      )
-    ],);
+        /// The list of bus stops to be displayed.
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              busList('87'),
+              busList('286'),
+              busList('289'),
+              busList('288'),
+            ],
+          ),
+        )
+      ],
+    );
   }
 
-  Widget busExpansionTile(int index, List<TimetableStop> busStops,
-      List<Tuple<String, int>> stopTimes, String routeId,) {
+  Widget busExpansionTile(
+    BuildContext context,
+    int index,
+    List<TimetableStop> busStops,
+    List<Tuple<String, int>> stopTimes,
+    String routeId,
+  ) {
     return CustomExpansionTile(
       title: Text(busStops[index].stopName),
       subtitle: Text('Next Arrival: ${stopTimes[0].first}'),
@@ -133,15 +140,17 @@ class BusTimelineState extends State<BusTimeline>
 
       /// Controls the leading circle icon in front of each bus stop.
       leading: CustomPaint(
-          painter: CirclePainter(
-              circleColor: busColors[routeId]!,
-              lineColor: busColors[routeId]!,
-              first: index == 0,
-              last: index == busStops.length - 1,),
-          child: const SizedBox(
-            height: 50,
-            width: 45,
-          ),),
+        painter: CirclePainter(
+          circleColor: busColors[routeId]!,
+          lineColor: busColors[routeId]!,
+          first: index == 0,
+          last: index == busStops.length - 1,
+        ),
+        child: const SizedBox(
+          height: 50,
+          width: 45,
+        ),
+      ),
       trailing: isExpandedList[index]
           ? const Text('Hide Arrivals -')
           : const Text('Show Arrivals +'),
@@ -191,23 +200,34 @@ class BusTimelineState extends State<BusTimeline>
 
                     /// The container in which the bus stop arrival times are
                     /// displayed.
-                    list.add(ListTile(
-                      dense: true,
-                      // TODO: change icon if bus is within 5 minutes
-                      leading: const Icon(Icons.access_time, size: 20),
-                      title: Text(
-                        timeTuple.first,
-                        style: const TextStyle(fontSize: 15),
-                      ),
-                      subtitle: Text(subText),
-                      trailing: PopupMenuButton<String>(
+                    list.add(
+                      ListTile(
+                        dense: true,
+                        // TODO: change icon if bus is within 5 minutes
+                        leading: const Icon(Icons.access_time, size: 20),
+                        title: Text(
+                          timeTuple.first,
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                        subtitle: Text(subText),
+                        trailing: PopupMenuButton<String>(
                           onSelected: (choice) => _handlePopupSelection(
-                              choice, busStops[index], timeTuple,),
+                            context: context,
+                            choice: choice,
+                            busStop: busStops[index],
+                            stopTime: timeTuple,
+                          ),
                           itemBuilder: (BuildContext context) => choices
-                              .map((choice) => PopupMenuItem<String>(
-                                  value: choice, child: Text(choice),),)
-                              .toList(),),
-                    ),);
+                              .map(
+                                (choice) => PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    );
                     return list;
                   },
                 ),
@@ -240,8 +260,8 @@ class BusTimelineState extends State<BusTimeline>
             .where((stopPair) => stopPair.second != -1)
             .toList();
         return index == 0
-            ? busExpansionTile(index, busStops, stopTimes, routeId)
-            : busExpansionTile(index, busStops, stopTimes, routeId);
+            ? busExpansionTile(context, index, busStops, stopTimes, routeId)
+            : busExpansionTile(context, index, busStops, stopTimes, routeId);
 
         /// showcase doesn't work because of duplicate global keys (it tries to
         /// use the same global key despite there being multiple tabs)
@@ -253,14 +273,29 @@ class BusTimelineState extends State<BusTimeline>
     );
   }
 
-  void _handlePopupSelection(
-      String choice, TimetableStop? busStop, Tuple<String, int>? stopTime,) {
+  void _handlePopupSelection({
+    required BuildContext context,
+    required String choice,
+    required TimetableStop busStop,
+    required Tuple<String, int> stopTime,
+  }) {
     if (choice == choices[0]) {
       BlocProvider.of<ScheduleBloc>(context)
-          .scheduleBusAlarm(stopTime!.second, busStop!);
+          .scheduleBusAlarm(stopTime.second, busStop);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: ListTile(
+            leading: const Icon(Icons.warning, color: Colors.white),
+            title: Text(
+              'Reminders set for ${busStop.stopName}',
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      );
     } else if (choice == choices[1]) {
       widget.panelController.animatePanelToPosition(0);
-      BlocProvider.of<MapBloc>(context).scrollToLatLng(busStop!.latLng);
+      BlocProvider.of<MapBloc>(context).scrollToLatLng(busStop.latLng);
     }
   }
 }

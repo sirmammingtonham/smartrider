@@ -23,12 +23,11 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     _isTimeline = true;
     platformChannelSpecifics = const NotificationDetails(
       android: AndroidNotificationDetails(
-        '10',
-        'basic_channel',
-        channelDescription: 'description',
+        'schedule_alarm',
+        'Schedule notifications',
+        channelDescription: 'Notifications for bus/shuttle arrivals',
         importance: Importance.max,
         priority: Priority.high,
-        ticker: 'ticker',
       ),
       iOS: IOSNotificationDetails(),
     );
@@ -59,9 +58,9 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     for (final timeOffset in [300, 120, 60]) {
       if (secondsFromNow - timeOffset > 0) {
         await notifications.zonedSchedule(
-          0,
-          '$vehicle arriving in ${timeOffset / 60} '
-              'minute${timeOffset == 60 ? "s" : ""}!',
+          timeOffset,
+          '$vehicle arriving in ${timeOffset ~/ 60} '
+              'minute${timeOffset == 60 ? "" : "s"}!',
           '$stopName is arriving soon!',
           tz.TZDateTime.now(tz.local)
               .add(Duration(seconds: secondsFromNow - timeOffset)),
@@ -77,7 +76,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     await notifications.zonedSchedule(
       0,
       'Your ${vehicle.toLowerCase()} is here!',
-      '$stopName should have arrived!',
+      '$stopName should have arrived.',
       tz.TZDateTime.now(tz.local).add(Duration(seconds: secondsFromNow)),
       platformChannelSpecifics,
       uiLocalNotificationDateInterpretation:
