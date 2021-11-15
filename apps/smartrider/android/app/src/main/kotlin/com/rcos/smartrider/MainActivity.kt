@@ -1,4 +1,4 @@
-package com.rcos.smartrider
+package io.rcos.smartrider
 
 import io.flutter.embedding.android.FlutterActivity
 

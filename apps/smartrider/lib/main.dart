@@ -189,14 +189,14 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
 
   Future<void> _handleDeepLink(Uri link) async {
     final params = link.queryParameters;
-    if (params.containsKey('error') || !params.containsKey('token')) {
+    if (params.containsKey('token')) {
+      _authBloc.add(AuthSignInEvent(token: params['token']!));
+    } else if (params.containsKey('code')) {
       _authBloc.add(
         AuthFailedEvent(
-          message: "Auth redirect failed! ${params['error']}",
+          message: "Authentication failed! Code: ${params['code']!}",
         ),
       );
-    } else {
-      _authBloc.add(AuthSignInEvent(token: params['token']!));
     }
   }
 

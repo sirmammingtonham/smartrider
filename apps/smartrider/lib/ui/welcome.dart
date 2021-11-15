@@ -14,7 +14,6 @@ class WelcomeScreen extends StatelessWidget {
   }) =>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          // backgroundColor: Theme.of(context).primaryColorDark,
           content: ListTile(
             leading: const Icon(Icons.warning, color: Colors.white),
             title: Text(
@@ -39,7 +38,7 @@ class WelcomeScreen extends StatelessWidget {
                 text: (state as AuthFailedState).message,
               );
               break;
-            default:
+            case AuthSignedInState:
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               break;
           }

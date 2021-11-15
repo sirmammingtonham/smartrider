@@ -1,11 +1,11 @@
 import * as admin from "firebase-admin";
+import { FirebaseError } from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as xml2js from "xml2js";
 import { default as fetch } from "node-fetch";
 
 admin.initializeApp(); // needs to go before other imports: https://github.com/firebase/firebase-functions-test/issues/6#issuecomment-496021884
 
-const auth = admin.auth();
 const parser = new xml2js.Parser();
 const runtimeOpts: functions.RuntimeOptions = {
   timeoutSeconds: 60, // timeout function after 3 secs
@@ -13,7 +13,7 @@ const runtimeOpts: functions.RuntimeOptions = {
 };
 
 const CAS_ENDPOINT = `https://casserver.herokuapp.com/cas`;
-const BUNDLE_ID = "com.rcos.smartrider";
+const BUNDLE_ID = "io.rcos.smartrider";
 const IOS_MIN_VERSION = "0.0.1";
 const ANDROID_MIN_VERSION = "0.0.1";
 const EFR = 1;
@@ -97,7 +97,7 @@ export const casAuthenticate = functions
         // email,
         // rin,
       }).toString();
-      
+
       await admin.firestore().doc(`users/${uid}`).set(
         {
           uid,
@@ -107,16 +107,15 @@ export const casAuthenticate = functions
         },
         { merge: true }
       );
-      
+
       const deepUrl = `https://smartrider.page.link/casAuth?${encodeURIComponent(
         payload
       )}`;
       console.log(deepUrl);
       return res.redirect(getDynamicLink(deepUrl));
-    } catch (e) {
-      // on any auth failure redirect to fail dynamic link
+    } catch (e: any) {
       const payload = new URLSearchParams({
-        error: String(e),
+        ...e.errorInfo,
       }).toString();
       return res.redirect(
         getDynamicLink(
