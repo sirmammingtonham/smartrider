@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared/models/saferide/position_data.dart';
+import 'package:shared/models/saferide/vehicle.dart';
 import 'package:smartrider/blocs/saferide/data/saferide_provider.dart';
 
 class SaferideRepository {
@@ -29,7 +29,7 @@ class SaferideRepository {
 
   Future<int> getQueueSize() async => _saferideProvider.getQueueSize();
 
-  Stream<List<PositionData>> getSaferideLocationsStream() =>
+  Stream<List<Vehicle>> getSaferideLocationsStream() =>
       _saferideProvider.getSaferideLocationsStream();
 
   Future<int> estimateWaitTime(double distance) async =>

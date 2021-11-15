@@ -1,33 +1,30 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:google_maps_webservice/geocoding.dart';
-import 'package:google_maps_webservice/places.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
-// import 'package:shared/models/saferide/driver.dart';
-import 'package:smartrider/blocs/auth/data/auth_repository.dart';
-import 'package:smartrider/blocs/saferide/data/saferide_repository.dart';
-import 'package:shared/util/strings.dart';
-import 'package:shared/models/saferide/order.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:ntp/ntp.dart';
-import 'dart:math';
+import 'package:shared/models/saferide/order.dart';
+import 'package:shared/models/saferide/vehicle.dart';
+import 'package:shared/util/strings.dart';
+import 'package:smartrider/blocs/auth/data/auth_repository.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+import 'package:smartrider/blocs/saferide/data/saferide_repository.dart';
 part 'saferide_event.dart';
 part 'saferide_state.dart';
 
-// BIG TODO: use shared prefs or look up in the database if the user has called
-// a ride so they dont reset when they leave and reopen the app
 class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
-  SaferideBloc(
-      {required this.prefsBloc,
-      required this.saferideRepo,
-      required this.authRepo})
-      : super(const SaferideNoState()) {
+  SaferideBloc({
+    required this.prefsBloc,
+    required this.saferideRepo,
+    required this.authRepo,
+    required this.notifications,
+  }) : super(const SaferideNoState()) {
     prefsBloc.stream.listen((state) async {
       switch (state.runtimeType) {
         case PrefsLoadedState:
@@ -47,19 +44,33 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
           break;
       }
     });
+
+    platformChannelSpecifics = const NotificationDetails(
+      android: AndroidNotificationDetails(
+        '10',
+        'basic_channel',
+        channelDescription: 'description',
+        importance: Importance.max,
+        priority: Priority.high,
+        ticker: 'ticker',
+      ),
+      iOS: IOSNotificationDetails(),
+    );
   }
 
   final places = GoogleMapsPlaces(apiKey: googleApiKey);
   final PrefsBloc prefsBloc;
   final SaferideRepository saferideRepo;
   final AuthRepository authRepo;
+  final FlutterLocalNotificationsPlugin notifications;
+  late final NotificationDetails platformChannelSpecifics;
 
   DocumentReference? currentOrder;
   PlacesDetailsResponse? dropoffDetails, pickupDetails;
   String? dropoffAddress, pickupAddress;
   String? dropoffDescription, pickupDescription;
   GeoPoint? dropoffPoint, pickupPoint;
-  double distance = 0.0;
+  double distance = 0;
   StreamSubscription? orderSubscription;
 
   @override
@@ -89,19 +100,21 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       case SaferideWaitingEvent:
         {
           yield SaferideWaitingState(
-              queuePosition: (event as SaferideWaitingEvent).queuePosition,
-              estimatedPickup: event.estimatedPickup);
+            queuePosition: (event as SaferideWaitingEvent).queuePosition,
+            estimatedPickup: event.estimatedPickup,
+          );
         }
         break;
       case SaferidePickingUpEvent:
         {
           yield SaferidePickingUpState(
-              vehicleId: (event as SaferidePickingUpEvent).vehicleId,
-              licensePlate: event.licensePlate,
-              driverPhone: event.driverPhone,
-              driverName: event.driverName,
-              queuePosition: event.queuePosition,
-              estimatedPickup: event.estimatedPickup);
+            vehicleId: (event as SaferidePickingUpEvent).vehicleId,
+            licensePlate: event.licensePlate,
+            driverPhone: event.driverPhone,
+            driverName: event.driverName,
+            queuePosition: event.queuePosition,
+            estimatedPickup: event.estimatedPickup,
+          );
         }
         break;
       case SaferideDroppingOffEvent:
@@ -117,7 +130,8 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       case SaferideDriverCancelledEvent:
         {
           yield SaferideCancelledState(
-              reason: (event as SaferideDriverCancelledEvent).reason);
+            reason: (event as SaferideDriverCancelledEvent).reason,
+          );
         }
         break;
     }
@@ -125,7 +139,8 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
 
   /// attempts to cancel saferide true if successful, false if fail
   Stream<SaferideState> _mapCancelledToState(
-      SaferideUserCancelledEvent event) async* {
+    SaferideUserCancelledEvent event,
+  ) async* {
     await saferideRepo.cancelOrder(currentOrder!);
     await endSubscription();
     yield SaferideNoState(serverTimeStamp: await NTP.now());
@@ -149,25 +164,42 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       case 'WAITING':
         {
           prefsBloc.setCurrentOrderId(order.orderRef.id);
-          add(SaferideWaitingEvent(
+          add(
+            SaferideWaitingEvent(
               queuePosition: order.queuePosition,
-              estimatedPickup: order.estimatedPickup));
+              estimatedPickup: order.estimatedPickup,
+            ),
+          );
         }
         break;
       case 'PICKING_UP':
         {
           // update pastorders once passengers are picked up
           await saferideRepo.updatePastOrders(distance, order.pickupTime);
-          final vehicle = await order.vehicleRef!.get();
-          final currentDriver =
-              (vehicle.get('current_driver') as Map<String, dynamic>);
-          add(SaferidePickingUpEvent(
+          final vehicle =
+              Vehicle.fromDocSnapshot(await order.vehicleRef!.get());
+
+          await notifications.show(
+            2,
+            '${vehicle.currentDriver.name} has accepted your ride!',
+            'Open smartrider to see on their current location.',
+            platformChannelSpecifics,
+            payload: jsonEncode({
+              'latitude': vehicle.positionData.location.latitude,
+              'longitude': vehicle.positionData.location.longitude,
+            }),
+          );
+
+          add(
+            SaferidePickingUpEvent(
               vehicleId: vehicle.id,
-              driverName: currentDriver['name']! as String,
-              driverPhone: currentDriver['phone_number']! as String,
-              licensePlate: vehicle.get('license_plate') as String,
+              driverName: vehicle.currentDriver.name,
+              driverPhone: vehicle.currentDriver.phone,
+              licensePlate: vehicle.licensePlate,
               queuePosition: order.queuePosition,
-              estimatedPickup: order.estimatedPickup));
+              estimatedPickup: order.estimatedPickup,
+            ),
+          );
         }
         break;
       case 'DROPPING_OFF':
@@ -177,6 +209,13 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
         break;
       case 'CANCELLED':
         {
+          await notifications.show(
+            2,
+            'Your ride was cancelled!',
+            order.cancellationReason,
+            platformChannelSpecifics,
+          );
+
           await endSubscription();
           add(SaferideDriverCancelledEvent(reason: order.cancellationReason!));
         }
@@ -184,7 +223,7 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
       case 'COMPLETED':
         {
           await endSubscription();
-          add(SaferideNoEvent());
+          add(const SaferideNoEvent());
         }
         break;
       case 'ERROR':
@@ -205,22 +244,24 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
             null,
             reason: 'critical error in saferide bloc',
           );
-          assert(false);
+          assert(false, 'critical error in saferide bloc');
         }
         break;
     }
   }
 
   Stream<SaferideState> _mapConfirmedToState(
-      SaferideConfirmedEvent event) async* {
+    SaferideConfirmedEvent event,
+  ) async* {
     // create order, listen to changes in snapshot, update display vars in state
     if (pickupPoint != null && dropoffPoint != null) {
       yield SaferideLoadingState();
       distance = Geolocator.bearingBetween(
-          pickupPoint!.latitude,
-          pickupPoint!.longitude,
-          dropoffPoint!.latitude,
-          dropoffPoint!.longitude);
+        pickupPoint!.latitude,
+        pickupPoint!.longitude,
+        dropoffPoint!.latitude,
+        dropoffPoint!.longitude,
+      );
       final order = await saferideRepo.createOrder(
         pickupAddress: pickupAddress!,
         pickupPoint: pickupPoint!,
@@ -236,30 +277,34 @@ class SaferideBloc extends Bloc<SaferideEvent, SaferideState> {
   }
 
   Stream<SaferideState> _mapSelectingToState(
-      SaferideSelectingEvent event) async* {
+    SaferideSelectingEvent event,
+  ) async* {
     if (event.dropoffPrediction != null) {
       dropoffDetails =
           await places.getDetailsByPlaceId(event.dropoffPrediction!.placeId!);
-      dropoffAddress = dropoffDetails!.result.formattedAddress!;
+      dropoffAddress = dropoffDetails!.result.formattedAddress;
       dropoffDescription = dropoffDetails!.result.name;
-      dropoffPoint = GeoPoint(dropoffDetails!.result.geometry!.location.lat,
-          dropoffDetails!.result.geometry!.location.lng);
+      dropoffPoint = GeoPoint(
+        dropoffDetails!.result.geometry!.location.lat,
+        dropoffDetails!.result.geometry!.location.lng,
+      );
     }
     if (event.pickupPrediction != null) {
       pickupDetails =
           await places.getDetailsByPlaceId(event.pickupPrediction!.placeId!);
-      pickupAddress = pickupDetails!.result.formattedAddress!;
+      pickupAddress = pickupDetails!.result.formattedAddress;
       pickupDescription = pickupDetails!.result.name;
-      pickupPoint = GeoPoint(pickupDetails!.result.geometry!.location.lat,
-          pickupDetails!.result.geometry!.location.lng);
+      pickupPoint = GeoPoint(
+        pickupDetails!.result.geometry!.location.lat,
+        pickupDetails!.result.geometry!.location.lng,
+      );
     }
 
     /// if they didn't enter a pickup location, we just use their current
     /// location
     if (pickupDetails == null) {
       try {
-        final currentLocation = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.best);
+        final currentLocation = await Geolocator.getCurrentPosition();
         pickupPoint =
             GeoPoint(currentLocation.latitude, currentLocation.longitude);
         // try to get this in a way that google maps can use

@@ -186,11 +186,12 @@ class BusTimetable {
 }
 
 class TimetableStop {
-  TimetableStop(
-      {required this.stopId,
-      required this.stopLat,
-      required this.stopLon,
-      required this.stopName});
+  TimetableStop({
+    required this.stopId,
+    required this.stopLat,
+    required this.stopLon,
+    required this.stopName,
+  });
 
   factory TimetableStop.fromJson(Map<String, dynamic> json) => TimetableStop(
         stopId: json['stop_id'] as String,

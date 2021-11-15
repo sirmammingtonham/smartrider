@@ -37,6 +37,16 @@
             "type": "dart"
         },
         {
+            "name": "smartrider (firebase emulator)",
+            "cwd": "apps/smartrider",
+            "request": "launch",
+            "type": "dart",
+            "toolArgs": [
+                "--dart-define",
+                "EMULATORS=true"
+            ],
+        },
+        {
             "name": "smartrider (profile mode)",
             "cwd": "apps/smartrider",
             "request": "launch",

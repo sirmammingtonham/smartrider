@@ -21,8 +21,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
-  // adding placeholder vars for now, replace these with sharedprefs
-  // final AuthRepository auth = AuthRepository.create();
   bool _loadingShuttle = false;
 
   @override
@@ -316,34 +314,34 @@ class SettingsPageState extends State<SettingsPage> {
                       ]),
                     ],
                     // GENERAL SETTINGS
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
-                      child: const Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 25),
-                          child: Text(
-                            'Notifications',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 28,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    cardBuilder([
-                      SwitchListTile(
-                        title: const Text('Push Notifications'),
-                        value: (prefsState as PrefsLoadedState)
-                            .prefs
-                            .getBool('pushNotifications')!,
-                        onChanged: (bool value) {
-                          prefsState.prefs.setBool('pushNotifications', value);
-                          setState(() {});
-                        },
-                        secondary: const Icon(Icons.notifications),
-                      ),
-                    ]),
+                    // Container(
+                    //   margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
+                    //   child: const Center(
+                    //     child: Padding(
+                    //       padding: EdgeInsets.only(top: 25),
+                    //       child: Text(
+                    //         'Notifications',
+                    //         style: TextStyle(
+                    //           fontWeight: FontWeight.bold,
+                    //           fontSize: 28,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // cardBuilder([
+                    //   SwitchListTile(
+                    //     title: const Text('Push Notifications'),
+                    //     value: (prefsState as PrefsLoadedState)
+                    //         .prefs
+                    //         .getBool('pushNotifications')!,
+                    //     onChanged: (bool value) {
+                    //     prefsState.prefs.setBool('pushNotifications', value);
+                    //       setState(() {});
+                    //     },
+                    //     secondary: const Icon(Icons.notifications),
+                    //   ),
+                    // ]),
                     // // SAFE RIDE SETTINGS
                     // Container(
                     //   margin: const EdgeInsets.fromLTRB(8, 15, 8, 0),
@@ -387,7 +385,9 @@ class SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                     cardBuilder(
-                      prefsState.buses.keys
+                      (prefsState as PrefsLoadedState)
+                          .buses
+                          .keys
                           .map(
                             (key) => SwitchListTile(
                               title: Text(PrefsBloc.busIdMap[key]!),

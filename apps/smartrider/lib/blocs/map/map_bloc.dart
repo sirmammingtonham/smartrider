@@ -18,7 +18,7 @@ import 'package:shared/models/bus/bus_realtime_update.dart';
 import 'package:shared/models/bus/bus_route.dart';
 import 'package:shared/models/bus/bus_shape.dart';
 //import 'package:shared/models/bus/bus_vehicle_update.dart';
-import 'package:shared/models/saferide/position_data.dart';
+import 'package:shared/models/saferide/vehicle.dart';
 // model imports
 import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
@@ -130,7 +130,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   final List<MarkerCluster> _markerClusters = [];
 
-  final Map<String, PositionData> _saferideUpdates = {};
+  final Map<String, Vehicle> _saferideUpdates = {};
   final Set<Marker> _saferideMarkers = <Marker>{};
   final Set<Polyline> _saferidePolylines = <Polyline>{};
   String? _pickupVehicleId;
@@ -255,9 +255,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   Stream<MapState> _mapDataRequestedToState() async* {
-    // yield MapLoadingState();
-
-    // Stopwatch stopwatch = new Stopwatch()..start();
     switch (_currentView) {
       case MapView.kBusView:
         {
@@ -292,15 +289,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       case MapView.kSaferideView:
         {
           /// update vehicle positions in our cache
-          saferideRepo.getSaferideLocationsStream().listen((positions) {
-            for (final position in positions) {
-              if (position.active) _saferideUpdates[position.id] = position;
+          saferideRepo.getSaferideLocationsStream().listen((vehicles) {
+            for (final vehicle in vehicles) {
+              if (vehicle.active) _saferideUpdates[vehicle.id] = vehicle;
             }
           });
         }
         break;
     }
-    // print('got the stuff in ${stopwatch.elapsed} seconds');
 
     _getEnabledMarkers();
     _getEnabledPolylines();
@@ -619,19 +615,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         },
       );
 
-  Marker _saferideVehicleToMarker(PositionData position) => Marker(
-        icon: position.id == _pickupVehicleId
+  Marker _saferideVehicleToMarker(Vehicle vehicle) => Marker(
+        icon: vehicle.id == _pickupVehicleId
             ? _saferidePickupUpdateIcon
             : _saferideUpdateIcon,
-        infoWindow: InfoWindow(title: 'Safe Ride going ${position.mph} mph'),
-        markerId: MarkerId(position.id),
-        position: position.latLng,
-        rotation: position.heading,
+        infoWindow: InfoWindow(title: 'Safe Ride going ${vehicle.mph} mph'),
+        markerId: MarkerId(vehicle.id),
+        position: vehicle.latLng,
+        rotation: vehicle.positionData.heading,
         onTap: () {
           _controller!.animateCamera(
             CameraUpdate.newCameraPosition(
               CameraPosition(
-                target: position.latLng,
+                target: vehicle.latLng,
                 zoom: 18,
                 tilt: 50,
               ),
@@ -639,21 +635,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           );
         },
       );
-
-  /// TODO: focusing bus stop marker shows name and stuff
-  // Marker _busStopToMarker(BusStop stop) {
-  //   return Marker(
-  //       icon: busStopIcon,
-  //       infoWindow: InfoWindow(title: stop.stopName),
-  //       markerId: MarkerId(stop.stopId.toString()),
-  //       position: stop.getLatLng,
-  //       onTap: () {
-  //         _controller.animateCamera(
-  //           CameraUpdate.newCameraPosition(
-  //               CameraPosition(target: stop.getLatLng, zoom: 18, tilt: 50)),
-  //         );
-  //       });
-  // }
 
   MarkerCluster _busStopToMarkerCluster(BusStopSimplified stop) =>
       MarkerCluster(
@@ -674,7 +655,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       flat: true,
       markerId: MarkerId(update.id.toString()),
       position: update.getLatLng,
-      rotation: update.heading as double,
+      rotation: update.heading! as double,
       anchor: const Offset(0.5, 0.5),
       onTap: () {
         _controller!.animateCamera(
@@ -692,11 +673,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     return Marker(
       icon: _updateIcons['bus_${update.routeId}'] ?? _updateIcons['-1']!,
       infoWindow: InfoWindow(
-        title: 'Bus #${update.id.toString()} '
+        title: 'Bus #${update.id} '
             'on Route ${update.routeId}',
       ),
       flat: true,
-      markerId: MarkerId(update.id.toString()),
+      markerId: MarkerId(update.id),
       position: busPosition,
       rotation: double.tryParse(update.bearing) ?? 0.0,
       anchor: const Offset(0.5, 0.5),
@@ -875,7 +856,6 @@ class MarkerCluster extends Clusterable {
         id: m.markerId.toString(),
         position: m.position,
         icon: m.icon,
-        isCluster: false,
       );
 
   final String? id;

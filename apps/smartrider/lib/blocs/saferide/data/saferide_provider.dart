@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared/models/saferide/position_data.dart';
+import 'package:shared/models/saferide/vehicle.dart';
 
 // saferide models
 // import 'package:shared/models/saferide/order.dart';
@@ -67,8 +67,8 @@ class SaferideProvider {
 
   int convertDistance(double distance) {
     // link for number scaling: https://stats.stackexchange.com/questions/281162/scale-a-number-between-a-range
-    distance = distance.clamp(1.0, 3300.0);
-    final distanceInInt = ((distance / 3300.0) * (5.0) + 0.0).ceil();
+    final distanceClamped = distance.clamp(1.0, 3300.0);
+    final distanceInInt = ((distanceClamped / 3300.0) * (5.0) + 0.0).ceil();
     return distanceInInt;
   }
 
@@ -90,7 +90,9 @@ class SaferideProvider {
     await refs.docs.first.reference.update({'$distanceInInt': newEstimate});
   }
 
-  Stream<List<PositionData>> getSaferideLocationsStream() =>
-      vehicles.snapshots().map((snap) =>
-          snap.docs.map((doc) => PositionData.fromDocSnapshot(doc)).toList());
+  Stream<List<Vehicle>> getSaferideLocationsStream() =>
+      vehicles.snapshots().map(
+            (snap) =>
+                snap.docs.map((doc) => Vehicle.fromDocSnapshot(doc)).toList(),
+          );
 }

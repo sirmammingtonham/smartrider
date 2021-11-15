@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +10,8 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/blocs/auth/auth_bloc.dart';
@@ -22,10 +25,8 @@ import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/ui/home.dart';
 import 'package:smartrider/ui/welcome.dart';
-
-// test imports
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,10 +42,11 @@ Future<void> main() async {
     }
   }
 
-  await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
-  FirebaseFunctions.instance.useFunctionsEmulator('10.0.2.2', 5001);
-  FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
-
+  if (const bool.hasEnvironment('EMULATORS')) {
+    await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
+    FirebaseFunctions.instance.useFunctionsEmulator('10.0.2.2', 5001);
+    FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
+  }
   final app = SmartRider(
     authRepo: await AuthRepository.create(),
     busRepo: await BusRepository.create(),
@@ -83,6 +85,7 @@ class SmartRider extends StatefulWidget {
 }
 
 class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
+  late final FlutterLocalNotificationsPlugin _notifications;
   late final AuthBloc _authBloc;
   late final PrefsBloc _prefsBloc;
   late final MapBloc _mapBloc;
@@ -95,12 +98,37 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
 
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('America/New_York'));
+
+    // init notifications
+    _notifications = FlutterLocalNotificationsPlugin();
+    _notifications.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('app_icon'),
+        iOS: IOSInitializationSettings(),
+      ),
+      onSelectNotification: (String? payload) {
+        if (payload != null) {
+          final params = jsonDecode(payload) as Map<String, dynamic>;
+          _mapBloc.scrollToLatLng(
+            LatLng(
+              params['latitude'] as double,
+              params['longitude'] as double,
+            ),
+          );
+        }
+      },
+    );
+
+    // init blocs
     _prefsBloc = PrefsBloc()..add(const LoadPrefsEvent());
     _authBloc = AuthBloc(authRepository: widget.authRepo)..add(AuthInitEvent());
     _saferideBloc = SaferideBloc(
       prefsBloc: _prefsBloc,
       saferideRepo: widget.saferideRepo,
       authRepo: widget.authRepo,
+      notifications: _notifications,
     );
     _mapBloc = MapBloc(
       saferideBloc: _saferideBloc,
@@ -112,8 +140,10 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     _scheduleBloc = ScheduleBloc(
       mapBloc: _mapBloc,
       busRepo: widget.busRepo,
+      notifications: _notifications,
     );
 
+    // init theme change
     final window = WidgetsBinding.instance!.window;
     window.onPlatformBrightnessChanged = () {
       // This callback is called every time the brightness changes.
@@ -127,6 +157,7 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
       setState(() {});
     };
 
+    // dynamic links (for auth)
     initDynamicLinks();
   }
 
@@ -223,24 +254,6 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
           autoPlay: true,
           autoPlayDelay: const Duration(seconds: 10),
         ),
-        // TODO: put all this shid into an onboarding bloc so we dont rebuild
-        //  the whole app each time we change settings...
-
-        // BlocBuilder<PrefsBloc, PrefsState>(
-        //     builder: (BuildContext context, PrefsState state) {
-        //   if (state is PrefsLoadedState) {
-        //     return ShowCaseWidget(
-        //       builder: Builder(
-        //           builder: (context) => state.firstLaunch!
-        //               ? const OnboardingScreen()
-        //               : const WelcomeScreen(homePage: HomePage())),
-        //       autoPlay: true,
-        //       autoPlayDelay: const Duration(seconds: 10),
-        //     );
-        //   } else {
-        //     return const MaterialApp(home: CircularProgressIndicator());
-        //   }
-        // }),
       ),
     );
   }
