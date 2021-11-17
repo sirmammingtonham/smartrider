@@ -49,6 +49,9 @@ class AuthRepository {
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
       );
 
+  Future<void> updatePhone({required String phoneNumber}) =>
+      _authProvider.updatePhone(phoneNumber);
+
   String processPhoneNumber(String phoneNumber) =>
       _authProvider.processPhoneNumber(phoneNumber);
 }

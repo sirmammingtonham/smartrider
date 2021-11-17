@@ -22,6 +22,8 @@ class AuthProvider {
 
   Future<void> _init() async {
     if (_firebaseAuth.currentUser != null) {
+      // print(_firebaseAuth.currentUser);
+      // print(_firebaseAuth.currentUser!.uid);
       currentUser = Rider.fromJson(
         await _firebaseFirestore
             .doc('users/${_firebaseAuth.currentUser!.uid}')
@@ -47,6 +49,16 @@ class AuthProvider {
     }
   }
 
+  Future<void> updatePhone(String phoneNumber) async {
+    final cleanPhoneNumber = processPhoneNumber(phoneNumber);
+    // print(_firebaseAuth.currentUser!.uid);
+    // print(currentUser!.uid);
+    // print(_firebaseAuth.currentUser!.uid == currentUser!.uid);
+    await currentUser?.ref.update({'phone': cleanPhoneNumber});
+  }
+
+  // create function logic here, Update phone number in firestore, need wrappers in repo
+  // currentuser.ref
   Future<void> signOut() async {
     return _firebaseAuth.signOut();
   }

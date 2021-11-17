@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 
-class Rider {
+class Rider extends Equatable {
   const Rider({
     required this.ref,
     required this.name,
@@ -29,4 +30,7 @@ class Rider {
   final String? phoneNumber;
 
   bool get phoneVerified => phoneNumber != null;
+
+  @override
+  List<Object?> get props => [ref, name, email, rin, uid, phoneNumber];
 }

@@ -10,6 +10,7 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({required this.authRepository}) : super(AuthSignedOutState());
   final AuthRepository authRepository;
+  String? phoneNumber;
 
   @override
   Stream<AuthState> mapEventToState(
@@ -47,7 +48,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             smsCode: event.sms,
           );
           try {
-            await FirebaseAuth.instance.signInWithCredential(credential);
+            // await FirebaseAuth.instance.signInWithCredential(credential);
+            await authRepository.updatePhone(phoneNumber: phoneNumber!);
+            // call authRepository.updatePhone()
+            // save phone number in variable before that
           } on FirebaseAuthException catch (e) {
             yield AuthFailedState(
               exception: e,
@@ -87,12 +91,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthResetPhoneEvent event,
   ) async* {
     final auth = FirebaseAuth.instance;
+    phoneNumber = event.newPhoneNumber;
 // TODO: update user number on firestore
 // move this into provider
     await authRepository.verifyPhoneNumber(
       phoneNumber: event.newPhoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {
-        await auth.signInWithCredential(credential);
+        // await auth.signInWithCredential(credential);
         await auth.currentUser!.updatePhoneNumber(credential);
       },
       verificationFailed: (FirebaseAuthException e) {
