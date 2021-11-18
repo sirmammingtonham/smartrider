@@ -31,6 +31,25 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       ),
       iOS: IOSNotificationDetails(),
     );
+
+    mapBloc.stream.listen((mapState) {
+      if (mapState is MapLoadedState) {
+        switch (mapState.mapView) {
+          case MapView.kBusView:
+            if (_tabController.index != 0) {
+              _tabController.animateTo(0);
+            }
+            break;
+          case MapView.kShuttleView:
+            if (_tabController.index != 1) {
+              _tabController.animateTo(1);
+            }
+            break;
+          case MapView.kSaferideView:
+            break;
+        }
+      }
+    });
   }
 
   final BusRepository busRepo;
@@ -114,13 +133,23 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         }),
       );
 
+  void tabListener() {
+    add(const ScheduleViewChangeEvent());
+    if (_tabController.index == 0 && mapBloc.mapView != MapView.kBusView) {
+      mapBloc.add(const MapViewChangeEvent(newView: MapView.kBusView));
+    } else if (_tabController.index == 1 &&
+        mapBloc.mapView != MapView.kShuttleView) {
+      mapBloc.add(const MapViewChangeEvent(newView: MapView.kShuttleView));
+    }
+  }
+
   @override
   Stream<ScheduleState> mapEventToState(ScheduleEvent event) async* {
     switch (event.runtimeType) {
       case ScheduleInitEvent:
         {
           _tabController = (event as ScheduleInitEvent).tabController
-            ..addListener(() => add(const ScheduleViewChangeEvent()));
+            ..addListener(tabListener);
           _panelController = event.panelController;
           busTables = await busRepo.getTimetables;
           yield* _mapScheduleTimelineToState();

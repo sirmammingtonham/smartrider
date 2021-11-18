@@ -20,5 +20,7 @@ linter:
     prefer_final_locals: true
     public_member_api_docs: false
     require_trailing_comma: true
+    no_default_cases: false
+    avoid_redundant_argument_values: false
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

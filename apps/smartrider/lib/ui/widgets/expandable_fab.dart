@@ -1,6 +1,7 @@
 /// https://flutter.dev/docs/cookbook/effects/expandable-fab
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:smartrider/ui/widgets/custom_widgets/custom_tooltip.dart';
 
 @immutable
 class ExpandableFab extends StatefulWidget {
@@ -15,13 +16,13 @@ class ExpandableFab extends StatefulWidget {
   final bool? initialOpen;
   final IconData icon;
   final double distance;
-  final List<Widget> children;
+  final List<ActionButton> children;
 
   @override
-  _ExpandableFabState createState() => _ExpandableFabState();
+  ExpandableFabState createState() => ExpandableFabState();
 }
 
-class _ExpandableFabState extends State<ExpandableFab>
+class ExpandableFabState extends State<ExpandableFab>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
@@ -77,17 +78,17 @@ class _ExpandableFabState extends State<ExpandableFab>
 
   Widget _buildTapToCloseFab() {
     return SizedBox(
-      width: 56.0,
-      height: 56.0,
+      width: 56,
+      height: 56,
       child: Center(
         child: Material(
           shape: const CircleBorder(),
           clipBehavior: Clip.antiAlias,
-          elevation: 4.0,
+          elevation: 4,
           child: InkWell(
             onTap: _toggle,
             child: const Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8),
               child: Icon(
                 Icons.close,
               ),
@@ -107,6 +108,7 @@ class _ExpandableFabState extends State<ExpandableFab>
         i++, angleInDegrees += step) {
       children.add(
         _ExpandingActionButton(
+          isOpen: _open,
           directionInDegrees: angleInDegrees,
           maxDistance: widget.distance,
           progress: _expandAnimation,
@@ -125,13 +127,13 @@ class _ExpandableFabState extends State<ExpandableFab>
         transform: Matrix4.diagonal3Values(
           _open ? 0.7 : 1.0,
           _open ? 0.7 : 1.0,
-          1.0,
+          1,
         ),
         duration: const Duration(milliseconds: 250),
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+        curve: const Interval(0, 0.5, curve: Curves.easeOut),
         child: AnimatedOpacity(
           opacity: _open ? 0.0 : 1.0,
-          curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
+          curve: const Interval(0.25, 1, curve: Curves.easeInOut),
           duration: const Duration(milliseconds: 250),
           child: FloatingActionButton(
             // backgroundColor: Colors.white,
@@ -155,12 +157,14 @@ class _ExpandingActionButton extends StatelessWidget {
     required this.maxDistance,
     required this.progress,
     required this.child,
+    required this.isOpen,
   }) : super(key: key);
 
   final double directionInDegrees;
   final double maxDistance;
   final Animation<double> progress;
-  final Widget child;
+  final ActionButton child;
+  final bool isOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +180,7 @@ class _ExpandingActionButton extends StatelessWidget {
           bottom: 4.0 + offset.dy,
           child: Transform.rotate(
             angle: (1.0 - progress.value) * math.pi / 2,
-            child: child!,
+            child: child,
           ),
         );
       },
@@ -190,40 +194,57 @@ class _ExpandingActionButton extends StatelessWidget {
 
 @immutable
 class ActionButton extends StatelessWidget {
-  const ActionButton({
+  ActionButton({
     Key? key,
-    this.tooltip,
-    this.onPressed,
+    required this.onPressed,
+    required this.tooltip,
     required this.isSelected,
     required this.icon,
   }) : super(key: key);
 
-  final String? tooltip;
-  final VoidCallback? onPressed;
+  final String tooltip;
+  final VoidCallback onPressed;
   final bool isSelected;
   final Widget icon;
+  final _tooltipKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      // executes after build
+      if (isSelected) {
+        final tooltip = _tooltipKey.currentState as CustomTooltipState?;
+        tooltip?.ensureTooltipVisible();
+        tooltip?.hideTooltip();
+      }
+    });
+
     return Material(
       shape: const CircleBorder(),
       clipBehavior: Clip.antiAlias,
-      elevation: 4.0,
+      elevation: 4,
       child: Container(
         decoration: isSelected
             ? BoxDecoration(
                 shape: BoxShape.circle,
-                border:
-                    Border.all(width: 3, color: Theme.of(context).accentColor),
+                border: Border.all(
+                  width: 3,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               )
             : null,
-        child: IconButton(
-          tooltip: tooltip,
-          onPressed: onPressed,
-          icon: icon,
+        child: CustomTooltip(
+          key: _tooltipKey,
+          message: tooltip,
+          showDuration: const Duration(seconds: 1, milliseconds: 500),
+          triggerMode: TooltipTriggerMode.manual,
+          child: IconButton(
+            tooltip: tooltip,
+            onPressed: onPressed,
+            icon: icon,
+          ),
         ),
       ),
-      // ),
     );
   }
 }

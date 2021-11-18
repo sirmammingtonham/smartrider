@@ -33,7 +33,7 @@ class SlidingUpPanel extends StatefulWidget {
       this.borderRadius,
       this.boxShadow = const <BoxShadow>[
         BoxShadow(
-          blurRadius: 8.0,
+          blurRadius: 8,
           color: Color.fromRGBO(0, 0, 0, 0.25),
         )
       ],
@@ -253,8 +253,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
           : Alignment.topCenter,
       children: <Widget>[
         //make the back widget take up the entire back side
-        widget.body != null
-            ? AnimatedBuilder(
+        if (widget.body != null) AnimatedBuilder(
                 animation: _ac,
                 builder: (context, child) {
                   return Positioned(
@@ -267,13 +266,10 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                   width: MediaQuery.of(context).size.width,
                   child: widget.body,
                 ),
-              )
-            : Container(),
+              ) else Container(),
 
         //the backdrop to overlay on the body
-        !widget.backdropEnabled
-            ? Container()
-            : GestureDetector(
+        if (!widget.backdropEnabled) Container() else GestureDetector(
                 onVerticalDragEnd: widget.backdropTapClosesPanel
                     ? (DragEndDetails dets) {
                         // only trigger a close if the drag is towards panel
@@ -351,8 +347,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                           )),
 
                       // header
-                      widget.header != null
-                          ? Positioned(
+                      if (widget.header != null) Positioned(
                               key: _headerKey,
                               top: widget.slideDirection == SlideDirection.up
                                   ? 0.0
@@ -362,12 +357,10 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                                       ? 0.0
                                       : null,
                               child: widget.header ?? const SizedBox(),
-                            )
-                          : Container(),
+                            ) else Container(),
 
                       // footer
-                      widget.footer != null
-                          ? Positioned(
+                      if (widget.footer != null) Positioned(
                               top: widget.slideDirection == SlideDirection.up
                                   ? null
                                   : 0.0,
@@ -375,8 +368,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                                   widget.slideDirection == SlideDirection.down
                                       ? null
                                       : 0.0,
-                              child: widget.footer ?? const SizedBox())
-                          : Container(),
+                              child: widget.footer ?? const SizedBox()) else Container(),
 
                       // collapsed panel
                       Positioned(
@@ -398,8 +390,8 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                           child: widget.collapsed == null
                               ? Container()
                               : FadeTransition(
-                                  opacity:
-                                      Tween(begin: 1.0, end: 0.0).animate(_ac),
+                                  opacity: Tween<double>(begin: 1, end: 0)
+                                      .animate(_ac),
 
                                   // if the panel is open ignore pointers (touch
                                   // events) on the collapsed child so that way
@@ -576,9 +568,9 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
   void _flingPanelToPosition(double targetPos, double velocity) {
     final Simulation simulation = SpringSimulation(
         SpringDescription.withDampingRatio(
-          mass: 1.0,
-          stiffness: 500.0,
-          ratio: 1.0,
+          mass: 1,
+          stiffness: 500,
+          ratio: 1,
         ),
         _ac.value,
         targetPos,
@@ -593,17 +585,17 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
 
   //close the panel
   Future<void> _close() {
-    return _ac.fling(velocity: -1.0);
+    return _ac.fling(velocity: -1);
   }
 
   //open the panel
   Future<void> _open() {
-    return _ac.fling(velocity: 1.0);
+    return _ac.fling(velocity: 1);
   }
 
   //hide the panel (completely offscreen)
   Future<void> _hide() {
-    return _ac.fling(velocity: -1.0).then((x) {
+    return _ac.fling(velocity: -1).then((x) {
       setState(() {
         _isPanelVisible = false;
       });
@@ -612,7 +604,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
 
   //show the panel (in collapsed mode)
   Future<void> _show() {
-    return _ac.fling(velocity: -1.0).then((x) {
+    return _ac.fling(velocity: -1).then((x) {
       setState(() {
         _isPanelVisible = true;
       });

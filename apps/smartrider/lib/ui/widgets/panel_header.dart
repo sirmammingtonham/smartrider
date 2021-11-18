@@ -46,7 +46,7 @@ class PanelHeader extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          color: Theme.of(context).accentColor,
+          color: Theme.of(context).colorScheme.secondary,
           height: saferide_widgets.saferideDefaultHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -69,9 +69,9 @@ class PanelHeader extends StatelessWidget {
                   width: 61,
                   height: 4,
                   decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(12.0))),
+                    color: Colors.grey[300],
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  ),
                 ),
               ],
             ),
@@ -82,7 +82,9 @@ class PanelHeader extends StatelessWidget {
   }
 
   Future<void> _saferideDriverCancelPopup(
-      BuildContext context, SaferideCancelledState saferideState) async {
+    BuildContext context,
+    SaferideCancelledState saferideState,
+  ) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -93,14 +95,18 @@ class PanelHeader extends StatelessWidget {
           TextButton(
             onPressed: () {
 // TODO: prompt to send email to student life or something
-              BlocProvider.of<SaferideBloc>(context).add(SaferideNoEvent());
+              BlocProvider.of<SaferideBloc>(context).add(
+                const SaferideNoEvent(),
+              );
               Navigator.pop(context, 'Report');
             },
             child: const Text('Report Driver'),
           ),
           TextButton(
             onPressed: () {
-              BlocProvider.of<SaferideBloc>(context).add(SaferideNoEvent());
+              BlocProvider.of<SaferideBloc>(context).add(
+                const SaferideNoEvent(),
+              );
               Navigator.pop(context, 'OK');
             },
             child: const Text('OK'),
@@ -124,25 +130,25 @@ class PanelHeader extends StatelessWidget {
           case SaferideSelectingState:
             appBarWidget = saferide_widgets.saferideSelectionWidget(
               context,
-              saferideState as SaferideSelectingState,
+              saferideState! as SaferideSelectingState,
             );
             break;
           case SaferideWaitingState:
             appBarWidget = saferide_widgets.saferideWaitingWidget(
               context,
-              saferideState as SaferideWaitingState,
+              saferideState! as SaferideWaitingState,
             );
             break;
           case SaferidePickingUpState:
             appBarWidget = saferide_widgets.saferidePickingUpWidget(
               context,
-              saferideState as SaferidePickingUpState,
+              saferideState! as SaferidePickingUpState,
             );
             break;
           case SaferideCancelledState:
             _saferideDriverCancelPopup(
               context,
-              saferideState as SaferideCancelledState,
+              saferideState! as SaferideCancelledState,
             );
             appBarWidget = Container();
             break;
@@ -154,7 +160,7 @@ class PanelHeader extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: ClipRRect(
             borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(20.0),
+              top: Radius.circular(20),
             ),
             child: appBarWidget,
           ),

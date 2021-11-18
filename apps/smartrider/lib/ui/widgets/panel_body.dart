@@ -1,26 +1,19 @@
-// ui dependencies
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-// bloc stuff
-import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
-
-// loading custom widgets and data
-import 'package:showcaseview/showcaseview.dart';
 import 'package:shared/util/consts/messages.dart';
-// import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_timeline.dart';
-// import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_table.dart';
-import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_unavailable.dart';
-import 'package:smartrider/ui/widgets/bus_schedules/bus_timeline.dart';
-import 'package:smartrider/ui/widgets/bus_schedules/bus_table.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/ui/home.dart';
+import 'package:smartrider/ui/widgets/bus_schedules/bus_table.dart';
+import 'package:smartrider/ui/widgets/bus_schedules/bus_timeline.dart';
+import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_unavailable.dart';
 
 class PanelBody extends StatelessWidget {
-  PanelBody(
-      {Key? key,
-      required this.panelScrollController,
-      required this.headerHeight})
-      : super(key: key);
+  PanelBody({
+    Key? key,
+    required this.panelScrollController,
+    required this.headerHeight,
+  }) : super(key: key);
 
   final ScrollController panelScrollController;
   final double headerHeight;
@@ -48,8 +41,8 @@ class PanelBody extends StatelessWidget {
             : [
                 // table widgets
                 BusTable(
-                    timetableMap:
-                        (scheduleState as ScheduleTableState).busTables),
+                  timetableMap: (scheduleState as ScheduleTableState).busTables,
+                ),
                 const ShuttleUnavailable(),
               ],
       );
@@ -65,7 +58,7 @@ class PanelBody extends StatelessWidget {
             {
               return ClipRRect(
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20.0),
+                  top: Radius.circular(20),
                 ),
                 child: Scaffold(
                   body: Column(
@@ -77,7 +70,8 @@ class PanelBody extends StatelessWidget {
                         child: TabBar(
                           controller: BlocProvider.of<ScheduleBloc>(context)
                               .tabController,
-                          indicatorColor: Theme.of(context).accentColor,
+                          indicatorColor:
+                              Theme.of(context).colorScheme.secondary,
                           labelColor:
                               Theme.of(context).colorScheme.onBackground,
                           unselectedLabelColor: Theme.of(context)
@@ -89,25 +83,29 @@ class PanelBody extends StatelessWidget {
                       ),
                       Expanded(
                         child:
-                            panelBody(context, scheduleState as ScheduleState),
+                            panelBody(context, scheduleState! as ScheduleState),
                       )
                     ],
                   ),
                   floatingActionButton: FloatingActionButton(
                     heroTag: 'switch_schedule_view_button',
-                    elevation: 5.0,
+                    elevation: 5,
                     onPressed: () {
                       if (scheduleState is ScheduleTimelineState) {
                         BlocProvider.of<ScheduleBloc>(context).add(
-                            const ScheduleTypeChangeEvent(isTimeline: false));
+                          const ScheduleTypeChangeEvent(isTimeline: false),
+                        );
                       } else if (scheduleState is ScheduleTableState) {
                         BlocProvider.of<ScheduleBloc>(context).add(
-                            const ScheduleTypeChangeEvent(isTimeline: true));
+                          const ScheduleTypeChangeEvent(isTimeline: true),
+                        );
                       }
                     },
-                    child: Icon(scheduleState is ScheduleTimelineState
-                        ? Icons.table_chart_outlined
-                        : Icons.timeline_outlined),
+                    child: Icon(
+                      scheduleState is ScheduleTimelineState
+                          ? Icons.table_chart_outlined
+                          : Icons.timeline_outlined,
+                    ),
                   ),
                 ),
               );
