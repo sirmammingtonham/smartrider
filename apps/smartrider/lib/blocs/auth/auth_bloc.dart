@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:smartrider/blocs/auth/data/auth_repository.dart';
 import 'package:shared/models/auth/rider.dart';
+import 'package:smartrider/blocs/auth/data/auth_repository.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -48,10 +48,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             smsCode: event.sms,
           );
           try {
-            // await FirebaseAuth.instance.signInWithCredential(credential);
+            await FirebaseAuth.instance.currentUser!
+                .linkWithCredential(credential);
             await authRepository.updatePhone(phoneNumber: phoneNumber!);
-            // call authRepository.updatePhone()
-            // save phone number in variable before that
           } on FirebaseAuthException catch (e) {
             yield AuthFailedState(
               exception: e,
@@ -90,16 +89,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> _mapResetPhoneToState(
     AuthResetPhoneEvent event,
   ) async* {
-    final auth = FirebaseAuth.instance;
     phoneNumber = event.newPhoneNumber;
-// TODO: update user number on firestore
-// move this into provider
     await authRepository.verifyPhoneNumber(
       phoneNumber: event.newPhoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        // await auth.signInWithCredential(credential);
-        await auth.currentUser!.updatePhoneNumber(credential);
-      },
+      verificationCompleted: (PhoneAuthCredential credential) async {},
       verificationFailed: (FirebaseAuthException e) {
         add(
           AuthFailedEvent(
