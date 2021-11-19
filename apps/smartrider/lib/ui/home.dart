@@ -1,26 +1,22 @@
 // ui imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smartrider/blocs/map/map_bloc.dart';
-
-import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
-
 // import 'package:shared/util/consts/messages.dart';
 import 'package:showcaseview/showcaseview.dart';
-
+import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 // import 'package:sizer/sizer.dart';
 // bloc imports
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
-import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
-
 // custom widget imports
 import 'package:smartrider/ui/widgets/map_widget.dart';
-import 'package:smartrider/ui/widgets/search_bar.dart';
-import 'package:smartrider/ui/widgets/panel_header.dart';
 import 'package:smartrider/ui/widgets/panel_body.dart';
+import 'package:smartrider/ui/widgets/panel_header.dart';
 import 'package:smartrider/ui/widgets/saferide_status_widgets.dart'
     as saferide_widgets;
+import 'package:smartrider/ui/widgets/search_bar.dart';
+import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 
 GlobalKey showcaseSettings = GlobalKey();
 GlobalKey showcaseShuttleToggle = GlobalKey();
@@ -99,7 +95,7 @@ class _HomePageState extends State<_HomePage>
   void startTimelineShowcase(PrefsLoadedState prefState, BuildContext context) {
     if (prefState.prefs.getBool('firstSlideUp') == true) {
       ShowCaseWidget.of(context)!.startShowCase(
-          [showcaseTransportTab, showcaseBusTab, showcaseTimeline]);
+          [showcaseTransportTab, showcaseBusTab, showcaseTimeline],);
       prefState.prefs.setBool('firstSlideUp', false);
     }
   }
@@ -144,7 +140,7 @@ class _HomePageState extends State<_HomePage>
       body: Stack(children: const <Widget>[
         SmartriderMap(),
         SearchBar(),
-      ]),
+      ],),
       header: PanelHeader(panelController: _panelController),
       panelBuilder: (sc) => PanelBody(
         panelScrollController: sc,

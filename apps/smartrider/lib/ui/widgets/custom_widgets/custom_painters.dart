@@ -9,7 +9,7 @@ class CirclePainter extends CustomPainter {
       required this.lineColor,
       this.first = false,
       this.last = false,
-      this.overflow = 30.0})
+      this.overflow = 30.0,})
       : super();
   final Color circleColor;
   final Color lineColor;
@@ -33,16 +33,16 @@ class CirclePainter extends CustomPainter {
 
     if (first) {
       canvas.drawLine(Offset(size.width / 2, size.height + overflow),
-          Offset(size.width / 2, size.height / 2 + 15), line);
+          Offset(size.width / 2, size.height / 2 + 15), line,);
     } else if (last) {
       canvas.drawLine(Offset(size.width / 2, size.height / 2 - 15.0),
-          Offset(size.width / 2, -overflow), line);
+          Offset(size.width / 2, -overflow), line,);
     } else {
       canvas
         ..drawLine(Offset(size.width / 2, (size.height / 2) - 15.0),
-            Offset(size.width / 2, -overflow), line)
+            Offset(size.width / 2, -overflow), line,)
         ..drawLine(Offset(size.width / 2, (size.height / 2) + 15.0),
-            Offset(size.width / 2, size.height + overflow), line);
+            Offset(size.width / 2, size.height + overflow), line,);
     }
 
     // set the color property of the paint
@@ -54,7 +54,7 @@ class CirclePainter extends CustomPainter {
     // center of the canvas is (x,y) => (width/2, height/2)
     final center = Offset(size.width / 2, size.height / 2);
 
-    canvas.drawCircle(center, 11.0, paint);
+    canvas.drawCircle(center, 11, paint);
   }
 
   @override

@@ -18,7 +18,7 @@ class BusRoute {
       this.continuousDropOff,
       this.startDate,
       this.endDate,
-      this.stops});
+      this.stops,});
 
   BusRoute.fromJson(Map<String, dynamic> json) {
     routeId = json['route_id'] as String?;
@@ -99,7 +99,7 @@ class BusStopSimplified {
       required this.stopLat,
       required this.stopLon,
       required this.stopSeq0,
-      required this.stopSeq1});
+      required this.stopSeq1,});
 
   factory BusStopSimplified.fromJson(Map<String, dynamic> json) =>
       BusStopSimplified(

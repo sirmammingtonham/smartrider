@@ -1,11 +1,11 @@
 // thx flutter shuttle tracker lol
-import 'package:smartrider/blocs/map/data/http_util.dart';
+import 'package:shared/models/shuttle/shuttle_eta.dart';
 // import 'package:path_provider/path_provider.dart';
 
 import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
 import 'package:shared/models/shuttle/shuttle_update.dart';
-import 'package:shared/models/shuttle/shuttle_eta.dart';
+import 'package:smartrider/blocs/map/data/http_util.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 /// This class contains methods for providing data to Repository

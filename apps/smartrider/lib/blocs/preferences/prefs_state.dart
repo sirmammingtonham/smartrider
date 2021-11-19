@@ -19,7 +19,7 @@ class PrefsLoadingState extends PrefsState {
 /// This class represents what user will see when data is fetched
 class PrefsLoadedState extends PrefsState {
   const PrefsLoadedState(this.prefs, this.shuttles, this.buses,
-      {this.modifyActiveRoutes = false});
+      {this.modifyActiveRoutes = false,});
 
   final SharedPreferences prefs;
   final Map<String, bool> shuttles;

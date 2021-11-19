@@ -1,17 +1,15 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 // import 'package:shared/models/themes.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
+// import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-
 // model imports
 import 'package:shared/models/shuttle/shuttle_route.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'prefs_event.dart';
 part 'prefs_state.dart';
@@ -82,7 +80,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
       case SavePrefsEvent:
         {
           await _sharedPrefs.setBool(
-              (event as SavePrefsEvent).name!, event.val);
+              (event as SavePrefsEvent).name!, event.val,);
           yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
         }
         break;

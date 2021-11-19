@@ -37,7 +37,7 @@ class MultiBlocBuilder extends StatefulWidget {
   const MultiBlocBuilder(
       {Key? key,
       required List<Bloc> blocs,
-      required Widget Function(BuildContext, BlocStates) builder})
+      required Widget Function(BuildContext, BlocStates) builder,})
       : _blocs = blocs,
         _builder = builder,
         super(key: key);

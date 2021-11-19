@@ -13,7 +13,7 @@ class BusTimetable {
       this.includeDates,
       this.excludeDates,
       this.stops,
-      this.formatted});
+      this.formatted,});
 
   BusTimetable.fromJson(Map<String, dynamic> json) {
     routeId = json['route_id'] as String?;

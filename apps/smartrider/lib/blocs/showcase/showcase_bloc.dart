@@ -55,11 +55,9 @@ class ShowcaseBloc extends Bloc<ShowcaseEvent, ShowcaseState> {
   void startTimelineShowcase(BuildContext context) {
     if (prefState.prefs.getBool('firstSlideUp') == true) {
       ShowCaseWidget.of(context)!.startShowCase(
-          [showcaseTransportTab, showcaseBusTab, showcaseTimeline]);
+          [showcaseTransportTab, showcaseBusTab, showcaseTimeline],);
       prefState.prefs.setBool('firstSlideUp', false);
     }
   }
 
 }
-
-

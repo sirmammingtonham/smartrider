@@ -39,7 +39,7 @@ class CustomStickyHeader extends StatefulWidget {
     this.cellFit = BoxFit.scaleDown,
   }) : super(key: key) {
     assert(cellDimensions.contentCellWidth != null ||
-        cellDimensions.columnWidths != null);
+        cellDimensions.columnWidths != null,);
     assert(cellDimensions.contentCellHeight != null ||
         cellDimensions.rowHeights != null);
     if (cellDimensions.columnWidths != null) {

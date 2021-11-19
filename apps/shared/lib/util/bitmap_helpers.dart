@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Color extension:
 /// Allows us to convert colors to hex string
@@ -45,12 +46,12 @@ class BitmapHelper {
   static Future<BitmapDescriptor> getBitmapDescriptorFromSvgAsset(
       String svgAssetLink,
       {Color? color,
-      Size? size}) async {
+      Size? size,}) async {
     final svgImage = await _getSvgImageFromAssets(svgAssetLink, color, size);
     // final sizedSvgImage = await _getSizedSvgImage(svgImage);
 
     final pngSizedBytes =
-        await (svgImage.toByteData(format: ui.ImageByteFormat.png));
+        await svgImage.toByteData(format: ui.ImageByteFormat.png);
     if (pngSizedBytes != null) {
       final unit8List = pngSizedBytes.buffer.asUint8List();
       return BitmapDescriptor.fromBytes(unit8List);
@@ -59,7 +60,7 @@ class BitmapHelper {
   }
 
   static Future<ui.Image> _getSvgImageFromAssets(
-      String svgAssetLink, Color? color, Size? targetSize) async {
+      String svgAssetLink, Color? color, Size? targetSize,) async {
     var svgString = await rootBundle.loadString(svgAssetLink);
     if (color != null) {
       svgString =

@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'package:shared/models/auth/rider.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared/models/auth/rider.dart';
 import 'package:smartrider/blocs/auth/data/auth_provider.dart';
 
 class AuthRepository {

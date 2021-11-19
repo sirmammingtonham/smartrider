@@ -13,9 +13,9 @@ class SRError {
       SRError(code: 'blocc', message: 'Error in the bloc');
 
   static const networkError = SRError(
-      code: 'bruh', message: 'No internet or shuttle server unavailable.');
+      code: 'bruh', message: 'No internet or shuttle server unavailable.',);
 
   static const userCancelledError = SRError(
       code: 'cancel_culture',
-      message: 'User cancelled ride. Going back to home screen.');
+      message: 'User cancelled ride. Going back to home screen.',);
 }

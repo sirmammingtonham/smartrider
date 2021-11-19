@@ -13,7 +13,7 @@ class ScheduleInitialState extends ScheduleState {
 
 class ScheduleTimelineState extends ScheduleState {
   const ScheduleTimelineState(
-      {required this.busTables, required this.shuttleTables});
+      {required this.busTables, required this.shuttleTables,});
 
   final Map<String?, BusTimetable>? busTables;
   final Object? shuttleTables; // placeholder
@@ -24,7 +24,7 @@ class ScheduleTimelineState extends ScheduleState {
 
 class ScheduleTableState extends ScheduleState {
   const ScheduleTableState(
-      {required this.busTables, required this.shuttleTables});
+      {required this.busTables, required this.shuttleTables,});
 
   final Map<String?, BusTimetable>? busTables;
   final Object? shuttleTables; // placeholder

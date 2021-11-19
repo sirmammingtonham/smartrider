@@ -23,7 +23,7 @@ class SphericalUtils {
       MathUtil.toRadians(from.latitude),
       MathUtil.toRadians(from.longitude),
       MathUtil.toRadians(to.latitude),
-      MathUtil.toRadians(to.longitude));
+      MathUtil.toRadians(to.longitude),);
 
   /// Returns the heading from one LatLng to another LatLng. Headings are
   /// expressed in degrees clockwise from North within the range [-180,180).
@@ -36,7 +36,7 @@ class SphericalUtils {
     final toLng = MathUtil.toRadians(to.longitude);
     final dLng = toLng - fromLng;
     final heading = atan2(sin(dLng) * cos(toLat),
-        cos(fromLat) * sin(toLat) - sin(fromLat) * cos(toLat) * cos(dLng));
+        cos(fromLat) * sin(toLat) - sin(fromLat) * cos(toLat) * cos(dLng),);
 
     return MathUtil.wrap(MathUtil.toDegrees(heading), -180, 180);
   }
@@ -59,9 +59,9 @@ class SphericalUtils {
     final sinLat =
         cosDistance * sinFromLat + sinDistance * cosFromLat * cos(heading);
     final dLng = atan2(sinDistance * cosFromLat * sin(heading),
-        cosDistance - sinFromLat * sinLat);
+        cosDistance - sinFromLat * sinLat,);
 
     return LatLng(MathUtil.toDegrees(asin(sinLat)).toDouble(),
-        MathUtil.toDegrees(fromLng + dLng).toDouble());
+        MathUtil.toDegrees(fromLng + dLng).toDouble(),);
   }
 }

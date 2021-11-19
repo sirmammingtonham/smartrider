@@ -1,10 +1,11 @@
 import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:shared/models/saferide/driver.dart';
-import 'package:smartdriver/blocs/location/location_bloc.dart';
-import 'package:smartdriver/blocs/auth/data/auth_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartdriver/blocs/auth/data/auth_repository.dart';
+import 'package:smartdriver/blocs/location/location_bloc.dart';
 
 part 'auth_event.dart';
 part 'auth_exception.dart';

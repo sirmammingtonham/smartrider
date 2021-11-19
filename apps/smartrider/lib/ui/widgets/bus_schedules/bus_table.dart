@@ -69,7 +69,7 @@ class BusTableState extends State<BusTable>
           ],
         ),
       )
-    ]);
+    ],);
   }
 
   Widget busList(String routeId) {
@@ -90,14 +90,14 @@ class BusTableState extends State<BusTable>
           child: SizedBox(
             child: Text(table.stops![i].stopName,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-          )),
+                style: const TextStyle(fontWeight: FontWeight.bold),),
+          ),),
       contentCellBuilder: (i, j) => Text(table.getTime(i, j)),
       cellDimensions: const CellDimensions.fixed(
           contentCellWidth: 100,
           contentCellHeight: 50,
           stickyLegendWidth: 100,
-          stickyLegendHeight: 50),
-    ));
+          stickyLegendHeight: 50,),
+    ),);
   }
 }

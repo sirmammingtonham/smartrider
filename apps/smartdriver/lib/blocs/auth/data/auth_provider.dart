@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:smartdriver/blocs/auth/auth_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared/models/saferide/driver.dart';
+import 'package:smartdriver/blocs/auth/auth_bloc.dart';
 
 class AuthProvider {
   // dependency injection for unit testing

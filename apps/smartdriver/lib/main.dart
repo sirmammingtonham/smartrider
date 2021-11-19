@@ -1,19 +1,18 @@
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smartdriver/blocs/auth/auth_bloc.dart';
-import 'package:smartdriver/blocs/location/location_bloc.dart';
-import 'package:smartdriver/blocs/order/order_bloc.dart';
-import 'package:smartdriver/blocs/auth/data/auth_repository.dart';
-import 'package:smartdriver/blocs/order/data/order_repository.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
-
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sizer/sizer.dart';
+import 'package:smartdriver/blocs/auth/auth_bloc.dart';
+import 'package:smartdriver/blocs/auth/data/auth_repository.dart';
+import 'package:smartdriver/blocs/location/location_bloc.dart';
+import 'package:smartdriver/blocs/order/data/order_repository.dart';
+import 'package:smartdriver/blocs/order/order_bloc.dart';
 import 'package:smartdriver/ui/home.dart';
 import 'package:smartdriver/ui/login.dart';
-import 'package:sizer/sizer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

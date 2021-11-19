@@ -2,24 +2,22 @@
 // TODO: give a message that you need to verify phone number before calling saferide
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:smartrider/ui/welcome.dart';
-import 'package:smartrider/ui/home.dart';
-// import 'package:sizer/sizer.dart';
-
 // prefs bloc
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
+import 'package:smartrider/ui/home.dart';
+import 'package:smartrider/ui/welcome.dart';
 
 const kTitleStyle = TextStyle(
   color: Colors.white,
   fontFamily: 'Helvetica',
-  fontSize: 30.0,
+  fontSize: 30,
   height: 1.5,
 );
 
 const kSubtitleStyle = TextStyle(
   color: Colors.white,
-  fontSize: 22.0,
+  fontSize: 22,
   height: 1.3,
 );
 
@@ -48,8 +46,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget _indicator(bool isActive) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
-      margin: const EdgeInsets.symmetric(horizontal: 8.0),
-      height: 8.0,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      height: 8,
       width: isActive ? 24.0 : 16.0,
       decoration: BoxDecoration(
         color: isActive ? Colors.black : const Color(0xFF181c5b),
@@ -105,14 +103,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             },
                             children: <Widget>[
                               Padding(
-                                padding: const EdgeInsets.all(40.0),
+                                padding: const EdgeInsets.all(40),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: const <Widget>[
                                     Center(
                                       child: Image(
                                         image: AssetImage(
-                                            'assets/onboarding_images/logo_v2.png'),
+                                            'assets/onboarding_images/logo_v2.png',),
                                         height: 42,
                                         width: 87,
                                       ),
@@ -130,7 +128,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 15.0),
+                                    SizedBox(height: 15),
                                     Center(
                                       child: Text(
                                           'All of your RPI transportation needs in one place, instantly accessible.',
@@ -140,7 +138,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
-                                          )),
+                                          ),),
                                     )
                                     //  Image(
                                     //    image: AssetImage('assets/onboarding_images/rpi_stock_photo.jpg'),
@@ -149,7 +147,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(40.0),
+                                padding: const EdgeInsets.all(40),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -161,11 +159,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         children: const <Widget>[
                                           Image(
                                               image: AssetImage(
-                                                  'assets/onboarding_images/interactive_map.png'),
+                                                  'assets/onboarding_images/interactive_map.png',),
                                               height: 35,
-                                              width: 55),
-                                        ]),
-                                    const SizedBox(height: 50.0),
+                                              width: 55,),
+                                        ],),
+                                    const SizedBox(height: 50),
                                     const Center(
                                       child: Text(
                                         'Interactive Map',
@@ -178,7 +176,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 15.0),
+                                    const SizedBox(height: 15),
                                     const Center(
                                       child: Text(
                                           'Easily locate nearby transporation stops and routes with live shuttle/bus tracking.',
@@ -188,13 +186,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
-                                          )),
+                                          ),),
                                     )
                                   ],
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(40.0),
+                                padding: const EdgeInsets.all(40),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -206,12 +204,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         children: const <Widget>[
                                           Image(
                                             image: AssetImage(
-                                                'assets/onboarding_images/comprehensive_scheduling.png'),
+                                                'assets/onboarding_images/comprehensive_scheduling.png',),
                                             height: 27,
                                             width: 75,
                                           ),
-                                        ]),
-                                    const SizedBox(height: 50.0),
+                                        ],),
+                                    const SizedBox(height: 50),
                                     const Center(
                                       child: Text(
                                         'Comprehensive Scheduling',
@@ -224,7 +222,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 15.0),
+                                    const SizedBox(height: 15),
                                     const Center(
                                       child: Text(
                                           'Access transportation route arrival times throughout the day and schedule reminders for specific stops.',
@@ -234,13 +232,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
-                                          )),
+                                          ),),
                                     )
                                   ],
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(40.0),
+                                padding: const EdgeInsets.all(40),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -258,8 +256,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                               width: 50,
                                             ),
                                           ),
-                                        ]),
-                                    const SizedBox(height: 50.0),
+                                        ],),
+                                    const SizedBox(height: 50),
                                     const Center(
                                       child: Text(
                                         'Request Transportation',
@@ -272,7 +270,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 15.0),
+                                    const SizedBox(height: 15),
                                     const Center(
                                         child: Text(
                                             'With the integration of the RPI SafeRide application, easily make a request for a vehicle to transport you safely around the campus.',
@@ -282,12 +280,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                               height: 1.5,
-                                            ))),
+                                            ),),),
                                   ],
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(40.0),
+                                padding: const EdgeInsets.all(40),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -299,12 +297,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         children: const <Widget>[
                                           Image(
                                             image: AssetImage(
-                                                'assets/onboarding_images/customizable_view.png'),
+                                                'assets/onboarding_images/customizable_view.png',),
                                             height: 35,
                                             width: 60,
                                           ),
-                                        ]),
-                                    const SizedBox(height: 50.0),
+                                        ],),
+                                    const SizedBox(height: 50),
                                     const Center(
                                       child: Text(
                                         'Cuztomizable View',
@@ -317,7 +315,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 15.0),
+                                    const SizedBox(height: 15),
                                     const Center(
                                       child: Text(
                                           'Conveniently choose which routes and stops are displayed on the map.',
@@ -327,7 +325,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                             height: 1.5,
-                                          )),
+                                          ),),
                                     )
                                   ],
                                 ),
@@ -339,8 +337,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: _buildPageIndicator(),
                         ),
-                        _currentPage != _numPages - 1
-                            ? Expanded(
+                        if (_currentPage != _numPages - 1) Expanded(
                                 child: Align(
                                   alignment: FractionalOffset.bottomRight,
                                   child: TextButton(
@@ -364,7 +361,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        SizedBox(width: 10.0),
+                                        SizedBox(width: 10),
                                         Icon(
                                           Icons.arrow_forward,
                                           color: Color(0xFF181c5b),
@@ -374,21 +371,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     ),
                                   ),
                                 ),
-                              )
-                            : const Text(''),
+                              ) else const Text(''),
                       ],
                     ),
                   ),
                 ),
               );
-      }),
+      },),
       bottomSheet: _currentPage == _numPages - 1 && !onboardDone
           ? Container(
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
                   borderRadius:
                       const BorderRadius.all(Radius.circular(double.infinity)),
-                  color: const Color(0xFF181c5b)),
+                  color: const Color(0xFF181c5b),),
               height: 10,
               width: double.infinity,
               child: GestureDetector(

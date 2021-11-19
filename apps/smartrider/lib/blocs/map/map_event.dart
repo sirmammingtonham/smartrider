@@ -60,4 +60,3 @@ class MapThemeChangeEvent extends MapEvent {
   @override
   List<Object> get props => [theme];
 }
-
