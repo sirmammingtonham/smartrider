@@ -70,7 +70,7 @@ export const casAuthenticate = functions
   .https.onRequest(async (req, res) => {
     const ORIGIN = `${req.protocol}://${req.get(
       "Host"
-    )}/smartrider-4e9e8/us-central1/casAuthenticate`;
+    )}/casAuthenticate`;
 
     if (req.query.ticket === undefined || req.query.ticket === null) {
       return res.redirect(`${CAS_ENDPOINT}/login?service=${ORIGIN}`);

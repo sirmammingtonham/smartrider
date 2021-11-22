@@ -28,6 +28,7 @@ dependencies:
 
   cloud_firestore: ^2.5.4
   cloud_functions: ^3.0.5
+  firebase_messaging: ^11.1.0
   device_preview: ^0.7.4
   equatable: ^2.0.2
   # firebase_analytics: ^8.1.1

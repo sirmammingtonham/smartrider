@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-// import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
@@ -40,12 +42,19 @@ Future<void> main() async {
     } else {
       await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
     }
+
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
   }
 
   if (const bool.hasEnvironment('EMULATORS')) {
-    // await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
+    await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
     FirebaseFunctions.instance.useFunctionsEmulator('10.0.2.2', 5001);
-    // FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
+    FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
   }
   final app = SmartRider(
     authRepo: await AuthRepository.create(),
@@ -121,6 +130,8 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
       },
     );
 
+    setupInteractedMessage();
+
     // init blocs
     _prefsBloc = PrefsBloc()..add(const LoadPrefsEvent());
     _authBloc = AuthBloc(authRepository: widget.authRepo)..add(AuthInitEvent());
@@ -159,6 +170,42 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
 
     // dynamic links (for auth)
     initDynamicLinks();
+  }
+
+  Future<void> setupInteractedMessage() async {
+    // Get any messages which caused the application to open from
+    // a terminated state.
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+    // If the message also contains a data property with a "type" of "chat",
+    // navigate to a chat screen
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    final notification = message.notification;
+    if (notification != null && !kIsWeb) {
+      _notifications.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'cloud_message',
+            'Cloud Alerts',
+            channelDescription:
+                'Important notifications from service providers',
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
+          iOS: IOSNotificationDetails(),
+        ),
+      );
+    }
   }
 
   Future<void> initDynamicLinks() async {
