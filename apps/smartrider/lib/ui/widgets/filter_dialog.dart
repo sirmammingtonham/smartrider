@@ -26,7 +26,7 @@ class _FilterDialogState extends State<FilterDialog> {
   Widget build(BuildContext context) {
     return Dialog(
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(18.0))),
+            borderRadius: BorderRadius.all(Radius.circular(18)),),
         child: FractionallySizedBox(
             heightFactor: 0.7,
             child: Stack(children: <Widget>[
@@ -35,11 +35,11 @@ class _FilterDialogState extends State<FilterDialog> {
                   children: <Widget>[
                     const SizedBox(height: 10),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       height: 64,
                       child: Material(
-                        borderRadius: BorderRadius.circular(10.0),
-                        elevation: 5.0,
+                        borderRadius: BorderRadius.circular(10),
+                        elevation: 5,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -49,7 +49,7 @@ class _FilterDialogState extends State<FilterDialog> {
                             ),
                             Expanded(
                                 child: Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
+                              padding: const EdgeInsets.only(right: 8),
                               child: TextField(
                                 controller: widget.controller,
                                 autofocus: false,
@@ -57,9 +57,9 @@ class _FilterDialogState extends State<FilterDialog> {
                                   Navigator.pop(context);
                                 },
                                 decoration: const InputDecoration(
-                                    hintText: 'Filter Results'),
+                                    hintText: 'Filter Results',),
                               ),
-                            )),
+                            ),),
                             IconButton(
                               icon: const Icon(Icons.cancel),
                               onPressed: () {
@@ -93,9 +93,9 @@ class _FilterDialogState extends State<FilterDialog> {
                                 Navigator.pop(context);
                               },
                             );
-                          }),
+                          },),
                     ),
-                  ]),
+                  ],),
               Positioned(
                   bottom: 20,
                   right: 20,
@@ -104,7 +104,7 @@ class _FilterDialogState extends State<FilterDialog> {
                       Navigator.pop(context);
                     },
                     child: const Icon(Icons.arrow_back),
-                  )),
-            ])));
+                  ),),
+            ],),),);
   }
 }

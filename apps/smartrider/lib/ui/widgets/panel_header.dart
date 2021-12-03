@@ -1,17 +1,14 @@
 // ui dependencies
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 // import 'package:sizer/sizer.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
-
 // bloc stuff
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
-
 // loading custom widgets and data
 import 'package:smartrider/ui/widgets/saferide_status_widgets.dart'
     as saferide_widgets;
+import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 
 class PanelHeader extends StatelessWidget {
   const PanelHeader({Key? key, required this.panelController})

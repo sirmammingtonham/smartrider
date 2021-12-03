@@ -7,7 +7,7 @@
 // import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 // // import 'package:intl/intl.dart';
 //
-import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
+// import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 // // import 'package:smartrider/blocs/map/map_bloc.dart';
 // // import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 

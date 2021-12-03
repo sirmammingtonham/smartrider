@@ -56,7 +56,7 @@ class SlidingUpPanel extends StatefulWidget {
       this.slideDirection = SlideDirection.up,
       this.defaultPanelState = PanelState.closed,
       this.header,
-      this.footer})
+      this.footer,})
       : assert(panel != null || panelBuilder != null),
         assert(0 <= backdropOpacity && backdropOpacity <= 1.0),
         assert(snapPoint == null || 0 < snapPoint && snapPoint < 1.0),
@@ -220,7 +220,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
         value: widget.defaultPanelState == PanelState.closed
             ? 0.0
             : 1.0 //set the default panel state (i.e. set initial value of _ac)
-        )
+        ,)
       ..addListener(() {
         if (widget.onPanelSlide != null) widget.onPanelSlide!(_ac.value);
 
@@ -295,15 +295,13 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                         color: _ac.value == 0.0
                             ? null
                             : widget.backdropColor.withOpacity(
-                                widget.backdropOpacity * _ac.value),
+                                widget.backdropOpacity * _ac.value,),
                       );
-                    }),
+                    },),
               ),
 
         //the actual sliding part
-        !_isPanelVisible
-            ? Container()
-            : _gestureHandler(
+        if (!_isPanelVisible) Container() else _gestureHandler(
                 child: AnimatedBuilder(
                   animation: _ac,
                   builder: (context, child) {
@@ -344,7 +342,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                           child: SizedBox(
                             height: widget.maxHeight,
                             child: widget.panel ?? widget.panelBuilder!(_sc),
-                          )),
+                          ),),
 
                       // header
                       if (widget.header != null) Positioned(
@@ -368,7 +366,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                                   widget.slideDirection == SlideDirection.down
                                       ? null
                                       : 0.0,
-                              child: widget.footer ?? const SizedBox()) else Container(),
+                              child: widget.footer ?? const SizedBox(),) else Container(),
 
                       // collapsed panel
                       Positioned(
@@ -399,7 +397,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
                                   // underneath
                                   child: IgnorePointer(
                                       ignoring: _isPanelOpen,
-                                      child: widget.collapsed),
+                                      child: widget.collapsed,),
                                 ),
                         ),
                       ),
@@ -451,7 +449,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
           _vt.addPosition(p.timeStamp, p.position),
       onPointerMove: (PointerMoveEvent p) {
         _vt.addPosition(p.timeStamp,
-            p.position); // add current position for velocity tracking
+            p.position,); // add current position for velocity tracking
         _onGestureSlide(p.position.dy, p.delta.dy);
       },
       onPointerUp: (PointerUpEvent p) => _onGestureEnd(_vt.getVelocity()),
@@ -574,7 +572,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
         ),
         _ac.value,
         targetPos,
-        velocity);
+        velocity,);
 
     _ac.animateWith(simulation);
   }
@@ -613,7 +611,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
 
   //animate the panel position to value - must be between 0.0 and 1.0
   Future<void> _animatePanelToPosition(double value,
-      {Duration? duration, Curve curve = Curves.linear}) {
+      {Duration? duration, Curve curve = Curves.linear,}) {
     assert(0.0 <= value && value <= 1.0);
     return _ac.animateTo(value, duration: duration, curve: curve);
   }
@@ -621,7 +619,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
   //animate the panel position to the snap point REQUIRES that widget.snapPoint
   //!= null
   Future<void> _animatePanelToSnapPoint(
-      {Duration? duration, Curve curve = Curves.linear}) {
+      {Duration? duration, Curve curve = Curves.linear,}) {
     assert(widget.snapPoint != null);
     return _ac.animateTo(widget.snapPoint!, duration: duration, curve: curve);
   }
@@ -691,7 +689,7 @@ class PanelController {
   /// duration specifies the time for the animation to complete (optional) curve
   /// specifies the easing behavior of the animation.
   Future<void> animatePanelToPosition(double value,
-      {Duration? duration, Curve curve = Curves.linear}) {
+      {Duration? duration, Curve curve = Curves.linear,}) {
     assert(isAttached, 'PanelController must be attached to a SlidingUpPanel');
     assert(0.0 <= value && value <= 1.0);
     return _panelState!
@@ -703,10 +701,10 @@ class PanelController {
   /// specifies the time for the animation to complete (optional) curve
   /// specifies the easing behavior of the animation.
   Future<void> animatePanelToSnapPoint(
-      {Duration? duration, Curve curve = Curves.linear}) {
+      {Duration? duration, Curve curve = Curves.linear,}) {
     assert(isAttached, 'PanelController must be attached to a SlidingUpPanel');
     assert(_panelState!.widget.snapPoint != null,
-        'SlidingUpPanel snapPoint property must not be null');
+        'SlidingUpPanel snapPoint property must not be null',);
     return _panelState!
         ._animatePanelToSnapPoint(duration: duration, curve: curve);
   }

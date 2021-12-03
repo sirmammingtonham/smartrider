@@ -49,7 +49,7 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
           {required String title,
           required String asset,
           double? size,
-          Color? color}) =>
+          Color? color,}) =>
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 1),
         child: SingleChildScrollView(
@@ -95,7 +95,7 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
             ),
           ),
         ),
-      ));
+      ),);
 
   Widget button(BuildContext context) => Showcase(
       key: showcaseLegend,
@@ -117,7 +117,7 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
           //     ? Colors.black87
           //     : Theme.of(context).accentColor,
         ),
-      ));
+      ),);
 
   @override
   Widget build(BuildContext context) {
@@ -133,11 +133,11 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                 _legendMarkerTile(
                     title: 'Bus Stop',
                     asset: 'assets/map_icons/marker_stop_bus.svg',
-                    size: iconSize),
+                    size: iconSize,),
                 _legendMarkerTile(
                     title: 'Realtime Bus',
                     asset: 'assets/map_icons/marker_vehicle.svg',
-                    size: iconSize),
+                    size: iconSize,),
                 _legendRouteTile(title: 'Route 87', color: busColors['87']!),
                 _legendRouteTile(title: 'Route 286', color: busColors['286']!),
                 _legendRouteTile(title: 'Route 289', color: busColors['289']!),
@@ -159,18 +159,18 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                 if (entry.value.active) {
                   routeTiles.add(_legendRouteTile(
                       title: entry.key,
-                      color: shuttleRoutes[entry.key]!.color));
+                      color: shuttleRoutes[entry.key]!.color,),);
                 }
               }
               legend = _legendCard([
                 _legendMarkerTile(
                     title: 'Shuttle Stop',
                     asset: 'assets/map_icons/marker_stop_shuttle.svg',
-                    size: iconSize),
+                    size: iconSize,),
                 _legendMarkerTile(
                     title: 'Realtime Shuttle',
                     asset: 'assets/map_icons/marker_vehicle.svg',
-                    size: iconSize),
+                    size: iconSize,),
                 ...routeTiles
               ]);
               height = 82.0 + (25 * routeTiles.length);
@@ -183,7 +183,7 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                 _legendMarkerTile(
                     title: 'Safe Ride',
                     asset: 'assets/map_icons/marker_saferide.svg',
-                    size: iconSize),
+                    size: iconSize,),
                 _legendMarkerTile(
                   title: 'Your Safe Ride',
                   asset: 'assets/map_icons/marker_saferide_alt.svg',
@@ -192,11 +192,11 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
                 _legendMarkerTile(
                     title: 'Pickup Location',
                     asset: 'assets/map_icons/marker_pickup.svg',
-                    size: iconSize),
+                    size: iconSize,),
                 _legendMarkerTile(
                     title: 'Dropoff Location',
                     asset: 'assets/map_icons/marker_dropoff.svg',
-                    size: iconSize)
+                    size: iconSize,)
               ]);
               height = 140.0;
               width = 185.0;
@@ -219,7 +219,7 @@ class _LegendState extends State<Legend> with TickerProviderStateMixin {
               Radius.circular(_isExpanded ? 20 : 100),
             ),
           ),
-          child: _isExpanded ? legend : button(context));
-    });
+          child: _isExpanded ? legend : button(context),);
+    },);
   }
 }

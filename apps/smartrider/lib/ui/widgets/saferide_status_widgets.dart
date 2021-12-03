@@ -2,12 +2,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:shared/util/math/num_to_ordinal.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 // bloc imports
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared/util/math/num_to_ordinal.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // import 'package:sizer/sizer.dart';
 
@@ -37,7 +36,7 @@ Widget saferideSelectionWidget(
                   style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                      color: Colors.white,),
                 ),
               ),
               Builder(builder: (context) {
@@ -51,14 +50,14 @@ Widget saferideSelectionWidget(
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w300,
-                            color: Colors.white60),
+                            color: Colors.white60,),
                       ),
                     ),
                   );
                 } else {
                   return const SizedBox.shrink();
                 }
-              }),
+              },),
               const SizedBox(height: 14),
               ElevatedButton(
                 onPressed: () {
@@ -76,7 +75,7 @@ Widget saferideSelectionWidget(
               )
             ],
           ),
-        ));
+        ),);
 
 /// widget for order status waiting
 Widget saferideWaitingWidget(
@@ -96,7 +95,7 @@ Widget saferideWaitingWidget(
                   style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                      color: Colors.white,),
                 ),
               ),
               ListTile(
@@ -109,7 +108,7 @@ Widget saferideWaitingWidget(
                     '${(state.queuePosition + 1).toOrdinal()} in line',
                     style: const TextStyle(
                       color: Colors.white,
-                    )),
+                    ),),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -127,7 +126,7 @@ Widget saferideWaitingWidget(
               )
             ],
           ),
-        ));
+        ),);
 
 /// widget for order status picking up
 Widget saferidePickingUpWidget(
@@ -147,7 +146,7 @@ Widget saferidePickingUpWidget(
                 style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                    color: Colors.white,),
               ),
             ),
             ListTile(
@@ -164,7 +163,7 @@ Widget saferidePickingUpWidget(
               subtitle: const Text('Driver',
                   style: TextStyle(
                     color: Colors.white,
-                  )),
+                  ),),
               trailing: const Icon(
                 Icons.call,
                 color: Colors.white,

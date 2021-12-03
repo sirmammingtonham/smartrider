@@ -12,11 +12,10 @@ import 'package:showcaseview/showcaseview.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/ui/home.dart';
+import 'package:smartrider/ui/widgets/expandable_fab.dart';
 import 'package:smartrider/ui/widgets/legend.dart';
 import 'package:smartrider/ui/widgets/saferide_status_widgets.dart'
     as saferide_widgets;
-
-import 'package:smartrider/ui/widgets/expandable_fab.dart';
 
 final LatLngBounds rpiBounds = LatLngBounds(
   southwest: const LatLng(42.691255, -73.698129),
