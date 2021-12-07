@@ -78,6 +78,7 @@ class _HomePageState extends State<_HomePage>
     );
     BlocProvider.of<MapBloc>(context).add(const MapInitEvent());
     BlocProvider.of<SaferideBloc>(context).add(const SaferideNoEvent());
+    BlocProvider.of<ShowcaseBloc>(context).add(const ShowcaseInitEvent());
  
   }
 
@@ -135,9 +136,9 @@ class _HomePageState extends State<_HomePage>
       controller: _panelController,
       maxHeight: MediaQuery.of(context).size.height * 0.9,
       minHeight: minHeight,
-      //onPanelOpened: () {
-      // startTimelineShowcase(prefsState, context);
-      //},
+      // onPanelOpened: () {
+      // _showcaseBloc.startTimelineShowcase(context);
+      // },
       parallaxEnabled: true,
       renderPanelSheet: false,
       backdropEnabled: true,

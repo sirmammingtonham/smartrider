@@ -11,6 +11,11 @@ part 'showcase_event.dart';
 part 'showcase_state.dart';
 
 class ShowcaseBloc extends Bloc<ShowcaseEvent, ShowcaseState> {
+  
+  ShowcaseBloc({    
+    required this.prefsBloc,
+  }) : super(const ShowcaseLoadingState());
+  
   // TODO: Replace keys and make public
   GlobalKey showcaseSettings = GlobalKey();
   GlobalKey showcaseShuttleToggle = GlobalKey();
@@ -26,14 +31,9 @@ class ShowcaseBloc extends Bloc<ShowcaseEvent, ShowcaseState> {
   GlobalKey showcaseMap = GlobalKey();
   GlobalKey showcaseTimeline = GlobalKey();
   
-  ShowcaseBloc({    
-    required this.prefsBloc,
-  }) : super(const ShowcaseLoadingState());
 
   /// Preferences Bloc
-
   final PrefsBloc prefsBloc;
-
 
   // TODO: showcase logic, move out of home.dart
   void startShowcase(BuildContext context) {

@@ -283,6 +283,7 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
         BlocProvider<SaferideBloc>(create: (context) => _saferideBloc),
         BlocProvider<MapBloc>(create: (context) => _mapBloc),
         BlocProvider<ScheduleBloc>(create: (context) => _scheduleBloc),
+        BlocProvider<ShowcaseBloc>(create: (context) =>_showcaseBloc), 
       ],
       child: MaterialApp(
         builder: (context, widget) => ResponsiveWrapper.builder(
