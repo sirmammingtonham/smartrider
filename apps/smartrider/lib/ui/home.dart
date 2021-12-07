@@ -9,6 +9,9 @@ import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 // bloc imports
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
+import 'package:smartrider/blocs/showcase/showcase_bloc.dart';
+
+
 // custom widget imports
 import 'package:smartrider/ui/widgets/map_widget.dart';
 import 'package:smartrider/ui/widgets/panel_body.dart';
@@ -38,6 +41,7 @@ class HomePage extends StatelessWidget {
 
   static const String route = '/';
 
+
   /// Builds our Home Page by calling the constructor for
   /// the class that builds the homepage.
   @override
@@ -61,6 +65,7 @@ class _HomePageState extends State<_HomePage>
     with SingleTickerProviderStateMixin {
   late final PanelController _panelController;
   late final TabController _tabController;
+  late final ShowcaseBloc _showcaseBloc;
 
   @override
   void initState() {
@@ -73,6 +78,7 @@ class _HomePageState extends State<_HomePage>
     );
     BlocProvider.of<MapBloc>(context).add(const MapInitEvent());
     BlocProvider.of<SaferideBloc>(context).add(const SaferideNoEvent());
+ 
   }
 
   // TODO: showcase logic, move out of home.dart
@@ -129,9 +135,9 @@ class _HomePageState extends State<_HomePage>
       controller: _panelController,
       maxHeight: MediaQuery.of(context).size.height * 0.9,
       minHeight: minHeight,
-      // onPanelOpened: () {
-      //   startTimelineShowcase(prefsState as PrefsLoadedState, context);
-      // },
+      //onPanelOpened: () {
+      // startTimelineShowcase(prefsState, context);
+      //},
       parallaxEnabled: true,
       renderPanelSheet: false,
       backdropEnabled: true,

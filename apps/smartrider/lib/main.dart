@@ -25,6 +25,7 @@ import 'package:smartrider/blocs/preferences/prefs_bloc.dart';
 import 'package:smartrider/blocs/saferide/data/saferide_repository.dart';
 import 'package:smartrider/blocs/saferide/saferide_bloc.dart';
 import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
+import 'package:smartrider/blocs/showcase/showcase_bloc.dart';
 import 'package:smartrider/ui/home.dart';
 import 'package:smartrider/ui/welcome.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -100,6 +101,7 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
   late final MapBloc _mapBloc;
   late final SaferideBloc _saferideBloc;
   late final ScheduleBloc _scheduleBloc;
+  late final ShowcaseBloc _showcaseBloc;
   static const FlexScheme colorScheme = FlexScheme.redWine;
 
   @override
@@ -153,6 +155,10 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
       busRepo: widget.busRepo,
       notifications: _notifications,
     );
+     _showcaseBloc = ShowcaseBloc(
+       prefsBloc: _prefsBloc,
+    );
+
 
     // init theme change
     final window = WidgetsBinding.instance!.window;

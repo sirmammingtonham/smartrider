@@ -27,17 +27,17 @@ class ShowcaseBloc extends Bloc<ShowcaseEvent, ShowcaseState> {
   GlobalKey showcaseTimeline = GlobalKey();
   
   ShowcaseBloc({    
-    required this.prefState,
+    required this.prefsBloc,
   }) : super(const ShowcaseLoadingState());
 
   /// Preferences Bloc
 
-  final PrefsLoadedState prefState;
+  final PrefsBloc prefsBloc;
 
 
   // TODO: showcase logic, move out of home.dart
   void startShowcase(BuildContext context) {
-    if (prefState.prefs.getBool('firstTimeLoad') == true) {
+    if (prefsBloc.getBool('firstTimeLoad') == true) {
       ShowCaseWidget.of(context)!.startShowCase([
         showcaseMap,
         showcaseSettings,
@@ -47,16 +47,16 @@ class ShowcaseBloc extends Bloc<ShowcaseEvent, ShowcaseState> {
         showcaseLocation,
         showcaseSlidingPanel
       ]);
-      prefState.prefs.setBool('firstTimeLoad', false);
+      prefsBloc.setBool('firstTimeLoad');
     }
   }
 
   //  TODO: showcase logic, move out of home.dart
   void startTimelineShowcase(BuildContext context) {
-    if (prefState.prefs.getBool('firstSlideUp') == true) {
+    if (prefsBloc.getBool('firstSlideUp') == true) {
       ShowCaseWidget.of(context)!.startShowCase(
           [showcaseTransportTab, showcaseBusTab, showcaseTimeline],);
-      prefState.prefs.setBool('firstSlideUp', false);
+      prefsBloc.setBool('firstSlideUp');
     }
   }
 

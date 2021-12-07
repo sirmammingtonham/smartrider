@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // model imports
 import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 part 'prefs_event.dart';
 part 'prefs_state.dart';
@@ -32,6 +33,18 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
 
   String? getCurrentOrderId() {
     return _sharedPrefs.getString('current_order');
+  }
+
+  bool? getBool(String key) {
+    return _sharedPrefs.getBool(key);
+  }
+
+  void setBool(String key) {
+    if (_sharedPrefs.getBool(key) == true) {
+      _sharedPrefs.setBool(key, false);
+    } else {
+      _sharedPrefs.setBool(key, true);
+    }
   }
 
   void setCurrentOrderId(String? id) {

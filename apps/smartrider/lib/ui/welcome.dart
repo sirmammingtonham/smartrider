@@ -68,7 +68,7 @@ class AuthUI extends StatefulWidget {
 
 class AuthUIState extends State<AuthUI> {
   static const authUrl =
-      'http://10.0.2.2:5001/smartrider-4e9e8/us-central1/casAuthenticate';
+      'https://us-central1-smartrider-4e9e8.cloudfunctions.net/casAuthenticate';
 
   @override
   void initState() {
