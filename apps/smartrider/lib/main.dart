@@ -215,22 +215,7 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
   }
 
   Future<void> initDynamicLinks() async {
-    FirebaseDynamicLinks.instance.onLink(
-      onSuccess: (PendingDynamicLinkData? dynamicLink) async {
-        final deepLink = dynamicLink?.link;
-        if (deepLink != null) {
-          await _handleDeepLink(deepLink);
-        }
-      },
-      onError: (OnLinkErrorException e) async {
-        _authBloc.add(
-          AuthFailedEvent(
-            exception: e,
-            message: 'Auth redirect failed!',
-          ),
-        );
-      },
-    );
+    FirebaseDynamicLinks.instance.onLink;
 
     final data = await FirebaseDynamicLinks.instance.getInitialLink();
     final deepLink = data?.link;
