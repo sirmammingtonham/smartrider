@@ -155,10 +155,9 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
       busRepo: widget.busRepo,
       notifications: _notifications,
     );
-     _showcaseBloc = ShowcaseBloc(
-       prefsBloc: _prefsBloc,
+    _showcaseBloc = ShowcaseBloc(
+      prefsBloc: _prefsBloc,
     );
-
 
     // init theme change
     final window = WidgetsBinding.instance!.window;
@@ -215,7 +214,20 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
   }
 
   Future<void> initDynamicLinks() async {
-    FirebaseDynamicLinks.instance.onLink;
+    FirebaseDynamicLinks.instance.onLink
+        .listen((PendingDynamicLinkData? dynamicLink) async {
+      final deepLink = dynamicLink?.link;
+      if (deepLink != null) {
+        await _handleDeepLink(deepLink);
+      }
+    }).onError((dynamic e) {
+      _authBloc.add(
+        AuthFailedEvent(
+          exception: e as Exception,
+          message: 'Auth redirect failed!',
+        ),
+      );
+    });
 
     final data = await FirebaseDynamicLinks.instance.getInitialLink();
     final deepLink = data?.link;
@@ -268,7 +280,7 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
         BlocProvider<SaferideBloc>(create: (context) => _saferideBloc),
         BlocProvider<MapBloc>(create: (context) => _mapBloc),
         BlocProvider<ScheduleBloc>(create: (context) => _scheduleBloc),
-        BlocProvider<ShowcaseBloc>(create: (context) =>_showcaseBloc), 
+        BlocProvider<ShowcaseBloc>(create: (context) => _showcaseBloc),
       ],
       child: MaterialApp(
         builder: (context, widget) => ResponsiveWrapper.builder(
