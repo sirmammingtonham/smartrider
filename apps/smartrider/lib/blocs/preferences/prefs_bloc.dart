@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // model imports
 import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sms_autofill/sms_autofill.dart';
+// import 'package:sms_autofill/sms_autofill.dart';
 
 part 'prefs_event.dart';
 part 'prefs_state.dart';
@@ -108,7 +108,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
           if (hideInactiveRoutes) {
             hideInactiveRoutes = false;
             for (final route in (event as InitActiveRoutesEvent).routes) {
-              _shuttles[route.name] = route.active;
+              _shuttles[route.id!] = route.active;
             }
           }
           yield const PrefsChangedState();

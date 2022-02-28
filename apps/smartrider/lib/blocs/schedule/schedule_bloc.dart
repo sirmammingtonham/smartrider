@@ -128,8 +128,8 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         stopName: stop.name ?? '',
         secondsFromNow: secondsFromNow,
         payload: jsonEncode({
-          'latitude': stop.latitude,
-          'longitude': stop.longitude,
+          'latitude': stop.coordinate?.latitude,
+          'longitude': stop.coordinate?.longitude,
         }),
       );
 

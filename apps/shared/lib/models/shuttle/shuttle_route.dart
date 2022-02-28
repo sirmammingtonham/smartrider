@@ -1,7 +1,5 @@
 import 'dart:ui';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ShuttleRoute {
@@ -12,7 +10,7 @@ class ShuttleRoute {
       coordinates = <Coordinates>[];
       (json['coordinates'] as List<dynamic>).map((dynamic e) =>
       coordinates?.add
-      (Coordinates.fromJson(e as Map<String, dynamic>)));
+      (Coordinates.fromJson(e as Map<String, dynamic>)),);
     }
 
     stopIds = stops;
