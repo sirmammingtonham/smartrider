@@ -1,6 +1,4 @@
 // ui dependencies
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
 // loading custom widgets and data

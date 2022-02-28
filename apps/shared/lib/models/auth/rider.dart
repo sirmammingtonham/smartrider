@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
+// ignore: must_be_immutable
 class Rider extends Equatable {
   Rider({
     required this.ref,

@@ -38,8 +38,8 @@ class ShuttleProvider {
 
 
     // Set stopIds for route
-    var temp = await getStops();
-    var stops = temp.map((e) => e.name).toList();
+    final temp = await getStops();
+    final stops = temp.map((e) => e.name).toList();
 
 
     final routeMap = response != null

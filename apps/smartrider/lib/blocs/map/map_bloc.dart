@@ -410,7 +410,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             ),
           );
 
-          scrollToCurrentLocation(zoom: 16);
+          await scrollToCurrentLocation(zoom: 16);
         }
         break;
       case SaferidePickingUpState:

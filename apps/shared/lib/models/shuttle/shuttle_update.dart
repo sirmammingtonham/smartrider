@@ -1,6 +1,5 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+
 
 class ShuttleUpdate {
   ShuttleUpdate({this.id, this.location});
