@@ -1,97 +1,56 @@
 import 'dart:ui';
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ShuttleRoute {
-  ShuttleRoute({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.enabled,
-    required this.color,
-    required this.width,
-    required this.stopIds,
-    required this.created,
-    required this.updated,
-    required this.points,
-    required this.active,
-    required this.schedule,
-  });
+  ShuttleRoute({this.coordinates, this.id});
 
-  factory ShuttleRoute.fromJson(Map<String, dynamic> json) {
-    final points = <Point>[];
-    for (final v in json['points'] as List) {
-      points.add(Point.fromJson(v as Map<String, dynamic>));
+  ShuttleRoute.fromJson(Map<String, dynamic> json, List<String?> stops) {
+    if (json['coordinates'] != null) {
+      coordinates = <Coordinates>[];
+      (json['coordinates'] as List<dynamic>).map((dynamic e) =>
+      coordinates?.add
+      (Coordinates.fromJson(e as Map<String, dynamic>)));
     }
-    final schedule = <Schedule>[];
-    for (final v in json['schedule'] as List) {
-      schedule.add(Schedule.fromJson(v as Map<String, dynamic>));
-    }
-    return ShuttleRoute(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      enabled: json['enabled'] as bool,
-      color: Color(int.parse(json['color'].toString().replaceAll('#', '0xff'))),
-      width: json['width'] as int,
-      stopIds: (json['stop_ids'] as List).cast<int>(),
-      created: json['created'] as String,
-      updated: json['updated'] as String,
-      points: points,
-      active: json['active'] as bool,
-      schedule: schedule,
-    );
+
+    stopIds = stops;
+    id = json['id'] as String?;
   }
 
-  final int id;
-  final String name;
-  final String description;
-  final bool enabled;
-  final Color color;
-  final int width;
-  final List<int> stopIds;
-  final String created;
-  final String updated;
-  final List<Point> points;
-  final bool active;
-  final List<Schedule> schedule;
-
-  Polyline get getPolyline => Polyline(
-        polylineId: PolylineId(name),
-        color: color,
-        width: 4,
-        points: points.map((points) => points.getLatLng).toList(),
-      );
+  List<Coordinates>? coordinates;
+  String? id;
+  List<String?> stopIds = [];
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
+    if (coordinates != null) {
+      data['coordinates'] = coordinates!.map((v) => v.toJson()).toList();
+    }
     data['id'] = id;
-    data['name'] = name;
-    data['description'] = description;
-    data['enabled'] = enabled;
-    data['color'] = color;
-    data['width'] = width;
-    data['stop_ids'] = stopIds;
-    data['created'] = created;
-    data['updated'] = updated;
-
-    data['points'] = points.map((v) => v.toJson()).toList();
-
-    data['active'] = active;
-
-    data['schedule'] = schedule.map((v) => v.toJson()).toList();
-
     return data;
   }
+
+  Color color = const Color(0xff000000);
+  bool active = true;
+  bool enabled = true;
+
+  Polyline get getPolyline => Polyline(
+        polylineId: PolylineId(id.toString()),
+        color: color,
+        width: 4,
+        points: coordinates!.map((coord) => coord.getLatLng).toList(),
+      );
 }
 
-class Point {
-  Point({this.latitude, this.longitude});
+class Coordinates {
+  Coordinates({this.latitude, this.longitude});
 
-  Point.fromJson(Map<String, dynamic> json) {
-    latitude = json['latitude'] as double?;
-    longitude = json['longitude'] as double?;
+  Coordinates.fromJson(Map<String, dynamic> json) {
+    latitude = json['latitude'] as double;
+    longitude = json['longitude'] as double;
   }
-
   double? latitude;
   double? longitude;
 
@@ -105,40 +64,18 @@ class Point {
   }
 }
 
-class Schedule {
-  Schedule({
-    this.id,
-    this.routeId,
-    this.startDay,
-    this.startTime,
-    this.endDay,
-    this.endTime,
-  });
 
-  Schedule.fromJson(Map<String, dynamic> json) {
-    id = json['id'] as int?;
-    routeId = json['route_id'] as int?;
-    startDay = json['start_day'] as int?;
-    startTime = json['start_time'] as String?;
-    endDay = json['end_day'] as int?;
-    endTime = json['end_time'] as String?;
-  }
+// Test code below
 
-  int? id;
-  int? routeId;
-  int? startDay;
-  String? startTime;
-  int? endDay;
-  String? endTime;
-
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['id'] = id;
-    data['route_id'] = routeId;
-    data['start_day'] = startDay;
-    data['start_time'] = startTime;
-    data['end_day'] = endDay;
-    data['end_time'] = endTime;
-    return data;
-  }
-}
+// void main() async {
+//   final r = await http.get(Uri.parse("https://shuttletracker.app/routes"));
+//   final response = json.decode(r.body);
+//   final routeMap = response != null
+//       ? <String, ShuttleRoute>{
+//           for (final json in response)
+//             (json as Map<String, dynamic>)['id'] as String:
+//                 ShuttleRoute.fromJson(json)
+//         }
+//       : <String, ShuttleRoute>{};
+//   print(routeMap);
+// }

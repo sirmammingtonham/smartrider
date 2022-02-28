@@ -16,7 +16,7 @@ class ShuttleProvider {
   /// This function will fetch the data from the JSON API and return a decoded
   Future<List<dynamic>?> fetch(String type) async {
     final response =
-        await get<List<dynamic>>(url: 'https://shuttles.rpi.edu/$type');
+        await get<List<dynamic>>(url: 'https://shuttletracker.app/$type');
     isConnected = response != null;
     return response;
   }
@@ -36,16 +36,22 @@ class ShuttleProvider {
     ///     return routeMap;
     final response = await fetch('routes');
 
+
+    // Set stopIds for route
+    var temp = await getStops();
+    var stops = temp.map((e) => e.name).toList();
+
+
     final routeMap = response != null
         ? <String, ShuttleRoute>{
-            for (final json in response.where(
-              (dynamic json) =>
-                  (json as Map<String, dynamic>)['enabled'] as bool,
-            ))
-              (json as Map<String, dynamic>)['name'] as String:
-                  ShuttleRoute.fromJson(json)
+            for (final json in response)
+              (json as Map<String, dynamic>)['id'] as String:
+                  ShuttleRoute.fromJson(json, stops)
+            
           }
         : <String, ShuttleRoute>{};
+
+    
 
     return routeMap;
   }
@@ -83,7 +89,7 @@ class ShuttleProvider {
     ///
     ///
     ///     return updatesList;
-    final response = await fetch('updates');
+    final response = await fetch('buses');
     final updatesList = response != null
         ? response
             .map<ShuttleUpdate>(

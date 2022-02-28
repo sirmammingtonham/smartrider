@@ -647,20 +647,21 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Marker _shuttleUpdateToMarker(ShuttleUpdate update) {
     return Marker(
-      icon: _updateIcons[update.routeId.toString()] ?? _updateIcons['-1']!,
+      icon: _updateIcons[update.id.toString()] ?? _updateIcons['-1']!,
       infoWindow: InfoWindow(
-        title: 'Shuttle #${update.vehicleId.toString()} '
-            'on Route ${update.routeId}',
+        title: 'Shuttle #${update.id.toString()} ',
       ),
       flat: true,
       markerId: MarkerId(update.id.toString()),
-      position: update.getLatLng,
-      rotation: update.heading! as double,
+      position: update.location!.coordinate!.getLatLng,
       anchor: const Offset(0.5, 0.5),
       onTap: () {
         _controller!.animateCamera(
           CameraUpdate.newCameraPosition(
-            CameraPosition(target: update.getLatLng, zoom: 18, tilt: 50),
+            CameraPosition(
+                target: update.location!.coordinate!.getLatLng,
+                zoom: 18,
+                tilt: 50),
           ),
         );
       },

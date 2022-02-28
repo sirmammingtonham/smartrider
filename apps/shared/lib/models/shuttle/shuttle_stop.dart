@@ -1,45 +1,49 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ShuttleStop {
-  ShuttleStop({
-    this.id,
-    this.latitude,
-    this.longitude,
-    this.created,
-    this.updated,
-    this.name,
-    this.description,
-  });
+  ShuttleStop({this.coordinate, this.name, this.id});
 
   ShuttleStop.fromJson(Map<String, dynamic> json) {
-    id = json['id'] as int?;
-    latitude = json['latitude'] as double?;
-    longitude = json['longitude'] as double?;
-    created = json['created'] as String?;
-    updated = json['updated'] as String?;
-    name = json['name'] as String?;
-    description = json['description'] as String?;
+    coordinate = json['coordinate'] != null
+        ? Coordinate.fromJson(json['coordinate'] as Map<String, dynamic>)
+        : null;
+    name = json['name'] as String;
+    id = json['name'] as String;
   }
 
-  int? id;
-  double? latitude;
-  double? longitude;
-  String? created;
-  String? updated;
+  Coordinate? coordinate;
   String? name;
-  String? description;
+  String? id;
 
-  LatLng get getLatLng => LatLng(latitude!, longitude!);
+  LatLng get getLatLng => 
+  LatLng((coordinate?.latitude)!, (coordinate?.longitude)!);
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
-    data['id'] = id;
-    data['latitude'] = latitude;
-    data['longitude'] = longitude;
-    data['created'] = created;
-    data['updated'] = updated;
+    if (coordinate != null) {
+      data['coordinate'] = coordinate!.toJson();
+    }
     data['name'] = name;
-    data['description'] = description;
+    data['id'] = id;
+    return data;
+  }
+}
+
+class Coordinate {
+  Coordinate({this.longitude, this.latitude});
+
+  Coordinate.fromJson(Map<String, dynamic> json) {
+    longitude = json['longitude'] as double;
+    latitude = json['latitude'] as double;
+  }
+
+  double? longitude;
+  double? latitude;
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['longitude'] = longitude;
+    data['latitude'] = latitude;
     return data;
   }
 }
