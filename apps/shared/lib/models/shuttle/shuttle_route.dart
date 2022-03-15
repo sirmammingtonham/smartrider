@@ -14,7 +14,10 @@ class ShuttleRoute {
     }
 
     stopIds = stops;
-    id = json['id'] as String?;
+    // Hard coded because there is only one route, and ShuttleTracker API
+    // no longer carries route names
+    id = 'Main Route'; 
+    // id = json['id'] as String?;
   }
 
   List<Coordinates>? coordinates;
