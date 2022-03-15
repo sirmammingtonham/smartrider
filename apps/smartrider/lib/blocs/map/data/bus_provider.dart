@@ -157,12 +157,13 @@ class BusProvider {
     final now = DateTime.now();
     final milliseconds = now.millisecondsSinceEpoch;
     final updates = <String, List<BusRealtimeUpdate>>{};
-    final response = await get<List<Map<String, dynamic>>>(
+    final response = await get<List<dynamic>>(
       url: 'https://www.cdta.org/realtime/buses.json?$milliseconds',
     );
     if (response != null) {
       for (final element in response) {
-        final update = BusRealtimeUpdate.fromJson(element);
+        final update =
+            BusRealtimeUpdate.fromJson(element as Map<String, dynamic>);
         if (shortRouteIds.contains(update.routeId)) {
           if (updates[update.routeId] == null) {
             updates[update.routeId] = [];

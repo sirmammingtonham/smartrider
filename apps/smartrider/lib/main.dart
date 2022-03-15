@@ -132,6 +132,8 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
       },
     );
 
+    // verify api version for shuttle tracker
+
     setupInteractedMessage();
 
     // init blocs
