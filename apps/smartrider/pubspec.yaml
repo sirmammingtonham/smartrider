@@ -65,6 +65,7 @@ dev_dependencies:
   dependency_validator: ^3.0.0
   flutter_test:
     sdk: flutter
+  test: ^1.19.5
   very_good_analysis: ^2.1.0
 
 # For information on the generic Dart part of this file, see the
