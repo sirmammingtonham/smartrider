@@ -23,7 +23,11 @@ class BusProvider {
     _providerHasLoaded = _init();
   }
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  BusProvider.withFirebase({FirebaseFirestore? firestore}) {
+    _providerHasLoaded = _init(firestore: firestore);
+  }
+
+  late FirebaseFirestore _firestore;
   // final FirebaseAuth _auth = FirebaseAuth.instance;
 
   late final Map<String, String> routeMapping;
@@ -41,9 +45,18 @@ class BusProvider {
     return shortRouteIds;
   }
 
+  Map<String, String> getrouteMapping() {
+    return routeMapping;
+  }
+
   // we need to await in the constructor, so doing it like this
   // allows for the factory to wait for initialization
-  Future<void> _init() async {
+  Future<void> _init({FirebaseFirestore? firestore}) async {
+    if (firestore != null) {
+      _firestore = firestore;
+    } else {
+      _firestore = FirebaseFirestore.instance;
+    }
     final routes = await _firestore
         .collection('routes')
         .where('route_short_name', whereIn: shortRouteIds)

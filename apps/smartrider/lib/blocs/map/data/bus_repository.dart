@@ -3,6 +3,7 @@ import 'package:shared/models/bus/bus_route.dart';
 import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/models/bus/bus_stop.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'bus_provider.dart';
 
@@ -14,11 +15,19 @@ class BusRepository {
     _busProvider = BusProvider();
   }
 
+  BusRepository._testCreate(FirebaseFirestore? firestore) {
+    _busProvider = BusProvider.withFirebase(firestore: firestore);
+  }
+
   late final BusProvider _busProvider;
 
   /// Public factory
-  static Future<BusRepository> create() async {
-    final self = BusRepository._create();
+  static Future<BusRepository> create({
+    bool isTest = false,
+    FirebaseFirestore? firestore,
+  }) async {
+    final self =
+        isTest ? BusRepository._testCreate(firestore) : BusRepository._create();
     await self._busProvider.waitForLoad;
     return self;
   }
@@ -42,6 +51,8 @@ class BusRepository {
       _busProvider.getTimetableRealtime();
 
   List<String> get getDefaultRoutes => _busProvider.getShortRoutes();
+
+  Map<String, String> get getrouteMapping => _busProvider.getrouteMapping();
 
   // bool get isConnected => _busProvider.getIsConnected;
 }
