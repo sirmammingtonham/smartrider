@@ -8,6 +8,9 @@ import 'package:shared/models/bus/bus_route.dart';
 import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/models/bus/bus_stop.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
+import 'package:intl/intl.dart';
+
+import 'package:smartrider/blocs/map/data/http_util.dart';
 
 /*
 Point of this test is to make sure bus_repo parses response from firestore
@@ -16,7 +19,7 @@ correctly. It doesn't test if the data in firebase is correct.
 void main() async {
   final testFireStore = FakeFirebaseFirestore();
 
-  await testFireStore // add polyline info to fakefirestore
+  await testFireStore // add polyline info for testing
       .collection('polylines')
       .doc('87-193')
       .set(<String, dynamic>{
@@ -33,6 +36,7 @@ void main() async {
   });
 
   await testFireStore.collection('routes').doc('87-193').set(<String, dynamic>{
+    // add route info for testing
     'agency_id': '1',
     'continuous_drop_off': null,
     'continuous_pickup': null,
@@ -76,6 +80,32 @@ void main() async {
       }
     ],
   });
+
+  await testFireStore.collection('stops').doc('00072').set(<String, dynamic>{
+    'arrival_times': [24840],
+    'departure_times': [24840],
+    'level_id': null,
+    'location_type': 0,
+    'parent_station': null,
+    'platform_code': null,
+    'route_ids': ['87-193'],
+    'shape_ids': ['2870157'],
+    'stop_code': '00072',
+    'stop_desc': null,
+    'stop_id': '00072',
+    'stop_lat': 42.692346,
+    'stop_lon': -73.628566,
+    'stop_name': 'Main Ave & Milhizer AVE',
+    'stop_sequence': [40, 40],
+    'stop_timezone': 'America/New_York',
+    'stop_url': 'https://www.cdta.org/schedules-stop-detail?stop_id=00072',
+    'trip_ids': ['8316011-JAN22-Troy-Weekday-01'],
+    'tts_stop_name': null,
+    'wheelchair_boarding': 1,
+    'zone_id': null,
+  });
+
+  // await testFireStore.collection('polylines')
   final busRepo =
       await BusRepository.create(isTest: true, firestore: testFireStore);
 
@@ -101,15 +131,26 @@ void main() async {
       );
     });
 
-    // test('Realtime timetable test', () async {
-    //   final _busRealtimeTimetable = await busRepo.getRealtimeTimetable;
-    //   expect(
-    //       _busRealtimeTimetable.runtimeType, <String, Map<String, String>>{});
-    // });
+    test('Timetable test', () async {
+      final _busRealtimeTimetable = await busRepo.getRealtimeTimetable;
+      expect(_busRealtimeTimetable.isNotEmpty, true);
+      expect(_busRealtimeTimetable['87'] == null, false);
+      expect(_busRealtimeTimetable['286'] == null, false);
+      expect(_busRealtimeTimetable['289'] == null, false);
+    });
 
-    // test('realtime update test', () async {
-    //   final _busRealtimeUpdate = await busRepo.getRealtimeUpdate;
-    //   expect(_busRealtimeUpdate.runtimeType, Map);
-    // });
+    test('Stops test', () async {
+      final _busStops = await busRepo.getStops;
+      expect(_busStops.isNotEmpty, true);
+    });
+
+    test('Timetable realtime test', () async {
+      final milliseconds = DateTime.now().millisecondsSinceEpoch;
+      final response = await get<Map<String, dynamic>>(
+        url: 'https://www.cdta.org/apicache/routebus_'
+            '87_0.json?_=$milliseconds',
+      );
+      expect(response == null, false);
+    });
   });
 }
