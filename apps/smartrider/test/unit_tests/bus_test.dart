@@ -130,6 +130,15 @@ void main() async {
       expect(_busRealtimeTimetable['87'] == null, false);
       expect(_busRealtimeTimetable['286'] == null, false);
       expect(_busRealtimeTimetable['289'] == null, false);
+      
+      final _allRoutes = ['87', '286', '289'];
+      for (final route in _allRoutes) {
+        for (final r in _busRealtimeTimetable[route]!.values) {
+          expect(
+            DateTime.tryParse('-123450101 $r Z') != null, true,
+          );
+        }
+      }
     });
 
     test('Stops test', () async {
