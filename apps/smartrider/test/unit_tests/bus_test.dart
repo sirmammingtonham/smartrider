@@ -1,16 +1,9 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:smartrider/blocs/map/data/bus_repository.dart';
-import 'package:test/test.dart';
-
 import 'package:shared/models/bus/bus_route.dart';
 import 'package:shared/models/bus/bus_shape.dart';
-import 'package:shared/models/bus/bus_stop.dart';
-import 'package:shared/models/bus/bus_timetable.dart';
-import 'package:intl/intl.dart';
-
+import 'package:smartrider/blocs/map/data/bus_repository.dart';
 import 'package:smartrider/blocs/map/data/http_util.dart';
+import 'package:test/test.dart';
 
 /*
 Point of this test is to make sure bus_repo parses response from firestore
@@ -29,7 +22,7 @@ void main() async {
         [45.34, 56.38],
         [34.68, 56.26]
       ],
-"properties": {"route_id": "87-193"}}
+    "properties": {"route_id": "87-193"}}
     ''',
     'route_id': '87-193',
     'type': 'MultiLineString',
@@ -145,12 +138,24 @@ void main() async {
     });
 
     test('Timetable realtime test', () async {
-      final milliseconds = DateTime.now().millisecondsSinceEpoch;
-      final response = await get<Map<String, dynamic>>(
-        url: 'https://www.cdta.org/apicache/routebus_'
-            '87_0.json?_=$milliseconds',
-      );
-      expect(response == null, false);
+      final _allRoutes = ['87', '286', '289'];
+      int milliseconds;
+
+      for (final route in _allRoutes) {
+        milliseconds = DateTime.now().millisecondsSinceEpoch;
+        var response = await get<Map<String, dynamic>>(
+          url: 'https://www.cdta.org/apicache/routebus_'
+              '${route}_0.json?_=$milliseconds',
+        );
+        expect(response == null, false);
+        if (response != null) {
+          for (final dynamic r in response.values) {
+            expect(
+              DateTime.tryParse('-123450101 ${r.toString()} Z') != null, true,
+            );
+          }
+        }
+      }
     });
   });
 }

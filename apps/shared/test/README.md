@@ -70,9 +70,9 @@
   
 ### Repository tests (`lib/data/repositories`)
 - [ ] `authentication_repository.dart`
-- [ ] `bus_repository.dart`
+- [x] `bus_repository.dart`
 - [ ] `saferide_repository.dart`
-- [ ] `shuttle_repository.dart`
+- [x] `shuttle_repository.dart`
   
 ### BLoC tests (`lib/blocs`)
 - [ ] `authentication/authentication_bloc.dart`
