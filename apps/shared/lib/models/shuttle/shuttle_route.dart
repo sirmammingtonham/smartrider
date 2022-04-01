@@ -8,15 +8,20 @@ class ShuttleRoute {
   ShuttleRoute.fromJson(Map<String, dynamic> json, List<String?> stops) {
     if (json['coordinates'] != null) {
       coordinates = <Coordinates>[];
-      (json['coordinates'] as List<dynamic>).map((dynamic e) =>
-      coordinates?.add
-      (Coordinates.fromJson(e as Map<String, dynamic>)),);
+      (json['coordinates'] as List<dynamic>).map(
+        (dynamic e) =>
+            coordinates?.add(Coordinates.fromJson(e as Map<String, dynamic>)),
+      );
+
+      for (var element in (json['coordinates'] as List<dynamic>)) {
+        coordinates?.add(Coordinates.fromJson(element as Map<String, dynamic>));
+      }
     }
 
     stopIds = stops;
     // Hard coded because there is only one route, and ShuttleTracker API
     // no longer carries route names
-    id = 'Main Route'; 
+    id = 'Main Route';
     // id = json['id'] as String?;
   }
 

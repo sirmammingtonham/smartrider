@@ -7,7 +7,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.6.1"
+    version: "2.8.2"
   bloc:
     dependency: transitive
     description:
@@ -28,14 +28,14 @@ packages:
       name: characters
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.0"
   charcode:
     dependency: transitive
     description:
       name: charcode
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "1.3.1"
   clock:
     dependency: transitive
     description:
@@ -254,13 +254,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  geocoder:
-    dependency: "direct main"
-    description:
-      name: geocoder
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.1"
   geolocator:
     dependency: "direct main"
     description:
@@ -324,20 +317,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.4"
-  humanize:
-    dependency: "direct main"
-    description:
-      name: humanize
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.0"
-  hypertrack_views_flutter:
-    dependency: "direct main"
-    description:
-      name: hypertrack_views_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.1"
   intl:
     dependency: "direct main"
     description:
@@ -358,14 +337,21 @@ packages:
       name: matcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.10"
+    version: "0.12.11"
+  material_color_utilities:
+    dependency: transitive
+    description:
+      name: material_color_utilities
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.3"
   meta:
     dependency: transitive
     description:
       name: meta
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.3.0"
+    version: "1.7.0"
   modal_progress_hud:
     dependency: "direct main"
     description:
@@ -456,7 +442,7 @@ packages:
       name: platform
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "3.1.0"
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -477,7 +463,7 @@ packages:
       name: process
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.2.1"
+    version: "4.2.4"
   protobuf:
     dependency: "direct main"
     description:
@@ -595,13 +581,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
-  streams_channel:
-    dependency: transitive
-    description:
-      name: streams_channel
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.0"
   string_scanner:
     dependency: transitive
     description:
@@ -629,7 +608,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.0"
+    version: "0.4.8"
   typed_data:
     dependency: transitive
     description:
@@ -643,14 +622,14 @@ packages:
       name: vector_math
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   win32:
     dependency: transitive
     description:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.4"
+    version: "2.5.1"
   xdg_directories:
     dependency: transitive
     description:
@@ -666,5 +645,5 @@ packages:
     source: hosted
     version: "4.5.1"
 sdks:
-  dart: ">=2.13.0 <3.0.0"
+  dart: ">=2.15.0 <3.0.0"
   flutter: ">=1.24.0-10.1.pre"

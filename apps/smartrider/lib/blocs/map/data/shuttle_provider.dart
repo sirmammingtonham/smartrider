@@ -36,22 +36,20 @@ class ShuttleProvider {
     ///     return routeMap;
     final response = await fetch('routes');
 
-
     // Set stopIds for route
     final temp = await getStops();
     final stops = temp.map((e) => e.name).toList();
-
-
+    final routeList = <ShuttleRoute>[];
+    for (final json in response!) {
+      routeList
+          .add(ShuttleRoute.fromJson(json as Map<String, dynamic>, stops));
+    }
     final routeMap = response != null
         ? <String, ShuttleRoute>{
-            for (final json in response)
-              (json as Map<String, dynamic>)['id'] as String:
-                  ShuttleRoute.fromJson(json, stops)
-            
+            for (final route in routeList)
+              route.id!: route
           }
         : <String, ShuttleRoute>{};
-
-    
 
     return routeMap;
   }
