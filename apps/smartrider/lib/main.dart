@@ -155,6 +155,7 @@ class SmartRiderState extends State<SmartRider> with WidgetsBindingObserver {
     _scheduleBloc = ScheduleBloc(
       mapBloc: _mapBloc,
       busRepo: widget.busRepo,
+      shuttleRepo: widget.shuttleRepo,
       notifications: _notifications,
     );
     _showcaseBloc = ShowcaseBloc(

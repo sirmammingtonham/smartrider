@@ -5,9 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared/models/bus/bus_route.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
+import 'package:shared/models/shuttle/shuttle_announcement.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
 import 'package:smartrider/blocs/map/data/bus_repository.dart';
+import 'package:smartrider/blocs/map/data/shuttle_repository.dart';
 import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_announcements.dart';
 import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -18,6 +21,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ScheduleBloc({
     required this.mapBloc,
     required this.busRepo,
+    required this.shuttleRepo,
     required this.notifications,
   }) : super(ScheduleInitialState()) {
     _isTimeline = true;
@@ -53,6 +57,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   }
 
   final BusRepository busRepo;
+  final ShuttleRepository shuttleRepo;
   final MapBloc mapBloc;
   final FlutterLocalNotificationsPlugin notifications;
   late final NotificationDetails platformChannelSpecifics;
@@ -185,10 +190,14 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     yield ScheduleTimelineState(
       busTables: busTables,
       shuttleTables: null,
+      shuttleAnnouncements: await shuttleRepo.getAnnouncements,
     );
   }
 
   Stream<ScheduleState> _mapScheduleTableToState() async* {
-    yield ScheduleTableState(busTables: busTables, shuttleTables: null);
+    yield ScheduleTableState(
+        busTables: busTables,
+        shuttleTables: null,
+        shuttleAnnouncements: await shuttleRepo.getAnnouncements,);
   }
 }

@@ -6,7 +6,7 @@ import 'package:smartrider/blocs/schedule/schedule_bloc.dart';
 import 'package:smartrider/ui/home.dart';
 import 'package:smartrider/ui/widgets/bus_schedules/bus_table.dart';
 import 'package:smartrider/ui/widgets/bus_schedules/bus_timeline.dart';
-import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_unavailable.dart';
+import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_announcements.dart';
 
 class PanelBody extends StatelessWidget {
   PanelBody({
@@ -19,9 +19,11 @@ class PanelBody extends StatelessWidget {
   final double headerHeight;
   final List<Widget> _tabs = [
     const Tab(text: 'Bus Schedule', icon: Icon(Icons.directions_bus)),
-    const Tab(text: 'Shuttle Schedule', icon: Icon(Icons.airport_shuttle)),
+    const Tab(
+      text: 'ShuttleTracker Announcements',
+      icon: Icon(Icons.airport_shuttle),
+    ),
   ];
-
   Widget panelBody(BuildContext context, ScheduleState scheduleState) =>
 //TODO: probably need a document or something in the database to manually
 // enable/disable the schedules in case of an outage or something
@@ -36,14 +38,18 @@ class PanelBody extends StatelessWidget {
                   scrollController: panelScrollController,
                   busTables: scheduleState.busTables,
                 ),
-                const ShuttleUnavailable(),
+                ShuttleAnnouncements(
+                  announcements: scheduleState.shuttleAnnouncements,
+                ),
               ]
             : [
                 // table widgets
                 BusTable(
                   timetableMap: (scheduleState as ScheduleTableState).busTables,
                 ),
-                const ShuttleUnavailable(),
+                ShuttleAnnouncements(
+                  announcements: scheduleState.shuttleAnnouncements,
+                ),
               ],
       );
 

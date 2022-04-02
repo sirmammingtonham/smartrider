@@ -5,7 +5,9 @@ import 'package:shared/models/shuttle/shuttle_eta.dart';
 import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
 import 'package:shared/models/shuttle/shuttle_update.dart';
+import 'package:shared/models/shuttle/shuttle_announcement.dart';
 import 'package:smartrider/blocs/map/data/http_util.dart';
+import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_announcements.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 /// This class contains methods for providing data to Repository
@@ -41,13 +43,11 @@ class ShuttleProvider {
     final stops = temp.map((e) => e.name).toList();
     final routeList = <ShuttleRoute>[];
     for (final json in response!) {
-      routeList
-          .add(ShuttleRoute.fromJson(json as Map<String, dynamic>, stops));
+      routeList.add(ShuttleRoute.fromJson(json as Map<String, dynamic>, stops));
     }
     final routeMap = response != null
         ? <String, ShuttleRoute>{
-            for (final route in routeList)
-              route.id!: route
+            for (final route in routeList) route.id!: route
           }
         : <String, ShuttleRoute>{};
 
@@ -97,6 +97,38 @@ class ShuttleProvider {
             .toList()
         : <ShuttleUpdate>[];
     return updatesList;
+  }
+
+  Future<List<ShuttleAnnouncement>> getAnnouncements() async {
+    /// Returns a list of announcement based on their start+end dates
+    /// based on schedule type
+    final response = await fetch('announcements');
+    final announcementsList = response != null
+        ? response
+            .map<ShuttleAnnouncement>(
+            (dynamic json) =>
+                ShuttleAnnouncement.fromJson(json as Map<String, dynamic>),
+          )
+            .where((announcement) {
+            final endDate = DateTime.parse(announcement.end.toString());
+            final startDate = DateTime.parse(announcement.start.toString());
+            final today = DateTime.now();
+            switch (announcement.scheduleType) {
+              case 'startOnly':
+                return startDate.isBefore(today) ||
+                    startDate.isAtSameMomentAs(today);
+              case 'endOnly':
+                return endDate.isAfter(today);
+              case 'startAndEnd':
+                return (startDate.isBefore(today) ||
+                        startDate.isAtSameMomentAs(today)) &&
+                    endDate.isAfter(today);
+              default:
+                return true;
+            }
+          }).toList()
+        : <ShuttleAnnouncement>[];
+    return announcementsList;
   }
 
   /// Getter method to retrieve the list of shuttle eta (estimated times of
