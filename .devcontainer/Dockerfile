@@ -6,11 +6,11 @@ ENV USER="developer"
 ENV JAVA_VERSION="8"
 ENV ANDROID_TOOLS_URL="https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip"
 ENV ANDROID_VERSION="29"
-ENV ANDROID_BUILD_TOOLS_VERSION="29.0.3"
+ENV ANDROID_BUILD_TOOLS_VERSION="30.0.3"
 ENV ANDROID_ARCHITECTURE="x86_64"
 ENV ANDROID_SDK_ROOT="/home/$USER/android"
 ENV FLUTTER_CHANNEL="dev"
-ENV FLUTTER_VERSION="2.2.3"
+ENV FLUTTER_VERSION="2.3.0-16.0.pre"
 ENV FLUTTER_URL="https://storage.googleapis.com/flutter_infra/releases/$FLUTTER_CHANNEL/linux/flutter_linux_$FLUTTER_VERSION-$FLUTTER_CHANNEL.tar.xz"
 ENV FLUTTER_HOME="/home/$USER/flutter"
 ENV FLUTTER_WEB_PORT="8090"
@@ -58,17 +58,28 @@ RUN curl -o flutter.tar.xz $FLUTTER_URL \
   && flutter precache \
   && yes "y" | flutter doctor --android-licenses \
   && flutter doctor \
-  && flutter emulators --create Pixel_3_API_30\
-  && flutter update-packages \
-  && flutter pub get
+  && flutter emulators --create \
+  && flutter update-packages 
+
+# get packages for each directory in apps
+RUN cd /workspaces/smartrider/apps/shared \
+&& flutter pub get \ 
+&& cd /workspaces/smartrider/apps/smartdriver \
+&& flutter pub get \
+&& cd /workspaces/smartrider/apps/smartrider \
+&& flutter pub get
+
+
+# copy over strings.dart
+
+
+# TODO: Get variables from string.dart
+
+# TODO: Test android studio with container
+# TODO: GitHub wiki
 
 COPY entrypoint.sh /usr/local/bin/
 COPY chown.sh /usr/local/bin/
 COPY flutter-android-emulator.sh /usr/local/bin/flutter-android-emulator
 COPY flutter-web.sh /usr/local/bin/flutter-web
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
-
-# TODO: Have emulator run after setup
-RUN cd smartrider/apps/smartrider \
-  && flutter emulators --launch flutter_emulator \
-  && flutter run

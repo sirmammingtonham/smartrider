@@ -16,30 +16,32 @@ class Order {
     required this.riderPhone,
     this.vehicleRef,
     required this.updatedAt,
-    this.estimatedPickup,
+    required this.estimatedPickup,
     required this.queuePosition,
     required this.pickupTime,
     this.cancellationReason,
   });
 
   factory Order.fromSnapshot(DocumentSnapshot snap) {
-    final data = (snap.data()! as Map<String, dynamic>);
+    final data = snap.data()! as Map<String, dynamic>;
     return Order(
-        orderRef: snap.reference,
-        status: data['status']!,
-        pickupAddress: data['pickup_address']!,
-        dropoffAddress: data['dropoff_address']!,
-        pickupPoint: data['pickup_point']!,
-        dropoffPoint: data['dropoff_point']!,
-        riderEmail: data['rider_email']!,
-        riderPhone: data['rider_phone']!,
-        vehicleRef: data['vehicle'],
-        updatedAt: data['updated_at']!,
-        estimatedPickup: data['estimated_pickup'],
-        queuePosition: data['queue_position'],
-        pickupTime: data['pickup_time'],
-        cancellationReason:
-            data['status'] == 'CANCELLED' ? data['cancel_reason'] : null);
+      orderRef: snap.reference,
+      status: data['status'] as String,
+      pickupAddress: data['pickup_address'] as String,
+      dropoffAddress: data['dropoff_address'] as String,
+      pickupPoint: data['pickup_point'] as GeoPoint,
+      dropoffPoint: data['dropoff_point'] as GeoPoint,
+      riderEmail: data['rider_email'] as String,
+      riderPhone: data['rider_phone'] as String,
+      vehicleRef: data['vehicle'] as DocumentReference<Object?>?,
+      updatedAt: data['updated_at'] as Timestamp,
+      estimatedPickup: data['estimated_pickup'] as int,
+      queuePosition: data['queue_position'] as int,
+      pickupTime: data['pickup_time'] as int,
+      cancellationReason: data['status'] == 'CANCELLED'
+          ? data['cancel_reason'] as String
+          : null,
+    );
   }
 
   /// reference to the order in firestore
@@ -69,10 +71,10 @@ class Order {
   final Timestamp updatedAt;
 
   /// timestamp of estimated pickup (when status == PICKUP_UP)
-  final int? estimatedPickup;
+  final int estimatedPickup;
 
   /// queue position, updated on writes through cloud functions
-  final int? queuePosition;
+  final int queuePosition;
 
   /// cancellation reason if status == CANCELLED else null
   final String? cancellationReason;

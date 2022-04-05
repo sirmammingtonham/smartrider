@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:sizer/sizer.dart';
-import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
+import 'package:smartdriver/blocs/auth/auth_bloc.dart';
 import 'package:smartdriver/blocs/order/order_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -295,8 +295,7 @@ class _HomeState extends State<Home> {
           ),
           trailing: const Icon(Icons.logout),
           onTap: () {
-            BlocProvider.of<AuthenticationBloc>(context)
-                .add(const AuthenticationSignOutEvent());
+            BlocProvider.of<AuthBloc>(context).add(const AuthSignOutEvent());
           },
         )
       ]));

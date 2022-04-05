@@ -1,19 +1,18 @@
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smartdriver/blocs/authentication/authentication_bloc.dart';
-import 'package:smartdriver/blocs/location/location_bloc.dart';
-import 'package:smartdriver/blocs/order/order_bloc.dart';
-import 'package:smartdriver/blocs/authentication/data/authentication_repository.dart';
-import 'package:smartdriver/blocs/order/data/order_repository.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
-
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sizer/sizer.dart';
+import 'package:smartdriver/blocs/auth/auth_bloc.dart';
+import 'package:smartdriver/blocs/auth/data/auth_repository.dart';
+import 'package:smartdriver/blocs/location/location_bloc.dart';
+import 'package:smartdriver/blocs/order/data/order_repository.dart';
+import 'package:smartdriver/blocs/order/order_bloc.dart';
 import 'package:smartdriver/ui/home.dart';
 import 'package:smartdriver/ui/login.dart';
-import 'package:sizer/sizer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,10 +36,10 @@ class SmartDriver extends StatefulWidget {
 }
 
 class _SmartDriverState extends State<SmartDriver> with WidgetsBindingObserver {
-  final authenticationRepository = AuthenticationRepository();
+  final authRepository = AuthRepository();
   final orderRepository = OrderRepository();
   late final LocationBloc locationBloc;
-  late final AuthenticationBloc authenticationBloc;
+  late final AuthBloc authBloc;
   late final OrderBloc orderBloc;
 
   @override
@@ -48,11 +47,10 @@ class _SmartDriverState extends State<SmartDriver> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
     locationBloc = LocationBloc();
-    authenticationBloc = AuthenticationBloc(
-        authRepository: authenticationRepository, locationBloc: locationBloc);
+    authBloc =
+        AuthBloc(authRepository: authRepository, locationBloc: locationBloc);
     orderBloc = OrderBloc(
-        authenticationRepository: authenticationRepository,
-        orderRepository: orderRepository);
+        authRepository: authRepository, orderRepository: orderRepository);
   }
 
   @override
@@ -86,8 +84,7 @@ class _SmartDriverState extends State<SmartDriver> with WidgetsBindingObserver {
     return MultiBlocProvider(
         providers: [
           BlocProvider<LocationBloc>(create: (context) => locationBloc),
-          BlocProvider<AuthenticationBloc>(
-              create: (context) => authenticationBloc),
+          BlocProvider<AuthBloc>(create: (context) => authBloc),
           BlocProvider<OrderBloc>(create: (context) => orderBloc),
         ],
         child: Sizer(builder: (context, orientation, deviceType) {
@@ -96,23 +93,19 @@ class _SmartDriverState extends State<SmartDriver> with WidgetsBindingObserver {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            home: BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
                 switch (state.runtimeType) {
-                  case AuthenticationSignedOutState:
+                  case AuthSignedOutState:
                     return Login(
-                      driverName:
-                          (state as AuthenticationSignedOutState).driverName,
+                      driverName: (state as AuthSignedOutState).driverName,
                       phoneNumber: state.phoneNumber,
                       vehicleId: state.vehicleId,
                     );
-                  case AuthenticationSignedInState:
-                    return Home(
-                        title:
-                            (state as AuthenticationSignedInState).user.name);
-                  case AuthenticationFailureState:
-                    return Text(
-                        (state as AuthenticationFailureState).errorMessage);
+                  case AuthSignedInState:
+                    return Home(title: (state as AuthSignedInState).user.name);
+                  case AuthFailureState:
+                    return Text((state as AuthFailureState).errorMessage);
                   default:
                     return const Text('AUTH BLOC ERROR');
                 }

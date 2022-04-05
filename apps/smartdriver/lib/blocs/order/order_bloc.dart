@@ -1,10 +1,11 @@
 import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:shared/util/errors.dart';
 import 'package:shared/models/saferide/order.dart';
-import 'package:smartdriver/blocs/authentication/data/authentication_repository.dart';
+import 'package:shared/util/consts/errors.dart';
+import 'package:smartdriver/blocs/auth/data/auth_repository.dart';
 import 'package:smartdriver/blocs/order/data/order_repository.dart';
 
 part 'order_event.dart';
@@ -12,12 +13,11 @@ part 'order_exception.dart';
 part 'order_state.dart';
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
-  OrderBloc(
-      {required this.authenticationRepository, required this.orderRepository})
+  OrderBloc({required this.authRepository, required this.orderRepository})
       : super(const OrderWaitingState()) {
     orderSubscription = orderRepository.orderStream.listen(orderListener);
   }
-  final AuthenticationRepository authenticationRepository;
+  final AuthRepository authRepository;
   final OrderRepository orderRepository;
   late final StreamSubscription orderSubscription;
 
@@ -42,9 +42,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   Future<void> updateAvailibility(bool available) async {
     if (available && state is OrderWaitingState) {
       // only set state to available if we don't already have an accepted order
-      await authenticationRepository.setAvailibility(true);
+      await authRepository.setAvailibility(true);
     } else if (!available) {
-      await authenticationRepository.setAvailibility(false);
+      await authRepository.setAvailibility(false);
     }
   }
 
@@ -92,10 +92,10 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   Stream<OrderState> _mapOrderAcceptedToState(OrderAcceptedEvent event) async* {
     // commented code not necessary since fields we care about wont change
     // final ref = await orderRepository.acceptOrder(
-    //     authenticationRepository.currentDriver, event.order.orderRef);
+    //     authRepository.currentDriver, event.order.orderRef);
     // final order = Order.fromSnapshot(await ref.get());
     await orderRepository.acceptOrder(
-        authenticationRepository.currentDriver!, event.order.orderRef);
+        authRepository.currentDriver!, event.order.orderRef);
     yield OrderPickingUpState(order: event.order);
   }
 
@@ -108,7 +108,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   Stream<OrderState> _mapOrderReachedDropoffToState(
       OrderReachedDropoffEvent event) async* {
     await orderRepository.reachedDropoffOrder(
-        authenticationRepository.currentDriver!, event.order.orderRef);
+        authRepository.currentDriver!, event.order.orderRef);
     yield const OrderWaitingState();
   }
 
@@ -120,7 +120,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
   Stream<OrderState> _mapOrderDriverCancelledToState(
       OrderDriverCancelledEvent event) async* {
-    await orderRepository.cancelOrder(authenticationRepository.currentDriver!,
+    await orderRepository.cancelOrder(authRepository.currentDriver!,
         event.orderRef, event.cancellationReason);
     yield const OrderWaitingState();
   }

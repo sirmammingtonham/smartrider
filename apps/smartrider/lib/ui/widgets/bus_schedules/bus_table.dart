@@ -1,12 +1,10 @@
 // ui dependencies
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
 // loading custom widgets and data
 import 'package:smartrider/ui/widgets/bus_schedules/bus_unavailable.dart';
 import 'package:smartrider/ui/widgets/custom_widgets/custom_sticky_table.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
 //import 'package:sticky_headers/sticky_headers.dart';
 //import 'package:table_sticky_headers/table_sticky_headers.dart';
 
@@ -58,7 +56,7 @@ class BusTableState extends State<BusTable>
         controller: _tabController,
       ),
       SizedBox(
-        height: 63.h,
+        height: 502,
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
@@ -69,7 +67,7 @@ class BusTableState extends State<BusTable>
           ],
         ),
       )
-    ]);
+    ],);
   }
 
   Widget busList(String routeId) {
@@ -90,14 +88,14 @@ class BusTableState extends State<BusTable>
           child: SizedBox(
             child: Text(table.stops![i].stopName,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-          )),
+                style: const TextStyle(fontWeight: FontWeight.bold),),
+          ),),
       contentCellBuilder: (i, j) => Text(table.getTime(i, j)),
       cellDimensions: const CellDimensions.fixed(
           contentCellWidth: 100,
           contentCellHeight: 50,
           stickyLegendWidth: 100,
-          stickyLegendHeight: 50),
-    ));
+          stickyLegendHeight: 50,),
+    ),);
   }
 }

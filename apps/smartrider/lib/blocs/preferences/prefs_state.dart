@@ -19,14 +19,14 @@ class PrefsLoadingState extends PrefsState {
 /// This class represents what user will see when data is fetched
 class PrefsLoadedState extends PrefsState {
   const PrefsLoadedState(this.prefs, this.shuttles, this.buses,
-      {this.modifyActiveRoutes = false});
+      {this.modifyActiveRoutes = false,});
 
   final SharedPreferences prefs;
   final Map<String, bool> shuttles;
   final Map<String, bool> buses;
   final bool modifyActiveRoutes;
 
-  ThemeData get theme => prefs.getBool('darkMode')! ? darkTheme : lightTheme;
+  // ThemeData get theme => prefs.getBool('darkMode')! ? FlexScheme.brandBlue : lightTheme;
 
   bool? get firstLaunch => prefs.getBool('firstLaunch');
 
@@ -44,14 +44,6 @@ class PrefsLoadedState extends PrefsState {
 // used only to notify global theme update on change
 class PrefsChangedState extends PrefsState {
   const PrefsChangedState();
-}
-
-/// This class represents what user will see when fetching data
-class PrefsSavingState extends PrefsState {
-  const PrefsSavingState();
-
-  @override
-  List<Object> get props => [];
 }
 
 // This class represents what user will see when there is an error

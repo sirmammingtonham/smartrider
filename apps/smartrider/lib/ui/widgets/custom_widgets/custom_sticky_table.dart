@@ -39,9 +39,9 @@ class CustomStickyHeader extends StatefulWidget {
     this.cellFit = BoxFit.scaleDown,
   }) : super(key: key) {
     assert(cellDimensions.contentCellWidth != null ||
-        cellDimensions.columnWidths != null);
+        cellDimensions.columnWidths != null,);
     assert(cellDimensions.contentCellHeight != null ||
-        cellDimensions.rowHeights != null);
+        cellDimensions.rowHeights != null,);
     if (cellDimensions.columnWidths != null) {
       assert(cellDimensions.columnWidths!.length == columnsLength);
     }
@@ -51,11 +51,11 @@ class CustomStickyHeader extends StatefulWidget {
     assert(cellAlignments.contentCellAlignment != null ||
         cellAlignments.columnAlignments != null ||
         cellAlignments.rowAlignments != null ||
-        cellAlignments.contentCellAlignments != null);
+        cellAlignments.contentCellAlignments != null,);
     assert(cellAlignments.stickyColumnAlignment != null ||
-        cellAlignments.stickyColumnAlignments != null);
+        cellAlignments.stickyColumnAlignments != null,);
     assert(cellAlignments.stickyRowAlignment != null ||
-        cellAlignments.stickyRowAlignments != null);
+        cellAlignments.stickyRowAlignments != null,);
     if (cellAlignments.columnAlignments != null) {
       assert(cellAlignments.columnAlignments!.length == columnsLength);
     }
@@ -66,7 +66,7 @@ class CustomStickyHeader extends StatefulWidget {
       assert(cellAlignments.contentCellAlignments!.length == rowsLength);
       for (var i = 0; i < cellAlignments.contentCellAlignments!.length; i++) {
         assert(
-            cellAlignments.contentCellAlignments![i].length == columnsLength);
+            cellAlignments.contentCellAlignments![i].length == columnsLength,);
       }
     }
     if (cellAlignments.stickyColumnAlignments != null) {
@@ -108,7 +108,7 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
     //     _SyncScrollController([_verticalTitleController,
     //     _verticalBodyController]);
     _horizontalSyncController = _SyncScrollController(
-        [_horizontalTitleController, _horizontalBodyController]);
+        [_horizontalTitleController, _horizontalBodyController],);
   }
 
   @override
@@ -129,7 +129,7 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
               child: NotificationListener<ScrollNotification>(
                 onNotification: (ScrollNotification notification) {
                   _horizontalSyncController.processNotification(
-                      notification, _horizontalTitleController);
+                      notification, _horizontalTitleController,);
                   return true;
                 },
                 child: SingleChildScrollView(
@@ -192,7 +192,7 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
                 child: NotificationListener<ScrollNotification>(
                   onNotification: (ScrollNotification notification) {
                     _horizontalSyncController.processNotification(
-                        notification, _horizontalBodyController);
+                        notification, _horizontalBodyController,);
                     return true;
                   },
                   child: SingleChildScrollView(
@@ -212,7 +212,7 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
                               height: widget.cellDimensions.rowHeights != null
                                   ? widget.cellDimensions.rowHeights![i]
                                   : widget.cellDimensions.contentCellHeight,
-                              alignment: (() {
+                              alignment: () {
                                 if (widget
                                         .cellAlignments.contentCellAlignment !=
                                     null) {
@@ -234,7 +234,7 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
                                   return widget.cellAlignments
                                       .contentCellAlignments![i][j];
                                 }
-                              }()),
+                              }(),
                               child: FittedBox(
                                 fit: widget.cellFit,
                                 child: widget.contentCellBuilder(j, i),
@@ -243,7 +243,7 @@ class _CustomStickyHeaderState extends State<CustomStickyHeader> {
                           ),
                         ),
                       ),
-                    )),
+                    ),),
                   ),
                 ),
               ),
@@ -361,10 +361,10 @@ class CellDimensions {
   final double stickyLegendHeight;
 
   static const CellDimensions base = CellDimensions.fixed(
-    contentCellWidth: 70.0,
-    contentCellHeight: 50.0,
-    stickyLegendWidth: 120.0,
-    stickyLegendHeight: 50.0,
+    contentCellWidth: 70,
+    contentCellHeight: 50,
+    stickyLegendWidth: 120,
+    stickyLegendHeight: 50,
   );
 }
 
@@ -488,7 +488,7 @@ class _SyncScrollController {
   bool _scrollingActive = false;
 
   void processNotification(
-      ScrollNotification notification, ScrollController sender) {
+      ScrollNotification notification, ScrollController sender,) {
     if (notification is ScrollStartNotification && !_scrollingActive) {
       _scrollingController = sender;
       _scrollingActive = true;

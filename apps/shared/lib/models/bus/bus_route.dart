@@ -18,26 +18,29 @@ class BusRoute {
       this.continuousDropOff,
       this.startDate,
       this.endDate,
-      this.stops});
+      this.stops,});
 
   BusRoute.fromJson(Map<String, dynamic> json) {
-    routeId = json['route_id'];
-    agencyId = json['agency_id'];
-    routeShortName = json['route_short_name'];
-    routeLongName = json['route_long_name'];
-    routeDesc = json['route_desc'];
-    routeType = json['route_type'];
-    routeUrl = json['route_url'];
-    routeColor = json['route_color'];
-    routeTextColor = json['route_text_color'];
-    routeSortOrder = json['route_sort_order'];
-    continuousPickup = json['continuous_pickup'];
-    continuousDropOff = json['continuous_drop_off'];
+    routeId = json['route_id'] as String?;
+    agencyId = json['agency_id'] as String?;
+    routeShortName = json['route_short_name'] as String?;
+    routeLongName = json['route_long_name'] as String?;
+    routeDesc = json['route_desc'] as String?;
+    routeType = json['route_type'] as int?;
+    routeUrl = json['route_url'] as String?;
+    routeColor = json['route_color'] as String?;
+    routeTextColor = json['route_text_color'] as String?;
+    routeSortOrder = json['route_sort_order'] as int?;
+    continuousPickup = json['continuous_pickup'] as int?;
+    continuousDropOff = json['continuous_drop_off'] as int?;
 
-    startDate = json['start_date'];
-    endDate = json['end_date'];
+    startDate = json['start_date'] as int?;
+    endDate = json['end_date'] as int?;
     stops = (json['stops'] as List).map<BusStopSimplified>(
-        (dynamic stop) => BusStopSimplified.fromJson(stop));
+      (dynamic stop) => BusStopSimplified.fromJson(
+        stop as Map<String, dynamic>,
+      ),
+    );
   }
 
   String? routeId;
@@ -96,16 +99,17 @@ class BusStopSimplified {
       required this.stopLat,
       required this.stopLon,
       required this.stopSeq0,
-      required this.stopSeq1});
+      required this.stopSeq1,});
 
   factory BusStopSimplified.fromJson(Map<String, dynamic> json) =>
       BusStopSimplified(
-          stopId: json['stop_id'],
-          stopName: json['stop_name'],
-          stopLat: json['stop_lat'],
-          stopLon: json['stop_lon'],
-          stopSeq0: json['stop_sequence_0'],
-          stopSeq1: json['stop_sequence_1']);
+        stopId: json['stop_id'] as String,
+        stopName: json['stop_name'] as String,
+        stopLat: json['stop_lat'] as double,
+        stopLon: json['stop_lon'] as double,
+        stopSeq0: json['stop_sequence_0'] as int,
+        stopSeq1: json['stop_sequence_1'] as int,
+      );
 
   final String stopId;
   final String stopName;

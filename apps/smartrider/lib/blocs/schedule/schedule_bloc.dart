@@ -1,38 +1,66 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
-//import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:shared/models/bus/bus_route.dart';
-import 'package:shared/models/shuttle/shuttle_stop.dart';
-
-import 'package:smartrider/blocs/map/map_bloc.dart';
-
-import 'package:shared/models/bus/bus_timetable.dart';
-import 'package:smartrider/blocs/map/data/bus_repository.dart';
-
+import 'dart:convert';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared/models/bus/bus_route.dart';
+import 'package:shared/models/bus/bus_timetable.dart';
+import 'package:shared/models/shuttle/shuttle_announcement.dart';
+import 'package:shared/models/shuttle/shuttle_stop.dart';
+import 'package:smartrider/blocs/map/data/bus_repository.dart';
+import 'package:smartrider/blocs/map/data/shuttle_repository.dart';
+import 'package:smartrider/blocs/map/map_bloc.dart';
+import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_announcements.dart';
+import 'package:smartrider/ui/widgets/sliding_up_panel.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 part 'schedule_event.dart';
 part 'schedule_state.dart';
 
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
-  ScheduleBloc({required this.mapBloc, required this.busRepo})
-      : super(ScheduleInitialState()) {
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      if (!isAllowed) {
-        // Insert here your friendly dialog box before call the request method
-        // This is very important to not harm the user experience
-        AwesomeNotifications().requestPermissionToSendNotifications();
+  ScheduleBloc({
+    required this.mapBloc,
+    required this.busRepo,
+    required this.shuttleRepo,
+    required this.notifications,
+  }) : super(ScheduleInitialState()) {
+    _isTimeline = true;
+    platformChannelSpecifics = const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'schedule_alarm',
+        'Schedule notifications',
+        channelDescription: 'Notifications for bus/shuttle arrivals',
+        importance: Importance.max,
+        priority: Priority.high,
+      ),
+      iOS: IOSNotificationDetails(),
+    );
+
+    mapBloc.stream.listen((mapState) {
+      if (mapState is MapLoadedState) {
+        switch (mapState.mapView) {
+          case MapView.kBusView:
+            if (_tabController.index != 0) {
+              _tabController.animateTo(0);
+            }
+            break;
+          case MapView.kShuttleView:
+            if (_tabController.index != 1) {
+              _tabController.animateTo(1);
+            }
+            break;
+          case MapView.kSaferideView:
+            break;
+        }
       }
     });
-    _isTimeline = true;
   }
 
   final BusRepository busRepo;
+  final ShuttleRepository shuttleRepo;
   final MapBloc mapBloc;
+  final FlutterLocalNotificationsPlugin notifications;
+  late final NotificationDetails platformChannelSpecifics;
   late final PanelController _panelController;
   late final TabController _tabController;
 
@@ -42,29 +70,82 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   TabController get tabController => _tabController;
 
   Map<String, BusRoute>? busRoutes;
-  Map<String?, BusTimetable>? busTables;
+  Map<String, BusTimetable>? busTables;
 
-  Future<void> scheduleBusAlarm(int secondsFromNow, TimetableStop stop) async {
-    await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 10,
-            channelKey: 'basic_channel',
-            title: 'Your bus is almost here!',
-            body: '${stop.stopName} is arriving soon!'),
-        schedule: NotificationInterval(
-            interval: secondsFromNow, repeats: false, allowWhileIdle: true));
+  Future<void> scheduleAlarm({
+    required String vehicle,
+    required String stopName,
+    required int secondsFromNow,
+    required String payload,
+  }) async {
+    // set up an alert for 5 mins before, 2 mins, before, and 1 min before
+    for (final timeOffset in [300, 120, 60]) {
+      if (secondsFromNow - timeOffset > 0) {
+        await notifications.zonedSchedule(
+          timeOffset,
+          '$vehicle arriving in ${timeOffset ~/ 60} '
+              'minute${timeOffset == 60 ? "" : "s"}!',
+          '$stopName is arriving soon!',
+          tz.TZDateTime.now(tz.local)
+              .add(Duration(seconds: secondsFromNow - timeOffset)),
+          platformChannelSpecifics,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          androidAllowWhileIdle: true,
+          payload: payload,
+        );
+      }
+    }
+
+    await notifications.zonedSchedule(
+      0,
+      'Your ${vehicle.toLowerCase()} is here!',
+      '$stopName should have arrived.',
+      tz.TZDateTime.now(tz.local).add(Duration(seconds: secondsFromNow)),
+      platformChannelSpecifics,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      androidAllowWhileIdle: true,
+      payload: payload,
+    );
   }
 
+  Future<void> scheduleBusAlarm(
+    int secondsFromNow,
+    TimetableStop stop,
+  ) =>
+      scheduleAlarm(
+        vehicle: 'Bus',
+        stopName: stop.stopName,
+        secondsFromNow: secondsFromNow,
+        payload: jsonEncode({
+          'latitude': stop.stopLat,
+          'longitude': stop.stopLon,
+        }),
+      );
+
   Future<void> scheduleShuttleAlarm(
-      int secondsFromNow, ShuttleStop stop) async {
-    await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 10,
-            channelKey: 'basic_channel',
-            title: 'Your bus is almost here!',
-            body: '${stop.name} is arriving soon!'),
-        schedule: NotificationInterval(
-            interval: secondsFromNow, repeats: false, allowWhileIdle: true));
+    int secondsFromNow,
+    ShuttleStop stop,
+  ) =>
+      scheduleAlarm(
+        vehicle: 'Shuttle',
+        stopName: stop.name ?? '',
+        secondsFromNow: secondsFromNow,
+        payload: jsonEncode({
+          'latitude': stop.coordinate?.latitude,
+          'longitude': stop.coordinate?.longitude,
+        }),
+      );
+
+  void tabListener() {
+    add(const ScheduleViewChangeEvent());
+    if (_tabController.index == 0 && mapBloc.mapView != MapView.kBusView) {
+      mapBloc.add(const MapViewChangeEvent(newView: MapView.kBusView));
+    } else if (_tabController.index == 1 &&
+        mapBloc.mapView != MapView.kShuttleView) {
+      mapBloc.add(const MapViewChangeEvent(newView: MapView.kShuttleView));
+    }
   }
 
   @override
@@ -73,7 +154,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       case ScheduleInitEvent:
         {
           _tabController = (event as ScheduleInitEvent).tabController
-            ..addListener(() => add(const ScheduleViewChangeEvent()));
+            ..addListener(tabListener);
           _panelController = event.panelController;
           busTables = await busRepo.getTimetables;
           yield* _mapScheduleTimelineToState();
@@ -102,8 +183,6 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
           }
         }
         break;
-      default:
-        print('error in schedule bloc');
     }
   }
 
@@ -111,10 +190,14 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     yield ScheduleTimelineState(
       busTables: busTables,
       shuttleTables: null,
+      shuttleAnnouncements: await shuttleRepo.getAnnouncements,
     );
   }
 
   Stream<ScheduleState> _mapScheduleTableToState() async* {
-    yield ScheduleTableState(busTables: busTables, shuttleTables: null);
+    yield ScheduleTableState(
+        busTables: busTables,
+        shuttleTables: null,
+        shuttleAnnouncements: await shuttleRepo.getAnnouncements,);
   }
 }

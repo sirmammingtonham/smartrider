@@ -2,7 +2,6 @@
 // code is governed by a BSD-style license that can be found in the LICENSE
 // file.
 
-import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 
 const Duration _kExpand = Duration(milliseconds: 200);
@@ -159,7 +158,7 @@ class _ExpansionTileState extends State<CustomExpansionTile>
   static final Animatable<double> _easeInTween =
       CurveTween(curve: Curves.easeIn);
   static final Animatable<double> _halfTween =
-      Tween<double>(begin: 0.0, end: 0.5);
+      Tween<double>(begin: 0, end: 0.5);
 
   final ColorTween _borderColorTween = ColorTween();
   final ColorTween _headerColorTween = ColorTween();
@@ -256,10 +255,10 @@ class _ExpansionTileState extends State<CustomExpansionTile>
     _borderColorTween.end = theme.dividerColor;
     _headerColorTween
       ..begin = theme.textTheme.subtitle1!.color
-      ..end = theme.accentColor;
+      ..end = theme.colorScheme.secondary;
     _iconColorTween
       ..begin = theme.unselectedWidgetColor
-      ..end = theme.accentColor;
+      ..end = theme.colorScheme.secondary;
     _backgroundColorTween.end = widget.backgroundColor;
     super.didChangeDependencies();
   }
@@ -275,8 +274,8 @@ class _ExpansionTileState extends State<CustomExpansionTile>
           enabled: !closed,
           child: Padding(
               padding: widget.childrenPadding ?? EdgeInsets.zero,
-              child: widget.children[0]),
-        ));
+              child: widget.children[0],),
+        ),);
 
     return AnimatedBuilder(
       animation: _controller.view,

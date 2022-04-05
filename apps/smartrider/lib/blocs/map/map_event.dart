@@ -53,3 +53,10 @@ class MapErrorEvent extends MapEvent {
   @override
   List<Object> get props => [];
 }
+
+class MapThemeChangeEvent extends MapEvent {
+  const MapThemeChangeEvent({required this.theme});
+  final ThemeData theme;
+  @override
+  List<Object> get props => [theme];
+}

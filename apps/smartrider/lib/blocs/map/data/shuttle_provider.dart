@@ -1,15 +1,14 @@
 // thx flutter shuttle tracker lol
-import 'dart:convert';
-// import 'dart:io';
-
-import 'package:http/http.dart' as http;
+import 'package:shared/models/shuttle/shuttle_eta.dart';
 // import 'package:path_provider/path_provider.dart';
 
 import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
 import 'package:shared/models/shuttle/shuttle_update.dart';
-import 'package:shared/models/shuttle/shuttle_eta.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:shared/models/shuttle/shuttle_announcement.dart';
+import 'package:smartrider/blocs/map/data/http_util.dart';
+import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_announcements.dart';
+// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 /// This class contains methods for providing data to Repository
 class ShuttleProvider {
@@ -17,26 +16,10 @@ class ShuttleProvider {
   bool isConnected = false;
 
   /// This function will fetch the data from the JSON API and return a decoded
-  Future<http.Response?> fetch(String type) async {
-    final client = http.Client();
-    http.Response? response;
-    try {
-      // shuttle tracker's certificate expired,
-      // TODO: will need to change this back to https at some point
-      response = await client.get(Uri.parse('http://shuttles.rpi.edu/$type'));
-      // await createJSONFile('$type', response);
-
-      if (response.statusCode == 200) {
-        isConnected = true;
-      }
-    } catch (error, stacktrace) {
-      await FirebaseCrashlytics.instance.recordError(
-        error,
-        stacktrace,
-        reason: 'client cannot connect to shuttleprovider',
-      );
-      isConnected = false;
-    }
+  Future<List<dynamic>?> fetch(String type) async {
+    final response =
+        await get<List<dynamic>>(url: 'https://shuttletracker.app/$type');
+    isConnected = response != null;
     return response;
   }
 
@@ -55,13 +38,16 @@ class ShuttleProvider {
     ///     return routeMap;
     final response = await fetch('routes');
 
+    // Set stopIds for route
+    final temp = await getStops();
+    final stops = temp.map((e) => e.name).toList();
+    final routeList = <ShuttleRoute>[];
+    for (final json in response!) {
+      routeList.add(ShuttleRoute.fromJson(json as Map<String, dynamic>, stops));
+    }
     final routeMap = response != null
         ? <String, ShuttleRoute>{
-            for (final json in (json.decode(response.body) as List<dynamic>)
-                .where((dynamic json) =>
-                    (json as Map<String, dynamic>)['enabled']))
-              (json as Map<String, dynamic>)['name']:
-                  ShuttleRoute.fromJson(json)
+            for (final route in routeList) route.id!: route
           }
         : <String, ShuttleRoute>{};
 
@@ -81,8 +67,11 @@ class ShuttleProvider {
     final response = await fetch('stops');
 
     final stopsList = response != null
-        ? (json.decode(response.body) as List<dynamic>)
-            .map<ShuttleStop>((dynamic json) => ShuttleStop.fromJson(json))
+        ? response
+            .map<ShuttleStop>(
+              (dynamic json) =>
+                  ShuttleStop.fromJson(json as Map<String, dynamic>),
+            )
             .toList()
         : <ShuttleStop>[];
     return stopsList;
@@ -98,14 +87,48 @@ class ShuttleProvider {
     ///
     ///
     ///     return updatesList;
-    final response = await fetch('updates');
-
+    final response = await fetch('buses');
     final updatesList = response != null
-        ? (json.decode(response.body) as List<dynamic>)
-            .map<ShuttleUpdate>((dynamic json) => ShuttleUpdate.fromJson(json))
+        ? response
+            .map<ShuttleUpdate>(
+              (dynamic json) =>
+                  ShuttleUpdate.fromJson(json as Map<String, dynamic>),
+            )
             .toList()
         : <ShuttleUpdate>[];
     return updatesList;
+  }
+
+  Future<List<ShuttleAnnouncement>> getAnnouncements() async {
+    /// Returns a list of announcement based on their start+end dates
+    /// based on schedule type
+    final response = await fetch('announcements');
+    final announcementsList = response != null
+        ? response
+            .map<ShuttleAnnouncement>(
+            (dynamic json) =>
+                ShuttleAnnouncement.fromJson(json as Map<String, dynamic>),
+          )
+            .where((announcement) {
+            final endDate = DateTime.parse(announcement.end.toString());
+            final startDate = DateTime.parse(announcement.start.toString());
+            final today = DateTime.now();
+            switch (announcement.scheduleType) {
+              case 'startOnly':
+                return startDate.isBefore(today) ||
+                    startDate.isAtSameMomentAs(today);
+              case 'endOnly':
+                return endDate.isAfter(today);
+              case 'startAndEnd':
+                return (startDate.isBefore(today) ||
+                        startDate.isAtSameMomentAs(today)) &&
+                    endDate.isAfter(today);
+              default:
+                return true;
+            }
+          }).toList()
+        : <ShuttleAnnouncement>[];
+    return announcementsList;
   }
 
   /// Getter method to retrieve the list of shuttle eta (estimated times of
@@ -123,7 +146,7 @@ class ShuttleProvider {
     // final response = await fetch('eta');
     final etas = <ShuttleEta>[];
     // final Map<String, dynamic> etamap = (response != null ?
-    //     (json.decode(response.body))! : <dynamic>[]) ..forEach((String key,
+    //     (response)! : <dynamic>[]) ..forEach((String key,
     //     dynamic value) {etas.add(ShuttleEta.fromJson(value));
     //       });
     return etas;

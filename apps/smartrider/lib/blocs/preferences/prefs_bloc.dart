@@ -1,14 +1,16 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:shared/models/themes.dart';
+// import 'package:flutter/material.dart';
+// import 'package:shared/models/themes.dart';
+// import 'package:flex_color_scheme/flex_color_scheme.dart';
+
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 // model imports
 import 'package:shared/models/shuttle/shuttle_route.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:sms_autofill/sms_autofill.dart';
 
 part 'prefs_event.dart';
 part 'prefs_state.dart';
@@ -31,6 +33,18 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
 
   String? getCurrentOrderId() {
     return _sharedPrefs.getString('current_order');
+  }
+
+  bool? getBool(String key) {
+    return _sharedPrefs.getBool(key);
+  }
+
+  void setBool(String key) {
+    if (_sharedPrefs.getBool(key) == true) {
+      _sharedPrefs.setBool(key, false);
+    } else {
+      _sharedPrefs.setBool(key, true);
+    }
   }
 
   void setCurrentOrderId(String? id) {
@@ -78,9 +92,8 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
         break;
       case SavePrefsEvent:
         {
-          yield const PrefsSavingState();
           await _sharedPrefs.setBool(
-              (event as SavePrefsEvent).name!, event.val);
+              (event as SavePrefsEvent).name!, event.val,);
           yield PrefsLoadedState(_sharedPrefs, _shuttles, _buses);
         }
         break;
@@ -95,7 +108,7 @@ class PrefsBloc extends Bloc<PrefsEvent, PrefsState> {
           if (hideInactiveRoutes) {
             hideInactiveRoutes = false;
             for (final route in (event as InitActiveRoutesEvent).routes) {
-              _shuttles[route.name] = route.active;
+              _shuttles[route.id!] = route.active;
             }
           }
           yield const PrefsChangedState();

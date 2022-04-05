@@ -37,7 +37,7 @@ class MultiBlocBuilder extends StatefulWidget {
   const MultiBlocBuilder(
       {Key? key,
       required List<Bloc> blocs,
-      required Widget Function(BuildContext, BlocStates) builder})
+      required Widget Function(BuildContext, BlocStates) builder,})
       : _blocs = blocs,
         _builder = builder,
         super(key: key);
@@ -106,6 +106,6 @@ class BlocStates {
   /// final exampeState = blocStates.get<ExampleState>();
   /// ```
   T get<T>() => _stateContainer.firstWhere(
-        (dynamic entry) => (entry is T),
-      );
+        (dynamic entry) => entry is T,
+      ) as T;
 }

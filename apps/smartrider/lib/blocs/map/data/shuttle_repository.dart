@@ -1,6 +1,8 @@
+import 'package:shared/models/shuttle/shuttle_announcement.dart';
 import 'package:shared/models/shuttle/shuttle_route.dart';
 import 'package:shared/models/shuttle/shuttle_stop.dart';
 import 'package:shared/models/shuttle/shuttle_update.dart';
+import 'package:smartrider/ui/widgets/shuttle_schedules/shuttle_announcements.dart';
 
 import 'shuttle_provider.dart';
 
@@ -18,5 +20,7 @@ class ShuttleRepository {
   Future<List<ShuttleStop>> get getStops async => _shuttleProvider.getStops();
   Future<List<ShuttleUpdate>> get getUpdates async =>
       _shuttleProvider.getUpdates();
+  Future<List<ShuttleAnnouncement>> get getAnnouncements async =>
+      _shuttleProvider.getAnnouncements();
   bool get isConnected => _shuttleProvider.isConnected;
 }

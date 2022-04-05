@@ -4,45 +4,46 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 /// Bus Stop model:
 /// Contains data related to Bus Stops
 class BusStop {
-  BusStop(
-      {this.stopId,
-      this.stopCode,
-      this.stopName,
-      this.ttsStopName,
-      this.stopDesc,
-      this.stopLat,
-      this.stopLon,
-      this.zoneId,
-      this.stopUrl,
-      this.locationType,
-      this.parentStation,
-      this.stopTimezone,
-      this.wheelchairBoarding,
-      this.levelId,
-      this.platformCode,
-      this.arrivalTimes,
-      this.departureTimes,
-      this.stopSequence,
-      this.routeIds,
-      this.shapeIds,
-      this.tripIds});
+  BusStop({
+    this.stopId,
+    this.stopCode,
+    this.stopName,
+    this.ttsStopName,
+    this.stopDesc,
+    this.stopLat,
+    this.stopLon,
+    this.zoneId,
+    this.stopUrl,
+    this.locationType,
+    this.parentStation,
+    this.stopTimezone,
+    this.wheelchairBoarding,
+    this.levelId,
+    this.platformCode,
+    this.arrivalTimes,
+    this.departureTimes,
+    this.stopSequence,
+    this.routeIds,
+    this.shapeIds,
+    this.tripIds,
+  });
 
   BusStop.fromJson(Map<String, dynamic> json) {
-    stopId = json['stop_id'];
-    stopCode = json['stop_code'];
-    stopName = json['stop_name'];
-    ttsStopName = json['tts_stop_name'];
-    stopDesc = json['stop_desc'];
-    stopLat = json['stop_lat'];
-    stopLon = json['stop_lon'];
-    zoneId = json['zone_id'];
-    stopUrl = json['stop_url'];
-    locationType = json['location_type'];
-    parentStation = json['parent_station'];
-    stopTimezone = json['stop_timezone'];
-    wheelchairBoarding = json['wheelchair_boarding'];
-    levelId = json['level_id'];
-    platformCode = json['platform_code'];
+    stopId = json['stop_id'] as String?;
+    stopCode = json['stop_code'] as String?;
+    stopName = json['stop_name'] as String?;
+    ttsStopName = json['tts_stop_name'] as int?;
+    stopDesc = json['stop_desc'] as String?;
+    stopLat = json['stop_lat'] as double?;
+    stopLon = json['stop_lon'] as double?;
+    zoneId = json['zone_id'] as String?;
+    stopUrl = json['stop_url'] as String?;
+    locationType = json['location_type'] as int?;
+    parentStation = json['parent_station'] as int?;
+    stopTimezone = json['stop_timezone'] as String?;
+    wheelchairBoarding = json['wheelchair_boarding'] as int?;
+    levelId = json['level_id'] as int?;
+    platformCode = json['platform_code'] as int?;
 
     arrivalTimes = (json['arrival_times'] as List).cast<int>();
     departureTimes = (json['departure_times'] as List).cast<int>();

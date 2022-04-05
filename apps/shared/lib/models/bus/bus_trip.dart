@@ -1,29 +1,30 @@
 /// Bus Trip model:
 /// Contains data for individual trips
 class BusTrip {
-  BusTrip(
-      {this.tripId,
-      this.routeId,
-      this.serviceId,
-      this.tripHeadsign,
-      this.tripShortName,
-      this.directionId,
-      this.blockId,
-      this.shapeId,
-      this.wheelchairAccessible,
-      this.bikesAllowed});
+  BusTrip({
+    this.tripId,
+    this.routeId,
+    this.serviceId,
+    this.tripHeadsign,
+    this.tripShortName,
+    this.directionId,
+    this.blockId,
+    this.shapeId,
+    this.wheelchairAccessible,
+    this.bikesAllowed,
+  });
 
   BusTrip.fromJson(Map<String, dynamic> json) {
-    tripId = json['trip_id'];
-    routeId = json['route_id'];
-    serviceId = json['service_id'];
-    tripHeadsign = json['trip_headsign'];
-    // tripShortName = json['trip_short_name'];
-    directionId = json['direction_id'];
-    // blockId = json['block_id'];
-    shapeId = json['shape_id'];
-    wheelchairAccessible = json['wheelchair_accessible'];
-    bikesAllowed = json['bikes_allowed'];
+    tripId = json['trip_id'] as String?;
+    routeId = json['route_id'] as String?;
+    serviceId = json['service_id'] as String?;
+    tripHeadsign = json['trip_headsign'] as String?;
+    // tripShortName = json['trip_short_name']  as String?;
+    directionId = json['direction_id'] as int?;
+    // blockId = json['block_id']  as String?;
+    shapeId = json['shape_id'] as String?;
+    wheelchairAccessible = json['wheelchair_accessible'] as int?;
+    bikesAllowed = json['bikes_allowed'] as int?;
   }
 
   String? tripId;

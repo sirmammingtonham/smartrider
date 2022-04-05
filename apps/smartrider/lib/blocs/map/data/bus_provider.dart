@@ -1,16 +1,16 @@
 import 'dart:convert';
-import 'package:shared/models/bus/bus_realtime_update.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:shared/models/bus/bus_realtime_update.dart';
 
 /// static gtfs models
 import 'package:shared/models/bus/bus_route.dart';
 import 'package:shared/models/bus/bus_shape.dart';
 import 'package:shared/models/bus/bus_stop.dart';
-import 'package:shared/models/bus/bus_trip.dart';
 import 'package:shared/models/bus/bus_timetable.dart';
+import 'package:shared/models/bus/bus_trip.dart';
+import 'package:smartrider/blocs/map/data/http_util.dart';
 
 /// A provider for Bus data.
 ///
@@ -23,7 +23,12 @@ class BusProvider {
     _providerHasLoaded = _init();
   }
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  BusProvider.withFirebase({FirebaseFirestore? firestore}) {
+    _providerHasLoaded = _init(firestore: firestore);
+  }
+
+  late FirebaseFirestore _firestore;
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
 
   late final Map<String, String> routeMapping;
   late final Future _providerHasLoaded;
@@ -40,16 +45,26 @@ class BusProvider {
     return shortRouteIds;
   }
 
+  Map<String, String> getrouteMapping() {
+    return routeMapping;
+  }
+
   // we need to await in the constructor, so doing it like this
   // allows for the factory to wait for initialization
-  Future<void> _init() async {
+  Future<void> _init({FirebaseFirestore? firestore}) async {
+    if (firestore != null) {
+      _firestore = firestore;
+    } else {
+      _firestore = FirebaseFirestore.instance;
+    }
     final routes = await _firestore
         .collection('routes')
         .where('route_short_name', whereIn: shortRouteIds)
         .get();
 
     routeMapping = <String, String>{
-      for (final doc in routes.docs) doc['route_id']: doc['route_short_name']
+      for (final doc in routes.docs)
+        doc['route_id'] as String: doc['route_short_name'] as String
     };
     _defaultRoutes = routeMapping.keys.toList();
   }
@@ -57,8 +72,11 @@ class BusProvider {
   Future get waitForLoad => _providerHasLoaded;
 
   /// Fetchs data from the JSON API and returns a decoded JSON.
-  Future<QuerySnapshot> fetch(String collection,
-      {List<String>? routes, String idField = 'route_id'}) async {
+  Future<QuerySnapshot> fetch(
+    String collection, {
+    List<String>? routes,
+    String idField = 'route_id',
+  }) async {
     return _firestore
         .collection(collection)
         .where(idField, whereIn: _defaultRoutes)
@@ -67,13 +85,12 @@ class BusProvider {
 
   /// Returns a [Map] of <[BusRoute.routeShortName], [BusRoute]>  pairs.
   Future<Map<String, BusRoute>> getRoutes() async {
-    final response =
-        await fetch('routes', idField: 'route_id', routes: _defaultRoutes);
+    final response = await fetch('routes', routes: _defaultRoutes);
 
     final routeMap = <String, BusRoute>{
       for (final doc in response.docs)
-        doc['route_short_name']:
-            BusRoute.fromJson(doc.data() as Map<String, dynamic>)
+        doc['route_short_name'] as String:
+            BusRoute.fromJson(doc.data()! as Map<String, dynamic>)
     };
 
     return routeMap;
@@ -81,13 +98,13 @@ class BusProvider {
 
   /// Returns a [Map] of [BusShape] objects.
   Future<Map<String, BusShape>> getPolylines() async {
-    final response =
-        await fetch('polylines', idField: 'route_id', routes: _defaultRoutes);
+    final response = await fetch('polylines', routes: _defaultRoutes);
 
     final shapesMap = <String, BusShape>{
       for (final doc in response.docs)
-        routeMapping[doc['route_id']]!:
-            BusShape.fromJson(json.decode(doc['geoJSON']))
+        routeMapping[doc['route_id']]!: BusShape.fromJson(
+          json.decode(doc['geoJSON'] as String) as Map<String, dynamic>,
+        )
     };
 
     return shapesMap;
@@ -102,7 +119,7 @@ class BusProvider {
 
     final stopsMap = <String, BusStop>{
       for (final doc in response.docs)
-        doc['stop_id']: BusStop.fromJson(doc.data())
+        doc['stop_id'] as String: BusStop.fromJson(doc.data())
     };
 
     return stopsMap;
@@ -110,13 +127,12 @@ class BusProvider {
 
   /// Returns a [List] of [BusTrip] objects.
   Future<Map<String, BusTrip>> getTrips() async {
-    final response =
-        await fetch('trips', idField: 'route_id', routes: _defaultRoutes);
+    final response = await fetch('trips', routes: _defaultRoutes);
 
     final tripList = <String, BusTrip>{
       for (final doc in response.docs)
         routeMapping[doc['route_id']]!:
-            BusTrip.fromJson(doc.data() as Map<String, dynamic>)
+            BusTrip.fromJson(doc.data()! as Map<String, dynamic>)
     };
 
     return tripList;
@@ -127,14 +143,16 @@ class BusProvider {
     final now = DateTime.now();
     final milliseconds = now.millisecondsSinceEpoch;
     final ret = <String, Map<String, String>>{};
+
     for (final route in shortRouteIds) {
-      final response = await http.get(Uri.parse(
-          'https://www.cdta.org/apicache/routebus_${route}_0.json?_=$milliseconds'));
-      if (response.statusCode == 200) {
+      final response = await get<Map<String, dynamic>>(
+        url: 'https://www.cdta.org/apicache/routebus_'
+            '${route}_0.json?_=$milliseconds',
+      );
+      if (response != null) {
         // filter out null values from json response and convert to map
         final data = <String, String>{};
-        (jsonDecode(response.body) as Map<String, dynamic>)
-            .forEach((String key, dynamic value) {
+        response.forEach((String key, dynamic value) {
           if (value != null) {
             data[key] = value.toString();
           }
@@ -151,16 +169,20 @@ class BusProvider {
   Future<Map<String, List<BusRealtimeUpdate>>> getBusRealtimeUpdates() async {
     final now = DateTime.now();
     final milliseconds = now.millisecondsSinceEpoch;
-    final response = await http.get(
-        Uri.parse('https://www.cdta.org/realtime/buses.json?$milliseconds'));
     final updates = <String, List<BusRealtimeUpdate>>{};
-    for (final element in jsonDecode(response.body)) {
-      final update = BusRealtimeUpdate.fromJson(element);
-      if (shortRouteIds.contains(update.routeId)) {
-        if (updates[update.routeId] == null) {
-          updates[update.routeId] = [];
+    final response = await get<List<dynamic>>(
+      url: 'https://www.cdta.org/realtime/buses.json?$milliseconds',
+    );
+    if (response != null) {
+      for (final element in response) {
+        final update =
+            BusRealtimeUpdate.fromJson(element as Map<String, dynamic>);
+        if (shortRouteIds.contains(update.routeId)) {
+          if (updates[update.routeId] == null) {
+            updates[update.routeId] = [];
+          }
+          updates[update.routeId]?.add(update);
         }
-        updates[update.routeId]?.add(update);
       }
     }
 
@@ -187,7 +209,7 @@ class BusProvider {
           await route.reference.collection(day.toLowerCase()).doc('0').get();
       if (table.data() != null) {
         final entry = BusTimetable.fromJson(table.data()!);
-        String id = route.get('route_id');
+        var id = route.get('route_id') as String;
         id = id.split('-')[0];
         entry.updateWithRealtime(realtimeTable[id]);
         // check if today is in exclusive dates

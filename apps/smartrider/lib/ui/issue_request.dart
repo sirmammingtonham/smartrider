@@ -19,9 +19,9 @@ class Post {
   /// map (or a JSON format).
   factory Post.fromJson(Map json) {
     return Post(
-      title: json['title'],
-      body: json['body'],
-      labels: json['labels'],
+      title: json['title'] as String?,
+      body: json['body'] as String?,
+      labels: json['labels'] as String?,
     );
   }
 
@@ -114,14 +114,14 @@ class _IssueRequestState extends State<IssueRequest> {
           child: Column(children: [
         // Vertical margin for elements.
         const Padding(
-          padding: EdgeInsets.symmetric(vertical: 15.0),
+          padding: EdgeInsets.symmetric(vertical: 15),
         ),
         // Organizes back button in a Row layout.
         Row(
           children: [
             // Horizonal left margin between screen and back button.
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.0),
+              padding: EdgeInsets.symmetric(horizontal: 5),
             ),
             // Back button
             ElevatedButton(
@@ -131,7 +131,7 @@ class _IssueRequestState extends State<IssueRequest> {
                 },
                 // The appearance of the back button.
                 child:
-                    Text('< BACK', style: Theme.of(context).textTheme.button)),
+                    Text('< BACK', style: Theme.of(context).textTheme.button),),
           ],
         ),
         // Container for the title label, used for layout purposes
@@ -139,7 +139,7 @@ class _IssueRequestState extends State<IssueRequest> {
           children: [
             // Left margin between screen and Title label.
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              padding: EdgeInsets.symmetric(horizontal: 10),
             ),
             // Controls appearance of the title label.
             Text('Title:', style: Theme.of(context).textTheme.headline6),
@@ -150,22 +150,22 @@ class _IssueRequestState extends State<IssueRequest> {
           children: [
             // Left margin between screen and title description.
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 11.0),
+              padding: EdgeInsets.symmetric(horizontal: 11),
             ),
             // Controls appearance of the title description label.
             Text('Enter a brief description of your request.',
-                style: Theme.of(context).textTheme.bodyText1),
+                style: Theme.of(context).textTheme.bodyText1,),
           ],
         ),
         // Vertical margin between title description label and input field.
         const Padding(
-          padding: EdgeInsets.symmetric(vertical: 3.0),
+          padding: EdgeInsets.symmetric(vertical: 3),
         ),
         // Container for the title TextField, in which the user enters a title.
         SizedBox(
             // Proportions of the text field
-            width: 330.0,
-            height: 50.0,
+            width: 330,
+            height: 50,
             // Text Field object: user enters the title for their request. Will
             // eventually be mapped to the title entry in the HTTP POST request
             child: TextField(
@@ -178,19 +178,19 @@ class _IssueRequestState extends State<IssueRequest> {
                       const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                 ),
                 style: TextStyle(
-                    color: Theme.of(context).accentTextTheme.bodyText1!.color),
+                    color: Theme.of(context).accentTextTheme.bodyText1!.color,),
                 // When changed, the TextField will store the current TextField
                 // value to our title variable (which will eventually be sent as
                 // the issue title.)
                 onChanged: (value) {
                   title = value;
-                })),
+                },),),
         // Container for Description title, for layout purposes.
         Row(
           children: [
             // Left margin between edge of screen and description title.
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              padding: EdgeInsets.symmetric(horizontal: 10),
             ),
             // The actual description title label
             Text(
@@ -206,11 +206,11 @@ class _IssueRequestState extends State<IssueRequest> {
             // Left margin between edge of screen and the Description label's
             // description.
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 11.0),
+              padding: EdgeInsets.symmetric(horizontal: 11),
             ),
             // The actual description for the description
             Text('Summarize your request.',
-                style: Theme.of(context).textTheme.bodyText2),
+                style: Theme.of(context).textTheme.bodyText2,),
           ],
         ),
         // Container for the description textfield
@@ -219,7 +219,7 @@ class _IssueRequestState extends State<IssueRequest> {
             // since the description textfield is multi-line, and will adjust
             // for the user to see everything they type. If the textbox extends
             // the screen, it will become scrollable.
-            width: 330.0,
+            width: 330,
             // TextField object: User enters the description of their
             // bug/feature, which will eventually be sent as the description
             // when that issue is created on GitHub.
@@ -237,23 +237,23 @@ class _IssueRequestState extends State<IssueRequest> {
                 maxLines: null,
                 // Also controls the appearance of the description textfield.
                 style: TextStyle(
-                    color: Theme.of(context).accentTextTheme.bodyText1!.color),
+                    color: Theme.of(context).accentTextTheme.bodyText1!.color,),
                 // When the user makes an edit to the description textfield, the
                 // value that they type will be stored in our description
                 // string.
                 onChanged: (value) {
                   description = value;
-                })),
+                },),),
         // Vertical margin between the description textfield and the dropdown
         // prompt.
         const Padding(
-          padding: EdgeInsets.symmetric(vertical: 3.0),
+          padding: EdgeInsets.symmetric(vertical: 3),
         ),
         // Prompts the user to select Bug/Feature/Other option in their
         // dropdown.
         Text('This is a:',
             style:
-                TextStyle(color: Theme.of(context).textTheme.bodyText1!.color)),
+                TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),),
         // Dropdown for the user to select the type of issue request they are
         // making
         DropdownButton<String>(
@@ -272,7 +272,7 @@ class _IssueRequestState extends State<IssueRequest> {
               setState(() {
                 dropdownValue = newValue;
               });
-            }),
+            },),
         // For layout purposes, contains the text and the checkbox used to make
         // sure the user is okay with us reaching out to them to explain more of
         // the issue.
@@ -285,7 +285,7 @@ class _IssueRequestState extends State<IssueRequest> {
             // Contains the text that gives us consent to contact them if we
             // have any questions about their request.
             SizedBox(
-              width: 300.0,
+              width: 300,
               child: Text(
                 'By selecting the checkmark, you give the developers of '
                 'SmartRider permission to contact you using your '
@@ -311,7 +311,7 @@ class _IssueRequestState extends State<IssueRequest> {
         // Container for the submit request button.
         SizedBox(
           // Contains the button in a box.
-          width: 350.0,
+          width: 350,
           // The submit request button itself.
           child: ElevatedButton(
             onPressed: () async {
@@ -330,7 +330,7 @@ class _IssueRequestState extends State<IssueRequest> {
             ),
           ),
         )
-      ])),
-    ));
+      ],),),
+    ),);
   }
 }

@@ -6,7 +6,7 @@ abstract class ScheduleEvent extends Equatable {
 
 class ScheduleInitEvent extends ScheduleEvent {
   const ScheduleInitEvent(
-      {required this.panelController, required this.tabController});
+      {required this.panelController, required this.tabController,});
 
   final PanelController panelController;
   final TabController tabController;

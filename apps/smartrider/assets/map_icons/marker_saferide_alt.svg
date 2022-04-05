@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="42" height="66" viewBox="0 0 42 66">
   <defs>
-    <filter id="Rectangle_73" x="0" y="0" width="42" height="66" filterUnits="userSpaceOnUse">
+    <!-- <filter id="Rectangle_73" x="0" y="0" width="42" height="66" filterUnits="userSpaceOnUse">
       <feOffset dy="3" input="SourceAlpha"/>
       <feGaussianBlur stdDeviation="3" result="blur"/>
       <feFlood flood-opacity="0.251"/>
       <feComposite operator="in" in2="blur"/>
       <feComposite in="SourceGraphic"/>
-    </filter>
+    </filter> -->
   </defs>
   <g id="car" transform="translate(-276.863 -99.093)">
     <rect id="shadow" width="25" height="48" rx="8" transform="translate(293.863 113.093)" opacity="0.251"/>
