@@ -1,12 +1,9 @@
 import 'dart:async';
-// import 'dart:convert';
+import 'dart:convert';
+import 'package:shared/util/strings.dart';
 
 import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
-
-// import 'package:oauth2_client/oauth2_helper.dart'; import
-// 'package:oauth2_client/github_oauth2_client.dart'; import
-// 'package:shared/util/strings.dart';
+import 'package:http/http.dart' as http;
 
 /// Represents an HTTP POST, structure implemented to send the info needed to
 /// create a GitHub API Post Request, to create an issue on the Github
@@ -104,233 +101,260 @@ class _IssueRequestState extends State<IssueRequest> {
   Widget build(BuildContext context) {
     // The body of the Issue Request page form
     return MaterialApp(
-        home: Scaffold(
-      // Controls the background color of the graph
-      backgroundColor: Theme.of(context).backgroundColor,
+      home: Scaffold(
+        // Controls the background color of the graph
+        backgroundColor: Theme.of(context).backgroundColor,
 
-      body: SingleChildScrollView(
+        body: SingleChildScrollView(
           // Contains all of the elements within our Issue Request form,
           // organized in a column for layout purposes.
-          child: Column(children: [
-        // Vertical margin for elements.
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 15),
-        ),
-        // Organizes back button in a Row layout.
-        Row(
-          children: [
-            // Horizonal left margin between screen and back button.
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5),
-            ),
-            // Back button
-            ElevatedButton(
-                // Navigates back to profile page when clicked
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                // The appearance of the back button.
-                child:
-                    Text('< BACK', style: Theme.of(context).textTheme.button),),
-          ],
-        ),
-        // Container for the title label, used for layout purposes
-        Row(
-          children: [
-            // Left margin between screen and Title label.
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-            ),
-            // Controls appearance of the title label.
-            Text('Title:', style: Theme.of(context).textTheme.headline6),
-          ],
-        ),
-        // Container for the title description label, used for layout purposes.
-        Row(
-          children: [
-            // Left margin between screen and title description.
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 11),
-            ),
-            // Controls appearance of the title description label.
-            Text('Enter a brief description of your request.',
-                style: Theme.of(context).textTheme.bodyText1,),
-          ],
-        ),
-        // Vertical margin between title description label and input field.
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 3),
-        ),
-        // Container for the title TextField, in which the user enters a title.
-        SizedBox(
-            // Proportions of the text field
-            width: 330,
-            height: 50,
-            // Text Field object: user enters the title for their request. Will
-            // eventually be mapped to the title entry in the HTTP POST request
-            child: TextField(
-                // Controls appearance of title TextField.
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: 'Title',
-                  hintStyle: TextStyle(color: Colors.grey[600]),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-                ),
-                style: TextStyle(
-                    color: Theme.of(context).accentTextTheme.bodyText1!.color,),
-                // When changed, the TextField will store the current TextField
-                // value to our title variable (which will eventually be sent as
-                // the issue title.)
-                onChanged: (value) {
-                  title = value;
-                },),),
-        // Container for Description title, for layout purposes.
-        Row(
-          children: [
-            // Left margin between edge of screen and description title.
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-            ),
-            // The actual description title label
-            Text(
-              'Description:',
-              style: Theme.of(context).textTheme.headline6,
-            )
-          ],
-        ),
-        // Container for the Description label's description. Created for layout
-        // purposes.
-        Row(
-          children: [
-            // Left margin between edge of screen and the Description label's
-            // description.
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 11),
-            ),
-            // The actual description for the description
-            Text('Summarize your request.',
-                style: Theme.of(context).textTheme.bodyText2,),
-          ],
-        ),
-        // Container for the description textfield
-        SizedBox(
-            // Dimensions of the description textfield. No height specified
-            // since the description textfield is multi-line, and will adjust
-            // for the user to see everything they type. If the textbox extends
-            // the screen, it will become scrollable.
-            width: 330,
-            // TextField object: User enters the description of their
-            // bug/feature, which will eventually be sent as the description
-            // when that issue is created on GitHub.
-            child: TextField(
-                // Controls the appearance of the description textfield.
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: 'Description',
-                  hintStyle: TextStyle(color: Colors.grey[600]),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-                ),
-                // Box will expand to accomodate the user's response (if it's
-                // multi-line).
-                maxLines: null,
-                // Also controls the appearance of the description textfield.
-                style: TextStyle(
-                    color: Theme.of(context).accentTextTheme.bodyText1!.color,),
-                // When the user makes an edit to the description textfield, the
-                // value that they type will be stored in our description
-                // string.
-                onChanged: (value) {
-                  description = value;
-                },),),
-        // Vertical margin between the description textfield and the dropdown
-        // prompt.
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 3),
-        ),
-        // Prompts the user to select Bug/Feature/Other option in their
-        // dropdown.
-        Text('This is a:',
-            style:
-                TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),),
-        // Dropdown for the user to select the type of issue request they are
-        // making
-        DropdownButton<String>(
-            value: dropdownValue,
-            items: <String>['Bug', 'Feature', 'Other'].map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            // Controls what the dropdown looks like.
-            style:
-                TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
-            // Changes the Dropdown appearance to display the user's choice.
-            onChanged: (String? newValue) {
-              setState(() {
-                dropdownValue = newValue;
-              });
-            },),
-        // For layout purposes, contains the text and the checkbox used to make
-        // sure the user is okay with us reaching out to them to explain more of
-        // the issue.
-        Row(
-          children: <Widget>[
-            // Left margin from edge to the text.
-            const SizedBox(
-              width: 10,
-            ),
-            // Contains the text that gives us consent to contact them if we
-            // have any questions about their request.
-            SizedBox(
-              width: 300,
-              child: Text(
-                'By selecting the checkmark, you give the developers of '
-                'SmartRider permission to contact you using your '
-                'entered email address if a follow-up is necessary. '
-                'Any other identifying information is to remain anonymous.',
-                style: Theme.of(context).textTheme.bodyText1,
+          child: Column(
+            children: [
+              // Vertical margin for elements.
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 15),
               ),
-            ),
-            // The checkbox next to the statement.
-            Checkbox(
-              checkColor: Theme.of(context).buttonColor,
-              activeColor: Theme.of(context).focusColor,
-              focusColor: Theme.of(context).focusColor,
-              value: valuefirst,
-              onChanged: (bool? value) {
-                setState(() {
-                  valuefirst = value;
-                });
-              },
-            ),
-          ],
-        ),
-        // Container for the submit request button.
-        SizedBox(
-          // Contains the button in a box.
-          width: 350,
-          // The submit request button itself.
-          child: ElevatedButton(
-            onPressed: () async {
-              // Post newPost = new Post(title: title, body: description,
-              //     labels: dropdownValue); // Sends the POST request to GitHub
-              //     API: Post p = await createPost(postUrl, body:
-              //     newPost.toMap());
+              // Organizes back button in a Row layout.
+              Row(
+                children: [
+                  // Horizonal left margin between screen and back button.
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                  ),
+                  // Back button
+                  ElevatedButton(
+                    // Navigates back to profile page when clicked
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    // The appearance of the back button.
+                    child: Text('< BACK',
+                        style: Theme.of(context).textTheme.button),
+                  ),
+                ],
+              ),
+              // Container for the title label, used for layout purposes
+              Row(
+                children: [
+                  // Left margin between screen and Title label.
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                  ),
+                  // Controls appearance of the title label.
+                  Text('Title:', style: Theme.of(context).textTheme.headline6),
+                ],
+              ),
+              // Container for the title description label, used for layout purposes.
+              Row(
+                children: [
+                  // Left margin between screen and title description.
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 11),
+                  ),
+                  // Controls appearance of the title description label.
+                  Text(
+                    'Enter a brief description of your request.',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                ],
+              ),
+              // Vertical margin between title description label and input field.
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 3),
+              ),
+              // Container for the title TextField, in which the user enters a title.
+              SizedBox(
+                // Proportions of the text field
+                width: 330,
+                height: 50,
+                // Text Field object: user enters the title for their request. Will
+                // eventually be mapped to the title entry in the HTTP POST request
+                child: TextField(
+                  // Controls appearance of title TextField.
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText: 'Title',
+                    hintStyle: TextStyle(color: Colors.grey[600]),
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                  ),
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                  // When changed, the TextField will store the current TextField
+                  // value to our title variable (which will eventually be sent as
+                  // the issue title.)
+                  onChanged: (value) {
+                    title = value;
+                  },
+                ),
+              ),
+              // Container for Description title, for layout purposes.
+              Row(
+                children: [
+                  // Left margin between edge of screen and description title.
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                  ),
+                  // The actual description title label
+                  Text(
+                    'Description:',
+                    style: Theme.of(context).textTheme.headline6,
+                  )
+                ],
+              ),
+              // Container for the Description label's description. Created for layout
+              // purposes.
+              Row(
+                children: [
+                  // Left margin between edge of screen and the Description label's
+                  // description.
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 11),
+                  ),
+                  // The actual description for the description
+                  Text(
+                    'Summarize your request.',
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ],
+              ),
+              // Container for the description textfield
+              SizedBox(
+                // Dimensions of the description textfield. No height specified
+                // since the description textfield is multi-line, and will adjust
+                // for the user to see everything they type. If the textbox extends
+                // the screen, it will become scrollable.
+                width: 330,
+                // TextField object: User enters the description of their
+                // bug/feature, which will eventually be sent as the description
+                // when that issue is created on GitHub.
+                child: TextField(
+                  // Controls the appearance of the description textfield.
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText: 'Description',
+                    hintStyle: TextStyle(color: Colors.grey[600]),
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                  ),
+                  // Box will expand to accomodate the user's response (if it's
+                  // multi-line).
+                  maxLines: null,
+                  // Also controls the appearance of the description textfield.
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                  // When the user makes an edit to the description textfield, the
+                  // value that they type will be stored in our description
+                  // string.
+                  onChanged: (value) {
+                    description = value;
+                  },
+                ),
+              ),
+              // Vertical margin between the description textfield and the dropdown
+              // prompt.
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 3),
+              ),
+              // Prompts the user to select Bug/Feature/Other option in their
+              // dropdown.
+              Text(
+                'This is a:',
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyText1!.color),
+              ),
+              // Dropdown for the user to select the type of issue request they are
+              // making
+              DropdownButton<String>(
+                value: dropdownValue,
+                items: <String>['Bug', 'Feature', 'Other'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                // Controls what the dropdown looks like.
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyText1!.color),
+                // Changes the Dropdown appearance to display the user's choice.
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownValue = newValue;
+                  });
+                },
+              ),
+              // For layout purposes, contains the text and the checkbox used to make
+              // sure the user is okay with us reaching out to them to explain more of
+              // the issue.
+              Row(
+                children: <Widget>[
+                  // Left margin from edge to the text.
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  // Contains the text that gives us consent to contact them if we
+                  // have any questions about their request.
+                  SizedBox(
+                    width: 300,
+                    child: Text(
+                      'By selecting the checkmark, you give the developers of '
+                      'SmartRider permission to contact you using your '
+                      'entered email address if a follow-up is necessary. '
+                      'Any other identifying information is to remain anonymous.',
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ),
+                  // The checkbox next to the statement.
+                  Checkbox(
+                    checkColor: Theme.of(context).buttonColor,
+                    activeColor: Theme.of(context).focusColor,
+                    focusColor: Theme.of(context).focusColor,
+                    value: valuefirst,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        valuefirst = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              // Container for the submit request button.
+              SizedBox(
+                // Contains the button in a box.
+                width: 350,
+                // The submit request button itself.
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final authn =
+                        '''Basic ${base64Encode(utf8.encode('$gitUserName:$gitPassWord'))}''';
 
-              // Once the POST is submitted, we can leave the Issue Request
-              // page.
-              Navigator.pop(context);
-            },
-            child: Text(
-              'SUBMIT REQUEST',
-              style: Theme.of(context).textTheme.button,
-            ),
+                    final headers = {
+                      'Accept': 'application/vnd.github.v3+json',
+                      'Content-Type': 'application/x-www-form-urlencoded',
+                      'Authorization': authn,
+                    };
+                    final payload =
+                        '''{"title":"$title", "body":"$description", "labels":["from-user"]}''';
+
+                    final url = Uri.parse(
+                        'https://api.github.com/repos/sirmammingtonham/smartrider/issues');
+                    var res =
+                        await http.post(url, headers: headers, body: payload);
+                    if (!mounted) return;
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'SUBMIT REQUEST',
+                    style: Theme.of(context).textTheme.button,
+                  ),
+                ),
+              )
+            ],
           ),
-        )
-      ],),),
-    ),);
+        ),
+      ),
+    );
   }
 }
