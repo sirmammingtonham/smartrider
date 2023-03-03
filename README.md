@@ -1,6 +1,6 @@
 # smartrider 🚕
 
-<img src="docs/screenshots/home.png" alt="home_screenshot" height="550px" align="right"/>
+<img src="app.gif" alt="home_screenshot" height="550px" align="right"/>
 
 **The all-in-one RPI transportation app**
 
